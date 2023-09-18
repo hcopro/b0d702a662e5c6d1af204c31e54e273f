@@ -1,0 +1,194 @@
+<div>
+	<table class="table table-borderless" id="table-contrat" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0">
+				<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Nom et Prénom</div></th>
+				<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Type</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Début</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Fin</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Statut</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Action</div></th>
+			</tr>
+		</thead>
+		<tbody class="" style="padding: 0px!important;"> 
+			<?php foreach ($data as $datum) : extract($datum);?>
+				<tr class="p-0">
+					<td class="text-important p-0 text-left">
+						<div class="card p-2 m-1 card-light-grey emp-<?=$employe->getIdEmploye();?>" style="height: 40px; max-height: 40px;">
+							<span class=""><?= $employe->getNom() . ' ' . $employe->getPrenom();?></span>
+						</div>
+					</td>
+					<td class="text-important p-0">
+						<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+							<?php if ($contrat != null) : ?>
+								<?= $contrat->getDesignation(); ?>
+							<?php else : ?>
+								N/A
+							<?php endif ?>
+						</div>
+					</td>
+					<td class="text-important p-0">
+						<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+							<?php
+								if ($contratEmploye != null) {
+									$date = explode('-', $contratEmploye->getDateDebut());
+									echo $date[2] . '/' . $date[1] . '/' . $date[0];
+								} else {
+									echo 'N/A';
+								}
+							?>
+						</div>
+					</td>
+					<td class="text-important p-0">
+						<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+							<?php
+								if ($contratEmploye != null) {
+									if ($contratEmploye->getDateFin() != "0000-00-00") {
+										$date = explode('-', $contratEmploye->getDateFin());
+										echo $date[2] . '/' . $date[1] . '/' . $date[0];
+									} else {
+										echo 'indéterminée';
+									}	
+								} else {
+									echo 'N/A';
+								}	
+							?>
+						</div>
+					</td>
+					<td class="p-0 text-important">
+						<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+							<?php if ($contratEmploye != null) : ?>
+								<?= $statut ?>
+							<?php else : ?>
+								N/A
+							<?php endif ?>
+						</div>
+					</td>
+					<td class="p-0 text-important text-center" style="width: 20%;">
+						<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+							<div class="row">
+								<div class="col-md-1 ml-1">
+									<a href='<?= HOST . "manage/update-contratEmploye?idEmploye=" . $employe->getIdEmploye() ?>' class='btn btn-sm btn-transparent'><i class='fa fa-info-circle text-info fa-15x tippy-act'></i></a>
+								</div>
+								<div class="col-md-1 ml-1">
+									<?php if ($contratEmploye != null) : ?>
+										<form id='form' class="inline-block" method='POST' action='<?= HOST. "manage/save-contratEmploye";?>' enctype='multipart/form-data' novalidate='novalidate'>
+					      					<input type='hidden' name='idContratEmploye' value='<?=$contratEmploye->getIdContratEmploye()?>' >
+					          				<input type='hidden' name='idEmploye' value='<?=$employe->getIdEmploye()?>' >
+					          				<input type='hidden' name='type' value='nouveau-contrat'>
+					                		<button class='btn btn-transparent btn-sm' type='submit'>
+					                			<i class='fa fa-plus-circle text-success fa-15x tippy-act'></i>
+					                		</button>
+					                	</form>
+					                <?php else : ?>
+					                	<button class='btn btn-transparent btn-sm disabled' type='submit' disabled="disabled">
+					                		<i class='fa fa-plus-circle text-success fa-15x tippy-act'></i>
+					                	</button>
+					                <?php endif ?>
+				                </div>
+				                <div class="col-md-1 ml-1">
+				                	<?php if ($contratEmploye != null) : ?>
+				                		<a href='<?= HOST . "manage/show-historiqueContrat?idEmploye=" . $employe->getIdEmploye()?>' class='btn btn-sm btn-transparent'>
+				                			<i class='fa fa-history text-info fa-15x tippy-act'></i>
+				                		</a>
+				                	<?php else : ?>
+				                		<a href='<?= HOST . "manage/show-historiqueContrat?idEmploye=" . $employe->getIdEmploye()?>' class='btn btn-sm btn-transparent disabled'>
+				                			<i class='fa fa-history text-info fa-15x tippy-act'></i>
+				                		</a>
+				                	<?php endif ?>
+			                	</div>
+			                	<div class="col-md-1 ml-1">
+			                		<?php if ($contratEmploye != null) : ?>
+					                	<form method='POST' class="inline-block" action='<?= HOST. "manage/imprimerContrat"?>' >
+			                            	<input type='hidden' name='idEmploye' value='<?=$employe->getIdEmploye()?>'>
+			                            	<input type='hidden' name='type' value='contrat'>
+			                            	<input type='hidden' name='idContratEmploye' value='<?=$contratEmploye->getIdContratEmploye()?>'>
+			                            	<button type='submit' class='btn btn-transparent btn-sm'>
+			                            		<i class='fa fa-print text-dark fa-15x tippy-act'></i>
+			                            	</button>
+			                          	</form>
+			                        <?php else : ?>
+			                        	<button type='submit' class='btn btn-transparent btn-sm disabled' disabled="disabled">
+			                            	<i class='fa fa-print text-dark fa-15x tippy-act'></i>
+			                            </button>
+			                        <?php endif ?>
+		                        </div>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<?php if ($contratEmploye != null) : ?>
+					<script>
+						$('document').ready(function(){
+							<?php if ($employe->getPhoto() != "") : ?>
+								photo = "<?= HOST . '../Web/Ressources/images/employes/' . $employe->getPhoto() ?>";
+							<?php else : ?>
+								photo = "<?= HOST . '../Web/Ressources/images/profilCandidat.png' ?>";
+							<?php endif ?>
+							contentHtml = "<div class='row' style='width: 400px;'>" + 
+											"<div class='col-md-2'>" + 
+												"<img src=" + photo + " style='height: 50px; width: 50px;'>" +
+											"</div>" +
+											"<div class='col-md-10'>" +
+												"<span><?=$employe->getNom() . ' ' . $employe->getPrenom()?><span/></br>" + 
+												"<span><?=$service?><span/></br>" +
+												"<span><?=$poste?><span/></br>" +
+												"<span><?=$categorie?><span/></br>" +
+											"</div>" +
+										"</div>";
+							setHtmlTippy('emp-<?=$employe->getIdEmploye()?>', contentHtml);
+						});
+					</script>
+				<?php endif ?>
+			<?php endforeach ?>
+		</tbody>
+	</table>
+</div>
+<script>
+	$('document').ready(function(){
+		$('#table-contrat').DataTable( {
+	        "pagingType" : "full_numbers",
+	        "language" : {
+		        "search" : "_INPUT_",
+		        "searchPlaceholder" : "rechercher",
+		        "zeroRecords": "Aucune donnée disponible",
+	            "oPaginate": {
+	                "sFirst":    "Premier",
+	                "sLast":    "Dernier",
+	                "sNext":    "Suivant",
+	                "sPrevious": "Précédent"
+	            }
+		    },
+	        "searchPlaceholder" : "rechercher",
+	        "lengthMenu" : [[10, 25, 50, -1], [10, 25, 50, "All"]]
+	    } );
+	    $('#table-contrat_length').addClass("invisible");
+	    $('#table-contrat_info').parent().removeClass();
+	    $('#table-contrat_info').parent().addClass("col-md-3");
+	    $('#table-contrat_info').remove();
+	    $('#table-contrat_wrapper').css("padding","0px");
+
+	});
+	function setHtmlTippy(classTippy, contentTippy)
+	{
+		var attente = setTimeout(function() {
+			tippy('.' + classTippy, {
+				content: contentTippy,
+				allowHtml : true,
+				placement : 'top-start'
+	  		});	
+		}, 1000);
+	}
+	tippy('.fa-info-circle', {
+		content: "Les détails du contrat"
+	});
+	tippy('.fa-plus-circle', {
+		content: "Nouveau contrat"
+	});
+	tippy('.fa-print', {
+		content: "Imprimer le contrat"
+	});
+	tippy('.fa-history', {
+		content: "L'historique des contrats"
+	});
+</script>

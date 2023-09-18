@@ -1,0 +1,205 @@
+<?php 
+  extract($data);
+  $showLink = $show == 'all' ? 'reduce' : 'all';
+  /*
+  $color = [
+    '255,0,255',
+    '0,255,0',
+    '218,165,32',
+    '128,128,0',
+    '177,1,1',
+    '0,255,255',
+    '255,69,0',
+    '154,205,50',
+    '255,193,7',
+    '0,54,250',
+    '138,43,226',
+    '148,0,211',
+    '255,20,147',
+    '244,164,96',
+    '199,16,56',
+    '0,255,0',
+    '255,0,0',
+    '255,255,0',
+    '128,128,0',
+    '178,34,34',
+    '255,69,0',
+    '154,205,50',
+    '0,128,0',
+    '100,149,237',
+    '157,135,26',
+    '148,0,211',
+    '255,20,147',
+    '244,164,96',
+    '255,0,255',
+    '0,255,0',
+    '218,165,32',
+    '128,128,0',
+    '177,1,1',
+    '0,255,255',
+    '255,69,0',
+    '154,205,50',
+    '255,193,7',
+    '0,54,250',
+    '138,43,226',
+    '148,0,211',
+    '255,20,147',
+    '244,164,96',
+    '199,16,56',
+    '0,255,0',
+    '255,0,0',
+    '255,255,0',
+    '128,128,0',
+    '178,34,34',
+    '255,69,0',
+    '154,205,50',
+    '0,128,0',
+    '100,149,237',
+    '138,43,226',
+    '148,0,211',
+    '255,20,147',
+    '244,164,96'
+  ];*/
+?>
+<script type="text/javascript">
+  var responses       = <?= json_encode($barometre->getContents());?>;
+  var lastThreeRender = <?= json_encode($lastThreeRender);?>;
+  var dates           = <?= json_encode($dates);?>;
+</script>
+<section class="page-section" id="back-section" style="display: flex;flex-wrap: wrap;">
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+      <h4 class="text-center list-title section-heading">Graphique du baromètre</h4>
+    </div>
+  </div>
+  <div class="row">
+    <a href="<?= HOST. 'manage/barometre_list'?>" class="btn btn-primary rounded-circle">
+      <i class="fas fa-arrow-left"></i>
+    </a>
+  </div>
+</br>
+  <div class="row align-items-center">
+    <a  class="btn btn-downloadx btn-success" id="print" onclick="printDiv ()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-pdf-fill" viewBox="0 0 16 16">
+        <path d="M5.523 10.424c.14-.082.293-.162.459-.238a7.878 7.878 0 0 1-.45.606c-.28.337-.498.516-.635.572a.266.266 0 0 1-.035.012.282.282 0 0 1-.026-.044c-.056-.11-.054-.216.04-.36.106-.165.319-.354.647-.548zm2.455-1.647c-.119.025-.237.05-.356.078a21.035 21.035 0 0 0 .5-1.05 11.96 11.96 0 0 0 .51.858c-.217.032-.436.07-.654.114zm2.525.939a3.888 3.888 0 0 1-.435-.41c.228.005.434.022.612.054.317.057.466.147.518.209a.095.095 0 0 1 .026.064.436.436 0 0 1-.06.2.307.307 0 0 1-.094.124.107.107 0 0 1-.069.015c-.09-.003-.258-.066-.498-.256zM8.278 4.97c-.04.244-.108.524-.2.829a4.86 4.86 0 0 1-.089-.346c-.076-.353-.087-.63-.046-.822.038-.177.11-.248.196-.283a.517.517 0 0 1 .145-.04c.013.03.028.092.032.198.005.122-.007.277-.038.465z"/>
+        <path fill-rule="evenodd" d="M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm.165 11.668c.09.18.23.343.438.419.207.075.412.04.58-.03.318-.13.635-.436.926-.786.333-.401.683-.927 1.021-1.51a11.64 11.64 0 0 1 1.997-.406c.3.383.61.713.91.95.28.22.603.403.934.417a.856.856 0 0 0 .51-.138c.155-.101.27-.247.354-.416.09-.181.145-.37.138-.563a.844.844 0 0 0-.2-.518c-.226-.27-.596-.4-.96-.465a5.76 5.76 0 0 0-1.335-.05 10.954 10.954 0 0 1-.98-1.686c.25-.66.437-1.284.52-1.794.036-.218.055-.426.048-.614a1.238 1.238 0 0 0-.127-.538.7.7 0 0 0-.477-.365c-.202-.043-.41 0-.601.077-.377.15-.576.47-.651.823-.073.34-.04.736.046 1.136.088.406.238.848.43 1.295a19.707 19.707 0 0 1-1.062 2.227 7.662 7.662 0 0 0-1.482.645c-.37.22-.699.48-.897.787-.21.326-.275.714-.08 1.103z"/>
+      </svg> Télécharger en pdf
+    </a>
+  </div>
+  <div class="row align-items-center infoBarom">
+    <div class="col-md-12 infoBarometre">
+      <h5>Le baromètre : <?= $barometreEnvoye->getLibelle(); ?></h5>
+      <?php if (isset($employe)) : ?>
+        <h6><u>Nom</u> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <?= $employe->getNom(); ?></h6>
+        <h6><u>Prénom</u> : <?= $employe->getPrenom(); ?></h6>
+        <h6><u>Poste</u> &nbsp;&nbsp;&nbsp;&nbsp;: <?php if (is_object($poste)) : ?> <?= $poste->getPoste(); ?><?php else : ?> Aucun <?php endif; ?></h6>
+        <h6><u>Service</u> &nbsp;: <?php if (is_object($service)) : ?> <?= ucfirst($service->getService()); ?><?php else : ?> Aucun <?php endif; ?></h6>
+        <h6><u>Date d'évaluation</u> : <?= $barometre->getDate(); ?></h6>
+      <?php else : ?>
+        <h6><u>Équipe</u> : <?php $collab = explode(':', $barometre->getIdBarometreList()); echo end($collab);?></h6>
+        <h6><u>Date d'évaluation</u> : <?= $barometre->getDate(); ?></h6>
+        <h6>&nbsp;</h6>
+        <h6>&nbsp;</h6>
+        <h6>&nbsp;</h6>
+      <?php endif; ?>
+      <br>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-2">
+      <a href="<?= HOST. 'manage/barometre/graph_barometer?idBarometre=' . $barometre->getIdBarometreList() . '&content=&show=' . $showLink . '&offset=';?>" class="btn btn-info" id="show-reduced" onclick="addOffSet(this)"><i class="far fa-chart-bar"></i> <?=$show == 'all' ? 'Reduisez' : 'Afficher tout';?></a>
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-info" id="last-three-result">3 derniers résultats</button>
+    </div>
+    <!-- <div class="col-md-2">
+      <a href="<?= HOST. 'manage/barometre/graph_barometer?idBarometre=' . $barometre->getIdBarometreList() . '&content=&show=' . $showLink . '&offset=';?>" class="btn btn-info" onclick="addOffSet(this)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-steps" viewBox="0 0 16 16">
+          <path d="M.5 0a.5.5 0 0 1 .5.5v15a.5.5 0 0 1-1 0V.5A.5.5 0 0 1 .5 0zM2 1.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1z"/>
+        </svg> <?=$show == 'all' ? '3 derniers résultats' : 'Résultat unique';?>
+      </a>
+    </div> -->
+    <div class="col-md-8">
+    </div>
+  </div>
+  </div>
+  <div class="row offre-body" style=" width: 95% !important;">
+    <div class="row" style="width: 1600px;">
+      <div class="col-md-12" id="graph" style="font-size: 1.2em; margin-left: 311px; display: flex;flex-wrap: wrap;">
+        <!-- Chart container -->
+        <div id="container">
+          <!-- begin circle -->
+            <div class="containers">
+              <div class="circle">
+                <img class="img-fluid smiley rounded-circle" src="
+                  <?php echo HOST ."../Web/Ressources/images/" . $img; ?>" style="position: absolute; width: 65px!important;">
+                <label style="z-index: 0; margin-bottom: -52px; color: black; font-size: 11.7px;"><strong><?= $label; ?></strong></label>
+                <?php $inc = 0; $indice = -1; $gradian = 360 / count($dataQuestions);
+                 foreach ($barometre->getContents() as $key => $value) :
+                  if (is_array($value) && isset($value['questions'])) : 
+                    if (is_int(array_key_first($value['questions']))) :
+                      foreach ($value['questions'] as $question) : $indice++;?>
+                        <span style ="transform: rotate(<?=$inc * $gradian?>deg); "><b>
+                          <div class="triangle" style="--color: <?=$color[$inc % 2]?>; --percent1: <?=$question['point'] * 20?>%; --percent2: <?=($question['point'] * 20) - 20?>%; --width: <?=((1500/(count($barometre->getContents()[1]['questions']) + 1))+(750/(count($barometre->getContents()[1]['questions']) + 1)))?>px;" >
+                            <img class="img-fluid rounded-circle triangle-img" src="<?= HOST ."../Web/Ressources/images/" . (!empty($question['image']) && !strpos($question['image'],'fakepath') ? "barometres/" . $question['image'] : "icon/" . $images[$indice%10]);?>" style="--rotate: <?=180 - ($inc * $gradian)?>deg;">
+                          </div></b>
+                        </span>
+                      <?php $inc++;
+                      endforeach;
+                    else : $imageX = $value['questions']['image'];?>
+                      <span style ="transform: rotate(<?=$key * $gradian?>deg); "><b>
+                        <div class="triangle" style="--color: <?=$color[$key % 2]?>; --percent1: <?=$value['questions']['point'] * 20?>%; --percent2: <?=($value['questions']['point'] * 20) - 20?>%; --width: <?=((1500/(count($barometre->getContents()[1]['questions']) + 1))+(750/(count($barometre->getContents()[1]['questions']) + 1)))?>px; opacity: 0.6!important;" >
+                          <img class="img-fluid rounded-circle triangle-img" src="<?= HOST ."../Web/Ressources/images/" . (!is_null($imageX) && !empty($imageX) && !strpos($imageX,'fakepath') ? "barometres/" . $imageX : "icon/" . $images[$key%10]);?>" style="--rotate: <?=180 - ($key * $gradian)?>deg;">
+                        </div></b>
+                        </span>
+                    <?php endif;?>
+                  <?php endif; ?>
+                <?php endforeach; ?>
+              </div>
+            </div>
+          <!-- end circle -->
+        </div>
+      </div>
+    </div>
+    <div class="row offre-footer" style="background-color: beige; margin-left: 45px;">
+      <div class="container text-left">
+        <div class="row row-footer">
+          <div class="row align-items-center" id="suggest" style="margin: 1px;">
+            <p>
+              <?php if (count($remarqueContents) > 0) :
+                foreach ($remarqueContents as $remarque) :
+                  $labelClass = isset($remarque['classify']) ? $remarque['classify'] : $remarque['remarque']['rmq'];
+                  $labelRmq   = isset($remarque['remarque']) ? $remarque['remarque'] : $remarque['remarque']['answer'];
+                ?>
+                  <u><?= $labelClass;?></u>&nbsp;:&nbsp;
+                  <br>
+                  <label><?= ucfirst($labelRmq);?></label>
+                  <br><br>
+                <?php endforeach;
+              endif; ?>
+              <u>Suggestion ou demandes particulières</u>&nbsp;:&nbsp;
+              <br>
+              <label><?= $dates[0];?></label>
+              <br>
+              <label><?= !empty($barometre->getContents()['suggestion']) ? ucfirst($barometre->getContents()['suggestion']) : "Aucune suggestion..."; ?></label>
+              <?php foreach($lastThreeRender as $clef => $last) : ?>
+                <br>
+                <label><?= $dates[$clef + 1];?></label>
+                <br>
+                <label><?= !empty($last['suggestion']) ? ucfirst($last['suggestion']) : "Aucune suggestion...";?></label>
+              <?php endforeach; ?>
+            </p>
+            <hr>
+          </div>
+          <hr>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Adding ej2.min.js CDN link in script file -->
+<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/barometerGraph.css">
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/ej2CHART.min.js" type="text/javascript"></script>
+<!-- Adding barometerGraph.js script file -->
+<script src="<?= HOST; ?>../Web/Ressources/js/barometerGraph.js" type="text/javascript"></script>

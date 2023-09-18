@@ -1,0 +1,286 @@
+<?php
+  $url = explode("/", $_GET['page']);
+  $url = $url[1];
+?>
+<section class="page-section" id="back-section">
+    <div class="container">
+        <div class="row">
+          <div class="col-md-3">
+            <a href="<?= HOST . $_SESSION['previousUrl'];?>" class="btn btn-primary rounded-circle">
+              <i class="fas fa-arrow-left"></i>
+            </a>
+          </div>
+          <div class="col-md-6">
+            <h4 class="text-center list-title section-heading">Fiche individuelle</h4>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-lg-12 profil-detail">
+            <?php if ($url == "employe" && !empty($data)): extract($data); $pageTitle = "Employe : " . ucwords($employe->getNom()); ?>
+              <div class="row">
+                <div class="col-md-5">
+                  <img class="img-fluid userDetail " src="
+                    <?php
+                      if ($employe->getPhoto() != "") {
+                        echo HOST . "../Web/Ressources/images/employes/" . $employe->getPhoto();
+                      } else {
+                        echo HOST ."../Web/Ressources/images/profilCandidat.png";
+                      }
+                    ?>
+                  ">            
+                </div>
+                <div class="col-md-4">
+                  <h5>Identité</h5>
+                  <strong>Nom :</strong><?= " " . strtoupper($employe->getNom()); ?><br>
+                  <strong>Prénom :</strong><?= " " . ucwords($employe->getPrenom()); ?><br>
+                  <strong>Né(e) le </strong>
+                    <?php 
+                      $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+                      $birth = explode('-', $employe->getDateNaissance());
+                      $index = (int)$birth[1] - 1;
+                      echo $birth[2] . " " . $months[$index] . " " . $birth[0];
+                    ?>
+                  <strong>à </strong><?= ucwords($employe->getLieuNaissance()); ?><br>
+                  <strong>Adresse :</strong> <?= " " . ucwords($employe->getAdresse()) . " " . ucwords($employe->getVille()); ?><br>
+                  <strong>CIN :</strong><?= " " . $employe->getNumeroCin() ?><br>
+                  <strong>Contact :</strong><?php $contact = explode('/', $employe->getContact()); echo " " . $contact[1]; ?><br>
+                  <strong>Email :</strong><?= " " . strtolower($employe->getEmail()); ?><br>
+                  <?php if($employe->getPersonnalite() != "") : ?>
+                    <strong> Personnalité : </strong>
+                      <?php 
+                        $personnalite = "";
+                        $persos = explode('_', $employe->getPersonnalite());
+                        foreach ($persos as $perso) {
+                          if (!empty($perso)) {
+                            $personnalite .= "<i>" . $perso . "</i>, ";
+                          }
+                        }
+                        echo substr($personnalite, 0, -2);;
+                      ?>
+                  <?php endif; ?>          
+                </div>
+                <div class="col-md-3">
+                    <h5>Compte sur le site</h5>
+                    <strong>Pseudo : </strong> <label><?= $compte->getLogin(); ?></label><br>
+                    <strong>Statut du compte :</strong>
+                    <?php 
+                      if ($compte->getStatut() == "active") {
+                        echo "<i style='color:green'>Activé</i>";
+                      } else if ($compte->getStatut() == "desactive"){
+                        echo "<i style='color:red'>Désactivé</i>";
+                      } 
+                    ?>
+                    <button class="btn btn-sm btn-success mt-2" data-toggle="modal" data-target="#modalEnregistrement">
+                      nouveau mot de passe
+                    </button>
+                </div>
+              </div><hr>
+              <div class="row">
+                <div class="col-md-5">
+                  <h5>Idenfication professionnelle</h5>
+                  <strong>Matricule :</strong><?= " " . $employe->getMatricule(); ?><br>
+                  <strong>Catégorie : </strong><?= " " . $categorie->getDesignation(); ?><br>
+                  <strong>Service :</strong><?= " " . ucfirst($service->getService()); ?><br>
+                  <strong>Poste :</strong><?= " " . ucfirst($poste->getPoste()); ?><br>
+                  <?php if (!empty($chef)): ?>
+                    <strong>Chef hiérarchique :</strong><?= " " . strtoupper($chef->getNom()) . " " . ucwords($chef->getPrenom()); ?>  
+                  <?php endif ?>
+                  <hr>
+                  <strong>Numéro CNAPS :</strong><?= " " . $employe->getNumeroCnaps(); ?><br>
+                  <strong>Statut CNAPS :</strong><?= " " . $employe->getStatutCnaps(); ?><br>
+                  <strong>Payé <?= " " . $employe->getTypePaiement(); ?></strong><br>
+                </div>
+                <?php if (!empty($compteBanque)): ?>                    
+                <div class="col-md-6">
+                    <h5>Compte bancaire : </h5>
+                    <strong>Code banque :</strong><?= " " . $banque->getCodeBanque(); ?><br>
+                    <strong>Banque :</strong><?= " " . ucwords($banque->getNomBanque()) . " " . ucwords($banque->getVille()); ?><br>
+                    <strong>Numéro de compte :</strong><?= " " . $compteBanque->getNumeroCompte(); ?>
+                </div>
+                <?php endif ?>
+              </div>
+              <hr>
+              <?php if ($contratEmploye->getStatut() != ManagerModuleEmploye::EMPTY && $contratEmploye->getStatut() != ManagerModuleEmploye::PROPOSED && $typeContrat != null) : ?>
+                <div class="row">
+                  <div class="col-md-5">
+                    <h5>Contrat en cours</h5>
+                    <strong>Type de contrat :</strong><?= " " . $typeContrat->getDesignation(); ?><br>
+                    <strong>Date de début :</strong>
+                    <?php
+                      $date = explode('-', $contratEmploye->getDateDebut()); 
+                      echo $date[2] . "/" . $date[1] . "/" . $date[0];
+                    ?>
+                    <br>
+                    <?php if ($typeContrat->getDesignation() != "CDI") : ?>
+                      <strong>Date de fin :</strong>
+                      <?php
+                        $date = explode('-', $contratEmploye->getDateFin()); 
+                        echo $date[2] . "/" . $date[1] . "/" . $date[0];
+                      ?>
+                      <br>
+                    <?php endif ?>
+                    <br>
+                  </div>
+                  <div class="col-md-6">
+                      <strong>Date d'embauche : </strong><?= $embauche ?><br>
+                      <?php if ($debauche != null) : ?>
+                        <strong>Date de débauche : </strong><?= $debauche ?><br>
+                      <?php else :?>
+                        <strong>Date de débauche : </strong> Non spécifiée<br>
+                      <?php endif ?>
+                      <?php if ($anciennete['annees'] == 0) : ?>
+                        <strong>Ancienneté : </strong><?= $anciennete["mois"] . " mois" ?><br>
+                      <?php elseif ($anciennete['annees'] == 1) : ?>
+                        <strong>Ancienneté : </strong><?= $anciennete["annees"] . " an et " . $anciennete["mois"] . " mois" ?><br>
+                      <?php else : ?>
+                        <strong>Ancienneté : </strong><?= $anciennete["annees"] . " ans et " . $anciennete["mois"] . " mois" ?><br>
+                      <?php endif ?> 
+                  </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                          <form method="POST" action="<?= HOST. "manage/imprimerContrat"?>" >
+                            <input type="hidden" name="idEmploye" value="<?=$employe->getIdEmploye()?>">
+                            <input type="hidden" name="type" value="contrat">
+                            <input type="hidden" name="idContratEmploye" value="<?=$contratEmploye->getIdContratEmploye()?>">
+                            <button type="submit" class="btn btn-dark btn-sm" style="width:50%">imprimer Contrat</button>
+                          </form>
+                    </div>
+                    <div class="col-md-6">
+                          <form method="POST" action="<?= HOST. "manage/imprimerContrat"?>" >
+                            <input type="hidden" name="idEmploye" value="<?=$employe->getIdEmploye()?>">
+                            <input type="hidden" name="type" value="attestation">
+                            <input type="hidden" name="idContratEmploye" value="<?=$contratEmploye->getIdContratEmploye()?>">
+                            <button type="submit" class="btn btn-dark btn-sm" style="width:50%">imprimer attestation</button>
+                          </form>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-5">
+                          <a href="<?= HOST . "manage/update-contratEmploye?idEmploye=" . $employe->getIdEmploye() ?>" class="btn btn-info btn-sm" style="width:50%">Gérer contrat</a>
+                    </div>
+                    <div class="col-md-6">
+                          <form method="POST" action="<?= HOST. "manage/imprimerContrat"?>" >
+                            <input type="hidden" name="idEmploye" value="<?=$employe->getIdEmploye()?>">
+                            <input type="hidden" name="type" value="certificat">
+                            <input type="hidden" name="idContratEmploye" value="<?=$contratEmploye->getIdContratEmploye()?>">
+                            <button type="submit" class="btn btn-dark btn-sm" style="width:50%">imprimer certificat</button>
+                          </form>
+                    </div>
+                </div>
+                <br>
+              <?php else : ?>
+                <div class="row">
+                  <div class="col-md-5">
+                    <h5>Contrat</h5>
+                    <p>L'employé n'a pas encore signé son contrat</p>
+                    <a href="<?= HOST . "manage/update-contratEmploye?idEmploye=" . $employe->getIdEmploye() ?>" class="btn btn-info btn-sm">Gérer son contrat</a>
+                  </div>
+                  </div>
+                </div>
+              <?php endif ?>
+            <?php endif ?>
+            <?php if (empty($data)): ?>
+              <h5>Donnée introuvable</h5>
+            <?php endif ?>
+          </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form method="POST" id="form" action="<?= HOST . 'manage/send-compte'?>" enctype="multipart/form-data" novalidate="novalidate">
+        <input type="hidden" name="idEmploye" value="<?= $employe->getIdEmploye() ?>">
+          <div class="modal-header">
+            <div class="text-center" style="width: 100%;">
+              <h5 class="modal-title" id="exampleModalLabel">Mot de passe</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="card p-3" style="background: #efefff;">
+              <div class="row">
+                <div class="col-md-11 m-3">
+                  <p class="text-justify">
+                    Au cas où <span class="text-important"><?= $employe->getCivilite() . ' ' . $employe->getNom() . ' ' . $employe->getPrenom() ?></span> aurait oublié son mot de passe, vous pouvez lui envoyer un nouveau.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <label class="label-input titre">Nouveau mot de passe : </label>
+                  <div class="form-group" style="position: relative;">
+                    <i class="fa fa-key icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+                    <input type="password" class="form-control" name="motDePasse" id="motDePasse" required="required" data-validation-required-message="Saisissez un mot de passe s'il vous plaît" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;" placeholder="nouveau mot de passe">
+                    <i class="fas fa-eye eye-icon" style="position: absolute; right: 53px; top: 60%; transform: translateY(-50%); z-index: 2;"></i>
+                    <p class="help-block text-danger"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="row" style="width: 105%!important;">
+              <div class="col-md-3">
+                <button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+              </div>
+              <div class="col-md-3"></div>
+              <div class="col-md-6">
+                <div class="form-group"> 
+                  <button type="submit" id="submit" class="btn btn-md btn-info">
+                    Enregistrer et envoyer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+<?php if (!empty($_SESSION['notification']) && $_SESSION['notification']['message'] != "") :?>
+  <div class="toast" id="notification" data-delay="10000" >
+    <?php if ($_SESSION['notification']['type'] == "erreur") :?>
+      <div class="toast-header" style="background: #b71c1c; color: #ffffff;">
+      <i class="fas fa-exclamation-circle fa-lg" style="margin-right: 10px; color: #ffffff;"></i>
+    <?php else : ?>
+      <div class="toast-header">
+    <?php endif ?>
+      <strong class="mr-auto"><?=$_SESSION['notification']['titre']?></strong>
+          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+    </div>
+    <div class="toast-body">
+      <?=$_SESSION['notification']['message']?>
+    </div>
+  </div>
+  <script>
+    $('#notification').toast('show');
+  </script>
+  <?php
+    unset($_SESSION['notification']);
+  ?>
+<?php endif?>
+<script type="text/javascript">
+  /** 
+   *@changelog 2023-06-07 Lansky [EVOL] Ajout fonctionnalité de voir le mot de passe saisi
+   *
+  */
+  $('.eye-icon').click(function() {
+        $(this).toggleClass('fa-eye fa-eye-slash');
+        let changeType = $(this).parent().find('input');
+        if ($(changeType).attr('type') == 'text') {
+          $(changeType).attr('type','password');
+        } else if ($(changeType).attr('type') == 'password') {
+          $(changeType).attr('type','text');
+        }
+    });
+</script>

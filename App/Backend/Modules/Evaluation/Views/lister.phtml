@@ -1,0 +1,696 @@
+<?php
+	extract($data);
+	$url = explode('/', $_GET['page']);
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<?php if (end($url) == 'barometre_list' || end($url) == 'barometre') : ?>
+			<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Le baromètre</h4>
+				</div>
+				<?php if (end($url) == 'barometre'  && $_SESSION['compte']['identifiant'] == 'entreprise') : ?>
+					<div class="col-md-2 text-right">
+						<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalEnregistrement">
+							<i class="fa fa-plus" aria-hidden="true"></i>
+							<span class="ml-2">créer</span>
+						</button>
+					</div>
+				<?php endif; ?>
+			</div>
+			<div class="block-section">
+				<div class="row">
+			        <ul id="new-tab-button">
+			        	<?php if ($_SESSION['compte']['identifiant'] == 'entreprise'): ?>
+			        		<li id="tab5">
+			        			<a href="<?= HOST. 'manage/barometre_list'?>">
+			        				La liste du baromètre
+			        			</a>
+			        		</li>
+			        		<li id="tab6">
+			        			<a href="<?= HOST. 'manage/barometre'?>">
+			        				envoie baromètre
+			        			</a>
+			        		</li>
+			        	<?php elseif ($_SESSION['compte']['identifiant'] == 'employe') : ?>
+			        		<li id="tab5">
+			        			<a href="<?= HOST. 'manage/employe/barometre?reply=NO'?>">
+			        				La liste du baromètre
+			        			</a>
+			        		</li>
+			        		<li id="tab6">
+			        			<a href="<?= HOST. 'manage/employe/barometre?reply=YES'?>">
+			        				Mes réponses du baromètre
+			        			</a>
+			        		</li>
+			        	<?php endif; ?>
+			        </ul>
+		      	</div>
+		      	<?php if (end($url) == 'barometre' && $_SESSION['compte']['identifiant'] == 'entreprise') : $pageTitle = 'Le baromètre' ?>
+					<div class="row block-section">
+						<div style="position: relative; width: 100%;">
+							<table class="table table-striped small-first-col" id="table-back">
+								<thead>
+									<tr>
+										<th></th>
+										<th>Libelle</th>	
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody id="tableSearch" class="body-half-screen">
+									<?php if ($listes): ?>
+										<?php foreach ($listes as $liste): ?>
+											<tr>
+												<td></td>
+												<td> 
+													<?= $liste->getLibelle(); ?>
+												</td>
+												<td>
+													<!-- <a href="detail-barometre?idBarometre=<?=$liste->getIdBarometre() ?>" class="btn btn-info">
+											        	<i class="fas fa-eye"></i>
+											      	</a>
+												  	<a href="update-barometre?idBarometre=<?=$liste->getIdBarometre() ?>" class="btn btn-warning test_click" data-target="#modalUpdate" data-toggle="modal" onclick='updateEvaluation(<?= $liste->getIdBarometre()?>,  "<?= $modifParent[$key]?>", "<?= $modifCateg[$key]?>", this)'>
+												        	<i class="fas fa-edit"></i>
+												      	</a> -->
+													<a href="send-barometre?idBarometre=<?=$liste->getIdBarometre(); ?>"  style="background-color: rgb(35 23 228 / 88%);" class="btn btn-info send" data-target="#modalSendBarometre" data-toggle="modal">
+												    	<i class="fas fa-user">envoyer</i>
+												  	</a>
+											      	<!-- <a href="archive-barometre?idBarometre=<?=$liste->getIdBarometre() ?>" class="btn btn-danger archive" data-toggle="modal" data-target="#confirmationModal" data-id=""
+											      		data-url="archive-barometre?idBarometre=<?=$liste->getIdBarometre() ?>">
+									                 	<i class="fa fa-times"></i>
+									                </a> -->
+										   		</td>
+											</tr>
+										<?php endforeach;?>
+									<?php endif;?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<!-- Debut Modal d'envoyer un barometre -->
+						<div class="modal fade" id="modalSendBarometre" tabindex="-1" role="dialog" aria-hidden="true">
+						  <div class="modal-dialog modal-dialog-centered" role="document">
+						    <div class="modal-content">
+						      <div class="modal-header">
+						        <h5 class="modal-title text-center">Envoie un barmètre</h5>
+						        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          <span aria-hidden="true">&times;</span>
+						        </button>
+						      </div>
+						      <div class="modal-body">
+						      	<div class="form-group">
+							        <div class="col-md-8">
+										<span class="titre">Liste des employés : </span>
+							    		<select  class="selectpicker form-control span3 focus_activated modal-input select-employe" multiple data-live-search="true" required="required" data-validation-required-message="Veuillez sélectionner au moins un employé" id="listIdEmploye">
+							    			<!-- <option value="all">Sélectionner Tout</option> -->
+							    			<?php foreach ($employes as $employe) : ?>
+							    				<option value="<?= $employe->getIdEmploye();?>"><?= $employe->getNom();?>&nbsp;<?= $employe->getPrenom();?></option>
+							    			<?php endforeach; ?>
+					        			</select>
+										<p class="help-block text-danger msg-empty"></p>
+									</div>
+						      	</div>
+						      </div>
+						      <div class="modal-footer">
+						        <button id="action-envoie" type="submit" class="btn btn-info btn-md" >Valider</button>
+						        <button type="button" class="btn btn-danger" data-dismiss="modal">Annuler</button>
+						      </div>
+						    </div>
+						  </div>
+						</div>
+					<!-- Fin du Modal d'envoyer un barometre -->
+					<!-- Debut Modal Ajout nouveau enregistrement -->
+						<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+							<div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+								<div class="modal-content">
+									<form method="POST" action="<?= HOST . 'manage/create-'. end($url) ; ?>" enctype="multipart/form-data" novalidate="novalidate" class="error">
+										<div class="modal-header">
+											<div class="text-center" style="width: 100%;">
+									      		<h5 class="modal-title" id="exampleModalLabel"> Créer un baromètre</h5>
+									      	</div>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+						  					<div class="card p-3" style="background: #efefff;">
+												<div class="form-group hidden">
+						              				<input class="form-control" name="idBarometre" type="number" value="<?php if(isset($barometre)) :
+									              		echo $barometre->getLibelle(); endif; ?>" readonly>
+									              	<p class="help-block text-danger"></p>
+									            </div>
+									            <div class="form-group hidden">
+						              				<input class="form-control" name="contentForm" id="hidden-add-contents" type="text" value="">
+									              	<p class="help-block text-danger"></p>
+									            </div>
+												<div class="row" style="margin-bottom: -28px;">
+													<div class="col-md-1">
+														<span class="titre">Libellé : </span>
+													</div>
+													<div class="col-md-8">
+														<div class="form-group">
+															<i class="fa fa-pencil-alt icon-input" aria-hidden="true" style="color: #3a434f; margin-top: 14px;"></i>
+															<input class="form-control focus_activated text-capitalize modal-input" id="libelle" name="libelle"
+																type="text" required="required" data-validation-required-message="Entrez la libellé svp!"
+																data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùçâ |'-?<>,;:!\/'']*" data-validation-regex-message="Caractères non valide"
+																placeholder="Saisir une description">
+															<p class="help-block text-danger"></p>
+														</div>
+													</div>
+												</div>
+												<hr>
+									            <div class="add-periode">
+													<div class="row row-period" style="margin-bottom: -28px;">
+														<div class="col-md-1">
+															<span class="titre">Période : </span>
+														</div>
+														<div class="col-md-8 text-center">
+															<div class="form-group">
+																<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+																  	<div class="carousel-inner">
+																    	<div class="carousel-item active">
+																      		<select id="periode" class="select-time" style="font-size: 0.8em!important; padding: 0px!important; margin-right: 79%;">
+																				<option value=""> -- période -- </option>
+																				<option value=3>hier</option>
+																				<option value=1 selected="seconds">aujourd'hui</option>
+																				<option value=2>demain</option>
+																				<option value=6>la semaine passée</option>
+																				<option value=4>cette semaine </option>
+																				<option value=5>la semaine prochaine</option>
+																				<option value=8>le mois prochain</option>
+																				<option value=7>ce mois</option>
+																				<option value=9>le mois dernier</option>
+																			</select>
+																    	</div>
+																 	</div>
+																</div>
+																<p class="help-block text-danger"></p>
+															</div>
+														</div>
+														<div class="col-md-1 add-btn-period" style="margin-top: -55px; margin-left: 90%;">
+															<div class="form-group">
+																<button type="button" class="btn btn-add-row-period" onclick="addRowPeriod('ajout', this)" style="background: #6e9e89;width: 33px; height: 33px; margin-left: -10px;" >
+																	<i class="fa fa-plus" aria-hidden="false" style="margin: -4px"></i>
+																</button>
+													  			<button type="button" class="btn btn-delete-row-period hidden" onclick="removeRowPeriod(this)" style="background: #d62037; width: 33px; height: 33px; margin-left: 1px; margin-top: -1px;">
+																	<i class="fas fa-times" style="margin: -2px"></i> 
+													  			</button>
+													  		</div>
+														</div>
+													</div>
+													<hr>
+													<div class="add-question">
+														<div class="row row-question" style="margin-bottom: -28px; padding-left: 2px;">
+															<div class="col-md-1" style="padding-left: 6px;">
+																<span class="titre">Question :</span>
+															</div>
+															<div class="col-md-8">
+																<div class="form-group">
+																	<textarea class="form-control rounded-0 question" rows="2"></textarea>
+																</div>
+															</div>
+															<div class="col-md-1 add-btn-question" style="margin-top: -55px; margin-left: 90%;">
+																<div class="form-group">
+																	<button type="button" class="btn btn-add-row-question" onclick="addRowQuestion('ajout', this)" style="background: #6e9e89;width: 33px; height: 33px; margin-left: -10px;" >
+																		<i class="fa fa-plus" aria-hidden="false" style="margin: -4px"></i>
+																	</button>
+														  			<button type="button" class="btn btn-delete-row-question hidden" onclick="removeRowQuestion(this)" style="background: #d62037; width: 33px; height: 33px; margin-left: 1px; margin-top: -1px;">
+																		<i class="fas fa-times" style="margin: -2px"></i> 
+														  			</button>
+														  		</div>
+															</div>
+														</div>
+														<hr>
+														<div class="row" style="margin-bottom: -49px; padding-left: 5px;">
+															<div class="col-md-12 choise-answer">
+																<div class="col-md-1" style="padding-left: 6px;">
+																	<span class="titre">Choix :</span>
+																</div>
+																<div class="col-md-11 add-choise">
+																	<div class="col-md-3" style="margin-top: -33px; margin-left: 6%;">
+																		<div class="form-group">
+																			<i class="fa fa-pencil-alt icon-input" aria-hidden="true" style="color: #3a434f; margin-top: 16px; margin-left: 5%;"></i>
+																				<input class="form-control focus_activated text-capitalize modal-input-choise" type="text" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùçâ |'-?<>,;:!\/'']*" data-validation-regex-message="Caractères non valide" placeholder="Réponse prédéfinie">
+																		</div>
+																	</div>
+																	<div class="col-md-1 bouton" style="margin-top: -57px; margin-left: 30%;">
+																		<div class="form-group">
+																			<button type="button" class="btn btn-add-row-choise" onclick="addRowChoise('ajout', this)" style="background: #6e9e89;width: 33px; height: 33px; margin-left: -6px;" >
+																				<i class="fa fa-plus" aria-hidden="false" style="margin: -4px"></i>
+																			</button>
+																  			<button type="button" class="btn btn-delete-row-choise hidden" onclick="removeRowChoise(this)" style="background: #d62037; width: 33px; height: 33px; margin-left: 37px; margin-top: -59px;">
+																				<i class="fas fa-times" style="margin: -2px"></i> 
+																  			</button>
+																  		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<hr>
+													</div>
+									            </div>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<div class="row" style="width: 105%!important;">
+									      		<div class="col-md-4">
+									      		</div>
+									      		<div class="col-md-4" style="margin-bottom: -3%;">
+								      				<button type="button" class="btn btn-md btn-danger annuler" data-dismiss="modal" style="height: 44%;">Annuler</button>
+									      			<div class="form-group"> 
+									      				<button type="submit" class="btn btn-md btn-info" onclick="getAllContents(this)" style="margin-top: -19%; margin-left: 40%;">
+									      					Enregister 
+									      				</button>
+									      			</div>
+									      		</div>
+									      		<div class="col-md-4">
+									      		</div>
+									      	</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					<!-- Fin Modal Ajout nouveau enregistrement -->
+		      	<?php elseif (end($url) == 'barometre_list') : ?>
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="tete-list-section row" style="background: #646c94;">
+								<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+									<div class="row">
+										<div class="col-md-6">
+											<select class="select-time" id='filter-group' style="font-size: 0.8em!important;">
+												<option value=""> -- groupe --</option>
+												<option value="1" selected="selected">tout</option>
+												<option value="2">par poste</option>
+												<option value="3">par employé</option>
+												<option value="4">par service</option>
+											</select>
+										</div>
+										<div class="col-md-6">
+											<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;">
+												<option class="option-tout" id="o-t" value="">-- selectionnez --</option>
+												<?php foreach ($servicesFilter as $service) : ?>
+													<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+												<?php endforeach ?>
+												<?php foreach ($postesFilter as $poste) : ?>
+													<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+												<?php endforeach ?>
+												<?php foreach ($employesFilter as $employe) : ?>
+													<option class="option-employe invisible" value="<?=$employe->getIdEmploye();?>"><?=$employe->getNom() . ' ' . $employe->getPrenom()?></option>
+												<?php endforeach ?>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<label class="titre" style="color: #ffffff;">état : </label>
+									<select class="select-time"  style="font-size: 0.8em!important;" id="filter-etat">
+										<option value="0" selected="selected">tout</option>
+										<option value="1">répondu</option>
+										<option value="2">ne pas répondu</option>
+									</select>
+								</div>
+								<div class="col-md-5 text-center" id="filtre-droite">
+									<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+									  	<div class="carousel-inner">
+									    	<div class="carousel-item active">
+									      		<select id="periode" class="select-time"  style="font-size: 0.8em!important;">
+													<option value=""> -- période -- </option>
+													<option value=7 selected="seconds">ce mois</option>
+													<option value=3>hier</option>
+													<option value=1>aujourd'hui</option>
+													<!-- <option value=2>demain</option> -->
+													<option value=6>la semaine passée</option>
+													<option value=4>cette semaine </option>
+													<!-- <option value=5>la semaine prochaine</option> -->
+													<!-- <option value=8>le mois prochain</option> -->
+													<option value=9>le mois passé</option>
+												</select>
+									    	</div>
+									    	<div class="carousel-item">
+									      		<label for="datepicker">
+										        	<input class="form-control datepicker date-time hasDatepicker" id="debut" type="text" autocomplete="off" placeholder="Début">
+									        	</label>
+											 	- 
+												<label for="datepicker">
+										        	<input class="form-control datepicker date-time hasDatepicker" id="fin" type="text" autocomplete="off" placeholder="Fin">
+									        	</label>
+									    	</div>
+									    	<div class="carousel-item">
+									    		<?php $date = date('Y') ?>
+									      		<select class="select-time" style="width: 200px; font-size: 0.8em!important;" id="selection-month">
+									      			<option value="">par mois</option>
+									      			<option value="1">Janvier <?=$date?></option>
+									      			<option value="2">Février <?=$date?></option>
+									      			<option value="3">Mars <?=$date?></option>
+									      			<option value="4">Avril <?=$date?></option>
+									      			<option value="5">Mai <?=$date?></option>
+									      			<option value="6">Juin <?=$date?></option>
+									      			<option value="7">Juillet <?=$date?></option>
+									      			<option value="8">Août <?=$date?></option>
+									      			<option value="9">Septembre <?=$date?></option>
+									      			<option value="10">Octobre <?=$date?></option>
+									      			<option value="11">Novembre <?=$date?></option>
+									      			<option value="12">Décembre <?=$date?></option>
+									      		</select>
+									    	</div>
+									 	</div>
+									  	<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+									    	<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+									    	<span class="sr-only">Previous</span>
+									  	</a>
+									  	<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+									    	<span class="carousel-control-next-icon" aria-hidden="true"></span>
+									    	<span class="sr-only">Next</span>
+									  	</a>
+									</div>
+								</div>
+							</div>
+							<div class="container-list-section" id="liste-barometre" style="background: #f7fbfc;"></div>
+						</div>
+					</div>
+				<?php elseif (end($url) == 'barometre' && $_SESSION['compte']['identifiant'] == 'employe') : $pageTitle = 'Le baromètre' ?>
+					<div class="row block-section">
+						<div style="position: relative; width: 100%;">
+							<table class="table table-striped small-first-col" id="table-back">
+								<thead>
+									<tr>
+										<th></th>
+										<th>Libelle</th>
+										<?php if ($barometres) : ?>	
+											<?php if (!is_null($barometres[0]->getDateReply())) : ?>	
+												<th>Reçu le</th>	
+												<th>Répondre le</th>	
+											<?php else : ?>	
+												<th>Date</th>	
+											<?php endif; ?>	
+										<?php endif; ?>	
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody id="tableSearch" class="body-half-screen">
+									<?php if ($barometres): $indx = 1; ?>
+										<?php foreach ($barometres as $barometre): ?>
+											<tr>
+												<td><?= $indx++; ?></td>
+												<td> 
+													<?= $barometre->getIdBarometre()->getLibelle(); ?>
+												</td>
+												<?php if (!is_null($barometre->getDateReply())) : ?>	
+													<td> 
+														<?= $barometre->getDate(); ?>
+													</td>
+													<td> 
+														<?= $barometre->getDateReply(); ?>
+													</td>
+												<?php else : ?>	
+													<td> 
+														<?= $barometre->getDate(); ?>
+													</td>
+												<?php endif; ?>
+												<td>
+													<?php if ($barometre->getIsAnswered() == 'YES') : ?>
+														<button type="submit" class="btn btn-info" id="<?=$barometre->getIdBarometreList(); ?>">
+												        	Voir ma réponse
+												      	</button>
+													<?php elseif ($barometre->getIsAnswered() == 'NO') : ?>
+													  	<button type="submit" class="btn btn-info verify" id="<?=$barometre->getIdBarometreList(); ?>">
+												        	Répondre
+												      	</button>
+													<?php endif; ?>
+										   		</td>
+											</tr>
+										<?php endforeach;?>
+									<?php endif;?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				<?php endif; ?>
+			</div>
+			<!-- Debut Modal de confirmation -->
+				<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-hidden="true">
+				  <div class="modal-dialog modal-dialog-centered" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title text-center">Confirmation</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				      </div>
+				      <div class="modal-body">
+				        <p id="text-confirmation"></p>
+				      </div>
+				      <div class="modal-footer">
+				        <a id="action-confirmation" class="btn btn-success">Oui</a>
+				        <button type="button" class="btn btn-danger deney-modal" data-dismiss="modal">Non</button>
+				      </div>	
+				    </div>
+				  </div>
+				</div>
+			<!-- Fin du Modal de confirmation -->
+			<!-- Debut Modal de répondre un baromètre -->
+				<div class="modal fade" id="responseBarometerModal" tabindex="-1" role="dialog" aria-hidden="true">
+				  <div class="modal-dialog modal-dialog-centered modal-lg" role="dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title text-center">Ma réponse</h5>
+				      </div>
+				      <div class="modal-body">
+				        <div id="text-responseBarometer">
+				        	<!-- ce body est généré par jquery dans listeBarometre.js -->
+				        </div>
+				      </div>
+				      <div class="modal-footer">
+				        <a id="action-responseBarometer" class="btn btn-success">Valider ma réponse</a>
+				      </div>	
+				    </div>
+				  </div>
+				</div>
+			<!-- Fin du Modal de répondre un baromètre -->
+			<link rel="stylesheet" href="<?= HOST; ?>../Web/Ressources/css/plugin/bootstrap-select.min.css" />
+			<script src="<?= HOST; ?>../Web/Ressources/js/listeBarometre.js"></script>
+		<?php else : ?>
+			<div class="row" style="margin-top: -15px;">
+				<div class="col-md-2"></div>
+				<div class="col-md-8">
+					<h4 class="text-center list-title section-heading">Gérer mes formulaires d'évaluations</h4>
+				</div>
+				<div class="col-md-2 text-right">
+					<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalEnregistrement">
+						<i class="fa fa-plus" aria-hidden="true"></i>
+						<span class="ml-2">créer</span>
+					</button>
+				</div>
+			</div>
+			<div class="row" style="margin-top: -15px;">
+				<div class="col-md-2 text-left">
+					<form enctype="multipart/form-data" method="POST" action="<?= HOST. 'manage/entreprise/evaluation/csv_file'?>" role="form">
+						<div class="form-group">
+							<input type="file" name="file" id="file" style="padding: 7px; padding-left: 2px; font-weight: 400; font-size: 16px;" accept=".csv">
+							<button type="submit" class="btn btn-success" name="upload"><i class="fas fa-file-import fa-1x"></i>&nbsp; Upload</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="block-section">
+				<?php if ($_SESSION['compte']['identifiant'] == "entreprise") : ?>
+					<?php if ($url[2] == "evaluation" && $url[1] == "entreprise" && isset($url[3])) : ?>
+						<div class="row">
+					        <ul id="new-tab-button">
+				        		<li id="tab2">
+				        			<a href="<?= HOST. 'manage/entreprise/evaluation/categorie'?>">
+				        				La liste des dimensions
+				        			</a>
+				        		</li>
+				        		<li id="tab4">
+				        			<a href="<?= HOST. 'manage/entreprise/evaluation/questionnaire'?>">
+				        				La liste des questions
+				        			</a>
+				        		</li>
+					        </ul>
+				      	</div>
+					<?php endif ?>
+		    		<div class="row">
+						<div class="col-lg-12 text-center">
+		    				<?php if (isset($url[3]) && $url[3] != 'categorie') : ?>
+		    					<!-- Debut Filtre -->
+			      				<div class="tete-list-section row" style="background: #789edb;">
+			      					<div class="col-md-6" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+			      						<div class="row">
+			      							<div class="col-md-6">
+			      								<label class="titre" style="color: #ffffff;">Dimension : </label>
+			      								<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;">
+													<option class="option-tout" id="o-t" value="0">Tout</option>
+													<?php foreach ($data['categories'] as $categorie) : ?>
+														<option class="option-categorie" value="<?=$categorie->getIdCategorie();?>"><?=$categorie->getLibelle()?></option>
+													<?php endforeach ?>
+												</select>
+			      							</div>
+										</div>
+									</div>
+			      				</div>
+		    					<!-- Fin Filtre -->
+		    				<?php endif; ?>
+		    			</div>
+		  			</div>
+		  			<!-- Utile pour afficher la liste questionnaire -->
+		  			<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;"></div>
+					<!-- Debut Modal Ajout nouveau enregistrement -->
+						<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+							<div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+								<div class="modal-content">
+									<form method="POST" id="form" action="<?= HOST . 'manage/entreprise/evaluation/create-'. $url[3] ?>" enctype="multipart/form-data" novalidate="novalidate" class="error">
+										<?php if ($url[3] == 'questionnaire') : 	$pageTitle = "Une question";
+										endif; ?>
+										<div class="modal-header">
+											<div class="text-center" style="width: 100%;">
+									      		<h5 class="modal-title" id="exampleModalLabel"> <?= 'Créer '.lcfirst($pageTitle) ?></h5>
+									      	</div>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<?php if ($url[3] == 'questionnaire') : ?>
+											<div class="modal-body">
+							  					<div class="card p-3" style="background: #efefff;">
+										            <div class="row">
+							  							<div class="col-md-2">
+							  								<span class="titre">Dimension : </span>
+							  							</div>
+							  							<div class="col-md-10">
+							  								<div class="form-group">
+							  									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f; bottom: 29px;"></i>
+											                  	<select  class="form-control span3 focus_activated modal-input" name="idCategorie" id="ajout-select-idCategorie" required="required"
+											                  	data-validation-required-message="Veuillez choisir une dimension" >
+											                    	<option class="text-center" value=""> __Choisir une dimension __ </option>
+											                    		<?php foreach($data['categories'] as $categorie): ?>
+											                      	<option value="<?= $categorie->getIdCategorie(); ?>" >
+											                        	<?= ucfirst($categorie->getLibelle()); ?>
+											                      	</option>
+											                    	<?php endforeach; ?>
+											                  	</select>
+											                </div>
+							  							</div>
+							  						</div>
+													<hr>
+													<div class="form-group hidden">
+									              		<input class="form-control" id="ajout-idQuestion" name="idQuestionnaire" type="number" value="<?php if(isset($questionnaire)) : 
+									              		echo $questionnaire->getLibelle(); endif; ?>" readonly>
+									              		<p class="help-block text-danger"></p>
+									              	</div>
+									              	<div class="form-group hidden">
+									              		<input class="form-control" name="idEntreprise" type="number"
+									              		value="<?= $_SESSION['user']['idEntreprise']; ?>" readonly>
+									              		<p class="help-block text-danger"></p>
+									              	</div>
+													<div class="row">
+														<div class="col-md-2">
+															<span class="titre">Question : </span>
+														</div>
+														<div class="col-md-10">
+															<div class="form-group">
+																<i class="fa fa-pencil-alt icon-input" aria-hidden="true" style="color: #3a434f; bottom: 29px;"></i>
+																<input class="form-control focus_activated text-capitalize modal-input" id="ajout-questionnaire" name="libelle"
+																	type="text" required="required" data-validation-required-message="Entrez la question svp !"
+																	data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùçâ |'-?<>,;:!\/'']*" data-validation-regex-message="Caractères non valide"
+																	placeholder="Saisir une question">
+																<p class="help-block text-danger"></p>
+															</div>
+														</div>
+													</div>
+													<hr>
+													<div class="row">
+														<div class="col-md-4">
+															<span class="titre">Interpretation : </span>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-md-3">
+															<div class="form-group">
+																<div class="card p-2 m-1 card-grey">
+																	<strong>
+																		<i class="fa fa-pencil-alt icon-input" aria-hidden="false" style="color: #ff00ea;margin: 6px;"></i>
+																		<label for="formControlTextarea1" style="font-style: italic;font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initiation 1 :</label>
+																	</strong>
+																</div>
+																<textarea name="Initiation 1" class="form-control focus_activated text-capitalize input-note" rows="5"></textarea>
+														  	</div>
+														</div>
+														<div class="col-md-3">
+															<div class="form-group">
+																<div class="card p-2 m-1 card-grey">
+																	<i class="fa fa-pencil-alt icon-input" aria-hidden="false" style="color: #ff00ea;margin: 6px;"></i>
+																	<strong>
+																		<label for="formControlTextarea2" style="font-style: italic;font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pratique 2 :</label>
+																	</strong> 
+																</div>
+																<textarea name="Pratique 2" class="form-control focus_activated text-capitalize input-note" rows="5"></textarea>
+														  	</div>
+														</div>
+														<div class="col-md-3">
+															<div class="form-group">
+																<div class="card p-2 m-1 card-grey">
+																	<i class="fa fa-pencil-alt icon-input" aria-hidden="false" style="color: #ff00ea;margin: 6px;"></i>
+																	<strong>
+																		<label for="formControlTextarea3" style="font-style: italic;font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maîtrise 3 :</label>
+																	</strong> 
+																</div>
+																<textarea name="Maîtrise 3" class="form-control focus_activated text-capitalize input-note" rows="5"></textarea>
+														  	</div>
+														</div>
+														<div class="col-md-3">
+															<div class="form-group">
+																<div class="card p-2 m-1 card-grey">
+																	<i class="fa fa-pencil-alt icon-input" aria-hidden="false" style="color: #ff00ea;margin: 6px;"></i>
+																	<strong>
+																		<label for="formControlTextarea4" style="font-style: italic;font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Expertise 4 :</label>
+																	</strong> 
+																</div>
+																<textarea name="Expertise 4" class="form-control focus_activated text-capitalize input-note" rows="5"></textarea>
+														  	</div>
+														</div>
+													</div>
+													<hr>
+												</div>
+											</div>
+										<?php endif; ?>
+										<div class="modal-footer">
+											<div class="row" style="width: 105%!important;">
+									      		<div class="col-md-4"></div>
+									      		<div class="col-md-2">
+									      			<button type="button" class="btn btn-md btn-danger" style="height: 41px;" id="annuler" data-dismiss="modal">Annuler</button>
+									      		</div>
+									      		<div class="col-md-2">
+									      			<div class="form-group"> 
+									      				<button type="submit" id="submit" class="btn btn-md btn-sm btn-info" style="height: 41px;">
+									      					Enregister 
+									      				</button>
+									      			</div>
+									      		</div>
+									      		<div class="col-md-4"></div>
+									      	</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					<!-- Fin Modal Ajout nouveau enregistrement -->
+					<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+	    		<?php endif ?>
+			</div>
+		<?php endif; ?>
+	</div>
+</section>
+<link rel="stylesheet" href="<?= HOST; ?>../Web/Ressources/css/plugin/bootstrap-select.min.css" />
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="<?= HOST; ?>../App/Backend/Modules/Evaluation/Views/lister.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabEvaluation.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>

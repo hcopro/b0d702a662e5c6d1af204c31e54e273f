@@ -1,0 +1,178 @@
+<?php extract($data); ?>
+<div>
+	<table class="table table-borderless" id="table-retard" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0">
+				<th class="p-0" style="width: 55%;"><div class="card p-2 m-1 card-grey">Nom et Prénom</div></th>
+				<th class="p-0 da text-center" style="width: 17%;"><div class="card p-2 m-1 card-grey">Dernière arrivée</div></th>
+				<th class="p-0 dr text-center th-retard" style="width: 7%;"><div class="card-retard card p-2 m-1 card-grey">Durée</div></th>
+				<th class="p-0 jr text-center th-retard" style="width: 7%;"><div class="card-retard card p-2 m-1 card-grey">Jours</div></th>
+				<th class="p-0 rc text-center th-retard" style="width: 7%;"><div class="card-retard card p-2 m-1 card-grey">Récupérer</div></th>
+				<th class="p-0 re text-center th-retard" style="width: 7%;"><div class="card-retard card p-2 m-1 card-grey">Reste</div></th>
+				<th class="p-0 text-center">
+					<div class="card p-2 m-1 card-grey" style="height: 40px;">
+						<i class="fa fa-chart-bar mt-1"></i>
+					</div>
+				</th>
+			</tr>
+		</thead>
+		<tbody class="" style="padding: 0px!important;">
+			<?php if ($retards != null) : ?> 
+				<?php foreach($retards as $key => $retardVal) : extract($retardVal);?>
+					<tr class="p-0" id="user-<?=$key?>">
+						<td class="text-important p-0">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<?= $userName;?>
+							</div>
+						</td>
+						<td class="p-0 text-important" style="width: 16%;">
+							<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+								<?= $lastArrived;?>
+							</div>
+						</td>
+						<td class="text-center p-0">
+							<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+								<?= $during;?>
+							</div>
+						</td>
+						<td class="text-center p-0">
+							<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+								<?= $delayNumber;?>
+							</div>
+						</td>
+						<td class="text-center p-0">
+							<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+								<?= $recoveryTime;?>
+							</div>
+						</td>
+						<td class="text-center p-0">
+							<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+								<?= $total;?>
+							</div>
+						</td>
+						<td class="text-right p-0">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<button type="button" class="m-0 p-0 btn btn-transparent btn-sm" data-toggle="modal" data-target="#modalLateStatus<?= $key;?>">
+	  								<i class="m-0 fas fa-info-circle icon-action" aria-hidden="true" style="color: #323d4b;font-size: 1.2em;"></i>
+								</button>
+							</div>
+						</td>
+					</tr>
+					<script>
+						/*$('document').ready(function() {
+							$('#month-stat<?=$key;?>').val((new Date).getMonth() + 1);
+							if ($('#month-stat<?=$key;?>').val() != null && $('#year-stat<?=$key;?>').val()) {
+								idEmploye = $('#idEmploye<?=$key;?>').val();
+								mois = $('#month-stat<?=$key;?>').val();
+								annee = $('#year-stat<?=$key;?>').val();
+								getStatistique(idEmploye, mois, annee);
+							}
+							<?php if ($depart != null) : ?>
+								var content = "<p><b>Arrivée : </b><?= $arrivee ?></p><p><b>Départ : </b><?= $depart ?></p>";
+							<?php else : ?>
+								var content = "<p><b>Arrivée : </b><?= $arrivee ?></p><p><b>Départ : </b> . . . </p>";
+							<?php endif ?> 
+							setHtmlTippy('pre-<?=$key?>', content);
+						});
+						$('#table-retard').on('page.dt', function (){
+							$('#month-stat<?=$key;?>').val((new Date).getMonth() + 1);
+							if ($('#month-stat<?=$key;?>').val() != null && $('#year-stat<?=$key;?>').val()) {
+								idEmploye = $('#idEmploye<?=$key;?>').val();
+								mois = $('#month-stat<?=$key;?>').val();
+								annee = $('#year-stat<?=$key;?>').val();
+								getStatistique(idEmploye, mois, annee);
+							}
+							<?php if ($depart != null) : ?>
+								var content = "<p><b>Arrivée : </b><?= $arrivee ?></p><p><b>Départ : </b><?= $depart ?></p>";
+							<?php else : ?>
+								var content = "<p><b>Arrivée : </b><?= $arrivee ?></p><p><b>Départ : </b> . . . </p>";
+							<?php endif ?> 
+							setHtmlTippy('pre-<?=$key?>', content);
+						});*/
+						$('#month-stat<?=$key;?>').change(function() {
+							idEmploye = $('#idEmploye<?=$key;?>').val();
+							mois = $('#month-stat<?=$key;?>').val();
+							annee = $('#year-stat<?=$key;?>').val();
+							getStatistique(idEmploye, mois, annee);
+						});
+						$('#year-stat<?=$key;?>').change(function() {
+							idEmploye = $('#idEmploye<?=$key;?>').val();
+							mois = $('#month-stat<?=$key;?>').val();
+							annee = $('#year-stat<?=$key;?>').val();
+							getStatistique(idEmploye, mois, annee);
+						});
+						function getStatistique(idEmploye, mois, annee) {
+							$.ajax({
+	 							url  : "<?= HOST . 'manage/statistiques'?>",
+	 							data : "idEmploye=" + idEmploye + "&mois=" + mois + "&annee=" + annee,
+								dataType : "json",
+								success : function(data)
+								{	
+									data : JSON.stringify(data);
+									$.each(data, function(key,value) {
+										
+									}); 
+								}
+							});
+						}
+					</script>
+				<?php endforeach; ?>
+			<?php endif;?>
+		</tbody>
+	</table>
+</div>
+
+<script>
+	$(document).ready(function() {
+	    $('#table-retard').DataTable( {
+	        "pagingType" : "full_numbers",
+	        "language" : {
+		        "search" : "_INPUT_",
+		        "searchPlaceholder" : "rechercher",
+		        "zeroRecords": "Aucun employé n'a été enregistreé",
+	            "oPaginate": {
+	                "sFirst":    "Premier",
+	                "sLast":    "Dernier",
+	                "sNext":    "Suivant",
+	                "sPrevious": "Précédent"
+	            }
+		    },
+	        "searchPlaceholder" : "rechercher",
+	        "lengthMenu" : [[10, 25, 50, -1], [10, 25, 50, "All"]]
+	    } );
+	    $('#table-retard_length').addClass("invisible");
+	    $('#table-retard_info').parent().removeClass();
+	    $('#table-retard_info').parent().addClass("col-md-3");
+	    $('#table-retard_info').remove();
+	    $('#table-retard_wrapper').css("padding","0px");
+  		tippy('.dr', {
+			content: "durée en retard"
+  		});
+  		tippy('.da', {
+			content: "dernier jour de retard"
+  		});
+  		tippy('.rc', {
+			content: "durée a été récupérée"
+  		});
+  		tippy('.re', {
+			content: "reste à récupérer"
+  		});
+  		tippy('.jr', {
+			content: "nombre de jour retard"
+  		});
+  		tippy('.fa-info-circle', {
+  			content: "informations plus complètes"
+  		});
+  		$('#table-retard_wrapper').children().css('width', '100%');
+	} );
+	function setHtmlTippy(classTippy, contentTippy)
+	{
+		var attente = setTimeout(function() {
+			tippy('.' + classTippy, {
+				content: contentTippy,
+				allowHtml : true,
+				placement : 'top-start'
+	  		});	
+		}, 1000);
+	}
+</script>

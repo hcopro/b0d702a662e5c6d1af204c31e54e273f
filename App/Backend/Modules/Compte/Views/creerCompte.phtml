@@ -1,0 +1,58 @@
+<?php
+	$pageTitle = "Création d'un compte";
+?>
+<section class="page-section" id="back-section">
+    <div class="container">
+      	<div class="row">
+	        <div class="col-lg-12 text-center">
+	          	<h5>Créer compte <?= $_GET['identifiant']; ?></h5>
+	        </div>
+	        <div class="col-lg-12">
+	        	<form id="form" method="POST" enctype="multipart/form-data" novalidate="novalidate">
+		            <div class="row">
+		            	<div class="col-md-4"></div>
+		              	<div class="col-md-4 block-div">
+			                <div class="form-group hidden">
+			                  	<input class="form-control" id="idCompte" name="idCompte" type="number" >
+			                </div>
+			                <div class="form-group hidden">
+			                  	<input class="form-control" id="identifiant" name="identifiant" type="text" value="<?= $_GET['identifiant']; ?>" readonly>
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+			                	<label class="label-input">Pseudo : </label>
+			                  	<input class="form-control text-lowercase focus_activated" id="login" name="login" type="text" required="required" data-validation-required-message="Veuillez entrer votre pseudo *" data-validation-regex-regex="^[a-z-_]*" data-validation-regex-message="Caractères non valide">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+			                	<label class="label-input">Mot de passe : </label>
+			                  	<input class="form-control focus_activated" id="motDePasse" name="motDePasse" type="password" required="required" data-validation-required-message="Veuillez entrer votre mot de passe *"  data-validation-regex-regex="^.{6,}$" data-validation-regex-message="6 caractères minimum *">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+			                	<label class="label-input">Confirmation du mot de passe : </label>
+			                  	<input class="form-control focus_activated" id="confirmation" name="confirmation" type="password" required="required" data-validation-required-message="Veuillez confirmer votre mot de passe *">
+			                  	<p class="help-block text-danger" id="match-message"></p>
+			                </div>
+			                <div class="form-group hidden">
+			                  	<input class="form-control" id="statut" name="statut" type="text" value="desactive" required="required">
+			                </div>
+		              	</div>
+		              	<div class="col-lg-12 text-center">
+		                	<div id="success"></div>
+		                	<button id="submit" class="btn btn-info btn-xl" type="submit">
+		                		Suivant
+					            <i class="fas fa-angle-double-right fa-inverse"></i>
+		                	</button>		                	
+		                	<a class="btn btn-danger btn-xl" href="<?= $_SERVER['HTTP_REFERER']; ?>">Annuler</a>	
+		              	</div>
+		            </div>
+	      		</form>
+	        </div>
+      	</div>
+      	<div class="row">
+        	
+      	</div>
+    </div>
+</section>
+<script src="<?= HOST; ?>../Web/Ressources/js/creerCompte.js"></script>

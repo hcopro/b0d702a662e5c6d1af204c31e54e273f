@@ -1,0 +1,19 @@
+<?php
+	$pageTitle = "ceci est juste un test";
+?>
+
+<section class="page-section" id="test">
+	<div class="container">
+		<div>
+			<h1> Voici notre homme : </h1>
+			<ul>
+				<li>nom : <?php echo $data['nom'] ?></li>
+				<li>prénom : <?php echo $data['prenom'] ?></li>
+				<li>âge : <?php echo $data['age'] ?> ans</li>
+			</ul>
+		</div>
+		<div>
+			<a id="inscrire" href="<?= HOST?>editTest"><button class="btn btn-success">Modifier notre homme</button></a>
+		</div>
+	</div>
+</section>

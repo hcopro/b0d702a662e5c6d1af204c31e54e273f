@@ -1,0 +1,260 @@
+<?php  extract($data); $pageTitle = "Curiculum Vitae"; ?>
+<section class="section-cv">
+  <link href="https://cdn.jsdelivr.net/gh/ka215/jquery.timeline@master/dist/jquery.timeline.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="<?= HOST;?>../Web/Ressources/css/creerCV.css">
+  <script src="<?= HOST; ?>../Web/Ressources/js/creerCV.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/ka215/jquery.timeline@master/dist/jquery.timeline.min.js"></script>
+  <script src="https://kendo.cdn.telerik.com/2023.1.117/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="<?= HOST;?>../Web/Ressources/Kendo UI/styles/kendo.default-ocean-blue.min.css"/>
+  <base href="<?= HOST;?>../Web/Ressources/Kendo UI/examples/colorpicker/index">
+  <script src="<?= HOST;?>../Web/Ressources/Kendo UI/js/kendo.all.min.js"></script>
+  <script src="<?= HOST;?>../Web/Ressources/Kendo UI/js/pako_deflate.min.js"></script>
+  <div class="container">
+    <div id="place-element" class="row">
+      <div class="col-md-10" id="placeCV">
+        <div id="cv-template" class="size-a4">
+          <div id="candidatCV" name="canidatCV" class="canidatCV format-cv">
+            <div id="photo-nom" class="row format-en-tete format-element-gauche">
+              <div id="photo-background" class="photoDuCandidat col-md-3 row">
+                <div class="col-md-12">
+                  <div class="container">
+                    <img class="img-fluid image-candidat margin-img" id="imageCandidatCV" src="<?= ($candidat->getPhoto() != "") ? HOST . "../Web/Ressources/images/candidats/" . $candidat->getPhoto() : HOST ."../Web/Ressources/images/profilCandidat.png";?>">
+                  </div>
+                </div>
+              </div>
+              <div id="nom-prenom" class="format-nomPrenom col-md-8">
+                <h6 class="format-nom font-italic font-weight-bold"><?= ($candidat->getNom()); ?></h6>
+                <h6 class="format-nom font-italic font-weight-bold"><?= ($candidat->getPrenom()); ?></h6>
+                <small><i class="fas fa-envelope"></i> &nbsp; _ <?= strtolower($candidat->getEmail()); ?></small>
+                <small>
+                  &nbsp;<i class="fas fa-phone"></i> &nbsp; _ <?php $contact = explode('/', $candidat->getContact()); echo $contact[1];?>
+                </small>
+                <small id="idAdresse" class="hidden">&nbsp; <i class="fas fa-home"></i>&nbsp; _ <?= $candidat->getAdresse(); ?>,<?= " ".($candidat->getVille());?></small>
+              </div>
+              <div class="modele-2 format-nomPrenom center-text hidden col-md-12">
+                <h5 class="font-italic font-weight-bold"><?= ($candidat->getNom()); ?> <?= ($candidat->getPrenom()); ?></h5>
+                <hr>
+                <div class="row">
+                  <div class="col-md-4">
+                    <small><i class="fas fa-envelope"></i> &nbsp; _ <?= strtolower($candidat->getEmail()); ?></small>
+                  </div>
+                  <div class="col-md-4">
+                    <small>
+                      &nbsp;<i class="fas fa-phone"></i> &nbsp; _ <?php $contact = explode('/', $candidat->getContact()); echo $contact[1];?>
+                    </small>
+                  </div>
+                  <div class="col-md-3">
+                    <small>&nbsp; 
+                      <i class="fas fa-home"></i>&nbsp; _ <?= $candidat->getAdresse(); ?>,<?= " ".($candidat->getVille());?>
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div id="elementGauche" class="col-md-2 format-element-gauche">
+                <div class="hidden modele-2 photoDuCandidat">
+                  <div class="container">
+                    <img class="img-fluid image-candidat"src="<?= ($candidat->getPhoto() != "") ? HOST . "../Web/Ressources/images/candidats/" . $candidat->getPhoto() : HOST ."../Web/Ressources/images/profilCandidat.png";?>">
+                  </div>
+                </div>
+                <div id="textGauche">
+                  <div class="adrese-model">
+                    <div id="adresse" class="adresse">
+                      <h7 class="text-uppercase underline titre-element font-weight-bold">Adresse</h7>
+                    <div>
+                      <small><?= $candidat->getAdresse(); ?>,<?= " ".($candidat->getVille());?></small>
+                    </div>
+                  </div>
+                  </div>
+                  
+                  <div id="langue-loisir-logiciel">
+                    <div class="langue">
+                      <?php if (isset($langues)) : ?>
+                        <h7 class="text-uppercase titre-element underline font-weight-bold">Langue</h7>
+                        <div class="row marge-element">
+                          <?php foreach($langues as $langue): ?>
+                            <small class="small"> <?= "&nbsp;" .ucfirst($langue->getNomLangue());?> - </small>
+                          <?php endforeach; ?>
+                        </div>
+                      <?php endif ;?>
+                    </div>
+                    <div class="centreDinteret">
+                      <?php if (isset($centreInterets)) : ?>
+                        <h7 class="text-uppercase underline titre-element font-weight-bold">Loisir</h7>
+                        <div class="row marge-element">
+                          <?php foreach($centreInterets as $centreInteret): ?>
+                            <small class="small"> <?= "&nbsp;" . $centreInteret->getCategorieCentreInteret();?> - </small>
+                          <?php endforeach; ?>
+                        </div>
+                      <?php endif ; ?>
+                    </div>
+                    <div class="logicelCV">
+                      <?php if (isset($logiciels)): ?>
+                        <h7 class="text-uppercase underline titre-element font-weight-bold">Logiciel</h7>
+                        <div class="row marge-element">
+                          <?php foreach($logiciels as $logicel): ?>
+                            <small> <?= "&nbsp;" .$logicel->getNomLogiciel();?> - </small>
+                          <?php endforeach; ?>
+                        </div>
+                      <?php endif ;?>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="elementDroite" class="col-md-9 format-element-droite">
+                <div id="textDroite">
+                  <div class="profil">
+                    <h7 class="text-uppercase underline titre-element font-weight-bold">Description</h7>
+                    <div class="row">
+                      <div class="col-md-11">
+                        <small class="p-margin small"><?= $candidat->getDescription(); ?></small>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="experience-formation">
+                    <div id="experience-case" class="experience">
+                      <h7 class="text-uppercase underline titre-element font-weight-bold">experiences</h7>
+                      <?php foreach ($experiences as $experience):?>
+                        <div class="container-fluid experience-place">
+                          <p class="font-weight-bold sous-titre p-margin"><?= ucfirst($experience->getPoste()); ?></p>
+                          <small class="small">
+                            <?php 
+                              $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                              $dateDebut = explode('-', $experience->getDateDebut());
+                              $dateFin = explode('-', $experience->getDateFin());
+                              $index = (int)$dateDebut[1] - 1;
+                              $index2 = (int)$dateFin[1] - 1;
+                              if ($dateFin[0] == 1970){
+                                echo $dateDebut[0] ." - à ce jour "; 
+                              } elseif ( $dateDebut[0] == $dateFin[0]){
+                                echo $dateDebut[0] ." " ;
+                              }
+                              else {
+                                echo $dateDebut[0] ." - ";
+                                echo $dateFin[0] ." ";
+                              }
+                            ?> 
+                            | <?= $experience->getEntreprise(); ?>
+                          </small>
+                          <small class="small col-md-10"><?= $experience->getDescription(); ?></small>
+                        </div>
+                      <?php endforeach;?>
+                    </div>
+                    <div id="formation-case" class="formation">
+                      <h7 class="text-uppercase underline titre-element font-weight-bold">Formation</h7>
+                      <?php foreach ($formations as $formation):?>
+                        <div class="container-fluid formation-place">
+                          <p class="text-capitalize p-margin sous-titre font-weight-bold"><?= is_object($formation['sousDomaine']) ? ucfirst($formation['sousDomaine']->getNomSousDomaine()) : 'Aucun'; ?></p>
+                          <small class="small">
+                            <?php 
+                              $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                              $dateDebut = explode('-', $formation['formation']->getDateDebut());
+                              $dateFin = explode('-', $formation['formation']->getDateFin());
+                              $index = (int)$dateDebut[1] - 1;
+                              $index2 = (int)$dateFin[1] - 1;
+                              if ($dateDebut[0] == $dateFin[0]){
+                                echo $dateDebut[0];
+                              }
+                              else{
+                                echo $dateDebut[0] . " - " .$dateFin[0] ;
+                              }
+                            ?>
+                            | <?= ucfirst($formation['formation']->getEtablissement()); ?> | <?= ucfirst($formation['niveauEtude']->getNiveau()); ?> 
+                          </small>
+                        </div>
+                      <?php endforeach;?>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr>
+      </div>
+      <div id="boutton-control" class="col-md-2">
+        <div id="control-boutton">
+          <div class="form-group">
+            <div class="form-group">
+              <strong>Modèle du CV</strong>
+              <select class="form-control select-color" id="modeleCV" name="couleur-texte">
+                <option value="modele-1">Modèle-1</option>
+                <option value="modele-2">Modèle-2</option>
+              </select>
+            </div>
+            <strong>Résolution</strong>
+            <select class="form-control select-resolution" id="resolutionCV">
+              <option value="portrait">Portrait</option>
+              <option value="paysage">Paysage</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <strong>Format image</strong>
+            <select class="form-control select-color" id="imageFormat" name="couleur-texte">
+              <option value="carre">Carré</option>
+              <option value="arrondi">Arrondi</option>
+              <!-- <option value="cercle">Cercle</option> -->
+            </select>
+          </div>
+          <div class="form-group row">
+            <strong class="col-md-8">Partie gauche</strong>
+            <div class="col-md-4">
+              <input id="picker1" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <strong class="col-md-8">Partie haute</strong>
+            <div class="col-md-4">
+              <input id="picker2" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <strong class="col-md-8">En-tête</strong>
+            <div class="col-md-4">
+              <input id="picker-en-tete" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <strong class="col-md-8">Couleur texte</strong>
+            <div class="col-md-4">
+              <input id="picker-text-gauche" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <strong class="col-md-8">Couleur titre</strong>
+            <div class="col-md-4">
+              <input id="picker-titre" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <strong class="col-md-8">Partie droite</strong>
+            <div class="col-md-4">
+              <input id="picker-couleur-droite" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <strong class="col-md-8">Couleur texte</strong>
+            <div class="col-md-4">
+              <input id="picker-text-droite" />
+            </div>
+          </div>          
+        </div>
+        <button type="button" id="create_pdf_portrait" class="btn btn-primary export-pdf-portrait">ExportPDF</button>
+        <button type="button" id="create_pdf_paysage" class="btn btn-primary hidden export-pdf-paysage">ExportPDF</button>
+        <button type="button" class="btn btn-primary export-img">ExportIMG</button>
+      </div>
+    </div> 
+  </div>
+</section>
+
+<script type="text/javascript">
+  kendo.pdf.defineFont({
+        "DejaVu Sans"             : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans.ttf",
+        "DejaVu Sans|Bold"        : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Bold.ttf",
+        "DejaVu Sans|Bold|Italic" : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+        "DejaVu Sans|Italic"      : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+        "WebComponentsIcons"      : "https://kendo.cdn.telerik.com/2017.1.223/styles/fonts/glyphs/WebComponentsIcons.ttf"
+  });
+</script>
+

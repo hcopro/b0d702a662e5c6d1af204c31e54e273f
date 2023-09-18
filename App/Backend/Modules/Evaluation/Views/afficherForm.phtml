@@ -1,0 +1,313 @@
+
+<?php if (strstr($_GET['page'], 'Update')) : ?>
+	<section class="page-section" id="back-section">
+    <div class="container">
+    	<div class="row">
+				<div class="col-md-2"></div>
+				<div class="col-md-8">
+					<h4 class="text-center list-title section-heading">Modification de l'évaluation à valider</h4>
+				</div>
+			</div>
+			<div class="row">
+        <a href="<?= HOST. 'manage/employe/evaluation'?>" class="btn btn-primary rounded-circle">
+          <i class="fas fa-arrow-left"></i>
+        </a>             
+      </div>
+			<div class="block-section">
+				<div class="row">
+	        <ul id="new-tab-button">
+        		<li id="tab">
+        			<a href="#">
+        				Évaluation pour <?= $data->getIdEvaluee()->getNom(); ?>&nbsp;<?= $data->getIdEvaluee()->getPrenom(); ?>
+        			</a>
+        		</li>
+	        </ul>
+      	</div>
+				<form method="POST" id="formUpdate" action="<?= HOST . 'manage/employe/update-evaluation' ?>" enctype="multipart/form-data" novalidate="novalidate">
+      		<div class="form-group hidden">
+          	<input class="form-control" name="idEvaluationEvaluateur" type="number" value="<?= $data->getIdEvaluationEvaluateur(); ?>" readonly>
+          	<p class="help-block text-danger"></p>
+        	</div>
+        	<div class="form-group hidden">
+          	<input class="form-control" name="idEvaluationEmploye" type="number" value="<?= $data->getIdEvaluationEmploye()->getIdEvaluationEmploye(); ?>" readonly>
+          	<p class="help-block text-danger"></p>
+        	</div>
+        	<div class="form-group hidden">
+          	<input class="form-control" name="idEvaluateur" type="number" value="<?= $_SESSION['user']['idEmploye']; ?>" readonly>
+          	<p class="help-block text-danger"></p>
+        	</div>
+        	<div class="form-group hidden">
+          	<input class="form-control" name="dateRepondre" type="text" value="<?= date("Y-m-d H:i:s")?>">
+          	<p class="help-block text-danger"></p>
+        	</div>
+        	<div class="form-group hidden">
+          	<input class="form-control" name="point" type="text" value="">
+          	<p class="help-block text-danger"></p>
+        	</div>
+        	<div class="form-group hidden">
+          	<input class="form-control" name="note" type="text" value="">
+          	<p class="help-block text-danger"></p>
+        	</div>
+	      	<div class="row">
+	      		<div class="col-md-1"></div>
+	      		<div class="col-md-10" style="background: #ffffff; border-radius: 5px">
+	      			<br>
+	      			<div class="row">
+						    <div class="col-md-12">
+						    	<div class="form-group">
+						      	<div class="row" >
+					      			<div class="col-md-2">
+					      				<label class="label-input">ÉVALUATION:</label>
+					      			</div>
+						      		<div class="col-md-10" style="font-weight: bolder; font-style: italic; color: #37474f; font-size: 1.25em;">
+												<?= $data->getLibelle(); ?>
+											</div>
+							    	</div>
+					      	</div>
+						    </div>
+							</div>
+			      	<hr>
+			      	<?php foreach ($data->getDonneeEvaluation() as $key => $datas) : 
+			      		$categories = $datas['categories'];
+			      		$sousCategories = $datas['sousCategories']; ?>
+          			<table class="table">
+          				<thead style="background: #c8d0e4;">
+          					<tr><th colspan="5" class="text-left"><?= ucfirst($categories->getLibelle()); ?></th></tr>
+          				</thead>
+          				<tbody>
+          					<?php foreach ($sousCategories as $keyTwo => $valueTwo ) : 
+        							$sousCategorie  = $valueTwo['sousCategories'];
+        							$questionnaires = $valueTwo['questionnaires'];
+        							if (is_object($sousCategorie)) : ?>
+				          			<tr style="background: #c8b4e4;">
+				          				<td colspan="5">
+							      			<label class="label-input"><?= ucfirst($categories->getLibelle()); ?>&nbsp;<b>&gt;</b>&nbsp;<?= ucfirst($sousCategorie->getLibelle()); ?></label>
+				          				</td>
+				          			</tr>
+			          			<?php endif; 
+	          					if ($questionnaires) :
+			          				foreach ($questionnaires as $keyThree => $result) : 
+				          				$question 	= $result['question']; 
+				          				$point 			= $result['point'];
+				          				$note 			= $result['note'];
+				          				if (is_object($question)) : ?>
+						          			<tr>
+						          				<td class="label"><?= $question->getLibelle(); ?></td>
+						          				<td>
+						          					<em>Point:</em>
+					                  		<select  class="form-control span3 focus_activated input-point" onclick="getPoint()" required="required"data-validation-required-message="Veuillez choisir un point" value="<?= $point ;?>" >
+			                      			<?php for ($indice=0; $indice <= POINT_MAX ; $indice++) : ?> 
+			                      				<option value="<?= $indice; ?>"><?= $indice; ?></option>
+			                      			<? endfor; ?>
+					                  		</select>
+						          				</td>
+						          				<td>
+						          					<div class="form-group">
+																	<i class="fa fa-pencil-alt icon-input" aria-hidden="false" style="color: #3a434f;margin: 3px;"></i>
+																	<label for="exampleFormControlTextarea2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note:</label>
+																	<textarea class="form-control focus_activated text-capitalize input-note" rows="2" ><?= $note; ?></textarea>
+																	<p class="help-block text-danger"></p>
+																</div>
+						          				</td>
+						          			</tr>
+				          				<?php endif;
+				          			endforeach;
+				          		else : ?>	
+				          			<tr>
+				          				<td>Aucune question à cette dimension...</td>
+				          			</tr>
+				          		<?php endif;
+			          		endforeach; ?>
+          				</tbody>
+          			</table>
+        			<?php endforeach; ?>
+      			</div>
+	      	</div>
+	      	<div class="row" style="width: 105%!important;">
+    				<div class="col-md-5"></div>
+    				<div class="col-md-1">
+    					<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+    				</div>
+	      		<div class="col-md-1">
+	      			<div class="form-group"> 
+	      				<button type="submit" class="btn btn-md btn-info">
+	      					Valider 
+	      				</button>
+	      			</div>
+	      		</div>
+    				<div class="col-md-5"></div>
+	      	</div>
+      	</form>
+	    </div>
+    </div>
+	</section>
+<?php elseif (explode('/', $_GET['page'])[2] == 'valide-evaluation_valider') : ?>
+	<section class="page-section" id="back-section">
+	  <div class="container">
+	  	<div class="row">
+				<div class="col-md-2"></div>
+				<div class="col-md-8">
+					<h4 class="text-center list-title section-heading">Valider évaluation</h4>
+				</div>
+			</div>
+			<div class="row">
+        <a href="<?= $_SERVER['HTTP_REFERER']; ?>" class="btn btn-primary rounded-circle">
+          <i class="fas fa-arrow-left"></i>
+        </a>
+      </div>
+			<div class="block-section">
+				<div class="row">
+	        <ul id="new-tab-button">
+	      		<li id="tab9">
+	      			<a href="#">
+	      				Évaluation pour <?= $data->getPoint()['evaluee']->getNom(); ?>&nbsp;<?= $data->getPoint()['evaluee']->getPrenom(); ?>
+	      			</a>
+	      		</li>
+	        </ul>
+	    	</div>
+	  		<form>
+	      	<div class="row">
+	      		<div class="col-md-1"></div>
+	      		<div class="col-md-10" style="background: #ffffff; border-radius: 5px">
+	      			<br>
+	      			<div class="row">
+						    <div class="col-md-12">
+						    	<div class="form-group">
+						      	<div class="row" >
+						      		<div class="col-md-2">
+		      							<label class="label-input">ÉVALUATION:</label>
+		      						</div>
+						      		<div class="col-md-10" style="font-weight: bolder; font-style: italic; color: #37474f; font-size: 1.25em;">
+												<?= $data->getLibelle(); ?>
+											</div>
+							    	</div>
+					      	</div>
+						    </div>
+							</div>
+			      	<hr>
+			      	<?php foreach ($data->getPoint()['points'] as $key => $datas) : 
+			      		$categories = $datas['parent'];
+			      		$sousCategories = $datas['category']; ?>
+	        			<table class="table">
+	        				<thead style="background: #c8d0e4;">
+	        					<tr><th colspan="5" class="text-left"><?= ucfirst($categories->getLibelle()); ?></th></tr>
+	        				</thead>
+	        				<tbody>
+	        					<?php foreach ($sousCategories as $keyTwo => $valueTwo ) : 
+	      							$sousCategorie  = $valueTwo['sousCategories'];
+	      							$questionnaires = $valueTwo['questionnaires'];
+	      							if (is_object($sousCategorie)) : ?>
+				          			<tr style="background: #c8b4e4;">
+				          				<td colspan="5">
+							      			<label class="label-input"><?= ucfirst($categories->getLibelle()); ?>&nbsp;<b>&gt;</b>&nbsp;<?= ucfirst($sousCategorie->getLibelle()); ?></label>
+				          				</td>
+				          			</tr>
+			          			<?php endif; 
+		          				if ($questionnaires) :
+			          				foreach ($questionnaires as $keyThree => $result) : 
+				          				$question	= $result['question']; 
+				          				$point		= $result['point'];
+				          				$note 		= $result['note'];
+				          				if (is_object($question)) : ?>
+						          			<tr>
+						          				<td class="label"><?= $question->getLibelle(); ?></td>
+						          				<td>
+					          						<em>Point:</em>
+					                  		<select  class="form-control span3 focus_activated input-point" onclick="getPoint()" required="required"
+					                  		data-validation-required-message="Veuillez choisir un point" value="0">
+			                      			<?php for ($indice=0; $indice <= POINT_MAX ; $indice++) : ?> 
+			                      				<option value="<?= $indice; ?>"><?= $indice; ?></option>
+			                      			<? endfor; ?>
+					                  		</select>
+						          				</td>
+						          				<td>
+						          					<div class="form-group">
+																	<i class="fa fa-pencil-alt icon-input" aria-hidden="false" style="color: #3a434f;margin: 3px;"></i>
+																	<label for="exampleFormControlTextarea2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note:</label>
+																	<textarea class="form-control focus_activated text-capitalize input-note" rows="2"></textarea>
+																	<p class="help-block text-danger"></p>
+																</div>
+						          				</td>
+						          			</tr>
+				          				<?php endif;
+				          			endforeach;
+				          		else : ?>
+				          			<tr>
+				          				<td>Aucune question à cette dimension...</td>
+				          			</tr>
+				          		<?php endif;
+			          		endforeach; ?>
+	        				</tbody>
+	        			</table>
+	      			<?php endforeach; ?>
+	    			</div>			
+	    		</div>
+	      	<div class="row" style="width: 105%!important;">
+	  				<div class="col-md-5"></div>
+	  				<div class="col-md-1">
+	  					<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+	  				</div>
+	  				<div class="col-md-1">
+	      			<div class="form-group"> 
+	      				<button type="button" data-target="#confirmationModal" data-toggle="modal" class="btn btn-md btn-info">
+	      					Valider 
+	      				</button>
+	      			</div>
+	      		</div>
+	      		<div class="col-md-5"></div>
+	      	</div>
+	    	</form>
+	    </div>
+	  </div>
+	</section>
+	<!-- Debut Modal de confirmation validation une évaluation -->
+		<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title text-center">Confirmation</h5>
+		        <hr>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <form method="POST" action="<?= HOST . 'manage/employe/create-evaluation_valider' ?>" enctype="multipart/form-data" novalidate="novalidate">
+	      		<div class="modal-body" id="form-hidden">
+		        	<p id="text-confirmation"> Voulez-vous vraiment valider cette évaluation?</p>
+		        	<div class="form-group hidden">
+			        	<input class="form-control" name="idEvaluationEmploye" type="number" value="<?= $data->getIdEvaluationEmploye(); ?>" readonly>
+			        	<p class="help-block text-danger"></p>
+			      	</div>
+			      	<div class="form-group hidden">
+			        	<input class="form-control" name="idEvaluateur" type="number" value="<?= $_SESSION['user']['idEmploye']; ?>" readonly>
+			        	<p class="help-block text-danger"></p>
+			      	</div>
+			      	<div class="form-group hidden">
+			        	<input class="form-control" name="dateRepondre" type="text" value="<?= date("Y-m-d H:i:s")?>">
+			        	<p class="help-block text-danger"></p>
+			      	</div>
+			      	<div class="form-group hidden">
+			        	<input class="form-control" name="point" type="text" value="">
+			        	<p class="help-block text-danger"></p>
+			      	</div>
+			      	<div class="form-group hidden">
+			        	<input class="form-control" name="note" type="text" value="">
+			        	<p class="help-block text-danger"></p>
+			      	</div>
+		      	</div>
+		      	<div class="modal-footer">
+		        	<button type="submit" class="btn btn-success" >Oui</button>
+		        	<button type="button" class="btn btn-danger" data-dismiss="modal">Non</button>
+		      	</div>
+		    	</div>
+		      </form>
+		  </div>
+		</div>
+	<!-- Fin du Modal de confirmation validation une évaluation -->
+<?php endif; ?>
+<script type="text/javascript" src="<?= HOST; ?>../App/Backend/Modules/Evaluation/Views/afficherForm.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>

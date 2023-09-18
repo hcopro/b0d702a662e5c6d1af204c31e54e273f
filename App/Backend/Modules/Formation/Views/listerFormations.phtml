@@ -1,0 +1,509 @@
+<div>
+	<table class="table table-borderless" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0">
+				<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Domaine</div></th>
+				<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Thème</div></th>
+				<th class="p-0 text-left"><div class="card-pointage card p-2 m-1 card-grey">Formateur</div></th>
+				<th class="p-0 text-left"><div class="card-pointage card p-2 m-1 card-grey">Dates</div></th>
+				<th class="p-0 text-center"><div class="card-pointage card p-2 m-1 card-grey">Actions</div></th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php if (count($data) > ManagerModuleFormation::NO) : ?>
+				<?php foreach ($data as $datum) : extract($datum); ?>
+					<tr class="p-0">
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey text-important text-left">
+								<?= $sousDomaine->getNomSousDomaine() ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey">
+								<?= $theme->getTheme() ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey text-left">
+								<?= $formateur->getCivilite() . ' ' . $formateur->getNom() . ' ' . $formateur->getPrenom() ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey text-left">
+								<?php if ($formation->getDebut() != null && $formation->getFin() != null) : ?>
+									<span>
+										du <span class="text-important"><?= date('d/m/Y', strtotime($formation->getDebut())) ?></span>
+										 au <span class="text-important"><?= date('d/m/Y', strtotime($formation->getFin())) ?></span> 
+									</span>
+								<?php else : ?>
+									indéterminée
+								<?php endif ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<span>
+									<button class="btn btn-transparent btn-sm m-0 p-0" data-toggle="modal" data-target="#modalDetail<?= $formation->getIdFormationProfessionnelle();?>">
+										<i class="fa fa-info-circle text-dark" style="font-size: 1.2em;"></i>
+									</button>
+									<button class="btn btn-transparent btn-sm m-0 p-0" data-toggle="modal" data-target="#modalParticipants<?= $formation->getIdFormationProfessionnelle();?>">
+										<i class="fa fa-users text-dark ml-2" style="font-size: 1.2em;"></i>
+									</button>
+									<button class="btn btn-transparent btn-sm m-0 p-0" id="modal-dates<?= $formation->getIdFormationProfessionnelle() ?>">
+										<i class="fa fa-calendar-alt text-dark ml-2" style="font-size: 1.2em;"></i>
+									</button>
+									<button class="btn btn-transparent btn-sm m-0 p-0" data-toggle="modal" data-target="#modalEvaluation<?= $formation->getIdFormationProfessionnelle() ?>">
+										<i class="fa fa-star text-dark ml-2" style="font-size: 1.2em;"></i>
+									</button>
+								</span>
+							</div>
+						</td>
+					</tr>
+					<div class="modal fade" id="modalDetail<?= $formation->getIdFormationProfessionnelle();?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered" role="document">
+					    	<div class="modal-content">
+					      		<div class="modal-header text-center">
+					      			<div class="text-center" style="width: 100%;">
+					      				<h5 class="modal-title section-heading m-0" id="exampleModalLabel">Les détails de la formation</h5>
+					      			</div>
+					        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          			<span aria-hidden="true">&times;</span>
+					        		</button>
+					      		</div>
+					      		<div class="modal-body">
+					      			<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+							      		<div class="card mt-2 p-2 card-light-grey">
+						      				<span class="titre font-style-italic">
+						      					Formation dans le domaine de <?= $sousDomaine->getNomSousDomaine() ?>
+						      				</span>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-4 text-left">
+													<span class="titre">
+														Formateur :
+													</span>
+												</div>
+												<div class="col-md-8 text-left">
+													<?= $formateur->getCivilite() . ' ' . $formateur->getNom() . ' ' . $formateur->getPrenom(); ?>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-4 text-left">
+													<span class="titre">
+														thème :
+													</span>
+												</div>
+												<div class="col-md-8 text-left">
+													<?= $theme->getTheme(); ?>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-4 text-left">
+													<span class="titre">
+														Description :
+													</span>
+												</div>
+												<div class="col-md-8 text-left">
+													<?= $theme->getDescription() ?>
+												</div>
+											</div>
+										</div>
+									</div>
+					      		</div>
+					    	</div>
+					  	</div>
+					</div>
+					<div class="modal fade" id="modalParticipants<?= $formation->getIdFormationProfessionnelle();?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered" role="document">
+					    	<div class="modal-content">
+					      		<div class="modal-header text-center">
+					      			<div class="text-center" style="width: 100%;">
+					      				<h5 class="modal-title section-heading m-0" id="exampleModalLabel">Les participants</h5>
+					      			</div>
+					        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          			<span aria-hidden="true">&times;</span>
+					        		</button>
+					      		</div>
+					      		<div class="modal-body">
+					      			<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+							      		<div class="card mt-2 p-2 card-light-grey">
+						      				<span class="titre font-style-italic">
+						      					Ajouter ou retirer des participants à cette formation
+						      				</span>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-3 text-left">
+													<span class="titre">
+														Employé :
+													</span>
+												</div>
+												<div class="col-md-9 text-left">
+													<ul id="liste-employes-<?= $formation->getIdFormationProfessionnelle() ?>">
+														<?php foreach ($participants as $participant) : ?>
+															<div class="row liste-participant" id="pa-<?= $participant->getIdEmploye() ?>">
+																<div class="col-md-9">
+																	<li class="m-0" id="part-<?=$participant->getIdEmploye()?>"><?= $participant->getNom() . ' ' . $participant->getPrenom() ?></li>
+																</div>
+																<div class="col-md-3">
+																	<?php if ($editable == true) : ?>
+																		<button class="btn btn-sm btn-transparent" id="supprimer<?=$participant->getIdEmploye()?>">
+																			<i class="fa fa-times text-danger tippy-act"></i>
+																		</button>
+																	<?php endif ?>
+																</div>
+															</div>
+															<script>
+																$('#supprimer<?=$participant->getIdEmploye()?>').click(function(){
+																	$.ajax({
+																		url : '<?= HOST . "manage/delete-employeFormation" ?>',
+																		data : 'idFormationProfessionnelle=<?= $formation->getIdFormationProfessionnelle() ?>&idEmploye=<?= $participant->getIdEmploye() ?>',
+																		dataType : 'text',
+																		success : function(data) {
+																			if (data == "ok") {
+																				$('#pa-<?= $participant->getIdEmploye() ?>').remove();
+																			}
+																		}
+																	});
+																});
+																$("#supprimer<?=$participant->getIdEmploye()?>").mouseenter(function(){
+																	$("#part-<?=$participant->getIdEmploye()?>").css("font-weight", "bold");
+																});
+																$("#supprimer<?=$participant->getIdEmploye()?>").mouseleave(function(){
+																	$("#part-<?=$participant->getIdEmploye()?>").css("font-weight", "normal");
+																});
+																tippy('.fa-times', {
+																	content: "Retirer cet employé"
+																});
+															</script>
+														<?php endforeach ?>
+													</ul>
+													<?php if ($editable == true) : ?>
+														<select class="select-time" id="part-<?= $formation->getIdFormationProfessionnelle() ?>" style="font-size: 0.8em!important; width: 70%!important;">
+															<option value="">Selectionner</option>
+															<?php foreach ($employes as $employe) : ?>
+																<option value="<?= $employe->getIdEmploye() ?>"> <?= $employe->getNom() . ' ' . $employe->getPrenom() ?> </option>
+															<?php endforeach ?>
+														</select>
+														<button class="btn btn-sm btn-success" id="add-participant-<?= $formation->getIdFormationProfessionnelle() ?>" style="font-size: 0.7em;" disabled="disabled">
+															ajouter
+														</button>
+													<?php endif ?>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+					      	</div>
+					    </div>
+					</div>
+					<div class="modal fade" id="modalEvaluation<?= $formation->getIdFormationProfessionnelle()?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+					    	<div class="modal-content">
+					      		<div class="modal-header text-center">
+					      			<div class="text-center" style="width: 100%;">
+					      				<h5 class="modal-title section-heading m-0" id="exampleModalLabel">Evaluations de la formation</h5>
+					      			</div>
+					        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          			<span aria-hidden="true">&times;</span>
+					        		</button>
+					      		</div>
+					      		<div class="modal-body">
+					      			<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+				      					<?php extract($evaluations); ?>
+				      					<div class="row">
+			      							<div class="col-md-6">
+			      								<div class="card card-light-grey m-1 p-2 text-center">
+				      								<p class="text-important" style="text-decoration: underline;">Evaluation moyenne des Participants(/10)</p>
+				      								<div class="note mx-auto">
+				      									<h1 class="mx-auto" style="margin-top: 25px;"><?= $moyenne['participants'] ?></h1>
+				      								</div>
+												</div>
+			      							</div>
+			      							<div class="col-md-6">
+				      							<div class="card card-light-grey m-1 p-2 text-center">
+				      								<p class="text-important" style="text-decoration: underline;">Evaluation moyenne des Supérieurs(/10)</p>
+				      								<div class="note mx-auto">
+				      									<h1 class="mx-auto" style="margin-top: 25px;"><?= $moyenne['superieurs'] ?></h1>
+				      								</div>
+												</div>
+		      								</div>
+			      						</div>
+				      					<div class="m-0 p-0">
+					      					<?php foreach ($individuelles as $individuelle) : extract($individuelle); ?>
+					      						<div class="row">
+					      							<div class="col-md-6 text-left">
+					      								<div class="card card-extra-light-grey m-1 p-2">
+						      								<p>
+							      								<img class="img-fluid userDetail " style="width:30px; height: 30px; border-radius : 50%; " src="
+																    <?php
+																        if ($employe->getPhoto() != "") {
+																            echo HOST."../Web/Ressources/images/employes/" . $employe->getPhoto();
+																        } else {
+																            echo HOST."../Web/Ressources/images/profilCandidat.png";
+																        }
+																    ?>
+															    ">
+															    <span class="text-important ml-3"><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></span>
+															</p>
+														    <div class="row" style="font-size: 0.9em;">
+														    	<div class="col-md-4 text-important">Note : </div>
+														    	<div class="col-md-8 text-left">
+														    		<?php if ($evaluationEmploye != null) : ?>
+														    			<span class="text-important"><?= $evaluationEmploye->getNote() . ' / 10' ?></span>
+														    		<?php else : ?>
+														    			N/A
+														    		<?php endif ?>
+														    	</div>
+														    </div>
+														    <div class="row" style="font-size: 0.9em;">
+														    	<div class="col-md-4 text-important">Remarque : </div>
+														    	<div class="col-md-8 text-left">
+														    		<?php if ($evaluationEmploye != null) : ?>
+														    			<?= $evaluationEmploye->getRemarque() ?>
+														    		<?php else : ?>
+														    			N/A
+														    		<?php endif ?>
+														    	</div>
+														    </div>
+														    <?php if ($evaluationEmploye == null) : ?>
+															    <div class="row" style="font-size: 0.9em;">
+															    	<div class="col-md-8"></div>
+															    	<div class="col-md-4">
+															    		<a class="btn btn-sm btn-success" href="<?= HOST . 'manage/rappeler-evaluationFormation?idEmploye=' . $employe->getIdEmploye() . '&idFormationProfessionnelle=' . $formation->getIdFormationProfessionnelle() . '&type=' . ManagerModuleFormation::EVALUATION_FORMATION ?>">Rappeler</a>
+															    	</div>
+															    </div>
+															<?php endif ?>
+														</div>
+					      							</div>
+					      							<div class="col-md-6 text-left">
+							      						<?php if ($chef != null) : ?>
+							      							<div class="card card-extra-light-grey m-1 p-2">
+							      								<p>
+							      									<img class="img-fluid userDetail " style="width:30px; height: 30px; border-radius : 50%; " src="
+																	    <?php
+																	        if ($chef->getPhoto() != "") {
+																	            echo HOST."../Web/Ressources/images/employes/" . $chef->getPhoto();
+																	        } else {
+																	            echo HOST."../Web/Ressources/images/profilCandidat.png";
+																	        }
+																	    ?>
+																    ">
+																    <span class="text-important ml-3"><?= $chef->getNom() . ' ' . $chef->getPrenom() ?></span>
+							      								</p>
+							      								<div class="row" style="font-size: 0.9em;">
+															    	<div class="col-md-4 text-important">Note : </div>
+															    	<div class="col-md-8 text-left">
+															    		<?php if ($evaluationSuperieur != null) : ?>
+															    			<span class="text-important"><?= $evaluationSuperieur->getNote() . ' / 10' ?></span>
+															    		<?php else : ?>
+															    			N/A
+															    		<?php endif ?>
+															    	</div>
+															    </div>
+															    <div class="row" style="font-size: 0.9em;">
+															    	<div class="col-md-4 text-important">Remarque : </div>
+															    	<div class="col-md-8 text-left">
+															    		<?php if ($evaluationSuperieur != null) : ?>
+															    			<?= $evaluationSuperieur->getRemarque() ?>
+															    		<?php else : ?>
+															    			N/A
+															    		<?php endif ?>
+															    	</div>
+															    </div>
+															    <?php if ($evaluationEmploye == null) : ?>
+																    <div class="row" style="font-size: 0.9em;">
+																    	<div class="col-md-8"></div>
+																    	<div class="col-md-4">
+																    		<a class="btn btn-sm btn-success" href="<?= HOST . 'manage/rappeler-evaluationFormation?idEmploye=' . $chef->getIdEmploye() . '&idFormationProfessionnelle=' . $formation->getIdFormationProfessionnelle() . '&type=' . ManagerModuleFormation::EVALUATION_PARTICIPANT ?>">Rappeler</a>
+																    	</div>
+																    </div>
+																<?php endif ?>
+															</div>
+							      						<?php endif ?>
+					      							</div>
+					      						</div>
+					      					<?php endforeach ?>
+					      				</div>
+									</div>
+						      	</div>
+						    </div>
+					    </div>
+					</div>
+					<script>
+						$('#modal-dates<?= $formation->getIdFormationProfessionnelle() ?>').click(function(){
+							$.ajax({
+								url : '<?= HOST . "manage/get-formationProfessionnelle" ?>',
+								data : 'idFormationProfessionnelle=<?= $formation->getIdFormationProfessionnelle() ?>',
+								dataType : 'json',
+								success : function(data) {
+									$('#date-debut').val("");
+									$('#date-debut').attr("disabled", false);
+									$('#date-fin').val("");
+									$('#date-fin').attr("disabled", false);
+									$('.submit-dates').css("display", "inline-block");
+									$('#idFormationProfessionnelle').val(data['idFormationProfessionnelle']);
+									if (data['debut'] != null) {
+										var debut = data['debut'].split('-')[2] + '/' + data['debut'].split('-')[1] + '/' + data['debut'].split('-')[0];
+										$('#date-debut').val(debut);
+										if (data['editable'] == false) {
+											$('#date-debut').attr("disabled", true);
+										}
+									}
+									if (data['fin'] != null) {
+										var fin = data['fin'].split('-')[2] + '/' + data['fin'].split('-')[1] + '/' + data['fin'].split('-')[0];
+										$('#date-fin').val(fin);
+										if (data['editable'] == false) {
+											$('#date-fin').attr("disabled", true);
+										}
+									}
+									if (data['editable'] == false) {
+										$('.submit-dates').css("display", "none");
+									}
+									$('#modalDates').modal('show');
+								}
+							});
+						});
+						$('#part-<?= $formation->getIdFormationProfessionnelle() ?>').change(function(){
+							if ($('#part-<?= $formation->getIdFormationProfessionnelle() ?>').val() != "") {
+								$('#add-participant-<?=$formation->getIdFormationProfessionnelle()?>').attr("disabled", false);
+							} else {
+								$('#add-participant-<?=$formation->getIdFormationProfessionnelle()?>').attr("disabled", true);
+							}
+						});
+						$('#add-participant-<?=$formation->getIdFormationProfessionnelle()?>').click(function(){
+							$.ajax({
+								url : '<?= HOST . "manage/save-employeFormation" ?>',
+								data : 'idFormationProfessionnelle=<?= $formation->getIdFormationProfessionnelle() ?>&idEmploye=' + $('#part-<?= $formation->getIdFormationProfessionnelle() ?>').val(),
+								dataType : 'text',
+								success : function(data) {
+									if (data == "ok") {
+										var html = '<div class="row liste-participant" id="pa-' + $('#part-<?= $formation->getIdFormationProfessionnelle() ?>').val() + '">' +
+														'<div class="col-md-9">' +
+															'<li class="m-0">' + $('#part-<?= $formation->getIdFormationProfessionnelle() ?> option:selected').text() + '</li>' +
+														'</div>' +
+													'</div>' ;
+										$("#liste-employes-<?= $formation->getIdFormationProfessionnelle() ?>").append(html);
+										$('#part-<?= $formation->getIdFormationProfessionnelle() ?>').val("");
+									}
+								}
+							});
+						});
+					</script>
+				<?php endforeach ?>
+			<?php else : ?>
+				<tr class="p-0">
+					<td class="p-0" colspan="5">
+						<div class="card p-2 m-1 card-light-grey">Aucun enregistrement trouvé</div>
+					</td>
+				</tr>
+			<?php endif ?>
+		</tbody>
+	</table>
+</div>
+<div class="modal fade" id="modalDates" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  	<div class="modal-dialog modal-dialog-centered" role="document">
+    	<div class="modal-content">
+      		<div class="modal-header text-center">
+      			<div class="text-center" style="width: 100%;">
+      				<h5 class="modal-title section-heading m-0" id="exampleModalLabel">Les dates de la formation</h5>
+      			</div>
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          			<span aria-hidden="true">&times;</span>
+        		</button>
+      		</div>
+      		<div class="modal-body">
+      			<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+		      		<div class="card mt-2 p-2 card-light-grey">
+	      				<span class="titre font-style-italic">
+	      					Fixez les dates de début et fin de la formation
+	      				</span>
+					</div>
+					<div class="card mt-2 p-2 card-light-grey">
+						<form method="POST" id="form" action="<?= HOST . 'manage/save-formationProfessionnelle'?>" enctype="multipart/form-data" novalidate="novalidate">
+							<input type="hidden" name="idFormationProfessionnelle" id="idFormationProfessionnelle" value="<?= $formation->getIdFormationProfessionnelle() ?>">
+							<div class="row">
+								<div class="col-md-4 text-left">
+									<span class="titre">
+										Date de début :
+									</span>
+								</div>
+								<div class="col-md-8 text-left">
+									<div class="form-group">
+										<i class="fa fa-calendar-alt icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+        								<label for="datepicker">
+						        			<input class="form-control datepicker" id="date-debut" value="" type="text" autocomplete="off" placeholder="date de début" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;">
+					        			</label>
+					        			<input type="text" class="form-control hidden" name="debut" id="debut" required="required" data-validation-required-message="Veuillez renseigner la date de début de la formation">
+        								<p class="help-block text-danger"></p>
+    								</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-4 text-left">
+									<span class="titre">
+										Date de fin :
+									</span>
+								</div>
+								<div class="col-md-8 text-left">
+									<div class="form-group">
+										<i class="fa fa-calendar-alt icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+        								<label for="datepicker">
+						        			<input class="form-control datepicker" id="date-fin" value="" type="text" autocomplete="off" placeholder="date de Fin" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;">
+					        			</label>
+					        			<input type="text" class="form-control hidden" name="fin" id="fin" required="required" data-validation-required-message="Veuillez renseigner la date de fin de la formation">
+        								<p class="help-block text-danger"></p>
+    								</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-8"></div>
+								<div class="col-md-4">
+									<button class="btn btn-sm btn-info submit-dates" id="submit" type="submit">
+										Enregistrer
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+	      	</div>
+	    </div>
+    </div>
+</div>
+<script type="text/javascript">
+	tippy('.fa-info-circle', {
+    	content: 'plus de détails'
+    });
+    tippy('.fa-users', {
+    	content: 'les participants'
+    });
+    tippy('.fa-calendar-alt', {
+    	content: 'les dates'
+    });
+    tippy('.fa-star', {
+    	content: 'Evaluation de la formation'
+    });
+	$('#annuler').click(function(){
+		window.location.reload();
+	});
+	$(function() {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+    });
+    $("#submit").click(function(){
+      	var date = $("#date-debut").val().split('/');
+      	if (date != "") {
+      		$("#debut").val(date[2] + '-' + date[1] + '-' + date[0]);
+      	}
+      	var date = $("#date-fin").val().split('/');
+      	if (date != "") {
+      		$("#fin").val(date[2] + '-' + date[1] + '-' + date[0]);
+      	}
+	});
+</script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>

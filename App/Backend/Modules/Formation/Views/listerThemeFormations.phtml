@@ -1,0 +1,195 @@
+<div>
+	<table class="table table-borderless" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0">
+				<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Statut</div></th>
+				<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Priorité</div></th>
+				<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Domaine</div></th>
+				<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Thème</div></th>
+				<th class="p-0 text-center"><div class="card-pointage card p-2 m-1 card-grey">Description</div></th>
+				<th class="p-0 text-center"><div class="card-pointage card p-2 m-1 card-grey">Détails</div></th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php if (count($data) > ManagerModuleFormation::NO) : ?>
+				<?php foreach ($data as $datum) : extract($datum); ?>
+					<tr class="p-0">
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey text-important text-center" style="height: 40px; max-height: 40px;">
+								<?php if ($formationOuverte !== null) : ?>
+									<?php if ($formationOuverte === false) : ?>
+										<i class="fa fa-check mt-1 text-success"></i>
+									<?php else : ?>
+										<i class="fa fa-hourglass mt-1 text-info"></i>
+									<?php endif ?>
+								<?php else : ?>
+									<i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>
+								<?php endif ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey text-important text-left">
+								<?php if ($theme->getPriorite() == 1) : ?>
+									<span><?= $theme->getStringPriorite() ?></span>
+								<?php elseif ($theme->getPriorite() == 2) : ?>
+									<span style="color: #f57f17;"><?= $theme->getStringPriorite() ?></span>
+								<?php elseif ($theme->getPriorite() == 3) : ?>
+									<span style="color: #d84315;"><?= $theme->getStringPriorite() ?></span>
+								<?php elseif ($theme->getPriorite() == 4) : ?>
+									<span style="color: #d50000;"><?= $theme->getStringPriorite() ?></span>
+								<?php endif ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey text-important text-left">
+								<?= $sousDomaine->getNomSousDomaine() ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey">
+								<?= $theme->getTheme() ?>
+							</div>
+						</td>
+						<td class="p-0" style="width: 250px;">
+							<div class="card p-2 m-1 card-light-grey" style="max-width: 245px; text-overflow: ellipsis; overflow-x: hidden;white-space: nowrap;">
+								<?= $theme->getDescription() ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<button class="btn btn-transparent btn-sm m-0 p-0" data-toggle="modal" data-target="#modalDetail<?= $theme->getIdThemeFormation();?>">
+									<i class="fa fa-info-circle text-dark" style="font-size: 1.4em;"></i>
+								</button>
+							</div>
+						</td>
+					</tr>
+					<div class="modal fade" id="modalDetail<?= $theme->getIdThemeFormation();?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered" role="document">
+					    	<div class="modal-content">
+					      		<div class="modal-header text-center">
+					      			<div class="text-center" style="width: 100%;">
+					      				<h5 class="modal-title section-heading m-0" id="exampleModalLabel">Les détails du thème</h5>
+					      			</div>
+					        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          			<span aria-hidden="true">&times;</span>
+					        		</button>
+					      		</div>
+					      		<div class="modal-body">
+					      			<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+					      				<?php if ($employe != null) : ?>
+						      				<div class="card mt-2 p-2 card-light-grey">
+						      					<span class="font-style-italic">
+							      					Thème suggéré par <span class="text-important"> <?= $employe->getCivilite() . ' ' . $employe->getNom() . ' ' . $employe->getPrenom() ?> </span>
+							      				</span>
+						      				</div>
+						      			<?php endif ?>
+							      		<div class="card mt-2 p-2 card-light-grey">
+						      				<span class="titre font-style-italic">
+						      					Formation dans le domaine de <?= $sousDomaine->getNomSousDomaine() ?>
+						      				</span>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-4 text-left">
+													<span class="titre">
+														thème :
+													</span>
+												</div>
+												<div class="col-md-8 text-left">
+													<?= $theme->getTheme(); ?>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-4 text-left">
+													<span class="titre">
+														Description :
+													</span>
+												</div>
+												<div class="col-md-8 text-left">
+													<?= $theme->getDescription() ?>
+												</div>
+											</div>
+										</div>
+									</div>
+					      		</div>
+						      	<div class="modal-footer">
+						      		<?php if ($editable == true) : ?>
+							        	<button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal<?= $theme->getIdThemeFormation();?>">Supprimer</button>
+							        	<button class="btn btn-sm btn-warning" data-dismiss="modal" id="editer<?= $theme->getIdThemeFormation(); ?>" >Editer</button>
+							        <?php endif ?>
+							       	<a class="btn btn-sm btn-info" href="<?= HOST . 'manage/entreprise/offreFormation?idThemeFormation=' . $theme->getIdThemeFormation() ?>" >
+							      		Voir les offres
+							       	</a>
+							    </div>
+					    	</div>
+					  	</div>
+					</div>
+					<div class="modal fade" id="deleteModal<?=$theme->getIdThemeFormation()?>" tabindex="-1" role="dialog" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered" role="document">
+						    <div class="modal-content" style="background: #cfd8dc;">
+						      	<div class="modal-header text-center">
+						      		<div class="text-center" style="width: 100%;">
+						      			<h5 class="modal-title section-heading m-0">Confirmation</h5>
+						      		</div>
+						        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          		<span aria-hidden="true">&times;</span>
+						        	</button>
+						      	</div>
+						      	<div class="modal-body">
+						      		<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+						        		<p id="text-confirmation"> Voulez-vous vraiment supprimer le thème <?= $theme->getTheme() ?> ?</p>
+						        	</div>
+						      	</div>
+						      	<div class="modal-footer">
+						      		<button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Annuler</button>
+						        	<a href="<?= HOST . 'manage/delete-themeFormation?idThemeFormation=' . $theme->getIdThemeFormation()?>" class="btn btn-sm btn-success">Confirmer</a>
+						      	</div>
+						    </div>
+						</div>
+					</div>
+					<script>
+						$('#editer<?= $theme->getIdThemeFormation() ?>').click(function(){
+							$.ajax({
+								url : '<?= HOST . "manage/get-themeFormation" ?>',
+								data : 'idThemeFormation=<?= $theme->getIdThemeFormation() ?>',
+								dataType : 'json',
+								success : function(data) {
+									$('#theme').val(data['theme']);
+									$('#description').html(data['description']);
+									$('#priorite').val(data['priorite']);
+									$('#idSousDomaine2 option[value="' + data['idSousDomaine'] + '"]').prop('selected', true);
+									$('#nomSousDomaine').val($('#idSousDomaine2 option[value="' + data['idSousDomaine'] + '"]').text());
+									$('#idThemeFormation').val(data['idThemeFormation']);
+									$('#titreModal').html("Modifier le thème");
+									$('#modalEnregistrement').modal('show');
+								}
+							});
+						});
+					</script>
+				<?php endforeach ?>
+			<?php else : ?>
+				<tr class="p-0">
+					<td class="p-0" colspan="6">
+						<div class="card p-2 m-1 card-light-grey">Aucun enregistrement trouvé</div>
+					</td>
+				</tr>
+			<?php endif ?>
+		</tbody>
+	</table>
+</div>
+<script type="text/javascript">
+	tippy('.fa-info-circle', {
+    	content: 'plus de détails'
+    });
+    tippy('.fa-check', {
+    	content: 'formation effectuée'
+    });
+    tippy('.fa-hourglass', {
+    	content: 'formation à venir'
+    });
+    tippy('.fa-exclamation-triangle', {
+    	content: "N'a pas encore d'offre validée"
+    });
+</script>

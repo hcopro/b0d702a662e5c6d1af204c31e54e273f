@@ -1,0 +1,292 @@
+<div>
+	<table class="table table-borderless" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0">
+				<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Nom et prénom(s)</div></th>
+				<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Contact</div></th>
+				<th class="p-0 text-center"><div class="card-pointage card p-2 m-1 card-grey">Adresse Email</div></th>
+				<th class="p-0 text-center"><div class="card-pointage card p-2 m-1 card-grey">Détails</div></th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php if (count($data) > ManagerModuleFormation::NO) : ?>
+				<?php foreach ($data as $datum) : extract($datum); ?>
+					<tr class="p-0">
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey text-important text-left">
+								<?= $formateur->getNom() . ' ' . $formateur->getPrenom() ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey">
+								<?= explode('/', $formateur->getContact())[1] ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey">
+								<?= $formateur->getEmail() ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<button class="btn btn-transparent btn-sm m-0 p-0" data-toggle="modal" data-target="#modalDetail<?= $formateur->getIdFormateur();?>">
+									<i class="fa fa-info-circle text-dark" style="font-size: 1.4em;"></i>
+								</button>
+							</div>
+						</td>
+					</tr>
+					<div class="modal fade" id="modalDetail<?= $formateur->getIdFormateur();?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered" role="document">
+					    	<div class="modal-content">
+					      		<div class="modal-header text-center">
+					      			<div class="text-center" style="width: 100%;">
+					      				<h5 class="modal-title section-heading m-0" id="exampleModalLabel">Les détails sur ce formateur</h5>
+					      			</div>
+					        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          			<span aria-hidden="true">&times;</span>
+					        		</button>
+					      		</div>
+					      		<div class="modal-body">
+					      			<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+							      		<div class="card mt-2 p-2 card-light-grey">
+							      			<div class="row">
+							      				<div class="col-md-5 text-center">
+							      					<div class="card p-2 m-0">
+							      						<i class="fa fa-graduation-cap fa-3x"></i>
+							      					</div>
+							      				</div>
+							      				<div class="col-md-7">
+							      					<p class="m-0"><?= explode('/', $formateur->getContact())[1] ?></p>
+							      					<p class="m-0"><?= $formateur->getEmail(); ?></p>
+							      				</div>
+							      			</div>
+							      			<div class="text-left mt-3">
+							      				<span class="titre font-italic">
+							      					<?= $formateur->getCivilite() . ' ' . $formateur->getNom() . ' ' . $formateur->getPrenom() ?>
+							      				</span>
+							      			</div>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-3 text-left">
+													<span class="titre">
+														NIF :
+													</span>
+												</div>
+												<div class="col-md-9 text-left">
+													<?= ($formateur->getNif() != null) ? $formateur->getNif() : "N/A"; ?>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-3 text-left">
+													<span class="titre">
+														STAT :
+													</span>
+												</div>
+												<div class="col-md-9 text-left">
+													<?= ($formateur->getStat() != null) ? $formateur->getStat() : "N/A"; ?>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-3 text-left">
+													<span class="titre">
+														RCS :
+													</span>
+												</div>
+												<div class="col-md-9 text-left">
+													<?= ($formateur->getRcs() != null) ? $formateur->getRcs() : "N/A"; ?>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-3 text-left">
+													<span class="titre">
+														Domaine :
+													</span>
+												</div>
+												<div class="col-md-9 text-left">
+													<ul id="liste-domaine-<?= $formateur->getIdFormateur() ?>">
+														<?php foreach ($domaines as $domaine) : ?>
+															<div class="row liste-domaine" id="sd-<?= $domaine->getIdSousDomaine() ?>">
+																<div class="col-md-9">
+																	<li class="m-0"><?= $domaine->getNomSousDomaine() ?></li>
+																</div>
+																<div class="col-md-3">
+																	<button class="btn btn-sm btn-transparent" id="supprimer<?=$domaine->getIdSousDomaine()?>">
+																		<i class="fa fa-times text-danger"></i>
+																	</button>
+																</div>
+															</div>
+															<script>
+																$('#supprimer<?=$domaine->getIdSousDomaine()?>').click(function(){
+																	$.ajax({
+																		url : '<?= HOST . "manage/delete-domaineFormateur" ?>',
+																		data : 'idFormateur=<?= $formateur->getIdFormateur() ?>&idSousDomaine=<?= $domaine->getIdSousDomaine() ?>',
+																		dataType : 'text',
+																		success : function(data) {
+																			if (data == "ok") {
+																				$('#sd-<?= $domaine->getIdSousDomaine() ?>').remove();
+																			}
+																		}
+																	});
+																});
+															</script>
+														<?php endforeach ?>
+													</ul>
+													<select class="select-time" id="ssd-<?= $formateur->getIdFormateur() ?>" style="font-size: 0.8em!important; width: 70%!important;">
+														<option value="">Selectionner</option>
+														<?php foreach ($sousDomaines as $sousDomaine) : ?>
+															<option value="<?= $sousDomaine->getIdSousDomaine() ?>"> <?= $sousDomaine->getNomSousDomaine() ?> </option>
+														<?php endforeach ?>
+													</select>
+													<button class="btn btn-sm btn-success" id="add-domaine-<?= $formateur->getIdFormateur() ?>" style="font-size: 0.7em;" disabled="disabled">
+														ajouter
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+					      		</div>
+					      		<div class="modal-footer">
+					      			<?php if ($editable == true) : ?>
+						        		<button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal<?= $formateur->getIdFormateur();?>" style="width: 40px;">
+						        			<i class="fa fa-trash"></i>
+						        		</button>
+						        	<?php endif ?>
+						        	<?php if ($formateur->getStatut() == ManagerModuleFormation::STATUT_ACTIF) : ?>
+						        		<a class="btn btn-sm btn-dark" href="<?=  HOST . 'manage/archiver-formateur?idFormateur=' . $formateur->getIdFormateur();?>" style="width: 40px;">
+						        			<i class="fa fa-archive"></i>
+						        		</a>
+						        	<?php elseif ($formateur->getStatut() == ManagerModuleFormation::STATUT_ARCHIVED) : ?>
+						        		<a class="btn btn-sm btn-success" href="<?=  HOST . 'manage/restaurer-formateur?idFormateur=' . $formateur->getIdFormateur();?>" style="width: 40px;">
+						        			<i class="fa fa-undo restore"></i>
+						        		</a>
+						        	<?php endif ?>
+						        	<button class="btn btn-sm btn-warning" data-dismiss="modal" id="edit<?=$formateur->getIdFormateur()?>" style="width: 40px;">
+						        		<i class="fa fa-edit"></i>
+						        	</button>
+						        	<a href="<?= HOST . 'manage/entreprise/formationFormateur?idFormateur=' . $formateur->getIdFormateur(); ?>" class="btn btn-sm btn-info" style="width: 40px;" >
+						        		<i class="fa fa-graduation-cap cap"></i>
+						        	</a>
+						      	</div>
+				    		</div>
+					  	</div>
+					</div>
+					<div class="modal fade" id="deleteModal<?=$formateur->getIdFormateur()?>" tabindex="-1" role="dialog" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered" role="document">
+						    <div class="modal-content" style="background: #cfd8dc;">
+						      	<div class="modal-header text-center">
+						      		<div class="text-center" style="width: 100%;">
+						      			<h5 class="modal-title section-heading m-0">Confirmation</h5>
+						      		</div>
+						        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          		<span aria-hidden="true">&times;</span>
+						        	</button>
+						      	</div>
+						      	<div class="modal-body">
+						      		<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+						        		<p id="text-confirmation"> Voulez-vous vraiment supprimer le formateur <?= $formateur->getNom() . ' ' . $formateur->getPrenom() ?> ?</p>
+						        	</div>
+						      	</div>
+						      	<div class="modal-footer">
+						      		<button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Annuler</button>
+						        	<a href="<?= HOST . 'manage/delete-formateur?idFormateur=' . $formateur->getIdFormateur()?>" class="btn btn-sm btn-success">Confirmer</a>
+						      	</div>
+						    </div>
+						</div>
+					</div>
+					<script>
+						$('#edit<?= $formateur->getIdFormateur() ?>').click(function(){
+							$.ajax({
+								url : '<?= HOST . "manage/get-formateur" ?>',
+								data : 'idFormateur=<?= $formateur->getIdFormateur() ?>',
+								dataType : 'json',
+								success : function(data) {
+									$('#civilite option[value="' + data['civilite'] + '"]').prop('selected', true);
+									$('#nom').val(data['nom']);
+									$('#prenom').val(data['prenom']);
+									$('#email').val(data['email']);
+									$('#nif').val(data['nif']);
+									$('#stat').val(data['stat']);
+									$('#rcs').val(data['rcs']);
+									$('#idFormateur').val(data['idFormateur']);
+									$('#titreModal').html("Modifier les informations du formateur");
+									var code = data['contact'].split('/')[0];
+									var contact = data['contact'].split('/')[1];
+									$('#select-country option[value="' + code + '"]').prop('selected', true);
+									$('#input-phone').removeClass('hidden');
+									$('.fa-phone').removeClass('hidden');
+									var cleave = new Cleave('#input-phone', {
+								      phone:true,
+								      phoneRegionCode: code
+								    });
+								    $('#input-phone').val(contact);
+									$('#modalEnregistrement').modal('show');
+								}
+							});
+						});
+						$('#ssd-<?= $formateur->getIdFormateur() ?>').change(function(){
+							if ($('#ssd-<?= $formateur->getIdFormateur() ?>').val() != "") {
+								$('#add-domaine-<?=$formateur->getIdFormateur()?>').attr("disabled", false);
+							} else {
+								$('#add-domaine-<?=$formateur->getIdFormateur()?>').attr("disabled", true);
+							}
+						});
+						$('#add-domaine-<?=$formateur->getIdFormateur()?>').click(function(){
+							$.ajax({
+								url : '<?= HOST . "manage/save-domaineFormateur" ?>',
+								data : 'idFormateur=<?= $formateur->getIdFormateur() ?>&idSousDomaine=' + $('#ssd-<?= $formateur->getIdFormateur() ?>').val(),
+								dataType : 'text',
+								success : function(data) {
+									if (data == "ok") {
+										var html = '<div class="row liste-domaine" id="sd-' + $('#ssd-<?= $formateur->getIdFormateur() ?>').val() + '">' +
+																'<div class="col-md-9">' +
+																	'<li class="m-0">' + $('#ssd-<?= $formateur->getIdFormateur() ?> option:selected').text() + '</li>' +
+																'</div>' +
+															'</div>' ;
+										$("#liste-domaine-<?= $formateur->getIdFormateur() ?>").append(html);
+										$('#ssd-<?= $formateur->getIdFormateur() ?>').val("");
+									}
+								}
+							});
+						});
+						tippy('.fa-trash', {
+							content : "supprimer le formateur"
+						});
+						tippy('.fa-archive', {
+							content : "archiver le formateur"
+						});
+						tippy('.fa-edit', {
+							content : "editer le formateur"
+						});
+						tippy('.cap', {
+							content : "voir les formations du formateur"
+						});
+						tippy('.fa-undo', {
+							content : "restaurer le formateur"
+						});
+						tippy('.fa-times', {
+							content : "supprimer"
+						});
+					</script>
+				<?php endforeach ?>
+			<?php else : ?>
+				<tr class="p-0">
+					<td class="p-0" colspan="5">
+						<div class="card p-2 m-1 card-light-grey">Aucun enregistrement trouvé</div>
+					</td>
+				</tr>
+			<?php endif ?>
+		</tbody>
+	</table>
+</div>
+<script type="text/javascript">
+	tippy('.fa-info-circle', {
+    	content: 'plus de détails'
+    });
+</script>

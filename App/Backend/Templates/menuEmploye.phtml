@@ -1,0 +1,147 @@
+<?php 
+    /** @changelog 13/12/2021 [EVOL] (Lansky) Dynamiser la liste des menus employés */
+    use \Model\ManagerMenuEntreprise;
+    use \Model\ManagerContratEmploye;
+    use \Model\ManagerAutorized;
+
+    $manager                = new ManagerMenuEntreprise();
+    $menus                  = $manager->chercher(['id_entreprise'=>$_SESSION['user']['idEntreprise']]);
+    $allMenus = $menus->getContaint()['employe'];
+    if ($_SESSION['compte']['addMenuUser'] === 'YES') {
+        $manager    = new ManagerAutorized();
+        $addMenu    = $manager->chercher(['id_employe' => $_SESSION['user']['idEmploye']]);
+        foreach ($menus->getContaint()['entreprise']['GESTION']["Capital humain"] as $link) {
+            if (array_key_exists('title', $link)) {
+                if ($link['title'] == 'Poste' || $link['title'] == 'Service') {
+                    array_push($allMenus['GESTION']["Capital humain"], $link);
+                }
+            }
+        }
+        $allMenus   = array_merge($addMenu->getAddMenu(), $allMenus);
+    }
+    $indexMenu              = 0;
+    $indexSubMenu           = 0;
+    $manager                = new ManagerContratEmploye();
+    $findContratUser        = $manager->lister([
+        'idEmploye' => $_SESSION['user']['idEmploye'],
+        'type'      => 'IN (1, 2)',
+        'dateFin'   => "000-00-00 or datefin <= NOW()"
+    ]);
+    $hasContract            = $findContratUser ? true : false;
+    $listeForSuperiorMenu   = array('suivi', 'planning');
+ ?>
+ <script type="text/javascript"> var allMenus = <?= json_encode($allMenus);?></script>
+<?php foreach ($allMenus as $titre => $submenus) : $indexMenu++;?>
+    <div class="menu-titre <?= $titre;?>">
+      <button class="btn btn-sm btn-transparent text-dark text-left" id="btn-titre-<?= $indexMenu;?>" type="button" data-toggle="collapse" data-target="#collapseMenu<?= $indexMenu;?>" aria-expanded="false" aria-controls="collapseExample" onclick="changeCollapsed(this)">
+        <i class="fa fa-caret-right fas" id="titre-<?= $indexMenu;?>"></i>
+        <span class="ml-2"><?= $titre;?></span>
+      </button>
+    </div>
+    <div class="collapse m-0 p-0" id="collapseMenu<?= $indexMenu;?>">
+        <div class="m-0 p-0">
+            <?php foreach ($submenus as $key => $value)  :
+                if (is_int($key)) : ?>
+                    <div class="item menu-niv-1" id="item<?= $indexMenu.''.$indexMenu.''.$key;?>">
+                        <a class="lien-menu" href="<?= HOST .''. $value['links']; ?>"><?= $value['title'];?></a>
+                    </div>
+                <?php else : ?>
+                     <div class="menu-titre" style="padding: 10px 0px 10px 30px;">
+                        <button class="btn btn-sm btn-transparent text-dark text-left" id="btn-titre-<?= $indexMenu.''.$indexSubMenu;?>" type="button" data-toggle="collapse" data-target="#collapseMenu<?= $indexMenu.''.$indexSubMenu;?>" aria-expanded="false" aria-controls="collapseExample" style="color: #01063e!important;" onclick="changeCollapsed(this)">
+                            <i class="fa fa-caret-right fas" id="titre-<?= $indexMenu.''.$indexSubMenu;?>"></i>
+                            <span class="ml-2"><?= $key;?></span>
+                        </button>
+                    </div>
+                    <div class="collapse m-0 p-0" id="collapseMenu<?= $indexMenu.''.$indexSubMenu;?>">
+                        <div class="m-0 p-0">
+                            <?php foreach ($value as $ke => $val) :
+                                if (is_int($ke)) : 
+                                    $showMenu = ($_SESSION['isSuperior']["hasSubordinate"] == 0 && in_array(strtolower($val['title']), $listeForSuperiorMenu))? false : true;
+                                    if ($showMenu) : ?>
+                                        <div class="item menu-niv-2" id="item<?= $indexMenu.''.$indexSubMenu.''.$ke;?>">
+                                            <a class="lien-menu" href="<?= HOST.''.$val['links']; ?>"><?= $val['title']; ?></a>
+                                        </div>
+                                    <?php endif;
+                                endif;
+                            endforeach; ?>
+                        </div>
+                    </div>
+                <?php $indexSubMenu++;
+                endif;
+            endforeach; ?>
+        </div>
+    </div>
+<?php endforeach; ?>
+<script type="text/javascript">
+    $('document').ready(function(){
+        $.ajax({
+            url : "<?= HOST . 'manage/hasSubordonne' ?>",
+            data : "idEmploye=<?= $_SESSION['user']['idEmploye'] ?>",
+            dataType : "text",
+            success : function(data)
+            {
+                /**@changelog 2022/05/03 [OPT] (Lansky) Enlever les onglets inutile */
+                var pathName = new Array (
+                                            '/manage/employe/conge'
+                                            , '/manage/employe/historiqueConge'
+                                            , '/manage/employe/validation'
+                                            , '/manage/historiqueConge'
+                                            , '/manage/employe/congeCollaborateur'
+                                            , '/manage/barometre_list'
+                                            , '/manage/employe/barometre'
+                                            , '/manage/collaborater/planning'
+                                        );
+                if (data == 1) {
+                    $('#item4').removeClass("hidden");
+                    var pathname = new URL(window.location.href).pathname;
+                    if ($.inArray(pathname, pathName) > -1){
+                        $('li#tab2').removeClass('d-none');
+                        $('li#tab4').removeClass('d-none');
+                        $('li#tab5').removeClass('d-none');
+                    }
+                } else if (data == 0) {
+                    /**@changelog 2021/08/13 [EVOL] (Lansky) Supprimer dans la liste du menu évaluation le sous menu évalué son équipe à ceux qui n'a pas de subordonnée */
+                    $.each($('.lien-menu'), function(index, val) {
+                        if ($(val).text() =='Évaluation à valider') {
+                            $(val).parent().addClass('hidden')
+                        } else if ($(val).text() =='Mes évaluations') {
+                            $(val).parent().addClass('hidden')
+                        } else if ($(val).text() =='Mes archives') {
+                            $(val).parent().addClass('hidden')
+                        }
+                    });
+                    $.each($('.menu-titre').find('span'), function(indx, vals) {
+                        if ($(vals).html() =='ÉVALUATION') {
+                            $(vals).parents('.menu-titre').addClass('hidden');
+                        }
+                    });
+                }
+            }
+        });
+        /* @changelog 03/10/2022 [EVOL] (Lansky) Inactive bouton congé pour CDD et CDI BÉSEOIN SPÉCIF DE CONNECTEO */
+        var userIdentities  = <?= json_encode($_SESSION)?>;
+        var hasContract     = <?= json_encode($hasContract)?>;
+        // Modifier le lien du congé si l'indentifiant de l'entreprise est vaalidée
+        // Pour l'instant modifier mannuellement cette identifiant
+        if (userIdentities.user.idEntreprise == 16 && hasContract) {
+            $.each($('.lien-menu'), function() {
+                if ($(this).text().trim().toLowerCase() =='congé') {
+                    console.log(userIdentities);
+                    let newLink = new URL(window.location.href).origin;
+                        newLink += '/manage/employe/dashboard'
+                    $(this).attr('href', newLink);
+                }
+            });
+        }
+        /* @changelog 2023-06-15 [OPTIM] (Lansky) Pour savoir quand un client éteint son appareil */
+        // La fonction onunload de JavaScript en combinaison avec une requête AJAX.
+        window.onunload = function() {
+            // Effectuez une requête AJAX pour signaler l'extinction du client
+            var xhr     = new XMLHttpRequest();
+            var urlOff  = new URL(window.location).origin + "/manage/power-off?idEmploye=" + userIdentities.user.idEmploye;
+            xhr.open("GET", urlOff, true);
+            xhr.send();
+        };
+    });
+</script>
+<script src="<?= HOST; ?>../Web/Ressources/js/menuEmploye.js"></script>

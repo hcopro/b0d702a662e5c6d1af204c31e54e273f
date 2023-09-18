@@ -1,0 +1,433 @@
+<?php
+	$url = explode('-', $_GET['page']);
+	$url = $url[1];
+	if (isset($_SESSION['variable']['idCompte'])) {
+		$idCompte = $_SESSION['variable']['idCompte'];
+	} 
+?>
+<section class="page-section" id="back-section">
+    <div class="container">
+      	<div class="row tab-menu">
+	        <ul id="tab-button">
+	        	<?php if ($_SESSION['compte']['identifiant'] == "candidat"): ?>
+	        		<li id="a"><a href="<?= HOST. "manage/edit-candidat?idCandidat=" . $_SESSION['user']['idCandidat'];?>">Modifier profil</a></li>
+				    <li id="b"><a href="<?= HOST . 'manage/update-password?idCompte=' . $_SESSION['compte']['idCompte']; ?>">Modifier mot de passe</a></li>
+				    <li id="c"><a href="<?= HOST . 'manage/edit-pseudo?idCompte=' . $_SESSION['compte']['idCompte']; ?>">Modifier pseudo</a></li>
+				    <li id="d"><a href="<?= HOST . "manage/edit-personnalite_candidat?idCandidat=" . $_SESSION['user']['idCandidat']; ?>">Modifier personnalité</a></li>
+				<?php elseif ($_SESSION['compte']['identifiant'] == "superadmin" && $_GET['page'] != "manage/register-superadmin" && $_GET['page'] != "manage/create-email_contact"): ?>	        		
+				    <li id="a"><a href="<?= HOST . "manage/edit-superadmin?idSuperadmin=" . $_SESSION['user']['idSuperadmin']?>">Modifier profil</a></li>
+				    <li id="b"><a href="<?= HOST . 'manage/update-password?idCompte=' . $_SESSION['compte']['idCompte']; ?>">Modifier mot de passe</a></li>
+				    <li id="c"><a href="<?= HOST . 'manage/edit-pseudo?idCompte=' . $_SESSION['compte']['idCompte']; ?>">Modifier pseudo</a></li>
+				<?php elseif ($_SESSION['compte']['identifiant'] == "employe"): ?>
+	        		<li id="update1"><a href="<?= HOST. "manage/update-employe?idEmploye=" . $_SESSION['user']['idEmploye'];?>">Modifier profil</a></li>
+				    <li id="update3"><a href="<?= HOST . 'manage/update-password?idCompte=' . $_SESSION['compte']['idCompte']; ?>">Modifier mot de passe</a></li>
+				    <li id="update4"><a href="<?= HOST . 'manage/edit-pseudo?idCompte=' . $_SESSION['compte']['idCompte']; ?>">Modifier Pseudo</a></li>
+	        	<?php endif ?>
+	        </ul>
+      	</div>
+      	<div class="row">
+        	<div class="col-lg-12">
+          		<form id="form" method="POST" action="<?= HOST. "manage/save-" . $url;?>" enctype="multipart/form-data" novalidate="novalidate">
+          			<?php if ($url == "pseudo" && !empty($data)) : $pageTitle = "Modification du pseudo"; $compte = $data;?>
+          				<div class="row">
+          					<div class="col-md-4"></div>
+			              	<div class="col-md-4 block-div">
+				                <div class="form-group hidden">
+				                  	<input class="form-control" id="idCompte" name="idCompte" type="number" value="<?= $compte->getIdCompte(); ?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Pseudo :</label>
+				                  	<input class="form-control text-lowercase focus_activated" id="login" name="login" type="text" value="<?= $compte->getLogin(); ?>" required="required" data-validation-required-message="Veuillez entrer votre pseudo *" data-validation-regex-regex="^[a-zA-Z-_]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+			              	</div>
+          				</div>
+		            <?php endif; ?>
+          			<?php if ($url == "candidat" && !empty($data)) :$pageTitle = "Enregistrement d'un candidat"; $candidat = $data; if (!is_null($candidat->getIdCompte())) { $idCompte = $candidat->getIdCompte();}?>
+			            <div class="row">          			
+			            	<div class="col-md-4 text-center">
+				                <div class="form-group hidden">
+				                  	<input class="form-control" id="idCandidat" name="idCandidat" type="number" value="<?= $candidat->getIdCandidat(); ?>">
+				                </div>
+			            		<label class="label-input">Votre photo </label><br>
+			            		<img class="img-fluid user rounded-circle" id="image" src="<?=($candidat->getPhoto() != "") ? HOST . "../Web/Ressources/images/candidats/" . $candidat->getPhoto() : HOST ."../Web/Ressources/images/profilCandidat.png";?>">
+				                <div class="form-group">
+				                	<button class="btn btn-primary" id="files" onclick="$('#photo').click(); return false;">Télécharger votre photo </button>
+				                  	<input class="form-control hidden" id="photo" name="photo" type="file" accept="image/*" value="<?= $candidat->getPhoto(); ?>">
+				                </div>
+			            	</div>
+			              	<div class="col-md-4">
+				                <div class="form-group">
+				                	<label class="label-input">Civilité </label>
+				                	<select  class="form-control span3" name="civilite" id="civilite" required="required" data-validation-required-message="Veuillez séléctionner votre civilité.">
+						                <option class="text-center" value="">-- Choisir -- </option>
+						                <option <?php if ($candidat->getCivilite()== "Mr") { echo "selected"; } ?> value="Mr">Monsieur</option>
+						                <option <?php if ($candidat->getCivilite()== "Mme") { echo "selected"; } ?> value="Mme">Madame</option>
+						                <option <?php if ($candidat->getCivilite()== "Mlle") { echo "selected"; } ?> value="Mlle">Mademoiselle</option>
+						            </select>
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Nom </label>
+				                  	<input class="form-control text-uppercase" id="nom" name="nom" type="text" value="<?= $candidat->getNom(); ?>" required="required" data-validation-required-message="Veuillez entrer votre nom *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Prénom </label>
+				                  	<input class="form-control text-capitalize" id="prenom" name="prenom" type="text" value="<?= $candidat->getPrenom(); ?>" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Date de naissance </label>
+				                	<label for="datepicker">
+						                <input class="form-control datepicker" type="text" value="<?php $date = explode('-', $candidat->getDateNaiss()); echo $date[2] . "/" . $date[1] . "/" . $date[0]; ?>" autocomplete="off" placeholder="Date de naissance">
+					              	</label>
+				                  	<input class="form-control hidden" id="dateNaiss" name="dateNaiss" type="date"  required="required" data-validation-required-message="Veuillez entrer votre date de naissance *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                
+			              	</div>
+			              	<div class="col-md-4">
+			                	<div class="form-group hidden">
+				                  	<input class="form-control" id="idCompte" name="idCompte" type="number" value="<?= $idCompte; ?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Adresse </label>
+				                  	<input class="form-control" id="adresse" name="adresse" type="text" value="<?= $candidat->getAdresse(); ?>" required="required" data-validation-required-message="Veuillez entrer adresse *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Ville</label>
+				                  	<input class="form-control text-capitalize" id="ville" name="ville" type="text" value="<?= $candidat->getVille(); ?>" required="required" data-validation-required-message="Veuillez entrer ville *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+			                        <label class="label-input">Contact :</label>
+								    <select id="select-country" class="form-control focus_activated">
+								    	<option value="">votre pays</option>
+								      	<?php 
+								      		$candidatContact = explode('/', $candidat->getContact());
+								      		foreach(unserialize(COUNTRIES) as $country): ?>
+							                <option 
+							                	<?php if ($candidatContact[0] == $country['code']) { echo "selected"; } ?> value="<?= $country['code']; ?>">
+							                	<?= $country['country'] ?>
+							                </option>
+							            <?php endforeach; ?>
+								    </select>
+								    <input type="text" id="input-phone" class="form-control focus_activated" value="<?= $candidatContact[1]; ?>" required="required" data-validation-required-message="Veuillez entrer votre contact">			
+								    <p class="help-block text-danger"></p>		    
+								</div>
+			                    <div class="form-group hidden">
+			                        <input class="form-control focus_activated" id="contact" name="contact" type="text" value="">
+			                    </div>
+				                <div class="form-group">
+				                	<label class="label-input">Adresse Email </label>
+				                  	<input class="form-control text-lowercase" id="email" name="email" type="email" value="<?= $candidat->getEmail(); ?>" required="required" data-validation-required-message="Veuillez entrer email.">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Votre description </label>
+			                  		<textarea class="form-control" id="description" name="description" required="required" data-validation-required-message="Veuillez entrer votre description."><?= $candidat->getDescription(); ?></textarea>
+			                  		<p class="help-block text-danger"></p>
+			                	</div>
+			             </div>
+		            <?php endif; ?>
+
+		            <?php if ($url == "entreprise" && !empty($data)) : $pageTitle = "Enregistrement d'une entreprise"; $entreprise = $data; if (!is_null($entreprise->getIdCompte())) {
+		            	$idCompte = $entreprise->getIdCompte(); } ?>
+		            	<div class="row">
+		            		<div class="col-md-3"></div>
+		            		<div class="col-md-6">
+		            			<h4 class="text-center list-title section-heading my-0">Edition profil</h4>
+		            		</div>
+		            	</div>
+		            	<hr>
+		              	<div class="row">          			
+							<div class="col-md-4 text-center">
+						        <div class="form-group hidden">
+						          	<input class="form-control" id="idEntreprise" name="idEntreprise" type="number" value="<?= $entreprise->getIdEntreprise(); ?>">
+						        </div>
+								<label class="label-input">Logo de votre entreprise </label><br>
+								<img class="img-fluid user" id="image" src="
+									<?php
+										if ($entreprise->getLogo() != "") {
+											echo HOST . "../Web/Ressources/images/entreprises/" . $entreprise->getLogo();
+										} else {
+											echo HOST ."../Web/Ressources/images/defaultLogo.png";
+										}
+									?>
+								">
+						        <div class="form-group">
+						        	<button class="btn btn-primary" id="files" onclick="$('#logo').click(); return false;">Télécharger votre logo </button>
+						      		<input class="form-control hidden" id="logo" name="logo" type="file" accept="image/*" value="<?= $entreprise->getLogo(); ?>">
+						        </div>
+						        <div class="form-group">
+						        	<label class="label-input">Nom de l'entreprise </label>
+						          	<input class="form-control" id="nom" name="nom" type="text" value="<?= $entreprise->getNom(); ?>" required="required" data-validation-required-message="Veuillez entrer le nom de votre entreprise *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+						          	<p class="help-block text-danger"></p>
+						        </div>
+						        <div class="form-group">
+						        	<label class="label-input">Secteur d'activité </label>
+						      		<textarea class="form-control" id="secteurActivite" name="secteurActivite" required="required" data-validation-required-message="Veuillez entrer l'activité de votre entreprise *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *"><?= $entreprise->getSecteurActivite(); ?></textarea>
+						      		<p class="help-block text-danger"></p>
+						    	</div>
+							</div>
+						  	<div class="col-md-4">
+						        <div class="form-group">
+						        	<label class="label-input">Description de votre entreprise </label>
+						      		<textarea class="form-control" id="description" name="description" required="required" data-validation-required-message="Veuillez entrer la description de votre entreprise *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *"><?= $entreprise->getDescription(); ?></textarea>
+						      		<p class="help-block text-danger"></p>
+						    	</div>
+						        <div class="form-group">
+						        	<label class="label-input">nom du Représentant </label>
+				                  	<input class="form-control text-capitalize" id="nomRepresentant" name="nomRepresentant" type="text" placeholder="Représentant" value="<?= $entreprise->getNomRepresentant(); ?>" required="required" data-validation-required-message="Veuillez entrer le nom du Représentant de votre entreprise *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+						        <div class="form-group">
+						        	<label class="label-input">qualité du Représentant </label>
+				                  	<input class="form-control text-capitalize" id="qualiteRepresentant" name="qualiteRepresentant" type="text" placeholder="Qualité du représentant" value="<?= $entreprise->getQualiteRepresentant(); ?>" required="required" data-validation-required-message="Veuillez entrer la qualité du représentant de votre entreprise *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+						        <div class="form-group">
+						        	<label class="label-input">Référence NIF </label>
+						          	<input class="form-control" id="nif" name="nif" type="number" value="<?= $entreprise->getNif(); ?>" required="required" data-validation-required-message="Veuillez entrer la référence NIF *"  data-validation-regex-regex="[0-9]{10}" data-validation-regex-message="10 chiffres obligatoire*">
+						          	<p class="help-block text-danger"></p>
+						        </div>
+						        <div class="form-group">
+						        	<label class="label-input">Référence STAT </label>
+						          	<input class="form-control" id="stat" name="stat" type="number" value="<?= $entreprise->getStat(); ?>" required="required" data-validation-required-message="Veuillez entrer la référence STAT *"  data-validation-regex-regex="[0-9]{17}" data-validation-regex-message="17 chiffres obligatoire*">
+						          	<p class="help-block text-danger"></p>
+						        </div>
+						        <div class="form-group">
+						        	<label class="label-input">Référence RCS </label>
+						          	<input class="form-control" id="rcs" name="rcs" type="text" value="<?= $entreprise->getRCS(); ?>" required="required" data-validation-required-message="Veuillez entrer la référence RCS *">
+						          	<p class="help-block text-danger"></p>
+						        </div>
+						  	</div>
+						  	<div class="col-md-4">
+						    	<div class="form-group">
+						        	<label class="label-input">Adresse </label>
+						          	<input class="form-control" id="adresse" name="adresse" type="text" value="<?= $entreprise->getAdresse(); ?>" required="required" data-validation-required-message="Veuillez entrer l'adresse de votre entreprise *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+						          	<p class="help-block text-danger"></p>
+						        </div>
+						        <div class="form-group">
+						        	<label class="label-input">Ville </label>
+						          	<input class="form-control text-capitalize" id="ville" name="ville" type="text" value="<?= $entreprise->getVille(); ?>" required="required" data-validation-required-message="Veuillez entrer la ville de votre entreprise *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+						          	<p class="help-block text-danger"></p>
+						        </div>
+						        <div class="form-group">
+			                        <label class="label-input">Contacts :</label>
+								    <select id="select-country" class="form-control focus_activated">
+								    	<option value="">votre pays</option>
+								      	<?php 
+								      		$entrepriseContact = explode('/', $entreprise->getContact());
+								      		foreach(unserialize(COUNTRIES) as $country): ?>
+							                <option 
+							                	<?php if ($entrepriseContact[0] == $country['code']) { echo "selected"; } ?> value="<?= $country['code']; ?>">
+							                	<?= $country['country'] ?>
+							                </option>
+							            <?php endforeach; ?>
+								    </select>
+								    <br>
+								    <input type="text" id="input-phone" class="form-control focus_activated" value="<?= $entrepriseContact[1]; ?>" required="required" data-validation-required-message="Veuillez entrer votre contact" placeholder="Contact">	
+								   	<p class="help-block text-danger"></p>		    
+								</div>
+			                    <div class="form-group hidden">
+			                        <input class="form-control focus_activated" id="contact" name="contact" type="text" value="">
+			                    </div>
+						        <div class="form-group">
+						          	<input class="form-control" id="contactRh" name="contactRh" type="text" value="<?= $entreprise->getContactRh(); ?>" placeholder="Contact RH">
+						          	<p class="help-block text-danger"></p>
+						        </div>
+						        <div class="form-group">
+						        	<label class="label-input">Adresse Email </label>
+						          	<input class="form-control" id="email" name="email" type="email" value="<?= $entreprise->getEmail(); ?>" required="required" data-validation-required-message="Veuillez entrer votre email.">
+						          	<p class="help-block text-danger"></p>
+						        </div>
+						 	</div>
+						</div>
+		            <?php endif; ?>
+
+		            <?php if ($url == "superadmin" && !empty($data)) : $pageTitle = "Enregistrement d'un superadministrateur"; $superadmin = $data; if (!is_null($superadmin->getIdCompte())) { $idCompte = $superadmin->getIdCompte(); } ?>
+	                  <div class="row">               
+	                    <div class="col-md-4 text-center block-div">
+	                      <div class="form-group hidden">
+	                        <input class="form-control" id="idSuperadmin" name="idSuperadmin" type="number" value="<?= $superadmin->getIdSuperadmin(); ?>">
+	                      </div>
+	                      <div class="form-group hidden">
+	                          <input class="form-control" id="idCompte" name="idCompte" type="number" value="<?= $idCompte; ?>">
+	                      </div>
+	                      <label class="label-input">Votre photo </label><br>
+	                      <img class="img-fluid user rounded-circle" id="image" src="
+	                        <?php
+	                            if ($superadmin->getPhoto() != "") {
+	                              echo HOST . "../Web/Ressources/images/superadmins/" . $superadmin->getPhoto();
+	                            } else {
+	                              echo HOST ."../Web/Ressources/images/profilAdmin.png";
+	                            }
+	                          ?>
+	                        ">
+	                      <div class="form-group">
+	                        <button class="btn btn-primary" id="files" onclick="$('#photo').click(); return false;">Télécharger votre photo </button>
+	                          <input class="form-control hidden" id="photo" name="photo" type="file" accept="image/*" value="<?= $superadmin->getPhoto(); ?>">
+	                      </div>
+	                    </div>
+	                    <div class="col-md-4 block-div">
+	                      <div class="form-group">
+	                      <label class="label-input">Nom et prénom :</label>
+	                        <input class="form-control text-capitalize focus_activated" id="nom" name="nom" type="text" value="<?= $superadmin->getNom(); ?>" required="required" data-validation-required-message="Veuillez entrer votre nom et prénom *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+	                        <p class="help-block text-danger"></p>
+	                      </div>
+	                      <div class="form-group">
+	                        <label class="label-input">Rôle :</label>
+	                          <input class="form-control  focus_activated" id="role" name="role" type="text" value="<?= $superadmin->getRole(); ?>" required="required" data-validation-required-message="Veuillez entrer votre rôle *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+	                          <p class="help-block text-danger"></p>
+	                      </div>
+	                      <div class="form-group">
+	                        <label class="label-input">Contact :</label>
+						    <select id="select-country" class="form-control focus_activated">
+						    	<option value="">votre pays</option>
+						      	<?php 
+						      		$superadminContact = explode('/', $superadmin->getContact());
+						      		foreach(unserialize(COUNTRIES) as $country): ?>
+					                <option 
+					                	<?php if ($superadminContact[0] == $country['code']) { echo "selected"; } ?> value="<?= $country['code']; ?>">
+					                	<?= $country['country'] ?>
+					                </option>
+					            <?php endforeach; ?>
+						    </select>
+						    <input type="text" id="input-phone" class="form-control focus_activated" value="<?= $superadminContact[1]; ?>" required="required" data-validation-required-message="Veuillez entrer votre contact">			
+						    <p class="help-block text-danger"></p>		    
+						  </div>
+	                      <div class="form-group hidden">
+	                          <input class="form-control focus_activated" id="contact" name="contact" type="text" value="">
+	                      </div>
+	                      <div class="form-group">
+	                        <label class="label-input">Adresse Email :</label>
+	                          <input class="form-control text-lowercase focus_activated" id="email" name="email" type="email" value="<?= $superadmin->getEmail(); ?>" required="required" data-validation-required-message="Veuillez entrer email.">
+	                          <p class="help-block text-danger"></p>
+	                      </div>
+	                    </div>
+	                  </div>
+	                <?php endif; ?>
+
+		            <?php if ($url == "email_contact" && !empty($data)) : $pageTitle = "Enregistrement d'un contact"; $emailContact = $data;?>
+		            	<div class="row">
+		            		<div class="col-lg-12 text-center">
+	          					<h5><?= $pageTitle; ?></h5>
+	        				</div>
+		            	</div>
+		            	<div class="row">
+		            		<div class="col-md-4"></div>
+			              	<div class="col-md-4 block-div">
+				                <div class="form-group hidden">
+				                  	<input class="form-control" id="idEmailContact" name="idEmailContact" type="number" value="<?= $emailContact->getIdEmailContact(); ?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Type</label>
+									<select  class="form-control focus_activated" name="type" id="type" required="required" data-validation-required-message="Veuillez choisir un type.">
+										<option class="text-center" value="">-- Choisir --</option>
+									<?php foreach(unserialize(TYPE) as $type): ?>
+						                <option 
+						                	<?php if ($emailContact->getType() == $type) { echo "selected"; } ?> value="<?= $type; ?>">
+						                	<?= $type ?>
+						                </option>
+						            <?php endforeach; ?>
+						            </select>
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Email : </label>
+				                  	<input class="form-control text-lowercase focus_activated" id="email" name="email" type="email" value="<?= $emailContact->getEmail(); ?>" required="required" data-validation-required-message="Veuillez entrer un email *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+			              	</div>
+		            	</div>
+		            <?php endif; ?>
+
+		            <?php if ($url == "employe" && !empty($data)) : $pageTitle = "Enregistrement d'un employe "; $employe = $data; 
+		            	$employe->setIdEntreprise($_SESSION['user']['idEntreprise']);
+		            	?>
+		            	<?php if (!isset($_SESSION['variable'])) : header("Location:" . HOST . "manage/" . $_SESSION['compte']['identifiant'] . "/dashboard"); ?>
+		            	<?php elseif (isset($_SESSION['candidat'])) :  
+		            		$employe->setPhoto($_SESSION['candidat']['photo']);
+		            	?>
+          				<div class="row">
+          					<div class="col-md-4">
+			            		<label>
+			            			<?= $employe->getNom(); ?>
+			            		</label>
+          					</div>
+          				</div>
+		            <?php endif; endif;?>
+
+	              	<div class="col-lg-12 text-center">
+	                	<button id="submit" class="btn btn-info btn-xl " type="submit">
+	                		Enregistrer
+	                	</button>                		
+	                		<a class="btn btn-danger btn-xl" href="<?= HOST . 'manage/' . $_SESSION['compte']['identifiant'] . '/dashboard'; ?>">Annuler</a>
+	              	</div>
+          		</form>
+        	</div>
+      	</div>
+    </div>
+</section>
+
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormCompte.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script> 
+	var pathname = new URL(window.location.href).pathname; 
+	var cleave = new Cleave('#input-phone', {
+      phone:true,
+      phoneRegionCode: $('#select-country').children("option:selected").val()
+    });
+
+	if (pathname == "/manage/edit-entreprise") {
+		var cleaveRH = new Cleave('#contactRh', {
+	      phone:true,
+	      phoneRegionCode: $('#select-country').children("option:selected").val()
+	    });
+		if ($('#select-country').children("option:selected").val() == "") {
+	    	$('#input-phone').addClass('hidden');
+	    	$('#contactRh').addClass('hidden');
+	    }
+
+		$('#select-country').change(function(){
+			if ($('#select-country').children("option:selected").val() == "") {
+		    	$('#input-phone').addClass('hidden');
+		    	$('#contactRh').addClass('hidden');
+		    } else {
+		    	$('#input-phone').removeClass('hidden');
+				$('#contactRh').removeClass('hidden');
+		      	cleave.setPhoneRegionCode(this.value);
+		      	cleave.setRawValue('');
+		      	cleaveRH.setPhoneRegionCode(this.value);
+		      	cleaveRH.setRawValue('');
+		    }
+	    });
+	} else {
+		if ($('#select-country').children("option:selected").val() == "") {
+	    	$('#input-phone').addClass('hidden');
+	    }
+
+		$('#select-country').change(function(){
+			if ($('#select-country').children("option:selected").val() == "") {
+		    	$('#input-phone').addClass('hidden');
+		    } else {
+				$('#input-phone').removeClass('hidden');
+		      	cleave.setPhoneRegionCode(this.value);
+		      	cleave.setRawValue('');
+		    }
+	    });
+	} 
+</script>
+<?php if ($_SESSION['compte']['identifiant'] == "candidat"): ?>
+	<script src="<?= HOST; ?>../Web/Ressources/js/tabCandidat.js"></script>
+<?php elseif ($_SESSION['compte']['identifiant'] == "entreprise"): ?>
+	<script src="<?= HOST; ?>../Web/Ressources/js/tabEntreprise.js"></script>
+<?php elseif ($_SESSION['compte']['identifiant'] == "superadmin"): ?>
+	<script src="<?= HOST; ?>../Web/Ressources/js/tabSuperadmin.js"></script>
+<?php elseif ($_SESSION['compte']['identifiant'] == "employe"): ?>
+	<script src="<?= HOST; ?>../Web/Ressources/js/tabEmploye.js"></script>
+<?php endif ?>

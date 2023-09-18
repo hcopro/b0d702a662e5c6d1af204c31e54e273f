@@ -1,0 +1,321 @@
+<?php  extract($data); ?>
+<div>
+	<table class="table table-borderless" id="table-tache" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0">
+				<th class="p-0" style="width: 511.172px!important;"><div class="card p-2 m-1 card-grey">Nom et Prénom</div></th>
+				<th class="p-0 pe text-center th-tache"><div class="card-tache card p-2 m-1 card-grey">Durée totale</div></th>
+				<th class="p-0 pr text-center th-tache" style="width: 320px!important;"><div class="card-tache card p-2 m-1 card-grey">Description de la tâche</div></th>
+				<th class="p-0 ab text-center th-tache"><div class="card-tache card p-2 m-1 card-grey">Durée de la tâche</div></th>
+			</tr>
+		</thead>
+		<tbody class="" style="padding: 0px!important;">
+			<?php if ($taches != null) : ?>
+				<?php foreach($taches as $tache) : extract($tache); extract($temps); ?>
+					<?php if (!empty($presence)) : ?>
+						<tr class="p-0">
+							<td class="text-important p-0">
+								<div class="card p-2 m-1 card-light-grey" style=" height: 65px; max-height: 65px;">
+									<?= $employe->getNom() . ' ' . $employe->getPrenom();?>
+								</div>
+							</td>
+							<td class="text-center p-0">
+								<div class="card p-2 m-1 card-extra-light-grey" style="height: 65px; max-height: 65px;">
+									<?= $hour . 'h ' . $minute . 'min ' . $second . 'sec' ?>
+								</div>
+							</td>
+							<td class="text-left p-0">
+								<?php if (is_object($presence)) :?>
+									<?php if ($presence->getStatut() == ManagerModulePresence::PRESENT_YES) :?>
+										<?php foreach ($presence->getIdPresence() as $k => $v ) : ?>
+											<div class="card p-2 m-1 card-extra-light-grey" style=" height: 65px; max-height: 65px;">
+												<label>
+													<strong><u>Titre:</u>&nbsp;</strong><?=mb_strtoupper($v->getIdTache()->getTitre()); ?>
+												</label>
+												<label>
+													<strong><u>Description:</u>&nbsp;</strong><?=ucfirst($v->getIdTache()->getDescription()); ?>
+												</label>
+											</div>
+										<?php endforeach;?>
+									<?php endif;?>
+								<?php elseif (is_array($presence)) :?>
+									<?php foreach ($presence as $k => $valuePresence) :?>
+										<?php if ($valuePresence->getStatut() == ManagerModulePresence::PRESENT_YES) :?>
+											<?php foreach ($valuePresence->getIdPresence() as $keyObjPresence => $valObjPresence) : extract($valObjPresence->getIdTache()); ?>
+												<div class="card p-2 m-1 card-extra-light-grey" style=" height: 65px; max-height: 65px;">
+													<label>
+														<strong><u>Titre:</u>&nbsp;</strong><?=mb_strtoupper($tache->getTitre()); ?>
+													</label>
+													<label>
+														<strong><u>Description:</u>&nbsp;</strong><?=ucfirst($tache->getDescription()); ?>
+													</label>
+												</div>
+											<?php endforeach;?>
+										<?php endif;?>
+									<?php endforeach;?>
+								<?php endif;?>
+							</td>
+							<td class="text-center p-0">
+								<?php foreach ($presence as $v ) :
+									foreach ($v->getIdPresence() as $vals ) : extract($vals->getIdTache()); extract($duree); ?>
+										<div class="card p-2 m-1 card-extra-light-grey" style="height: 65px; max-height: 65px;">
+											<?php $jour = $day > 0 ? $day . 'j ' : ''; ?>
+											<?=  $jour . $hour . 'h ' . $minute . 'min ' . $second . 'sec' ?>
+										</div>
+									<?php endforeach;
+								endforeach;?>
+							</td>
+						</tr>
+					<?php endif; ?>
+					<div class="modal fade" id="modalStatistique<?= $employe->getIdEmploye();?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered" role="document">
+					    	<div class="modal-content">
+					      		<div class="modal-header text-center">
+					      			<div class="text-center" style="width: 100%;">
+					      				<h5 class="modal-title section-heading" id="exampleModalLabel">Statistique mensuelle</h5>
+					      			</div>
+					        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          			<span aria-hidden="true">&times;</span>
+					        		</button>
+					      		</div>
+					      		<div class="modal-body">
+					      			<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+						      			<div class="row">
+						      				<div class="col-md-3">
+					      						<img src="
+													<?php
+							            				if ($employe->getPhoto() != "") {
+							            					echo HOST . "../Web/Ressources/images/employes/" . $employe->getPhoto();
+							            				} else {
+							            					echo HOST ."../Web/Ressources/images/profilCandidat.png";
+							            				}
+							            			?>
+												" style="height: 100px; width: 100px;">
+											</div>
+											<div class="col-md-9 text-left">
+												<label class="text-important"><?= $employe->getNom() . ' ' . $employe->getPrenom();?></label><br>
+												<label class="titre">Service : </label><?= ' ' . $service ?><br>
+												<label class="titre">Poste : </label><?= ' ' . $poste ?><br>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-grey">
+											<div class="row">
+												<div class="col-md-6 text-right">
+													<select class="select-time" id="month-stat<?=$employe->getIdEmploye();?>">
+														<option value="1">Janvier</option>
+										      			<option value="2">Février</option>
+										      			<option value="3">Mars</option>
+										      			<option value="4">Avril</option>
+										      			<option value="5">Mai</option>
+										      			<option value="6">Juin</option>
+										      			<option value="7">Juillet</option>
+										      			<option value="8">Août</option>
+										      			<option value="9">Septembre</option>
+										      			<option value="10">Octobre</option>
+										      			<option value="11">Novembre</option>
+										      			<option value="12">Décembre</option>
+													</select>
+												</div>
+												<div class="col-md-6 text-left">
+													<?php $yearNow = date("Y"); ?>
+													<input type="number" class="select-time" id="year-stat<?=$employe->getIdEmploye();?>" min="2020" value="<?= $yearNow ?>">
+												</div>
+												<input type="hidden" id="idEmploye<?=$employe->getIdEmploye()?>" value="<?=$employe->getIdEmploye()?>">
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-green">
+											<div class="row">
+												<div class="col-md-8 text-left">
+													temps de travail
+												</div>
+												<div class="col-md-4 text-left">
+													<span id="temps-travail<?=$employe->getIdEmploye()?>">
+														<i class="fa fa-spinner fa-pulse fa-fw"></i>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-yellow">
+											<div class="row">
+												<div class="col-md-8 text-left">
+													temps de permission
+												</div>
+												<div class="col-md-4 text-left">
+													<span id="temps-permission<?=$employe->getIdEmploye()?>">
+														<i class="fa fa-spinner fa-pulse fa-fw"></i>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-pink">
+											<div class="row">
+												<div class="col-md-8 text-left">
+													temps de repos médical
+												</div>
+												<div class="col-md-4 text-left">
+													<span id="temps-repos<?=$employe->getIdEmploye()?>">
+														<i class="fa fa-spinner fa-pulse fa-fw"></i>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-cyan">
+											<div class="row">
+												<div class="col-md-8 text-left">
+													temps de congé
+												</div>
+												<div class="col-md-4 text-left">
+													<span id="temps-conge<?=$employe->getIdEmploye()?>">
+														<i class="fa fa-spinner fa-pulse fa-fw"></i>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-grey">
+											<div class="row">
+												<div class="col-md-8 text-left">
+													temps total
+												</div>
+												<div class="col-md-4 text-left">
+													<span id="temps-total<?=$employe->getIdEmploye()?>">
+														<i class="fa fa-spinner fa-pulse fa-fw"></i>
+													</span>
+												</div>
+											</div>
+										</div>
+									</div>
+					      		</div>
+					    	</div>
+					  	</div>
+					</div>
+					<script>
+						$('document').ready(function() {
+							$('#month-stat<?=$employe->getIdEmploye();?>').val((new Date).getMonth() + 1);
+							if ($('#month-stat<?=$employe->getIdEmploye();?>').val() != null && $('#year-stat<?=$employe->getIdEmploye();?>').val()) {
+								idEmploye = $('#idEmploye<?=$employe->getIdEmploye();?>').val();
+								mois = $('#month-stat<?=$employe->getIdEmploye();?>').val();
+								annee = $('#year-stat<?=$employe->getIdEmploye();?>').val();
+								getStatistique(idEmploye, mois, annee);
+							}
+							<?php if ($depart != null) : ?>
+								var content = "<p><b>Arrivée : </b><?= $arrivee ?></p><p><b>Départ : </b><?= $depart ?></p>";
+							<?php else : ?>
+								var content = "<p><b>Arrivée : </b><?= $arrivee ?></p><p><b>Départ : </b> . . . </p>";
+							<?php endif ?> 
+							setHtmlTippy('pre-<?=$employe->getIdEmploye()?>', content);
+						});
+						$('#table-tache').on('page.dt', function (){
+							$('#month-stat<?=$employe->getIdEmploye();?>').val((new Date).getMonth() + 1);
+							if ($('#month-stat<?=$employe->getIdEmploye();?>').val() != null && $('#year-stat<?=$employe->getIdEmploye();?>').val()) {
+								idEmploye = $('#idEmploye<?=$employe->getIdEmploye();?>').val();
+								mois = $('#month-stat<?=$employe->getIdEmploye();?>').val();
+								annee = $('#year-stat<?=$employe->getIdEmploye();?>').val();
+								getStatistique(idEmploye, mois, annee);
+							}
+							<?php if ($depart != null) : ?>
+								var content = "<p><b>Arrivée : </b><?= $arrivee ?></p><p><b>Départ : </b><?= $depart ?></p>";
+							<?php else : ?>
+								var content = "<p><b>Arrivée : </b><?= $arrivee ?></p><p><b>Départ : </b> . . . </p>";
+							<?php endif ?> 
+							setHtmlTippy('pre-<?=$employe->getIdEmploye()?>', content);
+						});
+						$('#month-stat<?=$employe->getIdEmploye();?>').change(function() {
+							idEmploye = $('#idEmploye<?=$employe->getIdEmploye();?>').val();
+							mois = $('#month-stat<?=$employe->getIdEmploye();?>').val();
+							annee = $('#year-stat<?=$employe->getIdEmploye();?>').val();
+							getStatistique(idEmploye, mois, annee);
+						});
+						$('#year-stat<?=$employe->getIdEmploye();?>').change(function() {
+							idEmploye = $('#idEmploye<?=$employe->getIdEmploye();?>').val();
+							mois = $('#month-stat<?=$employe->getIdEmploye();?>').val();
+							annee = $('#year-stat<?=$employe->getIdEmploye();?>').val();
+							getStatistique(idEmploye, mois, annee);
+						});
+						function getStatistique(idEmploye, mois, annee) {
+							const TEMPS_PRESENCE = "presence";
+							const TEMPS_PERMISSION = "permission";
+							const TEMPS_REPOS = "repos";
+							const TEMPS_CONGE = "conge";
+							const TEMPS_TOTAL = "total";
+							$('#temps-travail' + idEmploye).html("<i class='fa fa-spinner fa-pulse fa-fw'></i>");
+							$('#temps-permission' + idEmploye).html("<i class='fa fa-spinner fa-pulse fa-fw'></i>");
+							$('#temps-repos' + idEmploye).html("<i class='fa fa-spinner fa-pulse fa-fw'></i>");
+							$('#temps-conge' + idEmploye).html("<i class='fa fa-spinner fa-pulse fa-fw'></i>");
+							$('#temps-total' + idEmploye).html("<i class='fa fa-spinner fa-pulse fa-fw'></i>");
+							$.ajax({
+	 							url  : "<?= HOST . 'manage/statistiques'?>",
+	 							data : "idEmploye=" + idEmploye + "&mois=" + mois + "&annee=" + annee,
+								dataType : "json",
+								success : function(data)
+								{	
+									data : JSON.stringify(data);
+									$.each(data, function(key,value) {
+										if (key == TEMPS_PRESENCE) {
+											$('#temps-travail' + idEmploye).html(value + " heures");
+										} else if (key == TEMPS_PERMISSION) {
+											$('#temps-permission' + idEmploye).html(value + " heures");
+										} else if (key == TEMPS_REPOS) {
+											$('#temps-repos' + idEmploye).html(value + " heures");
+										} else if (key == TEMPS_CONGE) {
+											$('#temps-conge' + idEmploye).html(value + " heures");
+										} else if (key == TEMPS_TOTAL) {
+											$('#temps-total' + idEmploye).html(value + " heures");
+										}
+									}); 
+								}
+							});
+						}
+					</script>
+				<?php endforeach ?>
+			<?php endif?>
+		</tbody>
+	</table>
+</div>
+<script>
+	$(document).ready(function() {
+	    $('#table-tache').DataTable( {
+	        "pagingType" : "full_numbers",
+	        "language" : {
+		        "search" : "_INPUT_",
+		        "searchPlaceholder" : "rechercher",
+		        "zeroRecords": "Aucun employé n'a été enregistreé",
+	            "oPaginate": {
+	                "sFirst":    "Premier",
+	                "sLast":    "Dernier",
+	                "sNext":    "Suivant",
+	                "sPrevious": "Précédent"
+	            }
+		    },
+	        "searchPlaceholder" : "rechercher",
+	        "lengthMenu" : [[10, 25, 50, -1], [10, 25, 50, "All"]]
+	    } );
+	    $('#table-tache_length').addClass("invisible");
+	    $('#table-tache_info').parent().removeClass();
+	    $('#table-tache_info').parent().addClass("col-md-3");
+	    $('#table-tache_info').remove();
+	    $('#table-tache_wrapper').css("padding","0px");
+  		tippy('.pe', {
+			content: "Début"
+  		});
+  		tippy('.ab', {
+			content: "Arret"
+  		});
+  		tippy('.dt', {
+			content: "Date"
+  		});
+		$.each($('#table-tache_wrapper').children(),function(k, v){
+			$(this).css('width','100%');
+			$(this).find('#table-tache_paginate').css('padding-left','170px');
+		});
+	} );
+	function setHtmlTippy(classTippy, contentTippy)
+	{
+		var attente = setTimeout(function() {
+			tippy('.' + classTippy, {
+				content: contentTippy,
+				allowHtml : true,
+				placement : 'top-start'
+	  		});	
+		}, 1000);
+	}
+</script>

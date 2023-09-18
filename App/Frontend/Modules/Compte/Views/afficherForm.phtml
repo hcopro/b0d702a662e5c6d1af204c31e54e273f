@@ -1,0 +1,298 @@
+<?php
+	$url = explode('-', $_GET['page']);
+	$url = $url[1];
+	if (!isset($_SESSION['variable'])) {
+		header("Location:" . HOST . "accueil");
+	}
+?>
+<section class="page-section" id="register">
+    <div class="container" style= "margin-top: 100px!important;">
+      	<div class="row">
+	        <div class="col-lg-12 text-center">
+	        	<h2 class="section-heading text-capitalize">Inscription compte <?= $url ?></h2>
+	        </div>
+      	</div>
+      	<div class="row register-form">
+        	<div class="col-lg-12">
+          		<form id="" method="POST" action="<?= HOST. "save-" . $url;?>" enctype="multipart/form-data" novalidate="novalidate">
+		            <div class="row">
+		        <!-- CANDIDAT -->
+          			<?php if ($url == "candidat" && !empty($data)) : 
+          				$pageTitle = "Inscription candidat";
+          				$candidat = $data;
+          			?>
+		            	<div class="col-md-4 text-center">
+			                <div class="form-group hidden">
+			                  	<input class="form-control" id="idCandidat" name="idCandidat" type="number" value="<?= $candidat->getIdCandidat(); ?>">
+			                </div>
+		            		<img class="img-fluid rounded-circle user-image" id="image" src="
+		            			<?php
+		            				if ($candidat->getPhoto() != "") {
+		            					echo HOST . "../Web/Ressources/images/candidats/" . $candidat->getPhoto();
+		            				} else {
+		            					echo HOST ."../Web/Ressources/images/profilCandidat.png";
+		            				}
+		            			?>
+		            		">
+			                <div class="form-group">
+			                	<button class="btn btn-info" id="files" onclick="$('#photo').click(); return false;">Télécharger votre photo </button>
+			                  	<input class="form-control hidden" id="photo" name="photo" type="file" accept="image/*" value="<?= $candidat->getPhoto(); ?>">
+			                </div>
+		            	</div>
+		              	<div class="col-md-4">
+			                <div class="form-group">
+			                	<i class="fas fa-restroom icon-input"></i>
+			                	<select  class="form-control" name="civilite" id="civilite" required="required" data-validation-required-message="Veuillez séléctionner votre civilite.">
+					                <option value="">__Civilité__</option>
+					                <option <?php if ($candidat->getCivilite()== "Mr") { echo "selected"; } ?> value="Mr">Monsieur</option>
+					                <option <?php if ($candidat->getCivilite()== "Mme") { echo "selected"; } ?> value="Mme">Madame</option>
+					                <option <?php if ($candidat->getCivilite()== "Mlle") { echo "selected"; } ?> value="Mlle">Mademoiselle</option>
+					            </select>
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+			                	<i class="fas fa-user-alt icon-input"></i>
+			                  	<input class="form-control text-uppercase" id="nom" name="nom" type="text" placeholder="Nom" value="<?= $candidat->getNom(); ?>" required="required" data-validation-required-message="Veuillez entrer votre nom *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+			                	<i class="fas fa-user-alt icon-input"></i>
+			                  	<input class="form-control text-capitalize" id="prenom" name="prenom" type="text" placeholder="Prénom" value="<?= $candidat->getPrenom(); ?>" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+				              <label for="datepicker">
+			                	<i class="fas fa-calendar-day icon-input"></i>
+				                <input class="form-control datepicker" type="text" autocomplete="off" placeholder="Date de naissance">
+				              </label>
+				              <input class="form-control hidden" id="dateNaiss" name="dateNaiss" type="date" value="<?= $candidat->getDateNaiss(); ?>" required="required" data-validation-required-message="Veuillez entrer votre date de naissance *">
+			                  <p class="help-block text-danger" id="dateNaiss-message"></p>
+				            </div>
+		              	</div>
+		              	<div class="col-md-4">
+		                	<div class="form-group hidden">
+			                  	<input class="form-control" id="idCompte" name="idCompte" type="number" value="">
+			                </div>
+			                <div class="form-group">
+			                	<i class="fas fa-building icon-input"></i>
+			                  	<input class="form-control text-capitalize" id="adresse" name="adresse" type="text" placeholder="Adresse" value="<?= $candidat->getAdresse(); ?>" required="required" data-validation-required-message="Veuillez entrer adresse *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+			                	<i class="fas fa-map-marker-alt icon-input"></i>
+			                  	<input class="form-control text-capitalize" id="ville" name="ville" type="text" placeholder="Ville " value="<?= $candidat->getVille(); ?>" required="required" data-validation-required-message="Veuillez entrer ville *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+		                        <i class="fas fa-phone-square-alt icon-input"></i>
+							    <select id="select-country" class="form-control focus_activated">
+							    	<option value="">Contact</option>
+							      	<?php 
+							      		foreach(unserialize(COUNTRIES) as $country): ?>
+						                <option 
+						                	value="<?= $country['code']; ?>">
+						                	<?= $country['country'] ?>
+						                </option>
+						            <?php endforeach; ?>
+							    </select>
+							    <input type="text" id="input-phone" class="form-control focus_activated" value="<?=  $candidat->getContact() ?>" required="required" data-validation-required-message="Veuillez entrer votre contact">		
+							    <p class="help-block text-danger"></p>		    
+							</div>
+		                    <div class="form-group hidden">
+		                        <input class="form-control focus_activated" id="contact" name="contact" type="text" value="">
+		                    </div>
+			                <div class="form-group">
+			                	<i class="fas fa-envelope icon-input"></i>
+			                  	<input class="form-control text-lowercase" id="email" name="email" type="email" placeholder="Email " value="<?= $candidat->getEmail(); ?>" required="required" data-validation-required-message="Veuillez entrer votre email *">
+			                  	<p class="help-block text-danger" id="email-message"></p>
+			                </div>
+			                <div class="form-group">
+		                  		<textarea class="form-control" id="description" name="description" placeholder="Votre description" required="required" data-validation-required-message="Veuillez entrer votre description *"><?= $candidat->getDescription(); ?></textarea>
+		                  		<p class="help-block text-danger" id="description-message"></p>
+		                	</div>
+		                	<div class="form-group hidden">
+			                  	<input class="form-control" id="publique" name="publique" type="number" value="1">
+			                </div>
+		              	</div>
+		            <?php endif; ?>
+
+		        <!-- ENTREPRISE -->
+		            <?php if ($url == "entreprise" && !empty($data)) :
+		            	$pageTitle = "Inscription entreprise"; 
+          				$entreprise = $data;
+          			?>
+		              	<div class="col-md-4 text-center">
+			                <div class="form-group hidden">
+			                  	<input class="form-control" id="idEntreprise" name="idEntreprise" type="number" value="<?= $entreprise->getIdEntreprise(); ?>">
+			                </div> 			                
+		                	<div class="form-group hidden">
+			                  	<input class="form-control" id="idCompte" name="idCompte" type="number" value="<?= $entreprise->getIdCompte(); ?>">
+			                </div>
+		            		<p class="font-weight-bold text-white">Logo de votre entreprise </p>
+		            		<img class="img-fluid user" id="image" src="
+		            			<?php
+		            				if ($entreprise->getLogo() != "") {
+		            					echo HOST . "../Web/Ressources/images/entreprises/" . $entreprise->getLogo();
+		            				} else {
+		            					echo HOST ."../Web/Ressources/images/defaultLogo.png";
+		            				}
+		            			?>
+		            		">
+			                <div class="form-group">
+			                	<button class="btn btn-primary" id="files" onclick="$('#logo').click(); return false;">Télécharger votre logo </button>
+			                  	<input class="form-control hidden" id="logo" name="logo" type="file" accept="image/*" value="<?= $entreprise->getLogo(); ?>">
+			                </div>
+		            	</div>
+		              	<div class="col-md-4">
+			                <div class="form-group">
+			                	<i class="fas fa-city icon-input"></i>
+			                  	<input class="form-control" id="nom" name="nom" type="text" placeholder="Nom de l'entreprise" value="<?= $entreprise->getNom(); ?>" required="required" data-validation-required-message="Veuillez entrer le nom de votre entreprise *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+			                	<i class="fas fa-city icon-input"></i>
+		                  		<textarea class="form-control" id="secteurActivite" name="secteurActivite" placeholder="Secteur d'activité " required="required" data-validation-required-message="Veuillez entrer l'activité de votre entreprise *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *"><?= $entreprise->getSecteurActivite(); ?></textarea>
+		                  		<p class="help-block text-danger"></p>
+		                	</div>
+			                <div class="form-group">
+		                  		<textarea class="form-control" id="description" name="description" placeholder="Description " required="required" data-validation-required-message="Veuillez entrer la description de votre entreprise *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *"><?= $entreprise->getDescription(); ?></textarea>
+		                  		<p class="help-block text-danger"></p>
+		                	</div>
+			                <div class="form-group">
+			                	<i class="fas fa-user-alt icon-input"></i>
+			                  	<input class="form-control text-capitalize" id="nomRepresentant" name="nomRepresentant" type="text" placeholder="Représentant" value="<?= $entreprise->getNomRepresentant(); ?>" required="required" data-validation-required-message="Veuillez entrer le nom du Représentant de votre entreprise *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+			                	<i class="fas fa-briefcase icon-input"></i>
+			                  	<input class="form-control text-capitalize" id="qualiteRepresentant" name="qualiteRepresentant" type="text" placeholder="Qualité du représentant" value="<?= $entreprise->getQualiteRepresentant(); ?>" required="required" data-validation-required-message="Veuillez entrer la qualité du représentant de votre entreprise *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+			                	<input class="form-control" id="rcs" name="rcs" type="text" value="<?= $entreprise->getRcs(); ?>" placeholder="RCS" required="required" data-validation-required-message="Veuillez entrer l'immatriculation RCS">
+			                	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+			                  	<input class="form-control" id="nif" name="nif" type="number" value="<?= $entreprise->getNif(); ?>" placeholder="NIF" required="required" data-validation-required-message="Veuillez entrer la référence NIF "  data-validation-regex-regex="[0-9]{10}" data-validation-regex-message="10 chiffres obligatoire">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+			                  	<input class="form-control" id="stat" name="stat" type="number" value="<?= $entreprise->getStat(); ?>"  placeholder="STAT" required="required" data-validation-required-message="Veuillez entrer la référence STAT "  data-validation-regex-regex="[0-9]{17}" data-validation-regex-message="17 chiffres obligatoire">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+		              	</div>
+		              	<div class="col-md-4">
+			                <div class="form-group">
+			                	<i class="fas fa-building icon-input"></i>
+			                  	<input class="form-control text-capitalize" id="adresse" name="adresse" type="text" placeholder="Adresse" value="<?= $entreprise->getAdresse(); ?>" required="required" data-validation-required-message="Veuillez entrer l'adresse de votre entreprise *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">			                	
+			                	<i class="fas fa-map-marker-alt icon-input"></i>
+			                  	<input class="form-control text-capitalize" id="ville" name="ville" type="text" placeholder="Ville" value="<?= $entreprise->getVille(); ?>" required="required" data-validation-required-message="Veuillez entrer la ville de votre entreprise *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+			                	<i class="fas fa-phone-square-alt icon-input"></i>
+							    <select id="select-country" class="form-control focus_activated">
+							    	<option value="">Contacts</option>
+							      	<?php 
+							      		foreach(unserialize(COUNTRIES) as $country): ?>
+						                <option 
+						                	value="<?= $country['code']; ?>">
+						                	<?= $country['country'] ?>
+						                </option>
+						            <?php endforeach; ?>
+							    </select>
+							    <br>
+							    <input type="text" id="input-phone" class="form-control focus_activated" value="<?= $entreprise->getContact(); ?>" required="required" data-validation-required-message="Veuillez entrer votre contact" placeholder="Contact">	
+							   	<p class="help-block text-danger"></p>		    
+							</div>
+		                    <div class="form-group hidden">
+		                        <input class="form-control focus_activated" id="contact" name="contact" type="text" value="">
+		                    </div>
+					        <div class="form-group">
+					          	<input class="form-control" id="contactRh" name="contactRh" type="text" value="<?= $entreprise->getContactRh(); ?>" placeholder="Contact RH">
+					          	<p class="help-block text-danger"></p>
+					        </div>
+			                <div class="form-group">
+			                	<i class="fas fa-envelope icon-input"></i>
+			                  	<input class="form-control" id="email" name="email" type="email" placeholder="Email" value="<?= $entreprise->getEmail(); ?>" required="required" data-validation-required-message="Veuillez entrer votre email *">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+		              	</div>
+		            <?php endif; ?>
+		              	<div class="col-lg-12 text-center">
+		                	<button id="submit" class="btn btn-primary btn-xl" type="submit">
+		                		Enregistrer
+		                	</button>
+		                	<a class="btn btn-danger btn-xl cancel" href="#" data-toggle="modal" data-target="#cancelModal" data-url="cancel-compte">Annuler</a>
+		              	</div>
+		            </div>
+          		</form>
+        	</div>
+      	</div>
+    </div>
+</section>
+
+ <!-- Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="text-confirmation"></p>
+      </div>
+      <div class="modal-footer">
+        <a id="action-cancel" class="btn btn-success">Oui</a>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Non</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormCompte.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script> 
+	var pathname = new URL(window.location.href).pathname; 
+	var cleave = new Cleave('#input-phone', {
+      phone:true,
+      phoneRegionCode: $('#select-country').children("option:selected").val()
+    });
+
+	if (pathname == "/register-entreprise") {
+		var cleaveRH = new Cleave('#contactRh', {
+	      phone:true,
+	      phoneRegionCode: $('#select-country').children("option:selected").val()
+	    });
+		if ($('#select-country').children("option:selected").val() == "") {
+	    	$('#input-phone').addClass('hidden');
+	    	$('#contactRh').addClass('hidden');
+	    }
+
+		$('#select-country').change(function(){
+			$('#input-phone').removeClass('hidden');
+			$('#contactRh').removeClass('hidden');
+	      	cleave.setPhoneRegionCode(this.value);
+	      	cleave.setRawValue('');
+	      	cleaveRH.setPhoneRegionCode(this.value);
+	      	cleaveRH.setRawValue('');
+	    });
+	} else {
+		if ($('#select-country').children("option:selected").val() == "") {
+	    	$('#input-phone').addClass('hidden');
+	    }
+
+		$('#select-country').change(function(){
+			$('#input-phone').removeClass('hidden');
+	      	cleave.setPhoneRegionCode(this.value);
+	      	cleave.setRawValue('');
+	    });
+	} 
+</script>

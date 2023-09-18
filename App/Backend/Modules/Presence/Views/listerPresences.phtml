@@ -1,0 +1,18 @@
+<?php
+	$user = null;
+	if (!empty($_SESSION['compte']['identifiant'])) {
+		$user = $_SESSION['compte']['identifiant'];
+	}
+?>
+<div>
+	<?php if ($user != null) :?>
+		<?php foreach ($data as $dataJournee) :?>
+			<div class="row">
+				<div class="col-md-6">
+					<?= //$dataJournee['date']; ?>
+				</div>
+			</div>
+			<br>
+		<?php endforeach?>
+	<?php endif?>
+</div>

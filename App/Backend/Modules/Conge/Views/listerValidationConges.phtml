@@ -1,0 +1,300 @@
+<?php
+	extract($data);
+?>
+<div>
+	<?php /**@changelog 15/04/2022 [OPT] (Lansky) Minimiser les lignes de codes pour éliminer la redondance de code */
+		$getIdsArchived = '';  $getIdsRead = ''; $getIdsRestaure = '';
+	?>
+	<?php if (count($validations) > 0) : ?>
+		<div class="card m-2 p-2 card-border-bleu" id="objectsGrid" style="background: #c4c9cd; z-index: 1; top: 0em; position: sticky;">
+			<div class="col-md-5 align-left" style="margin-left: -6%;">
+				<label class="control checkbox" for="multi-select__select-all">
+			      	<input id="multi-select__select-all" type="checkbox">
+			      	<span class="control-indicator"></span>
+			      	<a href="<?= HOST . 'manage/archiver-validationConge?idValidationConge='?>" class="btn btn-sm btn-danger archive disabled">Archiver</a>
+              		<a href="<?= HOST . 'manage/valider-validationConge?idValidationConge=' ?>" class="btn btn-sm btn-success read disabled">Valider</a>
+					<a class="btn btn-sm btn-info restaure disabled" href="<?= HOST . 'manage/restaurer-validationConge?idValidationConge='?>" >restaurer</a>
+			    </label>
+	    	</div>
+			<div class="col-md-7 align-center">
+	    	</div>
+    	</div>
+		<?php foreach ($validations as $validation) : $demande = $demandes[$validation->getIdValidationConge()]?>
+			<?php extract($demande); $employe = $employes[$demande->getIdConge()]; ?>
+			<?php if ($demande->getStatut() == ManagerModuleConge::LEAVE_ABOLISHED) :?>
+				<?php if ($validation->getStatut() == ManagerModuleConge::LEAVE_PROPOSED) :
+					$color = "#ffe905"; $class = "fa-exclamation-triangle"; $text = "en attente";
+				?>
+				<?php elseif ($validation->getStatut() == ManagerModuleConge::LEAVE_VALIDATED) :
+					$color = "#0076fd"; $class = "fa-check"; $text = "congé annulé";
+				?>
+				<?php elseif ($validation->getStatut() == ManagerModuleConge::LEAVE_REJECTED) :
+					$color = "#6610f2/*#f1491d*/"; $class = "fa-times"; $text = "annulation rejetée";
+				?>
+				<?php elseif ($validation->getStatut() == ManagerModuleConge::LEAVE_CANCELED) :
+					$color = "#ff2598"; $class = "fa-trash"; $text = "annulation retirée";
+				?>
+				<?php endif?>
+			<?php else :?>
+				<?php if ($validation->getStatut() == ManagerModuleConge::LEAVE_VALIDATED) :
+					$color = "#00c853"; $class = "fa-check"; $text = "validée";					
+				?>
+				<?php elseif ($validation->getStatut() == ManagerModuleConge::LEAVE_PROPOSED) :
+					$color = "#ffab00"; $class = "fa-exclamation-triangle"; $text = "en attente";					
+				?>
+				<?php elseif ($validation->getStatut() == ManagerModuleConge::LEAVE_REJECTED) :
+					$color = "#d32f2f"; $class = "fa-times"; $text = "rejetée";					
+				?>
+				<?php elseif ($validation->getStatut() == ManagerModuleConge::LEAVE_CANCELED) :
+					$color = "#f13535f5"; $class = "fa-trash"; $text = "retirée";					
+				?>
+				<?php endif?>
+			<?php endif?>
+			<div class="card m-2 p-2" style="border: 1px solid <?= $color?>; background: #e1e3e5;">
+				<div class="row">
+					<?php /**@changelog 15/09/2022 [OPT] (Lansky) Sélection multiple la liste de la validation du congé */ ?>
+					<div class="col-md-2 align-center">
+						<?php if ($validation->getStatut() != ManagerModuleConge::LEAVE_PROPOSED) :
+							if ($validation->getEtat() == ManagerModuleConge::LEAVE_ARCHIVED) :
+								$getIdsRestaure .= ',' . $validation->getIdValidationConge();
+								$mesStatus 		= 'mess-restaure';
+							else :
+								$getIdsArchived .= ',' . $validation->getIdValidationConge();
+								$mesStatus 		= 'mess-archive';
+							endif;
+						else : 
+							$getIdsRead .= ',' . $validation->getIdValidationConge();
+							$mesStatus 	= 'mess-read';
+							//$getIdsRestaure
+						?>
+						<?php endif; ?>
+						<label class="control checkbox <?=$mesStatus?>" for="<?=$validation->getIdValidationConge()?>" style="top: -9px;">
+			              	<input id="<?=$validation->getIdValidationConge()?>" type="checkbox" value="<?=$validation->getIdValidationConge()?>"  onclick="checkboxChange(<?=$validation->getIdValidationConge()?>, true)">
+			              	<span class="control-indicator"></span>
+			            </label>
+						<i class="fa <?= $class?>" style="color: <?= $color?>;" aria-hidden="true"></i>
+						<span class="text-important" style="color: <?= $color?>;"><?= $text?></span>
+					</div>
+					<div class="col-md-2 text-left" style="overflow: hidden; text-overflow: ellipsis;white-space: nowrap;">
+						<span class="titre"> 
+							<?= $employe->getCivilite() . ' ' . $employe->getNom() . ' ' . $employe->getPrenom() ?>
+						</span> 
+					</div>
+					<div class="col-md-2 text-left">
+						<span>
+							du
+							<?php $date = explode("-", $demande->getDebut()) ?>
+							<span class="titre"><?= ' ' . $date[2] . '/' . $date[1] . '/' . $date[0]?></span>
+							au
+							<?php $date = explode("-", $demande->getFin()) ?>
+							<span class="titre"><?=' ' . $date[2] . '/' . $date[1] . '/' . $date[0]?></span>.
+						</span>
+					</div>
+					<div class="col-md-2 text-left" style="overflow: hidden; text-overflow: ellipsis;white-space: nowrap;">
+						<span class="titre">
+							<?php if (count($suivisValidation[$validation->getIdConge()]) > 0) :?>
+								Validé par: 
+								<?php foreach ($suivisValidation[$validation->getIdConge()] as $suivi) : 
+									$userName = $_SESSION['user']['idCompte'] == $suivi[$suivi['responsable']]->getIdCompte() ? 'Vous' : ($suivi['responsable'] == ManagerModuleConge::COMPTE_ENTREPRISE ? $suivi['entreprise']->getNom() : $suivi['employe']->getCivilite() . ' ' . $suivi['employe']->getNom() . ' ' . $suivi['employe']->getPrenom());
+									$userName .= $suivi['statut'] == ManagerModuleConge::LEAVE_REJECTED ? '<br>(a rejeté)' : '';
+								?>
+									<?= $suivi['statut'] != ManagerModuleConge::LEAVE_PROPOSED ? '<br>' . $userName : '';?>
+								<?php endforeach; ?>
+							<?php else : ?>
+								Aucune validation
+							<?php endif; ?>
+						</span> 
+					</div>
+					<div class="col-md-2 text-center">
+						<span class="titre"><?=  ucfirst($demande->getRaison()) . ($validation->getStatut() == ManagerModuleConge::LEAVE_REJECTED && $_SESSION['compte']['identifiant'] == 'entreprise' ? '<br>Motif refus :<br>' . ucfirst($demande->getMotifRefus()) : '');?></span>
+					</div>
+					<div class="col-md-2 text-right">
+						<?php if ($validation->getEtat() == ManagerModuleConge::LEAVE_NOT_ARCHIVED) : ?>
+							<?php if ($validation->getStatut() == ManagerModuleConge::LEAVE_PROPOSED) : ?>
+								<button class="btn btn-sm btn-danger" disabled>archiver</button>
+							<?php else : ?>
+								<a class="btn btn-sm btn-danger" href="<?= HOST . 'manage/archiver-validationConge?idValidationConge=' . $validation->getIdValidationConge() ?>" >archiver</a>
+							<?php endif ?>
+						<?php elseif ($validation->getEtat() == ManagerModuleConge::LEAVE_ARCHIVED) : ?>
+							<a class="btn btn-sm btn-success" href="<?= HOST . 'manage/restaurer-validationConge?idValidationConge=' . $validation->getIdValidationConge() ?>" >restaurer</a>
+						<?php endif ?>
+						<button class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalDemande<?=$validation->getIdValidationConge()?>">voir</button>
+						<?= $validation->getStatut() == ManagerModuleConge::LEAVE_REJECTED && $demande->getAllow() == ManagerModuleConge::NO ? '<button class="btn btn-sm btn-info btn-autorized" id="btn-' . $demande->getIdConge() . '">autoriser</button>' : '';?>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="modalDemande<?=$validation->getIdValidationConge()?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  				<div class="modal-dialog modal-dialog-centered" role="document">
+    				<div class="modal-content">
+      					<div class="modal-header">
+        					<div class="text-center" style="width: 100%;">
+					      		<h5 class="modal-title section-heading" style="margin-bottom: -15px!important;" id="exampleModalLabel">Les détails de la demande</h5>
+					      	</div>
+        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          						<span aria-hidden="true">&times;</span>
+        					</button>
+      					</div>
+      					<div class="modal-body">
+        					<div class="card p-3" style="background: #efefff;">
+        						<div class="card m-1 p-2 titre text-center">
+        							<p class="m-0">
+	        							<span class="text-important"> <?= $employe->getCivilite() . ' ' . $employe->getNom() . ' ' . $employe->getPrenom() ?></span>
+									</p>
+        						</div>
+        						<div class="card m-1 p-2 text-left">
+        							<p>
+        								<span class="titre"> 
+        									<?= $employe->getCivilite() . ' ' . $employe->getNom() . ' ' . $employe->getPrenom() ?>
+        								</span> 
+        								<?php if ($demande->getDebut() != $demande->getFin()) : ?>
+	        								<?php if ($demande->getStatut() == ManagerModuleConge::CANCELED) :
+	        									echo ' a retiré sa demande de congé pour le ';
+	        								elseif ($demande->getStatut() == ManagerModuleConge::ABOLISHED) :
+	        									echo ' a demandé d&rsquo;annuler son congé du ';
+											else :
+        										echo ' a demandé un congé pour le ';
+		        							endif;?>
+	        								<?php $date = explode("-", $demande->getDebut()) ?>
+											<span class="titre"><?= ' ' . $date[2] . '/' . $date[1] . '/' . $date[0]?></span>
+											<?php if ($demande->getHeureDebut() == ManagerModuleConge::APRES_MIDI) : ?>
+												<span class="titre"> [midi] </span>
+											<?php endif ?>
+											jusqu'au
+											<?php $date = explode("-", $demande->getFin()) ?>
+											<span class="titre"><?=' ' . $date[2] . '/' . $date[1] . '/' . $date[0]?></span>
+											<?php if ($demande->getHeureFin() == ManagerModuleConge::APRES_MIDI) : ?>
+												<span class="titre"> [midi] </span>
+											<?php endif ?>
+											en raison de "<span class="text-important"><?= $demande->getRaison(); ?></span>
+											".<br>Son solde de congé est
+											<span class="text-important">
+												<?php echo ManagerModuleConge::showSoldeConge($solde->getDuree()); ?>&nbsp;&#46;
+											</span>
+	        							<?php else : ?>
+	        								<?= $demande->getStatut() == ManagerModuleConge::ABOLISHED ? 'souhaite annuler son congé prévu le' : 'a demandé un congé pour le' ?>
+	        								<?php $date = explode("-", $demande->getDebut()) ?>
+											<span class="titre"><?= ' ' . $date[2] . '/' . $date[1] . '/' . $date[0]?></span>
+											<?php if ($demande->getHeureDebut() == ManagerModuleConge::APRES_MIDI) : ?>
+												<span class="titre"> après-midi </span>
+											<?php elseif ($demande->getHeureFin() == ManagerModuleConge::MATIN) : ?>
+												<span class="titre"> matin </span>
+											<?php endif ?>
+											en raison de "<span class="text-important"><?= $demande->getRaison(); ?></span>".
+											<?php if ($demande->getDuring() > 0 && $demande->getBeginto() > 0) :?>
+												<br>Son congé commence à 
+												<span class="text-important"><?= $demande->getBeginto();?>H</span>
+												, il doit-être au bureau à 
+												<span class="text-important">
+													<?= $demande->getBeginto() + $demande->getDuring();?>H
+												</span> .
+											<?php endif; ?>
+											<br>Son solde de congé est <span class="text-important"><?= ManagerModuleConge::showSoldeConge($solde->getDuree()); ?>&nbsp;&#46;</span>
+		        						<?php endif ?>
+									</p>
+        							<?php if ($demande->getStatut() == ManagerModuleConge::PROPOSED) : ?>
+	        							<p>
+	        								Veuillez répondre à sa demande dès que possible.
+	        							</p>
+	        						<?php elseif ($demande->getStatut() == ManagerModuleConge::REFUSED) : ?>
+	        							<p>
+	        								Cette demande a été refusée en raison de <span class="text-important">"<?= $demande->getMotifRefus() ?>"</span>
+	        							</p>
+	        						<?php endif ?>
+	        					</div>
+	        					<div class="card m-1 p-2 text-left hidden" id="block-refus-<?= $validation->getIdValidationConge() ?>">
+	        						<label class="input-label titre">Motif de refus :</label>
+	        						<input type="text" class="" id="motif-refus-<?= $validation->getIdValidationConge() ?>" style="border-radius: 5px;" placeholder="Mentionnez la raison du refus de la demande">
+	        						<p class="text-danger" id="help-<?= $validation->getIdValidationConge() ?>"></p>
+	        					</div>
+        					</div>
+      					</div>
+      					<div class="modal-footer">
+        					<div class="text-right" style="width: 105%!important;">
+        						<?php if ($validation->getStatut() == ManagerModuleConge::LEAVE_PROPOSED) : ?>
+        							<?php $link = $demande->getStatut() == ManagerModuleConge::LEAVE_ABOLISHED ? 'annulation' : 'validation' ; ?>
+        							<button class="btn btn-sm btn-danger hidden" id="annuler-<?= $validation->getIdValidationConge() ?>">
+										annuler le refus
+									</button>
+									<button class="btn btn-sm btn-info hidden" id="rejet-link-<?= $validation->getIdValidationConge() ?>" >
+										envoyer la raison du refus
+									</button>
+									<button class="btn btn-sm btn-danger" id="rejet-btn-<?= $validation->getIdValidationConge() ?>">
+										rejeter
+									</button>
+									<a class="btn btn-sm btn-success" id="valider-<?= $validation->getIdValidationConge() ?>" href="<?= HOST . 'manage/valider-' . $link . 'Conge?idValidationConge=' . $validation->getIdValidationConge() ?>">
+										valider
+									</a>
+								<?php else : ?>
+									<a class="btn btn-sm btn-danger" href="<?= HOST . 'manage/archiver-validationConge?idValidationConge=' . $validation->getIdValidationConge() ?>">
+										archiver
+									</a>
+									<?php if ($validation->getStatut() == ManagerModuleConge::LEAVE_REJECTED && $demande->getDebut() >= date('Y-m-d') && $_SESSION['compte']['idCompte'] == $validation->getIdCompte()) : ?>
+										<a class="btn btn-sm btn-success" id="valider-<?= $validation->getIdValidationConge() ?>" href="<?= HOST . 'manage/valider-revalidationConge?idValidationConge=' . $validation->getIdValidationConge() . '&idConge=' . $demande->getIdConge() . "&motifRefus=" . $demande->getMotifRefus()?>">
+											revalider
+										</a>
+									<?php endif ?>
+								<?php endif ?>
+					      	</div>
+      					</div>
+    				</div>
+  				</div>
+  			</div>
+  			<script>
+  				$('#rejet-btn-<?= $validation->getIdValidationConge() ?>').click(function(){
+  					$('#block-refus-<?= $validation->getIdValidationConge() ?>').removeClass("hidden");
+  					$('#rejet-btn-<?= $validation->getIdValidationConge() ?>').addClass("hidden");
+  					$('#valider-<?= $validation->getIdValidationConge() ?>').addClass("hidden");
+  					$('#rejet-link-<?= $validation->getIdValidationConge() ?>').removeClass("hidden");
+  					$('#annuler-<?= $validation->getIdValidationConge() ?>').removeClass("hidden");
+  				});
+  				$('#rejet-link-<?= $validation->getIdValidationConge() ?>').click(function(){
+  					if ($('#motif-refus-<?= $validation->getIdValidationConge() ?>').val() != "") {
+  						window.location.href = "<?= HOST . 'manage/rejeter-validationConge?idValidationConge=' . $validation->getIdValidationConge() . '&motifRefus=' ?>" + $('#motif-refus-<?= $validation->getIdValidationConge() ?>').val();
+  					} else {
+  						$('#help-<?= $validation->getIdValidationConge() ?>').html("*Veuillez renseigner le motif de votre refus");
+  					}
+  				});
+  				$('#annuler-<?= $validation->getIdValidationConge() ?>').click(function(){
+  					$('#block-refus-<?= $validation->getIdValidationConge() ?>').addClass("hidden");
+  					$('#rejet-btn-<?= $validation->getIdValidationConge() ?>').removeClass("hidden");
+  					$('#valider-<?= $validation->getIdValidationConge() ?>').removeClass("hidden");
+  					$('#rejet-link-<?= $validation->getIdValidationConge() ?>').addClass("hidden");
+  					$('#annuler-<?= $validation->getIdValidationConge() ?>').addClass("hidden");
+  				});
+  			</script>
+		<?php endforeach?>
+	<?php else : ?>
+		<div class="card m-2 p-2 text-center">
+			<span>Vous n'avez aucune demande de congé à afficher</span>
+		</div>
+	<?php endif?>
+</div>
+<script type="text/javascript">
+	var hrefAttribute 	=  $('#multi-select__select-all').parent().find('a').attr('href') + '<?= $getIdsArchived ?>';
+	var idModules 		= "idValidationConge=";
+	var idModules 		= "idMessage=";
+	var getIdsRead 		= '<?= $getIdsRead?>';
+	var getIdsArchived 	= '<?= $getIdsArchived?>';
+	var getIdsRestaure 	= '<?= $getIdsRestaure?>';
+	console.log(getIdsArchived);
+	console.log(getIdsRestaure);
+	console.log(getIdsRead);
+	$('.btn-autorized').click(function(){
+		let id = $(this).attr('id');
+		$.post(
+		    "<?= HOST . 'manage/changer-autoriserDemandeConge'?>",
+		    {
+		        autorize 	: 1,
+		        idConge		: $(this).attr('id').replace('btn-', '')
+		    },
+		    function(data) {
+				$('#' + id).remove();
+		    },
+		    'json'
+		);
+	});
+	tippy('.btn-autorized', {
+		content: "Authoriser le salarié faire une autre demande dans ce plage de date"
+	});
+</script>
+<script src="<?= HOST; ?>../Web/Ressources/js/findListSelected.js"></script>

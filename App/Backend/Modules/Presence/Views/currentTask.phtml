@@ -1,0 +1,89 @@
+<?php
+	$heureCourante = new DateTime(date('H:i:s'));
+	$heureCourante->add(new DateInterval('PT2H'));
+	$heureAvecDecalage = new DateTime($heureCourante->format('H:i:s'));
+?>
+<div>	
+	<table class="table table-borderless" id="table-tache" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0">
+				<th class="p-0" style="width: 55%!important;"><div class="card p-2 m-1 card-grey">Nom et Prénom</div></th>
+				<th class="p-0 pe text-center th-tache" style="width: 13%!important;"><div class="card-tache card p-2 m-1 card-grey">Tâche</div></th>
+				<th class="p-0 pr text-center th-tache" style="width: 14%!important;"><div class="card-tache card p-2 m-1 card-grey">Debut</div></th>
+				<th class="p-0 ab text-center th-tache" style="width: 18%!important;"><div class="card-tache card p-2 m-1 card-grey">Durée</div></th>
+			</tr>
+		</thead>
+		<tbody class="" style="padding: 0px!important;">
+			<?php foreach ($data as $key => $value) :
+				extract($value);
+				$heure1 	= new DateTime($pointage->getDebut());
+				$diffFormat = $heure1->diff($heureAvecDecalage);
+			?>
+				<tr class="p-0" id="<?=$key?>">
+					<td class="text-important p-0">
+						<div class="card p-2 m-1 card-light-grey" >
+							<?=$userName;?>
+						</div>
+					</td>
+					<td class="text-important text-center p-0">
+						<div class="card p-2 m-1 card-light-grey" >
+							<?php if (is_array($tache)) :
+								foreach ($tache as $ky => $task) :
+									echo  ($ky > 0 ? '<br>' : '') . $task->getTitre();
+								endforeach;
+							else : 
+								echo $tache->getTitre();
+							endif; ?>
+						</div>
+					</td>
+					<td class="text-important text-center p-0">
+						<div class="card p-2 m-1 card-light-grey" >
+							<?=$pointage->getDebut();?>
+						</div>
+					</td>
+					<td class="text-important text-center p-0">
+						<div class="card p-2 m-1 card-light-grey <?= $pointage->getStatut() == ManagerModulePresence::OPEN_POINTING ? 'activeTask' : 'pausedTask';?>">
+							<input type="text" value="<?= $diffFormat->format('%H:%I:%S');?>" readonly="readonly" class="input-time text-important" id="input-<?=$key?>" style="color: #212529;height: 22px!important;">
+						</div>
+					</td>
+				</tr>
+			<?php endforeach; ?>
+		</tbody>
+	</table>
+</div>
+<script>
+	const SECOND_MAX 	= 60;
+	const MINUTE_MAX 	= 60;
+	const BASE_TEN   	= 10;
+	$('document').ready(function() {
+		$.each($('.activeTask > input[type="text"]'), function() {
+			startTimer('#' + $(this).attr('id'));
+		});
+	});
+
+	function startTimer(selector)
+	{
+		var start = $(selector).val();
+		/* @changelog 21/04/2022 [FIX] (Lansky) Sécuriser le code pour éviter l'apparition le message d'erreur */
+		if (start) {
+			var duration 	= start.split(":");
+			var hours 		= parseInt(duration[0], BASE_TEN);
+			var minutes 	= parseInt(duration[1], BASE_TEN);
+			var seconds 	= parseInt(duration[2], BASE_TEN);
+			var x = setInterval(function() {
+				if (seconds + 1 < SECOND_MAX) {
+					seconds++;
+				} else {
+					seconds = 0;
+					if (minutes +1 < MINUTE_MAX) {
+						minutes++;
+					} else {
+						minutes = 0;
+						hours++;
+					}
+				}
+					$(selector).val(('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2));
+			}, 1000);
+		}
+	}
+</script>

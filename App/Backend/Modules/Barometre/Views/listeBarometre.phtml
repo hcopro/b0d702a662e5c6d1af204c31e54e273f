@@ -1,0 +1,162 @@
+	<?php
+		if ($data) :
+			extract($data);
+		endif;
+	?>
+	<?php if ($_SERVER['REQUEST_URI'] == "/manage/barometre_list") : ?>
+		<table class="table table-striped small-first-col" id="table-back">
+			<thead>
+				<tr>
+					<?php if (isset($barometres['toutEmploye'])) : $body = 'all'; ?>
+						<th>Prénom</th>
+						<th>Nom</th>
+						<th>Service</th>
+						<th>Poste</th>
+					<?php else : ?>
+						<?php if (strstr(array_key_first($barometres), 'idPoste')) : $body = 'poste';?>
+							<th>Poste</th>
+						<?php else : $body = 'service';?>
+							<th>Service</th>
+						<?php endif; ?>
+						<th>Effectifs</th>
+					<?php endif; ?>
+					<th>Répondre</th>
+					<th>Date d'envoie</th>
+					<th>Répondu le</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody id="tableSearch" class="body-half-screen">
+			<?php
+             if ($barometres) : ?>
+				<?php foreach ($barometres as $clef => $baroms): ?>
+					<?php if (is_object($baroms) && $body != 'all') : ?>
+						<?php $baroms = ['0' => $baroms]; ?>
+					<?php endif; ?>
+					<?php foreach ($baroms as $barometre): ?>
+						<tr>
+							<?php if ($body == 'all' && !is_string($barometre->getIdEmploye())) : ?>
+								<td>
+									<?= $barometre->getIdEmploye()->getIdEmploye()->getPrenom() ; ?>
+								</td>
+								<td>
+									<?= $barometre->getIdEmploye()->getIdEmploye()->getNom() ; ?>
+								</td>
+								<td>
+									<?= $barometre->getIdEmploye()->getIdServicePoste()->getIdEntrepriseService()->getService() ; ?>
+								</td>
+								<td>
+									<?= $barometre->getIdEmploye()->getIdServicePoste()->getIdEntreprisePoste()->getPoste() ; ?>
+								</td>
+							<?php elseif ($body == 'poste') : ?>
+								<td>
+									<?php $clefN = explode(':', $clef);
+										echo ucwords(end($clefN)); 
+									?>
+						   		</td>
+								<td>
+									<?= $barometre->getIdEmploye() ; ?>
+						   		</td>
+							<?php elseif ($body == 'service') : ?>
+								<td>
+									<?php $clefN = explode(':', $clef);
+										echo ucwords(end($clefN)); 
+									?>
+						   		</td>
+								<td>
+									<?= $barometre->getIdEmploye() ; ?>
+						   		</td>
+							<?php endif; ?>
+							<td>
+								<?= $barometre->getIsAnswered() ; ?>
+					   		</td>
+							<td>
+								<?= $barometre->getDate() ; ?>
+							</td>
+							<td>
+								<?php if (!is_null($barometre->getDateReply())) : ?>
+									<?= $barometre->getDateReply() ; ?>
+								<?php else : ?>
+									---
+								<?php endif; ?>
+							</td>
+							<td>
+								<?php if ($barometre->getIsAnswered() == 'YES') : ?>
+									<a href="<?= HOST. 'manage/barometre/graph_barometer?idBarometre=' . $barometre->getIdBarometreList()?>&content=<?= $body!='all'? urlencode(serialize($barometre->toArray())) : '';?>&show=all&offset=" class="btn btn-info" onclick="addOffSet(this)" ><i class="far fa-chart-bar"></i></a>
+								<?php endif; ?>
+						      	<a href="archived-barometre?idBarometre=<?=$barometre->getIdBarometreList();?>" class="btn btn-danger archived" data-toggle="modal" data-target="#deleteModal<?=$barometre->getIdBarometreList(); ?>" data-id="" data-url="archived-barometre?idBarometre=<?=$barometre->getIdBarometreList(); ?>"><i class="fa fa-times"></i></a>
+						      	<input type="hidden" name="content" value="">
+							</td>
+						</tr>
+					<?php endforeach;?>
+				<?php endforeach;?>
+			<?php endif;?>
+			</tbody>
+		</table>
+	<?php elseif ($_SERVER['REQUEST_URI'] == "/manage/linear_answers_barometer") : ?>
+		<table class="table table-striped small-first-col" id="table-back">
+			<thead>
+				<tr>
+					<?php foreach ($bodyTable[0] as $key => $title) : ?>
+						<th><?= $title;?></th>
+					<?php endforeach;?>
+				</tr>
+			</thead>
+			<tbody id="tableSearch" class="body-half-screen">
+				<?php array_shift($bodyTable); foreach ($bodyTable as $response) : ?>
+					<tr>
+						<?php foreach ($response as $result) : ?>
+							<td><?= $result;?></td>
+						<?php endforeach;?>
+					</tr>
+				<?php endforeach;?>
+			</tbody>
+		</table>
+		<!-- <table class="table table-striped small-first-col" id="table-back">
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Prénoms</th>
+					<th>Nom</th>
+					<?php foreach ($header[0] as $key => $title) : ?>
+						<th><?= $title;?></th>
+					<?php endforeach;?>
+					<th>Émotion</th>
+					<th>Suggestion ou demande particulières</th>
+				</tr>
+			</thead>
+			<tbody id="tableSearch" class="body-half-screen">
+				<?php foreach ($bodyTable[0] as $response) : ?>
+					<tr>
+						<td><?= $response['date'];?></td>
+						<td><?= $response['lastName'];?></td>
+						<td><?= $response['firstName'];?></td>
+						<?php foreach ($response['answers'] as $point) : ?>
+							<td><?= $point['answer'];?></td>
+						<?php endforeach;?>
+						<th><span style='font-size:20px;'><?= $response['feel'];?></span></th>
+						<td><?= $response['suggest'];?></td>
+					</tr>
+				<?php endforeach;?>
+			</tbody>
+		</table> -->
+
+
+		<script type="text/javascript">
+			var filterLastDateReceive = <?= json_encode($dates);?>;
+			$(window).ready(function(){
+				let select = $('select#filter-last-date-receive'); // Sélectionne l'élément du select
+				$.each(filterLastDateReceive, function() {
+					let option = $('<option>');// Créer un nouvel élément d'option
+					// Définir la valeur et le texte de l'option
+					option.val(this);
+					option.text(this);
+					select.append(option);// Ajouter l'option à la sélection
+				});
+			});
+		</script>
+	<?php endif;?>
+<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+<script type="text/javascript">
+	var offSet = <?= !is_null($_SESSION['filters']['offset']) ? $_SESSION['filters']['offset'] : 1;?>;
+</script>

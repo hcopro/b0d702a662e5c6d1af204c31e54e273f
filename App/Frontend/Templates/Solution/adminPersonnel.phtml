@@ -1,0 +1,183 @@
+<?php
+  $pageTitle= "Administration de personnel"; 
+?>
+ <!-- Header -->
+  <header class="masthead">
+    <div class="container">
+      <div class="intro-text">
+        <div class="intro-lead-in">Bienvenue sur le site 
+          <img class="rounded-circle img-fluid" id="smile" src="<?= HOST; ?>../Web/Ressources/images/smile.jpg">
+        </div>
+        <div class="intro-heading text-uppercase">
+          Human Cart'<img class="rounded-circle img-fluid" id="office" src="<?= HOST; ?>../Web/Ressources/images/logowebsite.png">ffice
+        </div>
+      </div>
+    </div>
+  </header>
+  <section class="bg-light page-section" id="adminPersonnel">
+    <div class="container custom-container">
+      <div class="row">
+        <div class="col-lg-12 text-center">
+          <img class="rounded-circle img-fluid image" src="<?= HOST; ?>../Web/Ressources/images/gif/admin-personnel.gif"  style="margin-bottom: -10%; margin-left: -81%; width: 10%; height: 100%;">
+          <h2 class="section-heading text-uppercase">ADMINISTRATION DE PERSONNEL</h2>
+        </div>
+      </div>
+
+      <div class="row align-items-center" style="margin-top: 4%; margin-bottom: 67px; padding-top: 45px;">
+        <div class="col-sm-5 col-text">
+          <div class="cover-gound" style="--imageBack: url(<?= HOST; ?>../Web/Ressources/images/icon/icone-pointage.png);">
+          </div>
+          <div class="row-content">
+            <span class="timeline-panel">
+              Module<br>
+              <p class="text-muted strong ">
+                <strong>Gestion de pointage</strong>
+              </p>
+              <img class="rounded-circle img-fluid image" src="<?= HOST; ?>../Web/Ressources/images/gif/boton-siguiente.gif" style="--size: 50px!important; --top: -28%">
+            </span>
+            <ul>
+              <li>
+                <a href="<?= HOST ;?>Solution/AdminPersonnel/adminPersonnelExplanation#pointage" title="fonctionnalité de pointage"><p>Pointages</p></a>
+              </li>
+              <li>
+                <a href="<?= HOST ;?>Solution/AdminPersonnel/adminPersonnelExplanation#taches" title="fonctionnalité de la tâche réalisée"><p>Tâche réalisées</p></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-5 col-text">
+          <div class="cover-gound" style="--imageBack: url(<?= HOST; ?>../Web/Ressources/images/icon/icone-gestion-de-conges.jpg);">
+          </div>
+         <div class="row-content">
+           <span class="timeline-panel">
+            Module<br>
+            <p class="text-muted strong ">
+              <strong>Gestion d'absence</strong>
+            </p>
+            <img class="rounded-circle img-fluid image" src="<?= HOST; ?>../Web/Ressources/images/gif/conges-vaccance.gif" style="--size: 83px!important; --top: -28%">
+          </span>
+          <ul>
+            <li>
+              <a href="<?= HOST ;?>Solution/AdminPersonnel/adminPersonnelExplanation#permission" title="fonctionnalité de permission et de repos"><p>Permission</p></a>
+            </li>
+              <li>
+                <a href="<?= HOST ;?>Solution/AdminPersonnel/adminPersonnelExplanation#conge" title="fonctionnalité de congé"><p>Congé</p></a>
+              </li>
+          </ul>
+         </div>
+        </div>
+      </div>
+      <div class="row align-items-center" style="margin-top: 4%; margin-bottom: 67px; padding-top: 45px;">
+        <div class="col-sm-5 col-text">
+          <div class="cover-gound" style="--imageBack: url(<?= HOST; ?>../Web/Ressources/images/icon/icone-paie.png);">
+          </div>
+          <div class="row-content">
+            <span class="timeline-panel">
+              Module<br>
+              <p class="text-muted strong strong">
+                <strong>Gestion de paie et de prestation social</strong>
+              </p>
+              <img class="rounded-circle img-fluid image" src="<?= HOST; ?>../Web/Ressources/images/gif/dollars.gif" style="--size: 60px!important; --top: -29%;">
+            </span>
+            <ul>
+              <li>
+                <a href="<?= HOST ;?>Solution/AdminPersonnel/adminPersonnelExplanation#paie-avance" title="fonctionnalité de l'avance"><p>Avances</p></a>
+              </li>
+              <li>
+                <a href="<?= HOST ;?>Solution/AdminPersonnel/adminPersonnelExplanation#paie-avance" title="fonctionnalité de paie"><p>Paie</p></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-5">
+          
+        </div>
+      </div>
+      <br>
+      <hr>
+      <div class="row" style="margin-top: 4%;">
+        <div class="col-md-4">
+          <div class="row">
+            <i><img class="rounded-circle img-fluid image" src="<?= HOST; ?>../Web/Ressources/images/icon/icone-manager.jpg"></i>
+            <p class="text-muted text-center">
+              <strong>Manager</strong>
+            </p>
+          </div>
+          <div class="row">
+            <ul class="timeline-body">
+              <li style="display: flex; flex-direction: row-reverse; align-items: baseline;">
+                <p>Valide congés, notes de frais et feuilles de temps en un clic</p>&nbsp;
+                <i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+              </li>
+              <li style="display: flex; flex-direction: row-reverse; align-items: baseline;">
+                <p>Visualise le planning de ses équipes</p>&nbsp;
+                <i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+              </li>
+              <li style="display: flex; flex-direction: row-reverse; align-items: baseline;">
+                <p>Gère ses projets en toute simplicité (temps passé, budget ...)</p>&nbsp;
+                <i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+              </li>
+              <li style="display: flex; flex-direction: row-reverse; align-items: baseline;">
+                <p>Est notifié des échéances importantes (fin de contrat, entretien annuel etc.)</p>&nbsp;
+                <i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <i><img class="rounded-circle img-fluid image" src="<?= HOST; ?>../Web/Ressources/images/icon/icone-salarie.png"></i>
+            <p class="text-muted text-center">
+              <strong>Salarié</strong>
+            </p>
+          </div>
+          <div class="row">
+            <ul class="timeline-body">
+              <li style="display: flex; flex-direction: row-reverse; align-items: baseline;">
+                <p>Peut effectuer ses démarches en ligne (demandes de congés, remboursement de notes de frais, remplissage des feuilles de temps …)</p>&nbsp;
+                <i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+              </li>
+              <li style="display: flex; flex-direction: row-reverse; align-items: baseline;">
+                <p>Reçoit ses bulletins de salaire sous forme dématérialisée</p>&nbsp;
+                <i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+              </li>
+              <li style="display: flex; flex-direction: row-reverse; align-items: baseline;">
+                <p>Devient acteur de son intégration dans l’entreprise</p>&nbsp;
+                <i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <i><img class="rounded-circle img-fluid image" src="<?= HOST; ?>../Web/Ressources/images/icon/icone-service-RH.png"></i>
+            <p class="text-muted text-center">
+              <strong>Service RH</strong>
+            </p>
+          </div>
+          <div class="row">
+            <ul class="timeline-body">
+              <li style="display: flex; flex-direction: row-reverse; align-items: baseline;">
+                <p>Accède à toutes les données des salariés, en un seul endroit</p>&nbsp;
+                <i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+              </li>
+              <li style="display: flex; flex-direction: row-reverse; align-items: baseline;">
+                <p>Exporte les données salariées et EVP en quelques clics </p>&nbsp;
+                <i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+              </li>
+              <li style="display: flex; flex-direction: row-reverse; align-items: baseline;">
+                <p>Peut constituer des tableaux de bord RH personnalisés </p>&nbsp;
+                <i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+              </li>
+              <li style="display: flex; flex-direction: row-reverse; align-items: baseline;">
+                <p>Reçoit des notifications en cas d’échéance importante (visite médicale …)</p>&nbsp;
+                <i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+ </section>

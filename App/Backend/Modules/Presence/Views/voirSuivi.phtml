@@ -1,0 +1,277 @@
+<?php
+	$user = null;
+	$url = explode('/', $_GET['page']);
+	if (!empty($_SESSION['compte']['identifiant'])) {
+		$user = $_SESSION['compte']['identifiant'];
+		if ($user == "employe") {
+			$pageTitle = "Suivi mes collaborateurs";
+		} elseif ($user == "entreprise") {
+			$pageTitle = "Suivi les salariés";
+		}
+	} else {
+		header("Location : " . HOST);
+	}
+	extract($data);
+?>
+<section class="page-section" id="back-section" style="overflow-y: none!important;">
+	<div class="container" style="max-width: 98%!important;">
+		<div class="row" style="margin-top: -15px;">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h4 class="text-center list-title section-heading"><?= $pageTitle ?></h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="block-section">
+					<div class="row">
+				        <ul id="new-tab-button">
+			        		<li id="tab1" class="is-active">
+			        			<a href="<?= HOST. 'manage/' . $user . '/suivi/dashboard'?>">
+			        				Temps passé sur les tâches
+			        			</a>
+			        		</li>
+			        		<li id="tab3" <?php end($url) == 'tracking' ? 'class="is-active"' : ''; ?>>
+			        			<a href="<?= HOST. 'manage/tracking'?>">
+			        				Tâches réalisée
+			        			</a>
+			        		</li>
+			        		<li id="tab4" <?php end($url) == 'currentTask' ? 'class="is-active"' : ''; ?>>
+			        			<a href="<?= HOST. 'manage/tracking/currentTask'?>">
+			        				Tâches en cours
+			        			</a>
+			        		</li>
+							<?php if ($user == "employe") :?>
+				        		<li id="tab2" <?php end($url) == 'interim' ? 'class="is-active"' : ''; ?>>
+				        			<a href="<?= HOST. 'manage/employe/interim'?>">
+				        				Subordonné intérimaire
+				        			</a>
+				        		</li> 
+				        		<li id="tab5">
+		        					<a href="<?= HOST. 'manage/entreprise_postes'?>">
+				        				Poste de mes collaborateurs
+				        			</a>
+				        		</li> 
+				        	<?php elseif ($user == 'entreprise') : ?>
+				        		<li id="tab6" <?php end($url) == 'tacheRealisee' ? 'class="is-active"' : ''; ?>>
+				        			<a href="<?= HOST. 'manage/entreprise/tacheRealisee'?>" >
+				        				Tâches réalisées par employés
+				        			</a>
+				        		</li> 			    
+							<?php endif ?>
+				        </ul>
+			      	</div>
+					<div class="tete-list-section row" style="background: #647994;">
+						<div class="col-md-3 text-left">
+							<select class="selectpicker" data-live-search="true" data-live-search-placeholder="Recherche..." id="employe" style="width: 95%!important; font-size: 0.9em!important;">
+								<?php foreach ($subordonnes as $subordonne) : ?>
+									<option value="<?= $subordonne->getIdEmploye(); ?>"><?= $subordonne->getNom() . ' ' . $subordonne->getPrenom(); ?></option>
+								<?php endforeach ?>
+							</select>
+						</div>
+						<div class="col-md-3 text-left">
+							<select id="user-task-group" class="select-time" style="width: 68%!important; height: 35px!important; font-size: 0.9em!important; text-align: left!important;">
+								<option value="all" selected>Tout</option>
+							</select>
+						</div>
+						<div class="col-md-2 text-left">
+							<select id="periode" class="select-time" style="width: 68%!important; height: 35px!important; font-size: 0.9em!important; text-align: left!important;">
+								<option value="">-- Selectionnez une période --</option>
+								<option value="1">aujourd'hui</option>
+								<option value="3">hier</option>
+								<option value="4">cette semaine</option>
+								<option value="6">la semaine passée</option>
+								<option value="7" selected>ce mois</option>
+								<option value="9">le mois dernier</option>
+								<option value="<?=date('Y')?>">cette année</option>
+								<?php for ($i=date("Y",strtotime("-1 year")); $i > 2018 ; $i--) : ?>
+									<option value="<?=$i?>">année <?=$i;?></option>
+								<?php endfor; ?>
+
+							</select>
+						</div>
+						<div class="col-md-4 text-left">
+							<label class="titre text-white">Intervalle :</label>
+							<label for="datepicker">
+						        <input class="form-control datepicker date-time" id="debut" type="text" autocomplete="off" placeholder="Début">
+					        </label>
+							 - 
+							<label for="datepicker">
+						        <input class="form-control datepicker date-time" id="fin" type="text" autocomplete="off" placeholder="Fin">
+					        </label>
+					    </div>
+					</div>
+			      	<?php if ($_SESSION['compte']['identifiant'] == 'entreprise') : ?>
+				      	<div class="row">
+				      		<div class="col-md-3">
+					      		<form method="POST" action="<?= HOST . 'manage/exportExcel-tracking';?>" enctype="multipart/form-data">
+									<i class="fas fa-arrow-alt-circle-down" style="margin-left: 3px; margin-top: 7px; position: absolute;"></i>
+									<input type="submit" class="btn-success exportExcel" id="exportExcel" value="Exporter en excel" style="padding-left: 20px; border-radius: 12%;">
+								</form>
+				      		</div>
+				      		<div class="col-md-3">
+					      		<form method="POST" action="<?= HOST . 'manage/exportExcel-allUserTask';?>" enctype="multipart/form-data">
+									<i class="fas fa-arrow-alt-circle-down" style="margin-left: 3px; margin-top: 7px; position: absolute;"></i>
+									<input type="submit" class="btn-success exportExcel" id="exportAllUserTask" value="Repartition heure affaire personne" style="padding-left: 20px; border-radius: 12%;">
+								</form>
+				      		</div>
+				      		<div class="col-md-6"></div>
+				      	</div>
+			      	<?php endif; ?>
+					<input type="hidden" id="startDay" value="">
+					<input type="hidden" id="endDate" value="">
+					<div class="" id="liste-suivi" style="overflow-y: auto;"></div>
+				</div>
+			</div>
+		</div>
+		<script>
+			const ONE_MONTH 	= 1;
+			const MAX_INTERVAL 	= 6;
+    		const MONTHS_FR 	= ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+
+			$("#document").ready(function() {
+				if ($('#employe').val() != null && $('#periode').val() != null) {
+					$('#startDay').val(new Date().getDate());
+						let nowaday 		= new Date();
+						let lastDayOfMonth 	= new Date(nowaday.getFullYear(), nowaday.getMonth()+1, 0);
+						let numberOfDays 	= lastDayOfMonth.getDate();	
+					$('#endDate').val(new Date().getFullYear() + '-' + (new Date().getMonth() < 10 ? '0':'') + (new Date().getMonth() + ONE_MONTH) + '-' + numberOfDays);
+					$('#liste-suivi').load("<?= HOST . 'manage/suivis' ?>", {
+						idEmploye : $('#employe').val(),
+						periode   : $('#periode').val()
+					}, function(){
+						callScriptGraph();
+					});
+				} else {
+					$('#liste-suivi').append("<div class='card text-center p-2 m-2'>Vous n'avez pas de suivi à faire.</div>");
+				}
+				$('button.btn.dropdown-toggle').css('color', '#3a434f');
+				$('button.btn.dropdown-toggle').css('font-size', '.9rem');
+				$('.dropdown.bootstrap-select').css('width', '302px');
+				if ($('.exportExcel').length > 0) {
+					$('.exportExcel').click(function(event) {
+						/* Act on the event */
+						let action 	= $(this).closest('form').attr('action');
+							action 	+= '?userTaskGroup=' + $('#user-task-group').val() +
+									($(this).attr('id') == 'exportExcel' ? '&idEmploye=' + $('#employe').val() : '') +
+									'&debut=' + $('#debut').val() +
+									'&periode=' + $('#periode').val() +
+									'&fin=' + $('#fin').val();
+						$(this).closest('form').attr('action', action);
+					});
+				}
+			});
+			$("#employe").change(function() {
+				if ($('#employe').val() != null && $('#periode').val() != null) {
+					$('#liste-suivi').load("<?= HOST . 'manage/suivis' ?>", {
+						idEmploye 		: $('#employe').val(),
+						userTaskGroup 	: $('#user-task-group').val(),
+						periode   		: $('#periode').val(),
+						debut     		: $('#debut').val(),
+						fin       		: $('#fin').val()
+					}, function(){
+						callScriptGraph();
+					});
+				}
+			});
+			$('#periode').change(function() {
+				$("#liste-suivi").load("<?= HOST . 'manage/suivis'?>", {
+					idEmploye 		: $('#employe').val(),
+					userTaskGroup 	: $('#user-task-group').val(),
+					periode   		: $('#periode').val()
+				}, function() {
+					$("#debut").val(null);
+					$("#fin").val(null);
+					let nowaday = new Date();
+					if ($('#periode').val() < 9) {
+				        $('#mois').val(nowaday.getFullYear() + '-' + (nowaday.getMonth() + ONE_MONTH));
+				        let lastDayOfMonth 	= new Date(nowaday.getFullYear(), nowaday.getMonth()+1, 0);
+						let numberOfDays 	= lastDayOfMonth.getDate();
+				        $('#endDate').val(nowaday.getFullYear() + '-' + (nowaday.getMonth() < 10 ? '0':'') + (nowaday.getMonth() + ONE_MONTH) + '-' + numberOfDays);
+					} else if ($('#periode').val() == 9) {
+				        let prevMonthLastDate 	= new Date(nowaday.getFullYear(), nowaday.getMonth() - ONE_MONTH, nowaday.getDate());
+				        let lastDayOfMonth 		= new Date(nowaday.getFullYear(), nowaday.getMonth(), 0);
+						let numberOfDays 		= lastDayOfMonth.getDate();	
+				        $('#mois').val(prevMonthLastDate.getFullYear() + '-' + (prevMonthLastDate.getMonth() + ONE_MONTH));
+				        $('#endDate').val(prevMonthLastDate.getFullYear() + '-' + (prevMonthLastDate.getMonth() < 10 ? '0':'') + (prevMonthLastDate.getMonth() + ONE_MONTH) + '-' + numberOfDays);
+					} else if ($('#periode').val() > 9) {
+						let lastYear 	= new Date(new Date(). getFullYear() - (nowaday.getFullYear() - parseInt($('#periode').val())), 0, 1); 
+						let start 		= (new Date(lastYear. getFullYear(), 0, 1));
+						let end 		= (new Date(lastYear. getFullYear(), 11, 31)); 
+				        $('#mois').val(start.getFullYear() + '-' + (start.getMonth() + ONE_MONTH));
+						$("#endDate").val(end.getFullYear() + '-' + (end.getMonth() + ONE_MONTH) + '-' + end.getDate());
+					}
+					callScriptGraph();
+				});
+			});
+			$('#debut').change(function() {
+				$("#liste-suivi").load("<?= HOST . 'manage/suivis'?>", {
+					idEmploye 		: $('#employe').val(),
+					debut     		: $('#debut').val(),
+					userTaskGroup 	: $('#user-task-group').val(),
+					fin       		: $('#fin').val()
+				}, function() {
+					$("#periode").val("");
+					$('#fin').val("");
+					var stringDate 		= $('#debut').datepicker('getDate');
+					var date       		= new Date(stringDate.getFullYear(), stringDate.getMonth() + MAX_INTERVAL, stringDate.getDate());
+			        let monthDay 		= new Date($('#mois').val() + '-01');
+					let lastDayOfMonth 	= new Date(monthDay.getFullYear(), monthDay.getMonth()+1, 0);
+					let numberOfDays 	= lastDayOfMonth.getDate();
+				    $('#fin').datepicker('option', 'maxDate', date);
+			        $('#mois').val(stringDate.getFullYear() + '-' + (stringDate.getMonth() + ONE_MONTH));
+			        $('#endDate').val(stringDate.getFullYear() + '-' + (stringDate.getMonth() < 10 ? '0':'') + (stringDate.getMonth() + ONE_MONTH) + '-' + numberOfDays);
+					callScriptGraph();
+				});
+			});
+			$('#fin').change(function() {
+				$("#liste-suivi").load("<?= HOST . 'manage/suivis'?>", {
+					idEmploye 		: $('#employe').val(),
+					debut     		: $('#debut').val(),
+					userTaskGroup 	: $('#user-task-group').val(),
+					fin       		: $('#fin').val()
+				}, function() {
+					let parts = $('#fin').val().split("/"); // Split the string into day, month, and year
+					$("#periode").val("");
+			        $('#mois').val($('#debut').val().split('/')[2] + '-' + $('#debut').val().split('/')[1]);
+					$("#endDate").val(parts[2] + "-" + (parts[1] < 10 && parts[1].charAt(0)!= '0' ? '0':'') + parts[1] + "-" + (parts[0] < 10 && parts[0].charAt(0)!= '0' ? '0':'') + parts[0]);
+					callScriptGraph();
+				});
+			});
+			$('#user-task-group').change(function() {
+				$("#liste-suivi").load("<?= HOST . 'manage/suivis'?>", {
+					userTaskGroup 	: $('#user-task-group').val(),
+					idEmploye 		: $('#employe').val(),
+					debut     		: $('#debut').val(),
+					periode   		: $('#periode').val(),
+					fin       		: $('#fin').val()
+				}, function() {
+					callScriptGraph();
+				});
+			});
+			function callScriptGraph()
+			{
+				$.ajax({
+					url: "<?= HOST; ?>../Web/Ressources/js/reportingGraph.js",
+					dataType: 'script',
+					success: function(data) {
+						/**
+						 * Adding reportingGraph.js script file
+						 * Script has been loaded and executed
+						*/
+						console.log("Script reportingGraph.js loaded...");
+					}
+				});
+			}
+		</script>
+	</div>
+</section>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabPointage.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/bootstrap-select.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/planning.js"></script>
+
+<!-- Adding ej2.min.js CDN link in script file -->
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/ej2CHART.min.js" type="text/javascript"></script>

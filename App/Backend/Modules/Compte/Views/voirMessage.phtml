@@ -1,0 +1,180 @@
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h4 class="text-center list-title section-heading">Message de notification</h4>
+			</div>
+		</div>
+		<div class="block-section">
+			<div class="tete-list-section row" style="background: #647994;">
+				<div class="col-md-6 text-center" id="filtre-droite">
+					<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+					  	<div class="carousel-inner">
+					  		<?php if (!empty($_SESSION['message']['periode'])) : ?>
+					    		<div class="carousel-item active" id="carousel-item-periode">
+					    	<?php else : ?>
+					    		<div class="carousel-item" id="carousel-item-periode">
+					    	<?php endif ?>
+					    		<label class="titre" style="color: #ffffff;">par période : </label>
+					      		<select id="periode" class="select-time"  style="font-size: 0.8em!important;">
+									<option value="all">tout</option>
+									<option value="1">aujourd'hui</option>
+									<option value="3">hier</option>
+									<option value="4">cette semaine</option>
+									<option value="6">la semaine passée</option>
+									<option value="7">ce mois</option>
+									<option value="9">le mois dernier</option>
+								</select>
+					    	</div>
+					    	<?php if (!empty($_SESSION['message']['debut'])) : ?>
+					    		<div class="carousel-item active" id="carousel-item-intervalle">
+					    	<?php else : ?>
+					    		<div class="carousel-item" id="carousel-item-intervalle">
+					    	<?php endif ?>
+					    		<label class="titre" style="color: #ffffff;">par intervalle : </label>
+					      		<label for="datepicker">
+						        	<input class="form-control datepicker date-time" id="debut" type="text" autocomplete="off" placeholder="Début">
+					        	</label>
+							 	- 
+								<label for="datepicker">
+						        	<input class="form-control datepicker date-time" id="fin" type="text" autocomplete="off" placeholder="Fin">
+					        	</label>
+					    	</div>
+					    	<?php if (!empty($_SESSION['message']['mois'])) : ?>
+					    		<div class="carousel-item active" id="carousel-item-mois">
+					    	<?php else : ?>
+					    		<div class="carousel-item" id="carousel-item-mois">
+					    	<?php endif ?>
+					    		<?php $date = date('Y') ?>
+					    		<label class="titre" style="color: #ffffff;">Par mois : </label>
+					      		<select class="select-time" style="width: 200px; font-size: 0.8em!important;" id="selection-month">
+					      			<option value="">par mois</option>
+					      			<option value="1">Janvier <?=$date?></option>
+					      			<option value="2">Février <?=$date?></option>
+					      			<option value="3">Mars <?=$date?></option>
+					      			<option value="4">Avril <?=$date?></option>
+					      			<option value="5">Mai <?=$date?></option>
+					      			<option value="6">Juin <?=$date?></option>
+					      			<option value="7">Juillet <?=$date?></option>
+					      			<option value="8">Août <?=$date?></option>
+					      			<option value="9">Septembre <?=$date?></option>
+					      			<option value="10">Octobre <?=$date?></option>
+					      			<option value="11">Novembre <?=$date?></option>
+					      			<option value="12">Décembre <?=$date?></option>
+					      		</select>
+					    	</div>
+					 	</div>
+					  	<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+					    	<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					    	<span class="sr-only">Previous</span>
+					  	</a>
+					  	<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+					    	<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					    	<span class="sr-only">Next</span>
+					  	</a>
+					</div>
+				</div>
+		    	<div class="col-md-6 text-center">
+					<label class="titre" style="color: #ffffff;">lister : </label>
+					<select class="select-time"  style="font-size: 0.8em!important;" id="selection-type">
+						<option value="3" selected>tout</option>
+						<option value="1">nouveau</option>
+						<option value="2">lu</option>
+						<option value="0">archivé</option>
+					</select>
+				</div>
+			</div>
+			<div class="container-list-section" id="liste-message" style="height: 60vh!important; max-height: 60vh!important; overflow-y: auto; padding-top: 0px!important;"></div>
+		</div>
+	</div>
+</section>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabPointage.js"></script>
+<script>
+	const MAX_INTERVAL = 3;
+	$('document').ready(function() {
+		<?php if (!empty($_SESSION['message']['periode'])) : ?>
+			$('#periode option[value="<?= $_SESSION['message']['periode'] ?>"]').prop('selected', true);
+		<?php elseif (!empty($_SESSION['message']['debut'])) : ?>
+			var date  = "<?= $_SESSION['message']['debut'] ?>";
+			$('#debut').val(date);
+			<?php if (!empty($_SESSION['message']['fin'])) : ?>
+				var date = "<?=	$_SESSION['message']['fin'] ?>";
+				$('#fin').val(date);
+			<?php endif ?>
+		<?php elseif (!empty($_SESSION['message']['mois'])) : ?>
+			$('#selection-month option[value="<?= $_SESSION['message']['mois'] ?>"]').prop('selected', true);
+		<?php endif ?>
+		<?php if (isset($_SESSION['message']['type'])) : ?>
+			$('#selection-type option[value="<?= $_SESSION['message']['type'] ?>"]').prop('selected', true);
+		<?php endif ?> 
+		$("#liste-message").load("<?= HOST . 'manage/messages'?>", {
+			debut     : $('#debut').val(),
+			fin       : $('#fin').val(),
+			periode   : $('#periode').val(),
+			mois      : $('#selection-month').val(),
+			type      : $('#selection-type').val()
+		});
+	});
+	$('#periode').change(function() {
+		$("#liste-message").load("<?= HOST . 'manage/messages'?>", {
+			periode   : $('#periode').val(),
+			type      : $('#selection-type').val()
+		}, function() {
+			$("#debut").val(null);
+			$("#fin").val(null);
+			$('#selection-month').val("");
+		});
+	});
+	$('#debut').change(function() {
+		$("#liste-message").load("<?= HOST . 'manage/messages'?>", {
+			debut     : $('#debut').val(),
+			fin       : $('#fin').val(),
+			type      : $('#selection-type').val()
+		}, function() {
+			$("#periode").val("");
+			$('#selection-month').val("");
+			$('#fin').val("");
+			var stringDate = $('#debut').datepicker('getDate');
+			var date       = new Date(stringDate.getFullYear(), stringDate.getMonth() + MAX_INTERVAL, stringDate.getDate());
+		    $('#fin').datepicker('option', 'maxDate', date);
+		});
+	});
+	$('#fin').change(function() {
+		$("#liste-message").load("<?= HOST . 'manage/messages'?>", {
+			debut     : $('#debut').val(),
+			fin       : $('#fin').val(),
+			type      : $('#selection-type').val()
+		}, function() {
+			$("#periode").val("");
+			$('#selection-month').val("");
+		});
+	});
+	$('#selection-month').change(function() {
+		$("#liste-message").load("<?= HOST . 'manage/messages'?>", {
+			mois      : $('#selection-month').val(),
+			type      : $('#selection-type').val()
+		}, function() {
+			$("#periode").val("");
+			$('#debut').val(null);
+			$('#fin').val(null);
+		});
+	});
+	$('#selection-type').change(function() {
+		$("#liste-message").load("<?= HOST . 'manage/messages'?>", {
+			debut     : $('#debut').val(),
+			fin       : $('#fin').val(),
+			periode   : $('#periode').val(),
+			mois      : $('#selection-month').val(),
+			type      : $('#selection-type').val()
+		});
+	});
+	$("document").ready(function() {
+		$('.carousel').carousel({
+			interval: false
+		});
+	});
+</script>

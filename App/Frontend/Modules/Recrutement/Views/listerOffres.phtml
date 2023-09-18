@@ -1,0 +1,289 @@
+<?php 
+	use \Core\PublicFonctions;
+	$pageTitle = "Les offres d'emploi";
+	extract($data);
+?>
+
+<!-- <section class="bg-light page-section" id="offre"> -->
+    <section class="bg-light page-section" style="margin-top: 133px;">
+	    <div id="recruteur" style="width:100%; height: 100px;"></div>
+	    <div class="container-fluid custom-container">
+	      <div class="row" style="margin-top: -93px;">
+	        <div class="col-lg-12 text-center" style="display: flex;">
+	          <img class="rounded-circle img-fluid image" src="<?= HOST; ?>../Web/Ressources/images/gif/light-bulb-flashes.gif" style="width: 10%;">
+	          <h2 class="section-heading text-uppercase" style="color: #1f487c!important;">RECRUTEUR</h2>
+	        </div>
+	      </div>
+	      <div class="row align-items-center" style="margin-top: 4%;">
+	        <div class="col-sm-5 offset-1">
+	          <span class="timeline-panel">
+	            <p class="text-muted" style="margin-top: 0%;">
+	              <strong>Accès exclusif à une base de données de candidats qualifiés.</strong>
+	            </p>
+	          </span>
+	          <span class="timeline-panel">
+	            <p class="text-muted" style="margin-top: 0%;">
+	              <strong>Possibilité de publier des offres d'emploi, suivre les candidatures et personnaliser les paramètres.</strong>
+	            </p>
+	          </span>
+	          <span class="timeline-panel">
+	            <p class="text-muted" style="margin-top: 0%;">
+	              <strong>Simplification et accélération du processus de recrutement.</strong>
+	            </p>
+	          </span>
+	          <span class="timeline-panel">
+	            <p class="text-muted" style="margin-top: 0%;">
+	              <strong>Processus de recrutement transparent et éthique en conformité avec les lois en vigueur.</strong>
+	            </p>
+	          </span>
+	        </div>
+	        <div class="col-sm-6">
+	          <div class="cover">
+            	<img src="<?= HOST; ?>../Web/Ressources/images/recrutement/poste2.png" alt="" style="width: 75%; margin-left: 15%;height: 400px;">
+	          </div>
+	        </div>
+	      </div>
+			<a href="<?= HOST?>create-compte?identifiant=entreprise">Créer votre compte Recruteur</a>
+	    </div>
+	 </section>
+	 <hr>
+	 <section class="bg-light page-section">
+	    <div id="candidat" style="width:100%; height: 100px;"></div>
+	    <div class="container-fluid custom-container">
+		  <div class="row" style="margin-top: -85px!important;">
+		    <div class="col-lg-12 text-center" style="display: flex; align-content: space-around;">
+		      <img class="rounded-circle img-fluid image" src="<?= HOST; ?>../Web/Ressources/images/gif/light-bulb-flashes.gif" style="width: 10%;">
+		      <h2 class="section-heading text-uppercase" style="color: #1f487c!important;">&nbsp;&nbsp;&nbsp;&nbsp;CANDIDAT</h2>
+		    </div>
+		  </div>
+		  <div class="row align-items-center" style="margin-top: 4%;">
+		    <div class="col-sm-6">
+		      <div class="cover">
+	        	<img src="<?= HOST; ?>../Web/Ressources/images/recrutement/poste1.png" alt="" style="width: 62%; margin-left: 17%;height: 400px;">
+		      </div>
+		    </div>
+		    <div class="col-sm-5 offset-1">
+		      <span class="timeline-panel">
+		        <p class="text-muted " style="">
+		          <strong>Visibilité accrue pour les employeurs</strong>
+		        </p>
+		      </span>
+		      <span class="timeline-panel">
+		        <p class="text-muted ">
+		          <strong>Mise à jour facile de profil et CV</strong>
+		        </p>
+		      </span>
+		      <span class="timeline-panel">
+		        <p class="text-muted ">
+		          <strong>Accès à des offres d'emploi ciblées</strong>
+		        </p>
+		      </span>
+		      <span class="timeline-panel">
+		        <p class="text-muted ">
+		          <strong>Suivi des candidatures en temps réel.</strong>
+		        </p>
+		      </span>
+		      <span class="timeline-panel">
+		        <p class="text-muted ">
+		          <strong>Notification par email</strong>
+		        </p>
+		      </span>
+		    </div>
+		</div>
+		<div class="row">
+	  		<div class="col-md-12" style="text-align:right;">
+	 			<a href="<?= HOST?>create-compte?identifiant=candidat">Créer votre compte Candidat gratuitement</a>
+			</div>
+		</div>
+	</div>
+	</section>
+	<hr>
+  	<section class="bg-img" style="background-image: url(<?= HOST."../Web/Ressources/images/recrutement/"?>);background-size: cover; background-position: center;background-repeat: no-repeat;">
+		<div class="partie-haute">
+          	<div>
+          		<div class="row" style="margin-top: 150px!important;">
+	      			<div class="col-lg-10">
+	        			<h2 class="section-heading message texte3d text-uppercase">Trouvez votre prochain job</h2>
+        			</div>
+        		</div>
+	      		<hr>
+		        <div class="row text-center" id="divSearch"> 
+		            <div class="col-md-4">
+		                <select  class="form-control" name="idSousDomaine" id="idSousDomaine">
+							<option class="option-indication" value="">DOMAINE</option>
+								<?php foreach($sousDomaines as $sousDomaine): ?>
+					                <option 
+					                	<?php
+				                		if (isset($_GET['idSousDomaine']) && $_GET['idSousDomaine'] == $sousDomaine->getIdSousDomaine()) {
+				                			echo "selected";
+				                		}
+			                	?>
+			                	value="<?= $sousDomaine->getIdSousDomaine(); ?>">
+			                	<?= $sousDomaine->getNomSousDomaine(); ?>
+			                </option>
+			            <?php endforeach;?>
+			            </select>
+		            </div>
+		            <div class="col-md-4">
+		                <select  class="form-control" name="idContrat" id="idContrat">
+							<option class="option-indication" value="">TYPE DE CONTRAT</option>
+						<?php foreach($contrats as $contrat): ?>
+			                <option 
+			                	<?php
+			                		if (isset($_GET['idContrat']) && $_GET['idContrat'] == $contrat->getIdContrat()) {
+			                			echo "selected";
+			                		}
+			                	?>
+			                	value="<?= $contrat->getIdContrat(); ?>">
+			                	<?= $contrat->getDesignation(); ?>
+			                </option>
+			            <?php endforeach;?>
+			            </select>
+		            </div>
+		            <div class="col-md-4">
+		                <button class="btn" id="link-search" style="height: 40px">
+				          	<span class="fa-stack fa-2x">
+			                  <!-- <i class="fas fa-search fa-stack-1x fa-inverse"></i> -->
+				              	<i class="fas fa-search fa-stack-1x fa-inverse" style="font-size: 35px; margin-top: -20px;"></i>
+			                </span>
+		      			</button>
+		            </div>
+		        </div>
+		    </div>
+	  	</div>
+	</section>
+	<section class="section-offre" id="offre">
+		<link rel="stylesheet" type="text/css" href="<?= HOST;?>../Web/Ressources/css/listerOffres.css"/>
+		        <!-- <div class="row" id="list">
+		        	<div class="col-lg-12">
+		        		<ul class="offre-list">
+		        			<?php if (!empty($offres)) : foreach ($offres as $offre) : extract($offre); ?>
+				        		<li class="offre-single">
+			                        <a href="<?= HOST . 'offre?idOffre=' . $offre->getIdOffre(); ?>">
+			                        	<div class="row">
+			                        		<div class="col-md-4 entreprise-logo">
+			                        			<img class="img-fluid" src="<?= HOST; ?>../Web/Ressources/images/entreprises/<?= $entreprise->getLogo(); ?>" alt="">
+			                        			<br><?= $entreprise->getNom(); ?>
+			                        		</div>
+			                        		<div class="col-md-8">
+			                        			<h2 class="offre-poste"><?= ucfirst($poste->getPoste()); ?></h2>
+				                                <h3 class="offre-detail">Contrat : <?= $contrat->getDesignation();?> &nbsp; &nbsp; Date limite : 
+							              			<?php
+									   					$dateLimite   = str_replace('-', '/', $offre->getDateLimite()); 
+									   					echo date('d/m/Y', strtotime($dateLimite)); 
+									   				?> </h3>
+			                        		</div>
+			                        	</div>
+			                        </a>
+			                    </li>
+		      				<?php endforeach; ?>
+		      				<?php else: ?>
+		      					<li>Aucun enregistrement trouvé</li>
+		      				<?php endif; ?>
+		        		</ul>
+		        	</div>
+		        </div>
+		        <div class="row col-lg-12" id="pagination-container">
+			        <p class='paginacaoCursor' id="beforePagination"><i class="fas fa-angle-left"></i></p>
+			        <p class='paginacaoCursor' id="afterPagination"><i class="fas fa-angle-right"></i></p>
+			    </div> -->
+		<div>
+		    <div class="row list-style" id="list">
+		    	<div class="col-lg-12">
+		    		<ul class="offre-list">
+		    			<?php if (!empty($offres)) : foreach ($offres as $offre) : extract($offre); ?>
+		        		<li class="offre-single">
+		              <a href="<?= HOST . 'offre?idOffre=' . $offre->getIdOffre(); ?>">
+		              	<div class="row">
+		              		<div class="col-md-8">
+		              			<h2 class="offre-poste"><?= ucfirst($poste->getPoste()); ?></h2>
+		              			<h3 class="offre-detail offre-detail-sytle"> 
+		              				<i class="fa fas fa-city" style="color:#343a40"></i> 
+		              				Ville : <?= ucfirst($entreprise->getVille()); ?>
+		              			</h3>
+		                    <h3 class="offre-detail offre-detail-sytle"> 
+		                    	<i class="fa fas fa-file-contract" style="color:#343a40"></i>
+		                    	Contrat : <?= $contrat->getDesignation();?> &nbsp; &nbsp;  
+								   			</h3>
+								   			<h3 class="offre-detail offre-detail-sytle">
+								   				<i class="fa fas fa-calendar" style="color:#7a1111"></i>
+								   				Date limite : 
+						              			<?php
+								   					$months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+										            $dateLimite = explode('-', $offre->getDateLimite());
+									                $index = (int)$dateLimite[1] - 1;
+									                echo "  ". $dateLimite[2] . " " . $months[$index] . " " . $dateLimite[0]; 
+								   				?>
+								   			</h3>
+		              		</div>
+		              		<div class="col-md-4 entreprise-logo">
+		              			<img class="img-fluid rounded-circle shadow-4-strong" src="<?= HOST; ?>../Web/Ressources/images/entreprises/<?= $entreprise->getLogo(); ?>" alt="" style="border-radius: 5%!important;">
+		              			<br><strong style="color:black;"> <?= $entreprise->getNom(); ?> </strong>
+		              		</div>
+		              	</div>
+		              </a>
+		          	</li>
+		  				<?php endforeach; ?>
+		  				<?php else: ?>
+		  					<li>Aucun enregistrement trouvé</li>
+		  				<?php endif; ?>
+		    		</ul>
+		    	</div>
+		    </div>
+		    <div class="row col-lg-12" id="pagination-container">
+		      <p class='paginacaoCursor' id="beforePagination"><i class="fas fa-angle-left"></i></p>
+		      <p class='paginacaoCursor' id="afterPagination"><i class="fas fa-angle-right"></i></p>
+		  	</div>
+	  	</div>
+	</section>
+	<!-- <section class="pt-5 pb-5">
+	  <div class="container">
+	    <div class="row">
+	      <div class="col-6">
+	        <h3 class="mb-3">Ceux qui nous ont fait confiance </h3>
+	      </div>
+			</div>
+    </div>
+	</section>
+	<section>
+		<style type="text/css">
+			.slide {
+				width: 70.5px!important;
+			}
+			.image-gallery {
+			   display: flex;
+			   flex-wrap: wrap;
+			   justify-content: space-between;
+			   align-items: center;
+			}
+
+			.image-gallery img {
+			   	width: 70px;
+					height: 70px;
+			   	margin-bottom: 15px;
+			}
+			.logoEntreprise {
+					
+			}
+		</style>
+		<div class="container">
+	   	<div class="row">
+	      <div class="col-md-12">
+         	<div class="image-gallery">
+         		<?php foreach ($entreprises as $entreprise): ?>
+            	<img src="<?php
+                            if ($entreprise->getLogo() != "") {
+                                echo HOST . "../Web/Ressources/images/entreprises/" . $entreprise->getLogo();
+                            } else {
+                                echo HOST ."../Web/Ressources/images/defaultLogo.png";
+                            }
+                        ?>" class="img-fluid logoEntreprise rounded-circle" alt="Image <?php $x = 0; echo $x++; ?>">
+         		<?php endforeach ?>
+         	</div>
+	      </div>
+	   	</div>
+		</div>
+	</section> -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>     
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/listerOffresFront.js"></script>

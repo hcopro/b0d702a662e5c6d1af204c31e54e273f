@@ -1,0 +1,197 @@
+<?php
+	use \Core\PublicFonctions;
+	
+	$pageTitle 	= "Introuvable";
+	$months 		= ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+?>
+<section class="page-section bg-color" id="detail-offre">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" />
+	<link rel="stylesheet" type="text/css" href="<?= HOST;?>../Web/Ressources/css/voirOffre.css"/>
+	<br><br><br>
+    <div class="container">
+	    <?php if (!empty($data)): extract($data); $pageTitle = $poste->getPoste(); ?>
+	    	<div class="">
+    			<div class="style-image-offre">
+    				<div class="row">
+    					<div class="col-md-4 style-boutton-retour" style="margin-top: 0px;">
+		            <a href="<?= HOST . "offres"; ?>" class="btn rounded-circle btn-primary">
+		              <i class="fas fa-arrow-left"></i>
+		            </a>            
+		        	</div>
+			        <!-- <div class="col-md-4 style-texte-image"></div> -->
+	    				<!-- <div class="col-md-4"></div> -->
+	    			</div>
+    				<img src="<?= ($offre->getCouvertureOffre() != "") ? HOST . "../Web/Ressources/images/offre/" . $offre->getCouvertureOffre() : HOST ."../Web/Ressources/images/offre/Sans titre (17).png";?>" class="image-offre img-fluid"  style="margin-top: 4px; /*max-height: auto;*/ ">
+    			</div>
+    			<br>
+	    		<div class="row">
+						<div class="col-md-5">
+							<div style="position: sticky; top: 60px;">
+								<div class="container-fluid">
+									<h3 style="color:#1f487c" class="font-weight-bold">Détail de l'offre</h3>
+								</div>
+								<div class="container-fluid">
+									<h5 class="details-offre"><?= $poste->getPoste(); ?></h5>
+									    <!-- <div class="row offre-heading">
+									        <div class="col-lg-12 text-center">
+									        	<h2>Poste : <?= $poste->getPoste(); ?></h2>
+									          	<h3 class="offre-detail">
+									          		Date d'émission : <?php
+														                $dateEmission = str_replace('-', '/', $offre->getDateEmission()); 
+														              	echo "<i>" . date('d/m/Y', strtotime($dateEmission)) . "</i>";
+														              ?>&nbsp;
+									            	Contrat : <i><?= $contrat->getDesignation() ?></i>&nbsp;
+									            	Date limite de candidature : <?php
+									              									$dateLimite = str_replace('-', '/', $offre->getDateLimite()); 
+									              									echo "<i>" . date('d/m/Y', strtotime($dateLimite)) . "</i>";
+									            								?>
+									            </h3> -->
+		            	<hr>
+		        		</div>
+		        		<div class="container-fluid">
+									<h6 class="paragraphe-detail-offre"><i class="fa fas fa-file-contract" style="color:#1f487c"></i><?= "  ".$contrat->getDesignation(); ?></h6>
+									<hr>
+		    				</div>
+				      	<!-- <div class="row offre-body">
+					        <div class="col-md-3">
+							    <h4 class="text-center">Entreprise</h4>
+							    <div class="row"> -->
+				    	  <div class="container-fluid">
+									<h6 class="paragraphe-detail-offre"><i class="fa fas fa-city" style="color:#1f487c"></i><?= " ".ucfirst($entreprise->getVille()); ?></h6>
+									<hr>
+								</div>
+								<div class="container-fluid">
+									<h6 class="paragraphe-detail-offre">
+										<i class="fa fas fa-calendar" style="color:#1f487c"></i></i>
+										<?php
+				              $dateEmission = explode('-', $offre->getDateEmission());
+				              $index 				= (int)$dateEmission[1] - 1;
+				              echo "  ". $dateEmission[2] . " " . $months[$index] . " " . $dateEmission[0];
+				            ?>
+									</h6>
+									<hr>
+								</div>
+								<div class="container-fluid">
+									<h6 class="paragraphe-detail-offre">
+										<i class="fa fas fa-calendar" style="color:red"></i>
+										<?php
+				              $dateLimite = explode('-', $offre->getDateLimite());
+				              $index 			= (int)$dateLimite[1] - 1;
+				              echo "  ". $dateLimite[2] . " " . $months[$index] . " " . $dateLimite[0];
+				            ?>
+									</h6>
+									<hr>
+							</div>
+							<div class="container-fluid">
+	              <h6 class="paragraphe-detail-offre">
+	                <i class="fa fas fa-language" style="color:green;font-size: 20px;"></i>
+	                <?= $offre->getLangue();?>
+	              </h6>
+	              <hr>
+	            </div>
+							<div>
+						    <div class="container-fluid">
+									<h3 style="color:#1f487c" class="font-weight-bold">Entreprise</h3>
+								</div>
+								<div class="container-fluid">
+				        	<img src="<?=($entreprise->getLogo() != "") ? HOST . "../Web/Ressources/images/entreprises/" . $entreprise->getLogo() : HOST ."../Web/Ressources/images/defaultLogo.png";?>" id="logo" Class="img-fluid logo-entreprise">
+						    </div>
+						    <div class="container-fluid">			    	
+					        <h5 class="name"><?= $entreprise->getNom() ?></h5>
+						    	<hr>
+						    </div>
+						    <div class="container-fluid">
+						    	<label class="text-left">
+			              <p class="font-weight-bold">
+		                  Activité : <?= $entreprise->getSecteurActivite();?></br>
+		                  Adresse : <?= ucfirst($entreprise->getAdresse()) /*. " " . ucfirst($entreprise->getVille())*/ ;?>
+	                  </p>
+	                </label> 
+						    </div> 
+				      </div>
+		        </div>
+	        </div>
+	        <div class="col-md-7">
+	        	<div class="container-fluid">
+							<h3 style="color:#1f487c" class="font-weight-bold">Déscription de l'entreprise</h3>
+							<div>
+								<label class="paragraphe-mission"><?= $entreprise->getDescription(); ?></label>
+							</div>
+							<div>
+								<strong class="paragraphe-mission">Contact : </strong>
+								<label class="paragraphe-mission"><?= $entreprise->getContact(); ?></label>
+							</div>
+							<div>
+								<strong class="paragraphe-mission">Email : </strong>
+								<label class="paragraphe-mission"><?= $entreprise->getEmail(); ?></label>
+							</div>
+						</div>
+						<br>
+						<div class="container-fluid">
+							<h3 style="color:#1f487c" class="font-weight-bold">Mission</h3>
+			        	<?php foreach ($missions as $mission) :
+			        		$newliner = array($mission->getDescription());
+			        		if(strpos($mission->getDescription(), "&#10;") || strpos($mission->getDescription(), "\n") !== FALSE) :
+                		$delimiter 	= strpos($mission->getDescription(), "&#10;") !== FALSE ? "&#10;" : "\n";
+                		$newliner 	= explode($delimiter, $mission->getDescription());
+									endif;
+			        		foreach ($newliner as $descriptionMission) : ?>
+				        		<div>
+				        			<label class="paragraphe-mission">- <?=$descriptionMission;?></label>
+				        			<!-- <label class="paragraphe-mission"><pre style="display: flex; flex-wrap: wrap;">- <?=$descriptionMission;?></pre></label> -->
+				        		</div>
+				        	<?php endforeach ?>
+			        	<?php endforeach ?>
+			        </div>
+			        <br>
+							<div class="container-fluid">
+								<h3 style="color:#1f487c" class="font-weight-bold">Profil</h3>
+								<div>
+									<h5 class="h5-style">Experience : </h5>
+	            		<?php if(!empty($niveauExperience)) :?>
+			            	<label class="paragraphe-mission">-  
+		                  <?=($niveauExperience->getOrdre() < 10) ? $niveauExperience->getNiveau(). (is_object($sousDomaine) ? " en " . $sousDomaine->getNomSousDomaine() : '') : $niveauExperience->getNiveau(). " d'expérience(s)". (is_object($sousDomaine) ? " en " . $sousDomaine->getNomSousDomaine() : 'Aucune');?>
+		                </label>
+              		<?php endif; ?>
+              	</div>
+		      			<div>
+		      				<h5 class="h5-style">Niveau : </h5>
+	              	<?php if(!empty($niveauEtude)) :?>
+			            	<label class="paragraphe-mission">- <?=($niveauEtude->getOrdre() <= 10) ? $niveauEtude->getNiveau() : $niveauEtude->getNiveau(). " en " . $domaine->getNomDomaine();?>
+		                </label>
+	              	<?php endif; ?>
+	              </div>
+		        		<div>
+		        			<h5 class="h5-style">Personnalités : </h5>
+		        			<div class="paragraphe-mission">
+	              	 	<?php if($offre->getPersonnalite() != "") : $persos = explode('_', $offre->getPersonnalite()); foreach ($persos as $perso): if(!empty($perso)) :?>
+	                		<label>- <?= ucfirst($perso) ?></label>
+	              		<?php endif; endforeach; endif; ?>
+              		</div>
+		        		</div>
+		      			<div>
+		      				<h5 class="h5-style">Condition numéraire : </h5>
+				      		<?php if($offre->getConditionNumeraire() != "") :?>
+				        		<label class="paragraphe-mission"><?= $offre->getConditionNumeraire() ?></label>
+				      		<?php endif; ?>
+	            	</div>
+							</div>
+						</div>
+	        </div>
+      	</div>
+      	<div class="row offre-footer">
+      		<div class="col-lg-12 text-center">
+                <?php if (!(isset($_SESSION['compte']) && $_SESSION['compte']['identifiant'] == 'superadmin')): ?>
+                	<?php if (!empty($candidature)): ?>
+	                  <i class="alert-info">Candidature déjà envoyée</i>
+	                <?php elseif (strtotime($offre->getDateLimite()) >= strtotime(date("Y-m-d"))) : ?>
+              			<a href="<?= HOST . "manage/create-candidature?idOffre=" . $offre->getIdOffre(); ?>" class="btn btn-primary js-scroll-trigger">
+	                    Postuler  
+	                  </a>
+	                <?php endif ?>
+                <?php endif ?>
+	        </div>
+      	</div>
+	    <?php endif; ?>
+    </div>
+ </section>

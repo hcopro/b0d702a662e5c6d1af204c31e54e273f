@@ -1,0 +1,240 @@
+<div>
+	<?php if (count($data) > 0) : ?>
+		<?php foreach ($data as $datum) : extract($datum); ?>
+			<?php if ($demande->getStatut() == ManagerModuleFormation::DEMANDE_VALIDATED) :?>
+				<div class="card m-2 p-2" style="border: 1px solid #00c853;">
+			<?php elseif ($demande->getStatut() == ManagerModuleFormation::DEMANDE_PROPOSED) :?>
+				<div class="card m-2 p-2" style="border: 1px solid #ffab00;">
+			<?php elseif ($demande->getStatut() == ManagerModuleFormation::DEMANDE_REFUSED) :?>
+				<div class="card m-2 p-2" style="border: 1px solid #d32f2f;">
+			<?php endif?>
+				<div class="row">
+					<div class="col-md-1 text-center">
+						<?php if ($demande->getStatut() == ManagerModuleFormation::DEMANDE_VALIDATED) :?>
+							<i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+						<?php elseif ($demande->getStatut() == ManagerModuleFormation::DEMANDE_PROPOSED) :?>
+							<i class="fa fa-hourglass" style="color: #ffab00;" aria-hidden="true"></i>
+						<?php elseif ($demande->getStatut() == ManagerModuleFormation::DEMANDE_REFUSED) :?>
+							<i class="fa fa-times" style="color: #d32f2f;" aria-hidden="true"></i>
+						<?php endif?>
+					</div>
+					<div class="col-md-2 text-left">
+						<?php if ($demande->getStatut() == ManagerModuleFormation::DEMANDE_VALIDATED) :?>
+							<span class="text-important" style="color: #00c853;">validée</span>
+						<?php elseif ($demande->getStatut() == ManagerModuleFormation::DEMANDE_REFUSED) :?>
+							<span class="text-important" style="color: #d32f2f;">rejetée</span>
+						<?php elseif ($demande->getStatut() == ManagerModuleFormation::DEMANDE_PROPOSED) :?>
+							<span class="text-important" style="color: #ffab00;">en attente</span>
+						<?php endif ?>
+					</div>
+					<div class="col-md-7 text-left">
+						<span class="text-important"><?= $demandeur->getNom() . ' ' . $demandeur->getPrenom() ?></span> sur le thème <span class="text-important"><?= $theme->getTheme() ?></span>
+					</div>
+					<div class="col-md-2 text-right">
+						<?php if ($demande->getEtat() == ManagerModuleFormation::DEMANDE_ACTIF) : ?>
+							<?php if ($demande->getStatut() != ManagerModuleFormation::DEMANDE_PROPOSED) : ?>
+								<a class="btn btn-sm btn-danger" href="<?= HOST . 'manage/archiver-demandeFormation?idDemandeFormation=' . $demande->getIdDemandeFormation() ?>" >archiver</a>
+							<?php endif ?>
+						<?php elseif ($demande->getEtat() == ManagerModuleFormation::DEMANDE_ARCHIVED) : ?>
+							<a class="btn btn-sm btn-success" href="<?= HOST . 'manage/restaurer-demandeFormation?idDemandeFormation=' . $demande->getIdDemandeFormation() ?>" >restaurer</a>
+						<?php endif ?>
+						<button class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalDemande<?=$demande->getIdDemandeFormation()?>">voir</button>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="modalDemande<?=$demande->getIdDemandeFormation()?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  				<div class="modal-dialog modal-dialog-centered" role="document">
+    				<div class="modal-content">
+      					<div class="modal-header">
+        					<div class="text-center" style="width: 100%;">
+					      		<h5 class="modal-title section-heading" style="margin-bottom: -15px!important;" id="exampleModalLabel">Les détails de la demande</h5>
+					      	</div>
+        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          						<span aria-hidden="true">&times;</span>
+        					</button>
+      					</div>
+      					<div class="modal-body">
+        					<div class="card p-3" style="background: #efefff;">
+        						<div class="card mt-2 p-2 card-light-grey">
+									<div class="row">
+										<div class="col-md-4 text-left">
+											<span class="titre">
+												Demandeur :
+											</span>
+										</div>
+										<div class="col-md-8 text-left">
+											<?= $demandeur->getNom() . ' ' . $demandeur->getPrenom(); ?>
+										</div>
+									</div>
+								</div>
+								<div class="card mt-2 p-2 card-light-grey">
+									<div class="row">
+										<div class="col-md-4 text-left">
+											<span class="titre">
+												thème :
+											</span>
+										</div>
+										<div class="col-md-8 text-left">
+											<?= $theme->getTheme() ?>
+										</div>
+									</div>
+								</div>
+								<div class="card mt-2 p-2 card-light-grey">
+									<div class="row">
+										<div class="col-md-4 text-left">
+											<span class="titre">
+												Description :
+											</span>
+										</div>
+										<div class="col-md-8 text-left">
+											<?= $theme->getDescription() ?>
+										</div>
+									</div>
+								</div>
+								<div class="card mt-2 p-2 card-light-grey">
+									<div class="row">
+										<div class="col-md-4 text-left">
+											<span class="titre">
+												début :
+											</span>
+										</div>
+										<div class="col-md-8 text-left">
+											<?php
+												if ($formation->getDebut() != null) {
+													echo date('d/m/Y', strtotime($formation->getDebut()));
+												} else {
+													echo "indéterminée";
+												}
+											?>
+										</div>
+									</div>
+								</div>
+								<div class="card mt-2 p-2 card-light-grey">
+									<div class="row">
+										<div class="col-md-4 text-left">
+											<span class="titre">
+												fin :
+											</span>
+										</div>
+										<div class="col-md-8 text-left">
+											<?php
+												if ($formation->getFin() != null) {
+													echo date('d/m/Y', strtotime($formation->getFin()));
+												} else {
+													echo "indéterminée";
+												}
+											?>
+										</div>
+									</div>
+								</div>
+        					</div>
+      					</div>
+      					<div class="modal-footer">
+        					<div class="text-right" style="width: 105%!important;">
+        						<?php if ($demande->getEtat() == ManagerModuleFormation::DEMANDE_ACTIF) : ?>
+									<?php if ($demande->getStatut() == ManagerModuleFormation::DEMANDE_PROPOSED) : ?>
+										<a class="btn btn-sm btn-danger" href="<?= HOST . "manage/refuser-demandeFormation?idDemandeFormation=" . $demande->getIdDemandeFormation() ?>">refuser</a>
+										<a class="btn btn-sm btn-success" href="<?= HOST . "manage/valider-demandeFormation?idDemandeFormation=" . $demande->getIdDemandeFormation() ?>">valider</a>
+									<?php else : ?>
+										<a class="btn btn-sm btn-danger" href="<?= HOST . "manage/archiver-demandeFormation?idDemandeFormation=" . $demande->getIdDemandeFormation() ?>">archiver</a>
+										<?php if ($demande->getStatut() == ManagerModuleFormation::DEMANDE_VALIDATED) : ?>
+											<button class="btn btn-dark btn-sm m-0" data-dismiss="modal" id="evaluation<?= $demande->getIdDemandeFormation() ?>">
+												évaluer
+											</button>
+										<?php endif ?>
+									<?php endif ?>
+								<?php elseif ($demande->getEtat() == ManagerModuleFormation::DEMANDE_ARCHIVED) : ?>
+									<a class="btn btn-sm btn-success" href="<?= HOST . 'manage/restaurer-demandeFormation?idDemandeFormation=' . $demande->getIdDemandeFormation() ?>" >restaurer</a>
+								<?php endif ?>
+        						
+					      	</div>
+      					</div>
+    				</div>
+  				</div>
+  			</div>
+  			<script>
+				$('#evaluation<?= $demande->getIdDemandeFormation() ?>').click(function(){
+					$("#idEvaluationFormation").val("");
+					$("#modal-idEmployeFormation").val("");
+					$("#note").val("");
+					$("#remarque").html("N/A");
+					$.ajax({
+						url : '<?= HOST . "manage/get-evaluationFormation" ?>',
+						data : 'idFormationProfessionnelle=<?=$demande->getIdFormationProfessionnelle()?>&idEmploye=<?=$demandeur->getIdEmploye()?>',
+						dataType : 'json',
+						success : function(data) {
+							if (data['idEvaluationFormation'] != null) {
+								$("#modal-idEvaluationFormation").val(data['idEvaluationFormation']);
+								$("#note").val(data['note']);
+								$("#remarque").html(data['remarque']);
+							}
+							$("#modal-idEmployeFormation").val(data['idEmployeFormation']);
+							$('#modalEvaluation').modal('show');
+						}
+					});
+				});
+			</script>
+		<?php endforeach?>
+	<?php else : ?>
+		<div class="card m-2 p-2 text-center">
+			<span>Vous n'avez aucune demande de formation à valider</span>
+		</div>
+	<?php endif?>
+</div>
+<div class="modal fade" id="modalEvaluation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  	<div class="modal-dialog modal-dialog-centered" role="document">
+    	<div class="modal-content">
+      		<div class="modal-header text-center">
+      			<div class="text-center" style="width: 100%;">
+      				<h5 class="modal-title section-heading m-0" id="exampleModalLabel">Evaluation de la formation</h5>
+      			</div>
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          			<span aria-hidden="true">&times;</span>
+        		</button>
+      		</div>
+      		<div class="modal-body">
+      			<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+      				<form method="POST" id="form" action="<?= HOST . 'manage/save-evaluationFormation'?>" enctype="multipart/form-data" novalidate="novalidate">
+      					<input type="hidden" name="idEvaluationFormation" id="modal-idEvaluationFormation">
+      					<input type="hidden" name="idEmployeFormation" id="modal-idEmployeFormation">
+      					<input type="hidden" name="page" id="page" value="validationFormation">
+			      		<div class="card mt-2 p-2 card-light-grey">
+							<div class="row">
+								<div class="col-md-5 text-left">
+									<span class="titre">
+										Note :
+									</span>
+								</div>
+								<div class="col-md-7 text-left">
+									<div class="form-group m-0">
+										<i class="fa fa-star icon-input" aria-hidden="true" style="color: #3a434f; font-size: 0.8em;"></i>
+										<input type="number" name="note" id="note" min="0" max="10" class="form-control select-time d-inline-block" style="width: 150px!important;" placeholder="note" required="required" data-validation-required-message="Veuillez attribuer une note">
+										<span class="text-important">/ 10</span>
+										<p class="help-block text-danger"></p>
+    								</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-5 text-left">
+									<span class="titre">
+										Remarque :
+									</span>
+								</div>
+								<div class="col-md-7 text-left">
+									<div class="form-group">
+										<textarea class="pl-1" name="remarque" id="remarque" rows="5" required="required" data-validation-required-message="Veuillez laisser un commentaire" style="border-radius: 5px; width: 100%; font-size: 0.8em;">N/A</textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mt-2 p-2 text-right">
+							<button class="btn btn-info btn-sm" type="submit">
+								Enregistrer
+							</button>
+						</div>
+					</form>
+				</div>
+	      	</div>
+	    </div>
+    </div>
+</div>

@@ -1,0 +1,303 @@
+<?php 
+	if (!empty($data)) {
+		extract($data);
+	}
+?>
+<section class="page-section" id="back-section">
+    <div class="container">
+    	<div class="row">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h4 class="text-center list-title section-heading">Contrat professionnel</h4>
+			</div>
+		</div>
+		<div class="block-section">
+			<div class="row">
+		        <ul id="new-tab-button">
+	        		<li id="tab1">
+	        			<a href="<?= HOST. 'manage/show-monContrat'?>">
+	        				Gestion
+	        			</a>
+	        		</li>
+	        		<li id="tab2">
+	        			<a class="lien-menu" href="<?= HOST . 'manage/show-monHistoriqueContrat'?>">
+	        				Historique
+	        			</a>
+	        		</li>       			    
+		        </ul>
+	      	</div>
+	      	<?php if ($page == "historique") :?>
+				<div class="row">
+					<div class="col-md-1"></div>
+					<div class="col-md-10 block-section" style="background: #ffffff; border-radius: 5px;">
+					    <div class="row">
+						    <div class="col-md-3">
+		          				<img class="img-fluid userDetail " style="width:150px; height: 140px;margin-top: 10px; " src="
+								    <?php
+								        if ($employe->getPhoto() != "") {
+								            echo HOST."../Web/Ressources/images/employes/" . $employe->getPhoto();
+								        } else {
+								            echo HOST."../Web/Ressources/images/profilCandidat.png";
+								        }
+								    ?>
+							    ">
+		          			</div>
+						    <div class="col-md-5">
+						      	<div class="row">
+						      		<div class="col-md-12" style="font-weight: bolder; font-style: italic; color: #37474f; font-size: 1.2em;">
+						      			<?=$employe->getCivilite() . ' '. strtoupper($employe->getNom()) . ' ' . ucwords($employe->getPrenom())?>
+						      		</div>
+						      	</div>
+						      	<br>
+						      	<div class="row">
+						      		<div class="col-md-5">
+						      			<label class="label-input">MATRICULE</label>
+						      		</div>
+						      		<div class="col-md-6">
+						      			<?=$employe->getMatricule()?>
+						      		</div>
+						      	</div>
+						      	<div class="row">
+						      		<div class="col-md-5">
+						      			<label class="label-input">CIN</label>
+						      		</div>
+						      		<div class="col-md-6">
+						      			<?=$employe->getNumeroCin()?>
+						      		</div>
+						      	</div>
+						      	<div class="row">
+						      		<div class="col-md-5">
+						      			<label class="label-input">Cnaps</label>
+						      		</div>
+						      		<div class="col-md-6">
+						      			<?=$employe->getNumeroCnaps()?>
+						      		</div>
+						      	</div>
+						    </div>
+						</div>
+						<hr>
+						<table class="table">
+						    <?php foreach ($informations as $information) : ?>
+						      	<thead style="background: #c8d0e4; text-align: center;">
+						      		<tr>
+						      			<th colspan="2" style="font-weight: 600; color: #37474f">
+											du 
+				      							<?php 
+				      								$date = explode('-', $information['contratEmploye']->getDateDebut()); 
+				      								echo "<strong>" . $date[2] . "/" . $date[1] . "/" . $date[0] . "</strong>"; 
+				      							?>
+				      							<?php if ($information['contratEmploye']->getDateFin() != date("0000-00-00")) :?>
+				      						au
+		          								<?php 
+		          									$date = explode('-', $information['contratEmploye']->getDateFin()); 
+		          									echo "<strong>" . $date[2] . "/" . $date[1] . "/" . $date[0] . "</strong>"; 
+		          								?>
+		          								<?php else : ?>
+		          									à ce jour
+		          								<?php endif ?>
+						      			</th>
+						      		</tr>
+						      	</thead>
+						      	<tbody style="background: #ffffff">
+						      		<tr>
+						      			<td><strong>Type de contrat</strong></td>
+						      			<td><?=$information['typeContrat']->getDesignation()?></td>
+						      		</tr>
+						      		<tr>
+						      			<td><strong>Service</strong></td>
+						      			<td><?=$information['serviceEmploye']->getService(); ?></td>
+						      		</tr>
+						      		<tr>
+						      			<td><strong>Poste</strong></td>
+						      			<td><?=$information['posteEmploye']->getPoste() ?></td>
+						      		</tr>
+						      	</tbody>
+						    <?php endforeach ?>
+						</table>
+						<div class="row">
+						 	<div class="col-md-9"></div>
+						 	<div class="col-md-2">
+						  		<a href=<?= HOST . "manage/employe/dashboard" ?> class="btn btn-info btn-sm" style="width: 100%;">retour</a>
+						 	</div>
+						</div>
+					</div>
+				</div>
+	      	<?php elseif ($page == "gestion") :?>
+		      	<div class="row">
+		      		<div class="col-md-1"></div>
+		      		<div class="col-md-10" style="background: #ffffff; border-radius: 5px">
+		      			<br>
+		      			<div class="row">
+						    <div class="col-md-3">
+		          				<img class="img-fluid userDetail " style="width:150px; height: 140px;margin-top: 10px; " src="
+								    <?php
+								        if ($employe->getPhoto() != "") {
+								            echo HOST."../Web/Ressources/images/employes/" . $employe->getPhoto();
+								        } else {
+								            echo HOST."../Web/Ressources/images/profilCandidat.png";
+								        }
+								    ?>
+							    ">
+		          			</div>
+						    <div class="col-md-5">
+						      	<div class="row">
+						      		<div class="col-md-12" style="font-weight: bolder; font-style: italic; color: #37474f; font-size: 1.2em;">
+						      			<?=$employe->getCivilite() . ' '. strtoupper($employe->getNom()) . ' ' . ucwords($employe->getPrenom())?>
+						      		</div>
+						      	</div>
+						      	<br>
+						      	<div class="row">
+						      		<div class="col-md-5">
+						      			<label class="label-input">MATRICULE</label>
+						      		</div>
+						      		<div class="col-md-6">
+						      			<?=$employe->getMatricule()?>
+						      		</div>
+						      	</div>
+						      	<div class="row">
+						      		<div class="col-md-5">
+						      			<label class="label-input">CIN</label>
+						      		</div>
+						      		<div class="col-md-6">
+						      			<?=$employe->getNumeroCin()?>
+						      		</div>
+						      	</div>
+						      	<div class="row">
+						      		<div class="col-md-5">
+						      			<label class="label-input">Cnaps</label>
+						      		</div>
+						      		<div class="col-md-6">
+						      			<?=$employe->getNumeroCnaps()?>
+						      		</div>
+						      	</div>
+						    </div>
+						</div>
+						<hr>
+	          			<table class="table">
+	          				<thead style="background: #c8d0e4;">
+	          					<tr><th colspan="2" class="text-center">Contrat</th></tr>
+	          				</thead>
+	          				<tbody>
+			          			<tr>
+			          				<td class="label">Service</td>
+			          				<td>
+			          					<?php 
+			          						if ($service != null) {
+			          							echo $service->getService();
+			          						}
+			          					?>
+			          				</td>
+			          			</tr>
+			          			<tr>
+			          				<td class="label">Poste</td>
+			          				<td>
+				          				<?php
+				          					if ($poste != null) {
+				          						echo $poste->getPoste();
+				          					}
+				          				?>
+				          			</td>
+			          			</tr>
+			          			<tr>
+			          				<td class="label">Catégorie</td>
+			          				<td>
+				          				<?php
+				          					if ($categorie != null) {
+				          						echo $categorie->getDesignation();
+				          					}
+				          				?>
+				          			</td>
+			          			</tr>
+			          			<tr>
+			          				<td class="label">Salaire</td>
+			          				<td><?=$employe->getSalaire()?></td>
+			          			</tr>
+			          			<tr>
+			          				<td class="label">Type</td>
+			          				<td>
+				          				<?php foreach($contrats as $contrat): ?>
+											<?php
+											    if ($contrat->getIdContrat() == $contratEmploye->getType()) { 
+											        echo $contrat->getDesignation(); 
+											    } 
+											?>
+										<?php endforeach; ?>
+									</td>
+			          			</tr>
+			          			<tr>
+			          				<td class="label">Début</td>
+			          				<td>
+				          				<?php
+				          					if ($contratEmploye->getDateDebut() != null) {
+				          						$date = explode('-', $contratEmploye->getDateDebut()); 
+				          						echo $date[2] . "/" . $date[1] . "/" . $date[0];
+				          					} else {
+				          						echo "";
+				          					}
+				          				?>
+				          			</td>
+			          			</tr>
+			          			<tr>
+			          				<td class="label">Fin</td>
+			          				<td>
+				          				<?php
+				          					if ($contratEmploye->getDateFin() != null) {
+				          						if ($contratEmploye->getDateFin() != "0000-00-00") {
+				          							$date = explode('-', $contratEmploye->getDateFin()); 
+				          							echo $date[2] . "/" . $date[1] . "/" . $date[0];
+				          						} else {
+				          							echo "indéterminée";
+				          						}
+				          					} else {
+				          						echo "";
+				          					}		
+				          				?>
+				          			</td>
+			          			</tr>
+			          			<tr>
+			          				<td class="label">signature</td>
+			          				<td>
+				          				<?php
+				          					if ($contratEmploye->getStatut() == ManagerModuleContrat::EMPTY){
+				          						echo "";
+				          					} elseif ($contratEmploye->getStatut() == ManagerModuleContrat::PROPOSED) {
+				          						echo "pas encore";
+				          					} elseif ($contratEmploye->getStatut() == ManagerModuleContrat::VALIDATED || $contratEmploye->getStatut() == ManagerModuleContrat::EXPIRED) {
+				          						echo "<i class='fa fa-check fa-2x' style='color : #00c853'></i>";
+				          					}
+				          				?>
+				          			</td>
+			          			</tr>
+			          			<tr>
+			          				<td class="label">statut</td>
+			          				<td>
+				          				<?php
+				          					$today = date("Y-m-d");
+				          					if ($contratEmploye->getDateDebut() != null && $contratEmploye->getDateFin() != null) { 
+					          					if ($today < $contratEmploye->getDateDebut()) {
+					          						echo "A venir";
+					          					} elseif ($contratEmploye->getStatut() == ManagerModuleContrat::EXPIRED) {
+					          						echo "expiré";
+					          					} else {
+					          						if ($contratEmploye->getStatut() == ManagerModuleContrat::PROPOSED) {
+					          							echo "en attente de signature";
+					          						}
+					          						else {
+					          							echo 'en cours';
+					          						}
+					          					}
+					          				} else {
+					          					echo '';
+					          				}
+				          				?>
+				          			</td>
+			          			</tr>
+	          				</tbody>
+	          			</table>
+		      		</div>			
+		      	</div>
+		    </div>
+      	<?php endif?>
+    </div>
+</section>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabContratEmploye.js"></script>

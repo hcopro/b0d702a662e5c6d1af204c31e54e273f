@@ -1,0 +1,139 @@
+<div>
+	<table class="table table-borderless" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0">
+				<th class="p-0 text-left" style="width: 5%;"><div class="card p-2 m-1 card-grey">Validation</div></th>
+				<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Formateur</div></th>
+				<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Coût</div></th>
+				<th class="p-0 text-center" style="width: 15%;"><div class="card p-2 m-1 card-grey">Actions</div></th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php if (count($data) > ManagerModuleFormation::NO) : ?>
+				<?php foreach ($data as $datum) : extract($datum); ?>
+					<tr class="p-0">
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey text-important text-center" style="height: 40px; max-height: 40px;">
+								<?php if ($offre->getStatut() == ManagerModuleFormation::OFFRE_VALIDATED) : ?>
+									<i class="fa fa-circle validation-oui text-success mt-1" style="font-size: 1.2em;"></i>
+								<?php else : ?>
+									<i class="fa fa-circle validation-non text-danger mt-1" style="font-size: 1.2em;"></i>
+								<?php endif ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey text-important text-left">
+								<?= $formateur->getCivilite() . ' ' . $formateur->getNom() . ' ' . $formateur->getPrenom() ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey">
+								<?= $offre->getCout() ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<span>
+									<?php if ($offre->getStatut() == ManagerModuleFormation::OFFRE_PROPOSED) : ?>
+										<a href="<?= HOST . 'manage/valider-offreFormation?idOffreFormateur=' . $offre->getIdOffreFormateur() ?>" class="btn btn-transparent btn-sm m-0 p-0 ml-2 <?= ($offreEditable === false) ? "disabled" : "" ?>">
+											<i class="fa fa-check text-dark tippy-act" style="font-size: 1.0em;"></i>
+										</a>
+									<?php else : ?>
+										<a href="<?= HOST . 'manage/annuler-offreFormation?idOffreFormateur=' . $offre->getIdOffreFormateur() ?>" class="btn btn-transparent btn-sm m-0 p-0 ml-2 <?= ($offreEditable === false) ? "disabled" : "" ?>">
+											<i class="fa fa-times text-dark tippy-act" style="font-size: 1.0em;"></i>
+										</a>
+									<?php endif ?>
+									<button class="btn btn-transparent btn-sm m-0 p-0 ml-2" id="editer<?= $offre->getIdOffreFormateur() ?>" 
+										<?= ($offreEditable === false) ? "disabled" : "" ?>
+									>
+										<i class="fa fa-edit text-dark tippy-act" style="font-size: 1.0em;"></i>
+									</button>
+									<button class="btn btn-transparent btn-sm m-0 p-0 ml-2" data-toggle="modal" data-target="#deleteModal<?= $offre->getIdOffreFormateur();?>"
+										<?= ($offreEditable === false) ? "disabled" : "" ?>
+									>
+										<i class="fa fa-trash text-dark tippy-act" style="font-size: 1.0em;"></i>
+									</button>
+									<?php if ($offre->getStatut() == ManagerModuleFormation::OFFRE_VALIDATED) :?>
+										<a href="<?= HOST . 'manage/reprendre-offreFormation?idOffreFormateur=' . $offre->getIdOffreFormateur() ?>" class="btn btn-transparent btn-sm m-0 p-0 ml-2 <?= ($formationOuverte === true) ? "disabled" : "" ?>">
+											<i class="fa fa-history text-dark tippy-act" style="font-size: 1.0em;"></i>
+										</a>
+									<?php endif ?>
+								</span>
+							</div>
+						</td>
+					</tr>
+					<div class="modal fade" id="deleteModal<?=$offre->getIdOffreFormateur()?>" tabindex="-1" role="dialog" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered" role="document">
+						    <div class="modal-content" style="background: #cfd8dc;">
+						      	<div class="modal-header text-center">
+						      		<div class="text-center" style="width: 100%;">
+						      			<h5 class="modal-title section-heading m-0">Confirmation</h5>
+						      		</div>
+						        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          		<span aria-hidden="true">&times;</span>
+						        	</button>
+						      	</div>
+						      	<div class="modal-body">
+						      		<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+						        		<p id="text-confirmation"> 
+						        			Voulez-vous vraiment supprimer l'offre de <?= $formateur->getCivilite() . ' ' . $formateur->getNom() . ' ' . $formateur->getPrenom() ?> ?
+						        		</p>
+						        	</div>
+						      	</div>
+						      	<div class="modal-footer">
+						      		<button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Annuler</button>
+						        	<a href="<?= HOST . 'manage/delete-offreFormation?idOffreFormateur=' . $offre->getIdOffreFormateur()?>" class="btn btn-sm btn-success">Confirmer</a>
+						      	</div>
+						    </div>
+						</div>
+					</div>
+					<script>
+						$('#editer<?= $offre->getIdOffreFormateur() ?>').click(function(){
+							$.ajax({
+								url : '<?= HOST . "manage/get-offreFormateur" ?>',
+								data : 'idOffreFormateur=<?= $offre->getIdOffreFormateur() ?>',
+								dataType : 'json',
+								success : function(data) {
+									$('#cout').val(data['cout']);
+									$('#idFormateur option[value="' + data['idFormateur'] + '"]').prop('selected', true);
+									$('#idOffreFormateur').val(data['idOffreFormateur']);
+									$('#titreModal').html("Modifier l'offre");
+									$('#modalEnregistrement').modal('show');
+								}
+							});
+						});
+					</script>
+				<?php endforeach ?>
+			<?php else : ?>
+				<tr class="p-0">
+					<td class="p-0" colspan="5">
+						<div class="card p-2 m-1 card-light-grey">Aucun enregistrement trouvé</div>
+					</td>
+				</tr>
+			<?php endif ?>
+		</tbody>
+	</table>
+</div>
+<script type="text/javascript">
+	tippy('.fa-trash', {
+    	content: "Supprimer l'offre"
+    });
+    tippy('.fa-edit', {
+    	content: "Modifier l'offre"
+    });
+    tippy('.fa-check', {
+    	content: "Valider l'offre"
+    });
+    tippy('.fa-times', {
+    	content: "Annuler la validation de l'offre"
+    });
+    tippy('.validation-oui', {
+    	content: "Validée"
+    });
+    tippy('.validation-non', {
+    	content: "Non"
+    });
+    tippy('.fa-history', {
+    	content: "Reprendre cette formation"
+    });
+</script>

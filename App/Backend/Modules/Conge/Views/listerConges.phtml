@@ -1,0 +1,163 @@
+<?php
+	extract($data);
+?>
+<div>
+	<table class="table table-borderless" id="table-pointage" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0" style="position: sticky;z-index: 999;top: 0;background: var(--white);">
+				<th class="p-0" style="width: 35%!important;"><div class="card p-2 m-1 card-grey">Nom et Prénom</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Congé total</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Congé pris</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Solde congé</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Peut prendre</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Actions</div></th>
+			</tr>
+		</thead>
+		<tbody class="" style="padding: 0px!important;">
+			<?php foreach ($employes as $employe) : ?>
+				<?php if (!is_null($employe)) :
+					$congeTotal       = $congesTotals[$employe->getIdEmploye()];
+					$congePris        = $congesPris[$employe->getIdEmploye()];
+					$congeRestant     = $congesRestants[$employe->getIdEmploye()]; 
+					$congePeutPrendre = $congesPeutPrendre[$employe->getIdEmploye()];
+				?>
+					<tr class="p-0">
+						<td class="text-important p-0">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<?= $employe->getNom() . ' ' . $employe->getPrenom();?>
+							</div>
+						</td>
+						<td class="p-0 text-important text-center">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<?php if ($congeTotal !== null) : ?>
+									<span><?= ManagerModuleConge::showSoldeConge($congeTotal)?></span>
+								<?php else :?>
+									<span>N/A</span>
+								<?php endif ?>
+							</div>
+						</td>
+						<td class="p-0 text-important text-center">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<?php if ($congePris !== null) : ?>
+									<span><?= ManagerModuleConge::showSoldeConge($congePris)?></span>
+								<?php else :?>
+									<span>0jour</span>
+								<?php endif ?>
+							</div>
+						</td>
+						<td class="p-0 text-important text-center">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<?php if ($congeRestant !== null) : ?>
+									<span><?= ManagerModuleConge::showSoldeConge($congeRestant)?></span>
+								<?php else :?>
+									<span>N/A</span>
+								<?php endif ?>
+							</div>
+						</td>
+						<td class="p-0 text-important text-center">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<?php if ($congePeutPrendre !== null) : ?>
+									<?php if ($congePeutPrendre == true) : ?>
+										<span class="text-success"><i class="fa fa-check"></i><span class="ml-3">oui</span></span>
+									<?php else : ?>
+										<span class="text-danger"><i class="fa fa-times"></i><span class="ml-3">non</span></span>
+									<?php endif ?>		
+								<?php else : ?>
+									<span>N/A</span>
+								<?php endif ?>
+							</div>
+						</td>
+						<td class="p-0 text-center">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px; position: relative;">
+								<?php $hidden = $_SESSION['compte']['identifiant'] == 'employe' ? 'hidden':''; // Sécuriser la modification direct du congé ?>
+								<button class="btn btn-transparent btn-sm m-0 p-0 <?= $hidden;?>" id="modal-solde<?= $employe->getIdEmploye() ?>" style="position: absolute;">
+									<i class="fa fa-pencil-alt text-dark tippy-act" style="font-size: 1.2em; margin-left: 11px;"></i>
+								</button>
+								<a class="btn btn-transparent btn-sm m-0 p-0" href="<?= HOST . 'manage/historiqueConge';?>?idEmploye=<?= $employe->getIdEmploye();?>">
+									<i class="fa fa-eye text-dark tippy-act" style="font-size: 1.2em; position: absolute; margin-left: 11px;"></i>
+								</a>
+							</div>
+						</td>
+					</tr>
+					<script>
+						$('#modal-solde<?= $employe->getIdEmploye() ?>').click(function(){
+							$.ajax({
+								url : '<?= HOST . "manage/get-stockConge" ?>',
+								data : 'idEmploye=<?= $employe->getIdEmploye() ?>',
+								dataType : 'json',
+								success : function(data) {
+									var employe = data['employe'];
+									var stock   = data['stock'];
+									$('#idEmploye').val(employe['idEmploye']);
+									$('#employe').html(employe['civilite'] + ' ' + employe['nom'] + ' ' + employe['prenom']);
+									$('#duree').val(stock['duree']);
+									$('#modalEnregistrement').modal('show');
+								}
+							});
+						});
+					</script>
+				<?php endif; ?>
+			<?php endforeach ?>
+		</tbody>
+	</table>
+</div>
+<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<form method="POST" id="form" action="<?= HOST . 'manage/save-stockConge'?>" enctype="multipart/form-data" novalidate="novalidate">
+				<input type="hidden" name="idEmploye" id="idEmploye">
+				<div class="modal-header">
+					<div class="text-center" style="width: 100%;">
+			      		<h5 class="modal-title" id="exampleModalLabel">Initialiser le solde de congé</h5>
+			      	</div>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					</div>
+					<div class="modal-body">
+						<div class="card p-3" style="background: #ffffff;">
+							<div class="card card-extra-light-grey m-1 p-2 titre text-center">
+								<span id="employe"></span>
+							</div>
+							<div class="card card-extra-light-grey m-1 p-2 text-justify">
+								<div class="row">
+									<div class="col-md-4">
+										<span class="titre">Solde de congé : </span>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<input type="text" class="form-control" data-validation-regex-regex="^[0-9]*.?[0-9]+$" data-validation-regex-message="Caractères non valide ou information incomplète" name="duree" id="duree" required="required" data-validation-required-message="Veuillez entrer le solde" style="background: #ffffff; height: 38px; font-size: 0.9em; font-weight: bold;">
+											<p class="help-block text-danger"></p>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<p class="text-important">jour(s)</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<div class="text-right" style="width: 105%!important;">
+							<button class="btn btn-sm btn-info" type="submit">
+								Enregistrer
+							</button>
+						</div>
+			      	</div>
+			    </div>
+			</form>
+		</div>
+	</div>
+</div>
+<script>
+	tippy(".fa-pencil-alt", {
+		content: "Initialiser  le solde de congé"
+	});
+	tippy(".fa-eye", {
+		content: "Voir détails de congé"
+	});
+	$(function() {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+    });
+</script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>

@@ -1,0 +1,72 @@
+<?php extract($data); ?>
+<div class="card p-3" style="background: #fbfbfb; min-height: 350px; max-height: 350px; overflow-y: scroll;">
+        <?php foreach ($notifications as $donnees) : extract($donnees); ?>
+                <?php if ($statut == ManagerModulePresence::VALIDATED) : ?>
+                        <?php if ($notification->getStatut() == ManagerModulePresence::NOT_SEEN) : ?>
+                                <div class="card p-2 m-1" style="background: #8afc77; color: #000000; font-size: 1.0em;">
+                        <?php elseif ($notification->getStatut() == ManagerModulePresence::SEEN) : ?>
+                                <div class="card p-2 m-1" style="background: #bce5b5; color: #19506a; font-size: 0.9em;">
+                        <?php endif ?>    
+                <?php elseif ($statut == ManagerModulePresence::REFUSED) : ?>
+                        <?php if ($notification->getStatut() == ManagerModulePresence::NOT_SEEN) : ?>
+                                <div class="card p-2 m-1" style="background: #fd7878; color: #000000; font-size: 1.0em;">
+                        <?php elseif ($notification->getStatut() == ManagerModulePresence::SEEN) : ?>
+                                <div class="card p-2 m-1" style="background: #e5b5b7; color: #19506a; font-size: 0.9em;">
+                        <?php endif ?>   
+                <?php else : ?>
+                        <?php if ($notification->getStatut() == ManagerModulePresence::NOT_SEEN) : ?>
+                                <div class="card p-2 m-1" style="background: #789efd; color: #000000; font-size: 1.0em;">
+                        <?php elseif ($notification->getStatut() == ManagerModulePresence::SEEN) : ?>
+                                <div class="card p-2 m-1" style="background: #b5bde5; color: #19506a; font-size: 0.9em;">
+                        <?php endif ?>  
+                <?php endif ?>
+                <?php if ($statut == ManagerModulePresence::PROPOSED) : ?>
+                        <p>
+                                <?=$demandeur->getCivilite() . ' ' . $demandeur->getNom() . ' ' . $demandeur->getPrenom(); ?> a demandé une permission en raison de <span class="text-important"><?= $raison ?></span> pour le <span class="text-important"><?= $debutPermission ?></span>
+                        </p>
+                <?php else : ?>
+                        <p>
+                                <?php if ($demandeur->getIdEmploye() == $_SESSION['user']['idEmploye']) : ?>
+                                        Votre demande de permission en raison de <span class="text-important"> <?= $raison ?></span> pour le 
+                                        <span class="text-important"> <?= $debutPermission ?> </span> a été
+                                        <?php if ($statut == ManagerModulePresence::VALIDATED) : ?>
+                                                validée. Vous serez autorisé(e) à vous absenter
+                                                <?php if ($debutPermission == $finPermission) : ?>
+                                                        le <span class="text-important"> <?= $debutPermission ?> </span>.
+                                                <?php else : ?>
+                                                        du <span class="text-important"> <?= $debutPermission ?> </span> au <span class="text-important"> <?= $finPermission ?> </span>
+                                                <?php endif ?>
+                                        <?php elseif ($statut == ManagerModulePresence::REFUSED) : ?>
+                                                refusée.
+                                        <?php endif ?>
+                                <?php else : ?>
+                                        La demande de permission de <?=$demandeur->getCivilite() . ' ' . $demandeur->getNom() . ' ' . $demandeur->getPrenom(); ?> pour le <?= $debutPermission ?> en raison de <span class="text-important"> <?= $raison ?></span> a été
+                                        <?php if ($statut == ManagerModulePresence::VALIDATED) : ?>
+                                                validée. L'employé sera autorisé(e) à s'absenter
+                                                <?php if ($debutPermission == $finPermission) : ?>
+                                                        le <span class="text-important"> <?= $debutPermission ?> </span>.
+                                                <?php else : ?>
+                                                        du <span class="text-important"> <?= $debutPermission ?> </span> au <span class="text-important"> <?= $finPermission ?> </span>
+                                                <?php endif ?>
+                                        <?php elseif ($statut == ManagerModulePresence::REFUSED) : ?>
+                                                refusée.
+                                        <?php endif ?>
+                                <?php endif ?>
+                        </p>
+                <?php endif ?>
+                <div class="row">
+                        <div class="col-md-2">
+                                <?php if ($notification->getStatut() == ManagerModulePresence::SEEN) : ?>
+                                        <span>vu</span>
+                                <?php elseif ($notification->getStatut() == ManagerModulePresence::NOT_SEEN) : ?>
+                                        <span class="text-important">nouveau</span>
+                                <?php endif ?>
+                        </div>
+                        <div class="col-md-8"></div>
+                        <div class="col-md-2">
+                                <span style="font-size: 0.8em;"><?= $dateNotification; ?></span>
+                                </div>
+                        </div>
+                </div>
+        <?php endforeach ?>
+</div>

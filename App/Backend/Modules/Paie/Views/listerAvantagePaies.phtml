@@ -1,0 +1,111 @@
+<div>
+	<table class="table table-borderless" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0">
+				<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Avantage</div></th>
+				<th class="p-0 text-left" style="width: 20%;"><div class="card p-2 m-1 card-grey">Statut imposable</div></th>
+				<th class="p-0 text-center" style="width: 20%;"><div class="card p-2 m-1 card-grey">Ratio Imposable</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Actions</div></th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php if (count($data) > ManagerModulePaie::NO) : ?>
+				<?php foreach ($data as $avantage) : ?>
+					<tr class="p-0">
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey text-important text-left">
+								<?= $avantage->getLibelle() ?>
+							</div>
+						</td>
+						<td class="p-0 text-left">
+							<div class="card p-2 m-1 card-light-grey">
+								<?php if ($avantage->getImposable() == ManagerModulePaie::IMPOSABLE_POUR_TOUS) : ?>
+									<span>imposable pour tous</span>
+								<?php elseif ($avantage->getImposable() == ManagerModulePaie::NON_IMPOSABLE_POUR_TOUS) : ?>
+									<span>non imposable pour tous</span>
+								<?php elseif ($avantage->getImposable() == ManagerModulePaie::IMPOSABLE_PAR_DEFAUT) : ?>
+									<span>imposable par défaut</span>
+								<?php elseif ($avantage->getImposable() == ManagerModulePaie::NON_IMPOSABLE_PAR_DEFAUT) : ?>
+									<span>non imposable par défaut</span>
+								<?php endif ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey">
+								<?= $avantage->getRatioImposable() . '%' ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<span>
+									<button class="btn btn-transparent btn-sm m-0 p-0" id="edit<?=$avantage->getIdAvantage()?>">
+										<i class="fa fa-edit text-dark ml-2" style="font-size: 1.2em;"></i>
+									</button>
+									<button class="btn btn-transparent btn-sm m-0 p-0" data-toggle="modal" data-target="#deleteModal<?=$avantage->getIdAvantage()?>">
+										<i class="fa fa-trash text-dark ml-2" style="font-size: 1.2em;"></i>
+									</button>
+								</span>
+							</div>
+						</td>
+					</tr>
+					<div class="modal fade" id="deleteModal<?=$avantage->getIdAvantage()?>" tabindex="-1" role="dialog" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered" role="document">
+						    <div class="modal-content">
+						      	<div class="modal-header">
+						        	<h5 class="modal-title text-center" style="width: 100%;">Confirmation</h5>
+						        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          		<span aria-hidden="true">&times;</span>
+						        	</button>
+						      	</div>
+						      	<div class="modal-body">
+						      		<p>
+						      			<i class="fa fa-exclamation-triangle text-danger fa-2x" aria-hidden="true"></i>
+						      		</p>
+						      		<p>
+						      			<span class="text-danger">
+						      				Attention ! Les salariés qui profitent de cet avantage ne pourront plus en bénéficier après la suppression de ce dernier.
+						      			</span>
+						      		</p>
+						        	<p id="text-confirmation"> Voulez-vous vraiment supprimer cet avantage ?</p>
+						      	</div>
+						      	<div class="modal-footer">
+						      		<a href="" type="button" class="btn btn-sm btn-danger">Annuler</a>
+						        	<a href="<?= HOST . 'manage/delete-avantage?idAvantage=' . $avantage->getIdAvantage()?>" class="btn btn-sm btn-success">Confirmer</a>
+						      	</div>
+						    </div>
+						</div>
+					</div>
+					<script>
+						$('#edit<?=$avantage->getIdAvantage()?>').click(function(){
+							$.ajax({
+								url  : "<?= HOST . "manage/get-avantage" ?>",
+								data : "idAvantage=<?=$avantage->getIdAvantage()?>",
+								dataType : "json",
+								success : function(data)
+								{
+									$('#titre').html("Modification");
+									$('#idAvantage').val(data['idAvantage']);
+									$('#libelle').val(data['libelle']);
+									$('#imposable option[value="' + data['imposable'] + '"]').prop('selected', true);
+									$('#ratioImposable').val(data['ratioImposable']);
+									$('#modalEnregistrement').modal('show');
+								} 
+							});
+						});
+					</script>
+				<?php endforeach ?>
+			<?php else : ?>
+				<tr class="p-0">
+					<td class="p-0" colspan="5">
+						<div class="card p-2 m-1 card-light-grey">Aucun enregistrement trouvé</div>
+					</td>
+				</tr>
+			<?php endif ?>
+		</tbody>
+	</table>
+</div>
+<script type="text/javascript">
+	tippy('.fa-info-circle', {
+    	content: 'plus de détails'
+    });
+</script>

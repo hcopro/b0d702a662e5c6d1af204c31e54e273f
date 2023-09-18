@@ -1,0 +1,303 @@
+.section-cv{
+	margin-top: 52.5px;
+}
+
+.image-candidat{
+	max-height: 80px;
+	width: 80px;
+}
+
+.margin-img{
+	margin-left: -10px;
+}
+
+.marge-element{
+	margin-left: 5px;
+}
+
+.format-cv{
+	background: white;
+	height: auto;
+	width: auto;
+	/*max-width: 1500.28px;
+	max-height: 1500.89px;*/
+}
+
+.format-nom{
+	text-align: Left;
+}
+
+.format-element-gauche{
+	margin-top: 0px;
+	margin-left: 15px;
+	background: whitesmoke;
+}
+
+.format-element-droite{
+	margin-top: 1px;
+	margin-left: 10px;
+}
+
+.format-identite{
+	margin-left: 23px;
+}
+
+.titre-element{
+	color: #1f487c;
+}
+
+.fond-element{
+	background: linear-gradient(217deg, white, white 70.71%),
+              linear-gradient(127deg, grey, whitesmoke 70.71%),
+              linear-gradient(336deg, white, ghostwhite 70.71%);
+}
+
+.div-format{
+	width: 2480px;
+    height: 3508px;
+    columns: 2;
+    column-gap: 20px;
+	overflow: hidden;
+}
+
+.experience-place{
+	margin-top: -10px;
+	margin-left: -10px;
+}
+
+.formation-place{
+	margin-top: -10px;
+	margin-left: -10px;
+}
+
+.format-nomPrenom{
+	color: grey;
+	margin-top: 15px;
+    margin-left: 10px;
+}
+
+.couleur-icone{
+	color:#1f487c;
+}
+
+.profil{
+	margin-top: -1px;
+}
+
+.img-cercle{
+	border-radius: 50%;
+}
+
+.p-margin{
+	margin-bottom: 0rem;
+    margin-top: 10px;
+}
+
+.photoDuCandidat{
+	margin-top:5px;
+}
+
+.format-en-tete{
+	margin-left: 0px;
+    margin-right: 0px;
+}
+
+.size-a4{
+	width: 6.2in;
+	height: 8.7in;
+	background: white;
+}
+
+.size-a4-paysage{
+	max-height:6.2in;
+	min-height:6in;
+	max-width:8.7in;
+	min-width:8.5in;
+}
+
+.size-letter {
+	width: 6.3in;
+	height: 8.2in;
+}
+
+.size-executive {
+	width: 5.4in;
+	height: 7.8in;
+	font-size: 12px;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.police-small{
+	font-size:12px;
+}
+
+.sous-titre-size{
+	font-size: 13px;
+}
+
+.annimation{
+	animation-name: wiggle;
+    animation-duration: 2s;
+  	animation-iteration-count: 2;
+}
+
+@keyframes wiggle  {
+  0%, 7% {
+    transform: rotateZ(0);
+  }
+  15% {
+    transform: rotateZ(-15deg);
+  }
+  20% {
+    transform: rotateZ(10deg);
+  }
+  25% {
+    transform: rotateZ(-10deg);
+  }
+  30% {
+    transform: rotateZ(6deg);
+  }
+  35% {
+    transform: rotateZ(-4deg);
+  }
+  40%, 100% {
+    transform: rotateZ(0);
+  }
+}
+
+.rotation{
+	animation-name: rotate;
+  	animation-duration: 0.7s;
+  	animation-iteration-count: 2;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.wave {
+  	animation: wave 10s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0% {
+    background-color: #FF9999;
+  }
+  10% {
+    background-color: #FFCC99;
+  }
+  20% {
+    background-color: #FFFF99;
+  }
+  30% {
+    background-color: #CCFF99;
+  }
+  40% {
+    background-color: #99FF99;
+  }
+  50% {
+    background-color: #99FFCC;
+  }
+  60% {
+    background-color: #99FFFF;
+  }
+  70% {
+    background-color: #99CCFF;
+  }
+  80% {
+    background-color: #9999FF;
+  }
+  90% {
+    background-color: #CC99FF;
+  }
+  100% {
+    background-color: #FF99FF;
+  }
+}
+
+.resize{
+	color: yellowgreen;
+}
+
+.center-text{
+	text-align: center;
+}
+
+.image-rond{
+	clip-path: circle(50% at 50% 50%);
+/*	clip-path: polygon(50% 0%, 80% 10%, 100% 35%, 100% 70%, 80% 90%, 50% 100%, 20% 90%, 0% 70%, 0% 35%, 20% 10%);*/
+}
+
+.polygon{
+	clip-path: polygon(20% 0, 100% 0%, 100% 100%, 0% 100%);
+	background-color: whitesmoke;
+}
+.rate {
+    float: left;
+    height: 30px;
+    padding: 0 10px;
+    margin-top: -12px;
+}
+.rate:not(:checked) > input {
+    position:absolute;
+    top:-9999px;
+}
+.rate:not(:checked) > label {
+    float:right;
+    width:1em;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:30px;
+    color:#E9E9E9;
+}
+.rate:not(:checked) > label:before {
+    content: '★';
+}
+.rate > input:checked ~ label {
+    color: #FCF305;    
+}
+.rate:not(:checked) > label:hover,
+.rate:not(:checked) > label:hover ~ label {
+    color: #F6F600;  
+}
+.rate > input:checked + label:hover,
+.rate > input:checked + label:hover ~ label,
+.rate > input:checked ~ label:hover,
+.rate > input:checked ~ label:hover ~ label,
+.rate > label:hover ~ input:checked ~ label {
+    color: #FDD845;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #c9c7c2;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+

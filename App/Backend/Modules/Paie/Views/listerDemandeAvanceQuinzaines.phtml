@@ -1,0 +1,174 @@
+<div>
+	<?php if (count($data) > 0) : ?>
+		<?php foreach ($data as $datum) : extract($datum); ?>
+			<?php if ($demande->getStatut() == ManagerModulePaie::AVANCE_VALIDATED) :?>
+				<div class="card m-2 p-2" style="border: 1px solid #00c853;">
+			<?php elseif ($demande->getStatut() == ManagerModulePaie::AVANCE_PROPOSED) :?>
+				<div class="card m-2 p-2" style="border: 1px solid #ffab00;">
+			<?php elseif ($demande->getStatut() == ManagerModulePaie::AVANCE_REJECTED) :?>
+				<div class="card m-2 p-2" style="border: 1px solid #d32f2f;">
+			<?php endif?>
+				<div class="row">
+					<div class="col-md-1 text-center">
+						<?php if ($demande->getStatut() == ManagerModulePaie::AVANCE_VALIDATED) :?>
+							<i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+						<?php elseif ($demande->getStatut() == ManagerModulePaie::AVANCE_PROPOSED) :?>
+							<i class="fa fa-hourglass" style="color: #ffab00;" aria-hidden="true"></i>
+						<?php elseif ($demande->getStatut() == ManagerModulePaie::AVANCE_REJECTED) :?>
+							<i class="fa fa-times" style="color: #d32f2f;" aria-hidden="true"></i>
+						<?php endif?>
+					</div>
+					<div class="col-md-2 text-left">
+						<?php if ($demande->getStatut() == ManagerModulePaie::AVANCE_VALIDATED) :?>
+							<span class="text-important" style="color: #00c853;">validée</span>
+						<?php elseif ($demande->getStatut() == ManagerModulePaie::AVANCE_REJECTED) :?>
+							<span class="text-important" style="color: #d32f2f;">rejetée</span>
+						<?php elseif ($demande->getStatut() == ManagerModulePaie::AVANCE_PROPOSED) :?>
+							<span class="text-important" style="color: #ffab00;">en attente</span>
+						<?php endif ?>
+					</div>
+					<div class="col-md-4 text-left">
+						<span><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></span>
+					</div>
+					<div class="col-md-2 text-left">
+						<span><?= date('d/m/Y', strtotime($demande->getDate())) ?></span>
+					</div>
+					<div class="col-md-3 text-right">
+						<?php if ($_SESSION['compte']['identifiant'] == "entreprise") : ?>
+							<?php if ($demande->getTypeDemande() == ManagerModulePaie::AVANCE_NOT_ARCHIVED) : ?>
+								<?php if ($demande->getStatut() == ManagerModulePaie::AVANCE_PROPOSED) : ?>
+									<button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalSupprimer<?=$demande->getIdAvanceQuinzaine()?>">retirer</button>
+								<?php else : ?>
+									<a class="btn btn-sm btn-danger" href="<?= HOST . 'manage/archiver-demandeAvanceQuinzaine?idAvanceQuinzaine=' . $demande->getIdAvanceQuinzaine() ?>" >archiver</a>
+								<?php endif ?>
+							<?php elseif ($demande->getTypeDemande() == ManagerModulePaie::AVANCE_ARCHIVED) : ?>
+								<a class="btn btn-sm btn-success" href="<?= HOST . 'manage/restaurer-demandeAvanceQuinzaine?idAvanceQuinzaine=' . $demande->getIdAvanceQuinzaine() ?>" >restaurer</a>
+							<?php endif ?>
+						<?php elseif ($_SESSION['compte']['identifiant'] == "employe") : ?>
+							<?php if ($demande->getTypeAvance() == ManagerModulePaie::AVANCE_NOT_ARCHIVED) : ?>
+								<?php if ($demande->getStatut() == ManagerModulePaie::AVANCE_PROPOSED) : ?>
+									<button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalSupprimer<?=$demande->getIdAvanceQuinzaine()?>">retirer</button>
+								<?php else : ?>
+									<a class="btn btn-sm btn-danger" href="<?= HOST . 'manage/archiver-demandeAvanceQuinzaine?idAvanceQuinzaine=' . $demande->getIdAvanceQuinzaine() ?>" >archiver</a>
+								<?php endif ?>
+							<?php elseif ($demande->getTypeAvance() == ManagerModulePaie::AVANCE_ARCHIVED) : ?>
+								<a class="btn btn-sm btn-success" href="<?= HOST . 'manage/restaurer-demandeAvanceQuinzaine?idAvanceQuinzaine=' . $demande->getIdAvanceQuinzaine() ?>" >restaurer</a>
+							<?php endif ?>
+						<?php endif ?>
+						<button class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalDemande<?=$demande->getIdAvanceQuinzaine()?>">voir</button>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="modalDemande<?=$demande->getIdAvanceQuinzaine()?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  				<div class="modal-dialog modal-dialog-centered" role="document">
+    				<div class="modal-content">
+      					<div class="modal-header">
+        					<div class="text-center" style="width: 100%;">
+					      		<h5 class="modal-title section-heading" style="margin-bottom: -15px!important;" id="exampleModalLabel">Les détails de la demande</h5>
+					      	</div>
+        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          						<span aria-hidden="true">&times;</span>
+        					</button>
+      					</div>
+      					<div class="modal-body">
+        					<div class="card p-3" style="background: #efefff;">
+        						<div class="card m-1 p-2">
+        							<div class="row">
+        								<div class="col-md-5 text-left text-important">
+        									Demandeur :
+        								</div>
+        								<div class="col-md-7 text-left">
+        								 	<span class=""><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></span>
+        								</div>
+									</div>
+									<div class="row mt-2">
+	        							<div class="col-md-5 text-left text-important">
+	    									Date de la demande:
+	    								</div>
+	    								<div class="col-md-7 text-left">
+	    								 	<span class=""><?= date("d/m/Y", strtotime($demande->getDate())) ?></span>
+	    								</div>
+	    							</div>
+	    							<div class="row mt-2">
+		        						<div class="col-md-5 text-left text-important">
+	    									Montant :
+	    								</div>
+	    								<div class="col-md-7 text-left">
+	    								 	<span class=""><?= number_format($demande->getMontant(), 2) ?></span>
+	    								</div>
+	    							</div>
+	    							<div class="row mt-2">
+		        						<div class="col-md-5 text-left text-important">
+	    									Motif :
+	    								</div>
+	    								<div class="col-md-7 text-left">
+	    								 	<span class=""><?= $demande->getMotif() ?></span>
+	    								</div>
+	    							</div>
+        						</div>
+        					</div>
+      					</div>
+      					<div class="modal-footer">
+        					<div class="text-right" style="width: 105%!important;">
+        						<?php if ($demande->getStatut() == ManagerModulePaie::AVANCE_PROPOSED) : ?>
+        							<?php if ($_SESSION['compte']['identifiant'] == ManagerModulePaie::USER_ENTREPRISE) : ?>
+										<a class="btn btn-sm btn-danger" id="rejeter-<?= $demande->getIdAvanceQuinzaine() ?>" href="<?= HOST . 'manage/rejeter-demandeAvanceQuinzaine?idAvanceQuinzaine=' . $demande->getIdAvanceQuinzaine() ?>">
+												rejeter
+										</a>
+										<a class="btn btn-sm btn-success" id="valider-<?= $demande->getIdAvanceQuinzaine() ?>" href="<?= HOST . 'manage/valider-demandeAvanceQuinzaine?idAvanceQuinzaine=' . $demande->getIdAvanceQuinzaine() ?>">
+											valider
+										</a>
+									<?php else : ?>
+										<span class="text-important text-info">En attente de réponse</span>
+									<?php endif ?>
+								<?php else : ?>
+									<a class="btn btn-sm btn-danger" href="<?= HOST . 'manage/archiver-demandeAvanceQuinzaine?idAvanceQuinzaine=' . $demande->getIdAvanceQuinzaine() ?>">
+										archiver
+									</a>
+								<?php endif ?>
+					      	</div>
+      					</div>
+    				</div>
+  				</div>
+  			</div>
+  			<div class="modal fade" id="modalSupprimer<?=$demande->getIdAvanceQuinzaine()?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			  	<div class="modal-dialog modal-dialog-centered" role="document">
+			    	<div class="modal-content">
+			      		<div class="modal-header text-center">
+			      			<div class="text-center" style="width: 100%;">
+			      				<h5 class="modal-title section-heading" id="exampleModalLabel">Confirmation de la suppression</h5>
+			      			</div>
+			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          			<span aria-hidden="true">&times;</span>
+			        		</button>
+			      		</div>
+			      		<div class="modal-body">
+		      				<div class="card p-3 text-center" style="background: #ffffff;">
+		      					<?php if ($_SESSION['compte']['identifiant'] == ManagerModulePaie::USER_ENTREPRISE) : ?>
+		      						Voulez-vous vraiment retirer la demande d'avance de <span class="titre"><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></span> ?
+		      					<?php elseif ($_SESSION['compte']['identifiant'] == ManagerModulePaie::USER_EMPLOYE) : ?>
+		      						Voulez-vous vraiment retirer votre demande d'avance quinzaine ?
+		      					<?php endif ?>
+				        	</div>
+			      		</div>
+			      		<div class="modal-footer">
+			      			<div class="row" style="width: 105%!important;">
+			      				<div class="col-sm-3 text-left">
+			      					<a href="" class="btn btn-red">Annuler</a>
+			      				</div>
+			      				<div class="col-sm-5"></div>
+			      				<div class="col-sm-4">
+			      					<a href="<?= HOST . 'manage/delete-demandeAvanceQuinzaine?idAvanceQuinzaine=' . $demande->getIdAvanceQuinzaine() ?>" class="btn btn-green">Confirmer</a>
+			      				</div>
+			      			</div>
+			      		</div>
+			    	</div>
+			  	</div>
+			</div>
+		<?php endforeach?>
+	<?php else : ?>
+		<div class="card m-2 p-2 text-center">
+			<span>Aucune demande d'avance quinzaine à afficher</span>
+		</div>
+	<?php endif?>
+</div>

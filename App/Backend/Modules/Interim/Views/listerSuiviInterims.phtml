@@ -1,0 +1,186 @@
+<div>
+	<table class="table table-borderless" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0">
+				<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Nom et Prénom</div></th>
+				<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Poste</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Début</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Fin</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Détails</div></th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php if (count($data) > ManagerModuleInterim::NO) : ?>
+				<?php foreach ($data as $datum) : extract($datum); ?>
+					<tr class="p-0">
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey text-important text-left">
+								<?= $employe->getNom() . ' ' . $employe->getPrenom() ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey">
+								<?= $poste->getPoste() ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey">
+								<?= $debut ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey">
+								<?= $fin ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<button class="btn btn-transparent btn-sm m-0 p-0" id="modalEvaluation<?= $interim->getIdInterim();?>">
+									<i class="fa fa-info-circle text-dark" style="font-size: 1.4em;"></i>
+								</button>
+							</div>
+						</td>
+					</tr>
+					<script>
+						$('#modalEvaluation<?= $interim->getIdInterim() ?>').click(function(){
+							$.ajax({
+								url : "<?= HOST . 'manage/getInterim'?>",
+								data : "idInterim=<?= $interim->getIdInterim() ?>",
+								dataType : "json",
+								success : function(data)
+								{
+									$('#idInterim').val(data['interim']['idInterim']);
+									$('#evaluateur').val(data['interim']['chef']);
+									$('#chef').val(data['interim']['chef']);
+									$('#nom-prenom').html(data['employe']['nom'] + ' ' + data['employe']['prenom']);
+									$('#poste').html(data['poste']['poste']);
+									$('#debut').html(data['debut']);
+									$('#fin').html(data['fin']);
+									if (data['evaluation'] != null) {
+										$('#idEvaluationInterim').val(data['evaluation']['idEvaluationInterim']);
+										$('#note').val(data['evaluation']['note']);
+										$('#remarque').html(data['evaluation']['remarque']);
+									}
+									if (data['employe']['photo'] != "") {
+										$('#photo').attr("src", '<?= HOST ?>../Web/Ressources/images/employes/' + data['employe']['photo']);
+									} else {
+										$('#photo').attr("src", '<?= HOST . "../Web/Ressources/images/profilCandidat.png"?>');
+									}
+									$('#modalEvaluation').modal('show');
+								}
+							});
+						});
+					</script>
+				<?php endforeach ?>
+			<?php else : ?>
+				<tr class="p-0">
+					<td class="p-0" colspan="5">
+						<div class="card p-2 m-1 card-light-grey">Aucun enregistrement trouvé</div>
+					</td>
+				</tr>
+			<?php endif ?>
+		</tbody>
+	</table>
+</div>
+<div class="modal fade" id="modalEvaluation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  	<div class="modal-dialog modal-dialog-centered" role="document">
+    	<div class="modal-content">
+      		<div class="modal-header text-center">
+      			<div class="text-center" style="width: 100%;">
+      				<h5 class="modal-title section-heading m-0" id="exampleModalLabel">Evaluation</h5>
+      			</div>
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          			<span aria-hidden="true">&times;</span>
+        		</button>
+      		</div>
+      		<div class="modal-body">
+      			<form method="POST" id="form" action="<?= HOST . 'manage/save-evaluationInterim' ?> " novalidate="novalidate" enctype="multipart/form-data">
+      				<input type="hidden" name="idInterim" id="idInterim">
+      				<input type="hidden" name="chef" id="chef">
+      				<input type="hidden" name="idEvaluationInterim" id="idEvaluationInterim">
+      				<input type="hidden" name="evaluateur" id="evaluateur">
+	      			<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+		      			<div class="row">
+		      				<div class="col-md-3">
+	      						<img id="photo" style="height: 100px; width: 100px;">
+							</div>
+							<div class="col-md-9 text-left">
+								<label class="text-important" id="nom-prenom"></label><br>
+							</div>
+						</div>
+						<div class="card mt-2 p-2 card-light-grey">
+							<div class="row">
+								<div class="col-md-5 text-left">
+									<span class="titre">
+										Poste assuré :
+									</span>
+								</div>
+								<div class="col-md-7 text-left" id="poste"></div>
+							</div>
+						</div>
+						<div class="card mt-2 p-2 card-light-grey">
+							<div class="row">
+								<div class="col-md-5 text-left">
+									<span class="titre">
+										Dates :
+									</span>
+								</div>
+								<div class="col-md-7 text-left">
+									du <span class="titre" id="debut"></span> au <span class="titre" id="fin"></span>
+								</div>
+							</div>
+						</div>
+						<div class="card mt-2 p-2 card-light-grey">
+							<div class="row">
+								<div class="col-md-5 text-left">
+									<span class="titre">
+										Note :
+									</span>
+								</div>
+								<div class="col-md-7 text-left form-group m-0">
+									<i class="fa fa-star icon-input" aria-hidden="true" style="color: #3a434f; font-size: 0.8em;"></i>
+									<input type="number" name="note" id="note" min="0" max="10" class="form-control select-time d-inline-block" style="width: 150px!important;" placeholder="note" required="required" data-validation-required-message="Veuillez attribuer une note">
+									<span class="text-important">/ 10</span>
+									<p class="help-block text-danger"></p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-5 text-left">
+									<span class="titre">
+										Remarque :
+									</span>
+								</div>
+								<div class="col-md-7 text-left">
+									<textarea name="remarque" id="remarque" rows="5" required="required" data-validation-required-message="Veuillez laisser un commentaire" style="border-radius: 5px; width: 100%; font-size: 0.8em;">N/A</textarea>
+								</div>
+							</div>
+							<br>
+							<div class="row">
+								<div class="col-md-5">
+									<a href="" type="submit" class="btn btn-danger btn-sm" style="width: 100%;">
+										Annuler
+									</a>
+								</div>
+								<div class="col-md-2"></div>
+								<div class="col-md-5">
+									<button type="submit" class="btn btn-info btn-sm" style="width: 100%;">
+										Enregistrer
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+      		</div>
+    	</div>
+  	</div>
+</div>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+<script>
+	$(function() {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+    });
+    tippy('.fa-info-circle', {
+    	content: 'plus de détails'
+    });
+</script>

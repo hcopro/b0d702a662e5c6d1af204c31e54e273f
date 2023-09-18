@@ -1,0 +1,340 @@
+<?php
+	extract($data);
+	$url = explode('/', $_GET['page']);
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row" style="margin-top: -15px;">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h4 class="text-center list-title section-heading">Évaluation à valider</h4>
+			</div>
+		</div>
+		<div class="block-section">
+			<?php if ($_SESSION['compte']['identifiant'] == "entreprise") : ?>
+				<?php if ($url[2] == "evaluation_valider") : ?>
+					<div class="row">
+				        <ul id="new-tab-button">
+			        		<li id="tab9">
+			        			<a href="<?= HOST. 'manage/entreprise/evaluation'?>">
+			        				La liste des évaluations à valider
+			        			</a>
+			        		</li>
+				        </ul>
+			      	</div>
+				<?php endif ?>
+				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+					<div class="row block-section">
+						<div>
+							<table class="table table-striped small-first-col" id="table-back">
+								<?php if ($url[2] == "evaluation_valider") : $pageTitle = "Valider l'évaluation"; ?>
+									<thead>
+										<tr>
+											<th>N°</th>
+											<th>Libelle</th>
+											<th>Évaluation</th>
+											<th>Personne à évaluer</th>
+											<th>Évaluateurs</th>
+											<th>Catégorie</th>
+											<th>Date de création</th>
+											<th class="text-center">Actions</th>
+										</tr>
+									</thead>
+									<tbody id="tableSearch" class="body-half-screen">
+										<?php foreach ($data as $key => $donnees) : ?>
+											<tr class="">
+												<td>
+													<?= $key + 1; ?>
+												</td>
+												<td>
+													<?= ucfirst(strtolower($donnees->getLibelle())); ?>
+												</td>
+												<?php foreach ($donnees->getPoint() as $keyTwo => $value) : ?>
+														<?php if ($keyTwo == 'evaluation') : ?>
+															<td>
+																<?= ucfirst($value->getLibelle()); ?>
+															</td>
+														<?php elseif ($keyTwo == 'points') : ?>
+															<td>
+																<?php foreach ($value as $keyFour => $valueFour) :
+																	 
+																	if ($keyFour == 'points') :
+																		foreach ($valueFour as $keyFinve => $valueFinve) :
+																			foreach ($valueFinve as $keySix => $categ) :
+																				if ($keySix === 'categories') :
+																					if (is_array($categ)) : echo "<pre>"; var_dump($categ['categories']); ?>
+																						&nbsp;&#8209;&nbsp;
+																						<?= $categ['categories']->getLibelle() ; ?>
+																						<br>
+																					<? else : ?>
+																						&nbsp;&#8209;&nbsp;
+																						<?= $categ->getLibelle() ; ?>
+																						<br>
+																					<? endif; 
+																				endif;
+																			endforeach;
+																		endforeach; 
+																	endif;
+																endforeach;?>
+															</td>
+														<?php elseif ($keyTwo == 'evaluateurs') : ?>
+															<td>
+																<?php foreach ($value as $keyThree => $eval) : 
+																	if ($eval->getIdEmploye() === $donnees->getIdEvaluateur()) : ?>
+																		<?= $eval->getNom(); ?>&nbsp;<?= $eval->getPrenom(); ?>
+																	<?php endif; 
+																endforeach; ?>
+															</td>
+														<?php elseif ($keyTwo == 'evaluee') : ?>
+															<td>
+																<?= $value->getNom(); ?>&nbsp;<?= $value->getPrenom(); ?>
+															</td>
+													<?php endif; ?>
+												<?php endforeach;  ?>
+												<td>
+													<?= $donnees->getDateCreation() ; ?>
+												</td>
+												<td class="text-center">
+													<a href="evaluation?idEvaluation=" class="btn btn-info">
+											        	<i class="fas fa-eye"></i>
+											      	</a>
+													<a href="update-evaluation?idEvaluation=" class="btn btn-warning">
+									        			<i class="fas fa-edit"></i>	
+											      	</a>				      		
+											      		<a href="delete-evaluation" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id=""
+											      		data-url="delete-evaluation?idEvaluation=">
+						                 				<i class="fas fa-trash"></i>
+					                				</a>
+												</td>
+											</tr>		
+										<?php endforeach;?>
+									</tbody>
+								<?php endif; ?>
+							</table>
+						</div>
+					</div>
+				</div>
+				
+				<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+			<?php endif ?>
+			<!-- Debut Modal Modification de l'évaluation -->
+				<!-- <div class="modal fade" id="modalUpdate" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+						<div class="modal-content">
+							<form method="POST" id="formModif" action="" enctype="multipart/form-data" novalidate="novalidate">
+								<div class="modal-header">
+									<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title" id="exampleModalLabelModif"> <?= 'Modifier '.lcfirst($pageTitle) ?></h5>
+							      	</div>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+				  					<div class="card p-3 card-p-3-modif" style="background: #efefff;">
+										<div class="form-group hidden">
+							              	<input class="form-control" id="modif-idEvaluation" name="id_evaluation" type="number" value="" readonly>
+							              	<p class="help-block text-danger"></p>
+						              	</div>
+						              	<div class="form-group hidden">
+							              	<input class="form-control" id="hidden-modif-idParent" name="id_parent" type="text" value="">
+							              	<p class="help-block text-danger"></p>
+						              	</div>
+						              	<div class="form-group hidden">
+							              	<input class="form-control" id="hidden-modif-idCategorie" name="id_categorie" type="text" value="">
+							              	<p class="help-block text-danger"></p>
+						              	</div>
+						              	<div class="form-group hidden">
+						              		<input class="form-control" id="idEntreprise" name="id_entreprise" type="number"
+						              		value="<?= $_SESSION['user']['idEntreprise']; ?>" readonly>
+						              		<p class="help-block text-danger"></p>
+						              	</div>
+						              	<div class="form-group hidden">
+							              	<input class="form-control" id="date" name="date_creation" type="text" value="<?= date("Y-m-d H:i:s")?>">
+							              	<p class="help-block text-danger"></p>
+						              	</div>
+										<div class="row">
+											<div class="col-md-2">
+												<span class="titre">Libelle : </span>
+											</div>
+											<div class="col-md-10">
+												<div class="form-group">
+													<i class="fa fa-pencil-alt icon-input" aria-hidden="true" style="color: #3a434f;margin-left: 2%;margin-top: 2%;"></i>
+													<input class="form-control focus_activated text-capitalize modal-input" id="modif-evaluation" name="libelle"
+														type="text" required="required" data-validation-required-message="Entrez l'évaluation svp!"
+														data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùçâ]*" data-validation-regex-message="Caractères non valide"
+														placeholder="Saisir libelle d'évaluation">
+													<p class="help-block text-danger"></p>
+												</div>
+											</div>
+										</div>
+										<hr>
+							            <div class="row" id="modal-card-p-3-modif-row">
+				  							<div class="col-md-5">
+				  								<span class="titre">Categorie : </span>
+				  								<div class="form-group">
+				  									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;margin-left: 3%;margin-top: 5%;"></i>
+								                  	<select  class="form-control span3 focus_activated modal-input idParent" name="" id="modif-select-idCategorie" required="required" onclick="getIdParent('modif-','')" 
+								                  	data-validation-required-message="Veuillez choisir une catégorie" >
+								                    	<option class="text-center" value=""> __Choisir une catégorie __ </option>
+								                  	</select>
+								                </div>
+				  							</div>
+				  							<div class="col-md-5">
+												<span class="titre">Sous-categorie : </span>
+												<div class="form-group">
+													<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;margin-left: 3%;margin-top: 5%;"></i>
+										    		<select  class="form-control span3 focus_activated modal-input idCategorie" name="" id="modif-select-idSousCategorie" required="required" onclick="getIdCategory()" 
+										    		data-validation-required-message="Veuillez choisir une sous-categorie">
+								          				<option class="text-center" value="">__Choisir une sous-categorie __</option>
+								        			</select>
+										  		</div>
+											</div>
+											<div class="col-md-2" style="padding-top: 25px;">
+												<div class="form-group">
+													<button type="button" class="btn btn-modif" onclick="addRowModif()" style="background: #6e9e89;" >
+														<i class="fa fa-plus" aria-hidden="false"></i>
+													</button>
+										  			<button type="button" class="btn btn-delete" onclick="removeRowModif(this)" style="background: #d62037;">
+														<i class="fas fa-times" id="times_close" ></i> 
+										  			</button>
+										  		</div>
+											</div>
+											<hr>
+				  						</div>
+				  					</div>
+								</div>
+								<div class="modal-footer">
+									<div class="row" style="width: 105%!important;">
+						      			<div class="col-md-3">
+						      				<button type="button" class="btn btn-md btn-danger" id="annulerModif" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submitModif" class="btn btn-md btn-info">
+							      					Enregister 
+							      				</button>
+							      			</div>
+							      		</div>
+						      		</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div> -->
+			<!-- Fin Modal Modification de l'évaluation -->
+			<!-- Debut Modal Ajout nouveau enregistrement -->
+			<!-- 	<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+						<div class="modal-content">
+							<form method="POST" id="form" action="<?= HOST . 'manage/entreprise/create-'. $url[2] ?>" enctype="multipart/form-data" novalidate="novalidate">
+								<div class="modal-header">
+									<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title" id="exampleModalLabel"> <?= 'Créer '.lcfirst($pageTitle) ?></h5>
+							      	</div>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+				  					<div class="card p-3" style="background: #efefff;">
+										<div class="form-group hidden">
+							              	<input class="form-control" id="ajout-idEvaluation" name="id_evaluation" type="number" value="<?php if(isset($evaluation)) :  echo $evaluation->getIdEvaluation(); endif; ?>" readonly>
+							              	<p class="help-block text-danger"></p>
+						              	</div>
+						              	<div class="form-group hidden">
+							              	<input class="form-control" id="hidden-ajout-idParent" name="id_parent" type="text" value="">
+							              	<p class="help-block text-danger"></p>
+						              	</div>
+						              	<div class="form-group hidden">
+							              	<input class="form-control" id="hidden-ajout-idCategorie" name="id_categorie" type="text" value="">
+							              	<p class="help-block text-danger"></p>
+						              	</div>
+						              	<div class="form-group hidden">
+							              	<input class="form-control" name="date_creation" type="text" value="<?= date("Y-m-d H:i:s")?>">
+							              	<p class="help-block text-danger"></p>
+						              	</div>
+										<div class="row">
+											<div class="col-md-1">
+												<span class="titre">Libelle : </span>
+											</div>
+											<div class="col-md-10">
+												<div class="form-group">
+													<i class="fa fa-pencil-alt icon-input" aria-hidden="true" style="color: #3a434f;margin-left: 2%;margin-top: 2%;"></i>
+													<input class="form-control focus_activated text-capitalize modal-input" id="ajout-evaluation" name="libelle"
+														type="text" required="required" data-validation-required-message="Entrez l'évaluation svp!"
+														data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùçâ]*" data-validation-regex-message="Caractères non valide"
+														placeholder="Saisir libelle d'évaluation">
+													<p class="help-block text-danger"></p>
+												</div>
+											</div>
+										</div>
+										<hr>
+							            <div class="row" id="modal-p-3-row">
+				  							<div class="col-md-5">
+				  								<span class="titre">Categorie : </span>
+				  								<div class="form-group">
+				  									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;margin-left: 3%;margin-top: 5%;"></i>
+								                  	<select  class="form-control span3 focus_activated modal-input idParent" name="" id="ajout-select-idCategorie" required="required" onclick="getIdParent('ajout-')" 
+								                  	data-validation-required-message="Veuillez choisir une catégorie" >
+								                    	<option class="text-center" value=""> __Choisir une catégorie __ </option>
+								                  	</select>
+								                </div>
+				  							</div>
+				  							<div class="col-md-5">
+												<span class="titre">Sous-categorie : </span>
+												<div class="form-group">
+													<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;margin-left: 3%;margin-top: 5%;"></i>
+										    		<select  class="form-control span3 focus_activated modal-input idCategorie" name="" id="ajout-select-idSousCategorie" required="required" onclick="getIdCategory()" 
+										    		data-validation-required-message="Veuillez choisir une sous-categorie">
+								          				<option class="text-center" value="">__Choisir une sous-categorie __</option>
+								        			</select>
+										  		</div>
+											</div>
+											<div class="col-md-2" style="padding-top: 25px;">
+												<div class="form-group">
+													<button type="button" class="btn btn-ajout" onclick="addRow()" style="background: #6e9e89;" >
+														<i class="fa fa-plus" aria-hidden="false"></i>
+													</button>
+										  			<button type="button" class="btn btn-delete" onclick="removeRow()" style="background: #d62037;">
+														<i class="fas fa-times" id="times_close" ></i> 
+										  			</button>
+										  		</div>
+											</div>
+											<hr>
+				  						</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<div class="row" style="width: 105%!important;">
+						      			<div class="col-md-3">
+						      				<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submit" class="btn btn-md btn-info">
+							      					Enregister 
+							      				</button>
+							      			</div>
+							      		</div>
+						      		</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div> -->
+			<!-- Fin Modal Ajout nouveau enregistrement -->
+		</div>
+	</div>
+</section>
+<script type="text/javascript" src="<?= HOST; ?>../App/Backend/Modules/Evaluation/Views/listerEvaluation.js" async></script>
+<script type="text/javascript" src="<?= HOST; ?>../App/Backend/Modules/Evaluation/Views/listeEvaluationGlobal.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabEvaluation.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script type="text/javascript"> var employes = <?= json_encode($data['employes']); ?></script>

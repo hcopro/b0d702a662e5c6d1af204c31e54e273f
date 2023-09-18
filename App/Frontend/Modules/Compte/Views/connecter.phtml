@@ -1,0 +1,76 @@
+<?php 
+	unset($_SESSION['variable']);
+  $pageTitle = "Login";
+?>
+
+<section class="page-section" id="connexion">
+  <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+            <form id="form" method="POST" action="" enctype="multipart/form-data" novalidate="novalidate">
+              <div class="row">
+                  <div class="col-md-3"></div>
+                  <div class="col-md-6 login-form">
+                    <div class="col-lg-12">
+                        <h2 class="section-heading text-center">Login</h2>  
+                        <div class="form-group">
+                          <label class="label-input">Pseudo :</label>
+                          <input class="form-control" id="login" name="login" type="text" required="required" data-validation-required-message="Veuillez entrer votre pseudo *" data-validation-regex-regex="^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]*" data-validation-regex-message="Caractères non valide *" tabindex="8">
+                          <p class="help-block text-danger"></p>
+                        </div>
+                        <div class="form-group" style="position: relative;">
+                          <label class="label-input">Mot de passe :</label>
+                          <input class="form-control text-lowercase" id="motDePasse" name="motDePasse" type="password" required="required" data-validation-required-message="Veuillez entrer votre mot de passe *" tabindex="9">
+                          <i class="fas fa-eye eye-icon" style="position: absolute; right: 16px; top: 68%; transform: translateY(-42%); z-index: 2;"></i>
+                            <p class="help-block text-danger"></p>
+                        </div>
+                        <div class="form-group hidden">
+                          <input class="form-control" id="localisation" name="userIp" type="text" value="<?= $_SERVER['REMOTE_ADDR'] ?>" readonly>
+                          <p class="help-block text-danger"></p>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 text-center">
+                      <div class="row">
+                        <div class="col order-last text-left">
+                          <button type="submit" class="btn btn-primary btn-xl" id="connect" tabindex="10" style="padding: 15px 50px 15px 50px;">Se connecter</button>
+                        </div>
+                        <div class="col order-first text-right">
+                          <a href="#" data-toggle="modal" data-target="#inscriptionModal" tabindex="12">
+                            <button class="btn btn-warning btn-xl" tabindex="11" style="padding: 15px 50px 15px 50px;">Créer compte </button>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </form>
+        </div>
+      </div>
+  </div>
+</section>
+
+ <!-- Modal -->
+<div class="modal fade" id="inscriptionModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h4>Vous voulez s'inscrire en tant que :</h4>
+        <label class="container">Entreprise
+          <input type="radio" name="radio" id="entreprise" value="entreprise">
+          <span class="checkmark"></span>
+        </label>
+        <label class="container">Candidat
+          <input type="radio" name="radio" id="candidat" value="candidat">
+          <span class="checkmark"></span>
+        </label>
+        <label class="text-center hidden" id="warning">Veuillez choisir un type d'utilisateur</label>
+      </div>
+      <div class="modal-footer">
+        <a id="inscrire"><button class="btn btn-success">Valider</button></a>
+        <button type="button" class="btn btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="<?= HOST; ?>../Web/Ressources/js/connecter.js"></script>

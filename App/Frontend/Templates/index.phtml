@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+  		<meta charset="utf-8">
+		<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+		<!-- <meta property="og:image" content="<?= HOST ?>../Web/Ressources/images/entreprises/fiche_rh.png">
+		<meta property="og:image:type" content="image/png">
+		<meta property="og:image:width" content="1024">
+		<meta property="og:image:height" content="1024"> -->
+		<!-- <meta property="og:title" content="your_link_title">
+		<meta property="og:image" content="<?= HOST ?>../Web/Ressources/images/entreprises/fiche_rh.png"> -->
+
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="icon" type="image/png" href="<?= HOST ?>../Web/Ressources/images/entreprises/logoHumanexusV2.png">
+
+  		<title><?= isset($pageTitle) ? $pageTitle : 'Humanexus'; ?></title>
+
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/fontawesome-free/css/all.min.css">	
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/agency.min.css">			
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/datepicker.css">	
+ 		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/style.css">
+
+ 		<!-- Fonts CDN -->
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/fonts/montserrat.css">
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/fonts/kaushan.css">
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/fonts/serif.css">
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/fonts/roboto.css">
+
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.min.js"></script>
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.easing.min.js"></script>
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/bootstrap.bundle.min.js"></script>
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jqBootstrapValidation.js"></script>
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/filter.js"></script>	
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/agency.min.js"></script>				
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datepicker.js"></script>		  
+
+	</head>
+	<body>
+		<!-- Navigation -->
+		<nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+    		<div class="container">
+      			<a class="navbar-brand js-scroll-trigger" href="https://hco.mg" tabindex="1">
+      				<img src = "<?= HOST . 'Web/Ressources/images/entreprises/logoHumanexusV2.png'?>" style="width: 250px;">
+      			</a>
+      			<?php /* echo "<pre>"; var_dump("expression"); var_dump($_GET['page']); var_dump($_SESSION); exit;*/ ?>
+			    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+			        Menu
+			    <i class="fas fa-bars"></i>
+			    </button>
+      			<div class="collapse navbar-collapse" id="navbarResponsive">
+			        <ul class="navbar-nav text-uppercase ml-auto">
+			          	<li class="nav-item">
+			            	<a class="nav-link js-scroll-trigger" href="https://hco.mg" tabindex="2">
+			            	<i class="fas fa-home"></i>
+			            	</a>
+			          	</li>
+			          	<!-- <li class="nav-item"> -->
+			            	<!-- <a class="nav-link js-scroll-trigger" tabindex="3" href="https://hco.mg/apropos/">À propos</a> -->
+		                	<!-- <ul class="list text-lowercase">
+		                    	<li><a href="<?= HOST;?>accueil#a-propos">Qui somme-nous?</a></li>
+		                    	<li><a href="<?= HOST;?>accueil#activites">Nos activités</a></li>
+		                	</ul> -->
+			          	<!-- </li> -->
+			          	<!-- <li class="nav-list nav-item"> -->
+			            	<!-- <a class="nav-link js-scroll-trigger" href="<?= HOST;?>solution">Solutions</a>
+		                	<ul class="list text-lowercase">
+		                    	<li><a href="<?= HOST;?>Solution/adminPersonnel">Administration du personnel</a></li>
+		                    	<li><a href="<?= HOST;?>Solution/gestionTalents">Gestion des talents</a></li>
+		                	</ul> -->
+			          	<!-- </li> -->
+			          	<!-- <li class="nav-item"> -->
+			            	<!-- <a class="nav-link js-scroll-trigger" href="https://hco.mg/contact/" tabindex="4">
+			            	Contact
+			            	</a> -->
+			          	<!-- </li> -->
+			          	<li class="nav-item">
+			            	<a class="nav-link js-scroll-trigger" href="<?= HOST;?>offres" tabindex="5">
+			            	Offres
+			            	</a>
+			          	</li>
+			          	<?php if (isset($_SESSION['compte'])): ?>			          		
+				          	<li class="nav-list nav-item">
+			            	<a class="nav-link js-scroll-trigger text-uppercase" href="#">Mon compte</a>
+		                	<ul class="list text-lowercase">
+		                    	<li><a href="<?= HOST . 'manage/' . $_SESSION['compte']['identifiant'] . '/dashboard';?>">Profil</a></li><hr>		        
+		                 
+		                    	<li><a href="<?= HOST;?>deconnexion" >Deconnexion</a></li>
+		                	</ul>
+			          	</li>
+				        <?php else: ?>	
+				        	<li class="nav-list nav-item">
+				            	<a class="nav-link js-scroll-trigger" href="#" tabindex="6">S'inscrire</a>
+			                	<ul class="list text-lowercase">
+			                    	<li><a href="<?= HOST; ?>create-compte?identifiant=candidat">Candidat</a></li>
+			                    	<li><a href="<?= HOST; ?>create-compte?identifiant=entreprise">Entreprise</a></li>
+			                	</ul>
+				          	</li>
+				          	<li class="nav-item">
+				            	<a class="nav-link js-scroll-trigger" href="<?= HOST;?>connexion" tabindex="7">
+				            		Se connecter
+				            	</a>
+				          	</li>	
+			          	<?php endif ?>
+			        </ul>
+      			</div>
+    		</div>
+  		</nav>
+		<div id="content-page-front">
+			<?= $pageContent; ?>
+		</div>
+		<div class="container">
+			<?php if (isset($_SESSION['info'])) {
+	   			foreach ($_SESSION['info'] as $type => $message) {
+					echo "<div class='info container alert alert-" . $type . "' data-dismiss='alert' id='alert'>" . $message . "</div>";
+					unset($_SESSION['info']);		
+				}
+	    	}?>
+		</div>
+		<footer class="footer">
+		    <div class="container">
+		      <div class="row align-items-center">
+		        <div class="col-md-4">
+		          <span class="copyright">Copyright &copy; Huma Nexus <?=date('Y')?> </span>
+		        </div>
+		        <div class="col-md-4">
+		          <ul class="list-inline social-buttons">
+		            <li class="list-inline-item">
+		              <a href="https://www.facebook.com/humancartoffice" style="background: #4267b2">
+		                <i class="fab fa-facebook-f"></i>
+		              </a>
+		            </li>
+		          </ul>
+		          <label class="">
+	                Coordonnées :
+	                <p >
+	                Tél. : (+261) 34 55 462 70</br>
+	                E-mail : contact@hco.mg</br>
+	                </p>
+	              </label>
+		        </div>
+		        <div class="col-md-4">
+		          <a href="https://hco.mg" class="text-footer">
+	              	<h4><img src = "<?= HOST . 'Web/Ressources/images/entreprises/logoHumanexusV2.png'?>" style="width: 280px;"></h4>
+	              	<!-- <h4><img src = "<?= HOST . 'Web/Ressources/images/entreprises/hcoV2.png'?>"></h4> -->
+	              </a>
+		        </div>
+		      </div>
+		    </div>
+		</footer>
+	</body>
+</html>
+
+<script src="<?= HOST; ?>../Web/Ressources/js/header.js"></script>

@@ -1,0 +1,2583 @@
+<style type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/dataTable.bootstrap.css"></style>
+<style type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/dataTable.responsive.css"></style> 
+<?php
+	$url = explode("/", $_GET['page']);
+	$url = $url[1];
+	if ($url == "suggest_candidats") {
+		$title     = "Suggestion des candidats";
+		$pageTitle = "Candidats suggérés";
+	} elseif ($url == "offre_candidatures") {
+		$title     = "Liste des candidatures par offre";
+		$pageTitle = "Candidatures d'une offre";
+	}
+	$manage = new ManagerModuleRecrutement();
+	unset($_SESSION['variable']);
+	$isAddMenu 	= isset($_SESSION['compte']['addMenuUser']) ? $_SESSION['compte']['addMenuUser'] : 'NO';
+	$months 	= ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+?>
+<section class="page-section" id="back-section">
+	<div class="container" style="margin-top: -20px !important;">
+    	<?php if ($url == "formations") : $pageTitle = "Formations";?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-formation";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Mes formations</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Formation</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : extract($data); if(!empty($formations)): foreach ($formations as $formation):?>
+							<tr>
+								<td>
+						   			<strong>
+						   				<?php
+							   				$debut = str_replace('-', '/', $formation['formation']->getDateDebut());
+							   				$fin   = str_replace('-', '/', $formation['formation']->getDateFin()); 
+							   				echo date('d/m/Y', strtotime($debut)) . " - " . date('d/m/Y', strtotime($fin)) . ":";
+							   			?>
+						   			</strong>
+						   			<ul>
+						   				<li>
+						   					 Domaine : <?= ucfirst($formation['sousDomaine']->getNomSousDomaine()); ?> 
+						   				</li>
+						   				<li>
+						   					 Thème : <?= ucfirst($formation['formation']->getTheme()); ?> 
+						   				</li>
+						   				<li>
+						   					 Description : <?= ucfirst($formation['formation']->getDescription()); ?> 
+						   				</li>
+						   			</ul>
+								</td>
+								<td class="text-center">
+									<a href="<?= HOST . "manage/update-formation?idFormation=" . $formation['formation']->getIdFormation(); ?>" class="btn btn-warning">
+							        	<i class="fas fa-edit">	</i>
+							      	</a>
+							      	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $formation['formation']->getIdFormation(); ?>" data-name="ce formation" data-url="delete-formation?idFormation=">
+					                  <i class="fas fa-trash"></i>	
+					                </a>
+								</td>
+							</tr>
+							<?php endforeach; endif;?>
+							<?php else: ?> 
+								<tr>
+									<td>Aucun enregistrement touvé</td>
+								</tr>
+							<?php endif;?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col-md-12 tab-menu">
+	            <ul id="tab-button">
+                  <li id="e"><a href="<?= HOST. "manage/candidat/dashboard";?>"><i class="fas fa-user"></i>&nbsp;<br>Profil</a></li>
+                  <li id="f"><a href="<?= HOST . "manage/formations"; ?>"><i class="fas fa-book-open"></i>&nbsp;<br>Formations</a></li>
+                  <li id="g"><a href="<?= HOST . "manage/diplomes"; ?>"><i class="fas fa-user-graduate"></i>&nbsp;<br>Diplômes</a></li>
+                  <li id="h"><a href="<?= HOST . "manage/experiences"; ?>"><i class="fas fa-award"></i>&nbsp;<br>Expériences</a></li>
+                </ul>
+	        </div>
+	        <script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif ($url == "diplomes") : $pageTitle = "Diplômes";?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-diplome";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Mes diplômes</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Diplôme</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : extract($data); if(!empty($diplomes)): foreach ($diplomes as $diplome):?>
+							<tr>
+								<td>
+						   			<strong>
+						   				<?php
+							   				$date = str_replace('-', '/', $diplome['diplome']->getDateObtention());
+							   				echo date('d/m/Y', strtotime($date)) . ":";
+							   			?>
+						   			</strong>
+						   			<ul>
+						   				<li>
+						   					 Diplôme : <?= ucfirst($diplome['diplome']->getDesignation()) . " en " . ucfirst($diplome['domaine']->getNomDomaine()); ?> 
+						   				</li>
+						   				<li>
+						   					 Ecole : <?= ucfirst($diplome['diplome']->getEcole()); ?> 
+						   				</li>
+						   				<li>
+						   					 Niveau d'étude : <?= $diplome['niveauEtude']->getNiveau(); ?> 
+						   				</li>
+						   			</ul>
+								</td>
+								<td class="text-center">
+									<a href="<?= HOST . "manage/update-diplome?idDiplome=" . $diplome['diplome']->getIdDiplome(); ?>" class="btn btn-warning">
+							        	<i class="fas fa-edit"></i>
+							      	</a>
+							      	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $diplome['diplome']->getIdDiplome(); ?>" data-name="ce diplôme" data-url="delete-diplome?idDiplome=">
+					                  	<i class="fas fa-trash"></i>	
+					                </a>
+								</td>
+							</tr>
+							<?php endforeach; endif;?>
+							<?php else: ?>
+								<tr>
+									<td>Aucun enregistrement touvé</td>
+								</tr>
+							<?php endif;?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col-md-12 tab-menu">
+	            <ul id="tab-button">
+	              	<li id="e"><a href="<?= HOST. "manage/candidat/dashboard";?>"><i class="fas fa-user"></i>&nbsp;<br>Profil</a></li>
+	              	<li id="f"><a href="<?= HOST . "manage/formations"; ?>"><i class="fas fa-book-open"></i>&nbsp;<br>Formations</a></li>
+	              	<li id="g"><a href="<?= HOST . "manage/diplomes"; ?>"><i class="fas fa-user-graduate"></i>&nbsp;<br>Diplômes</a></li>
+	              	<li id="h"><a href="<?= HOST . "manage/experiences"; ?>"><i class="fas fa-award"></i>&nbsp;<br>Expériences</a></li>
+	            </ul>
+	        </div>
+	        <script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif ($url == "experiences") : $pageTitle = "Expériences";?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-experience";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Mes expériences</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Expérience</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : extract($data); if(!empty($experiences)): foreach ($experiences as $experience):?>
+							<tr>
+								<td>
+						   			<strong>
+						   				<?php
+							   				$debut = str_replace('-', '/', $experience['experience']->getDateDebut());
+							   				$fin   = str_replace('-', '/', $experience['experience']->getDateFin()); 
+							   				echo date('d/m/Y', strtotime($debut)) . " - " . date('d/m/Y', strtotime($fin)) . ":";
+							   			?>
+						   			</strong>
+						   			<ul>
+						   				<li>
+						   					 Domaine : <?= ucfirst($experience['sousDomaine']->getNomSousDomaine()); ?>
+						   				</li>
+						   				<li>
+						   					 Entreprise : <?= $experience['experience']->getEntreprise(); ?>
+						   				</li>
+						   				<li>
+						   					 Poste : <?= ucfirst($experience['experience']->getPoste()); ?>
+						   				</li>
+						   				<li>
+						   					 Description : <?= ucfirst($experience['experience']->getDescription()); ?>
+						   				</li>
+						   			</ul>
+								</td>
+								<td class="text-center">
+									<a href="<?= HOST . "manage/update-experience?idExperience=" . $experience['experience']->getIdExperience(); ?>" class="btn btn-warning">
+							        	<i class="fas fa-edit"></i>
+							      	</a>
+							      	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $experience['experience']->getIdExperience(); ?>" data-name="cette expérience" data-url="delete-experience?idExperience=">
+					                  <i class="fas fa-trash"></i>
+					                </a>
+								</td>
+							</tr>
+							<?php endforeach; endif;?>
+							<?php else: ?>
+								<tr>
+									<td>Aucun enregistrement touvé</td>
+								</tr>
+							<?php endif;?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col-md-12 tab-menu">
+	            <ul id="tab-button">
+                  <li id="e"><a href="<?= HOST. "manage/candidat/dashboard";?>"><i class="fas fa-user"></i>&nbsp;<br>Profil</a></li>
+                  <li id="f"><a href="<?= HOST . "manage/formations"; ?>"><i class="fas fa-book-open"></i>&nbsp;<br>Formations</a></li>
+                  <li id="g"><a href="<?= HOST . "manage/diplomes"; ?>"><i class="fas fa-user-graduate"></i>&nbsp;<br>Diplômes</a></li>
+                  <li id="h"><a href="<?= HOST . "manage/experiences"; ?>"><i class="fas fa-award"></i>&nbsp;<br>Expériences</a></li>
+                </ul>
+	        </div>
+	        <script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif ($url == "candidatures" && $_SESSION['compte']['identifiant'] == "candidat") :
+			$pageTitle = "Candidatures envoyées";
+		?>
+			<div class="row">
+				<div class="col-md-3">
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Les candidatures envoyées</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div class="col-md-12">
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Candidature</th>
+								<th>Entretien</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : foreach ($data as $candidature): extract($candidature); ?>
+							<tr>
+								<td> 
+									<strong>
+						   				<?php
+							   				$date = str_replace('-', '/', $candidature->getDateCandidature());
+							   				echo "Envoyée le " . date('d/m/Y', strtotime($date)) . " : ";
+							   			?>
+						   			</strong><br>
+						   			Entreprise : <?= $entreprise->getNom(); ?><br>
+						   			Poste : <?= ucfirst($poste->getPoste()); ?>
+								</td>
+								<td>
+								<?php if (!empty($entretien)): ?>
+									<?php if ($entretien->getStatut() == "en attente") : ?>
+						   				<label>
+						   					Vous avez un rendez-vous pour un entretien
+						   					<?php if (!empty($interlocuteurs)): 
+						   						$collaborateurs = "";
+						   						echo " avec "; 
+						   						foreach ($interlocuteurs as $interlocuteur) :
+						   							$collaborateurs .= ucfirst($interlocuteur->getNom()) . ", ";
+						   						endforeach;
+						   					?>
+						   						<?= substr($collaborateurs, 0, -2); ?>
+						   					<?php endif; ?>
+						   				</label><br>
+						   			<?php elseif ($entretien->getStatut() == "valide"): ?>
+						   				<label>Votre entretien a été bien passé</label><br>
+						   			<?php else : ?>
+						   				<label>Dommage que votre entretien a été rejeté</label><br>
+						   			<?php endif ?>
+									<label> Date : </label>
+									<?php
+						   				$date = str_replace('-', '/', $entretien->getDate());
+						   				echo date('d/m/Y', strtotime($date));
+						   			?><br>
+						   			<label>Lieu : </label><?= $entretien->getLieu() . " à " . substr($entretien->getHeure(), 0, -3);?><br>
+						   			<label>Statut : </label>
+						   			<?php if ($entretien->getStatut() != "rejete") : ?>
+						   				<label class="alert-info"><?= $entretien->getStatut();?></label>
+						   			<?php else : ?>
+						   				<label class="alert-danger">rejeté</label>
+						   			<?php endif ?>
+						   		<?php else : ?>
+						   			<label>Entretien en attente</label>
+								<?php endif ?>
+								</td>
+							</tr>
+							<?php endforeach; endif;?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+Mangataka prix détai
+		<?php elseif ($url == "candidatures_entreprise" && ($_SESSION['compte']['identifiant'] == "entreprise" || $isAddMenu === 'YES')) :
+			$pageTitle = "Candidatures reçues";
+		?>
+			<?php if (!array_key_exists('view', $data)) : extract($data); /*echo "<pre>"; var_dump($data['cardsData']); exit;*/ ?>
+				<link rel="stylesheet" href="<?= HOST;?>../Web/Ressources/Kendo UI/styles/kendo.default-ocean-blue.min.css" />
+				<link rel="stylesheet" type="text/css" href="<?= HOST;?>../Web/Ressources/css/creerCV.css">
+				<link rel="stylesheet" type="text/css" href="<?= HOST;?>../Web/Ressources/css/commentaires.css">
+				<script src="<?= HOST;?>../Web/Ressources/js/commentaires.js"></script>
+				<script src="<?= HOST; ?>../Web/Ressources/js/creerCV.js"></script>
+				<base href="<?= HOST;?>../Web/Ressources/Kendo UI/examples/colorpicker/index">
+	  			<script src="<?= HOST;?>../Web/Ressources/Kendo UI/js/kendo.all.min.js"></script>
+	  			<script src="<?= HOST;?>../Web/Ressources/js/listerCandidatures.js"></script>
+				<div class="" style="overflow-y: hidden;">
+					<div id="example">
+					    <div class="demo-section wide">
+					        <div id="taskBoard"></div>
+					    </div>
+						<div class="container">
+							<div class="">
+								<select class="form-control-sm" name="offre" id="select-offre">
+									<option value="">
+									<?php
+										if (isset($_GET['idOffre'])) {
+											if (!empty($_GET['poste'])) {
+												echo $_GET['poste'];
+											} else {
+												echo "...........";
+											}
+										} else {
+											echo "...........";
+										}
+									?>
+								</option>
+								<option value="0">Tous les postes</option>
+                        			<?php if (isset($data['offres'])) : ?>
+										<?php foreach( $data['offres'] as $offre ) : ?>
+											<option value="<?= $offre['offre']->getIdOffre(); ?>, <?= $offre['poste']->getPoste(); ?>"><?= $offre['poste']->getPoste(); ?></option>
+										<?php endforeach; ?>				
+									<?php endif; ?>				
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="modal fade" id="entretien" tabindex="-1" role="dialog" aria-hidden="true">
+				        <div class="modal-dialog modal-dialog-centered" role="document">
+			          		<div class="modal-content">
+					            <div class="modal-header modal-style-header">
+					                <h5 class="modal-title text-center">Ajouter entretien</h5> 
+					                <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+					                	<span aria-hidden="true">&times;</span>
+					                </button>
+					            </div>
+					            <form id="formEntretien" action="" method="POST" enctype="multipart/form-data">
+				              		<div class="modal-body modal-style-body">
+						                <input type="hidden" id="idEntretien" name="idEntretien" value="">
+						                <input type="hidden" id="idCandidature" name="idCandidature" value="">
+						                <input type="hidden" id="idNiveauEntretien" name="idNiveauEntretien" value="">
+						                <div class="form-group">
+				                          	<label class="label-input">Lieu :</label>
+				                          	<input class="form-control" id="lieu" name="lieu" type="text" value="" required="required" data-validation-required-message="Veuillez entrer le lieu d'entretien *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                          	<p class="help-block text-danger"></p>
+				                        </div>
+				                        <div class="form-group">
+				                          	<label class="label-input">Date :</label>
+				                          	<input class="datepicker form-control" id="datepicker" autocomplete="off" name="date" data-date-format="dd/mm/yyyy" value="" data-validation-required-message="Veuillez renseigner la date de l'entretien" data-validation-regex-regex="^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[0-2])\/\d{4}$" data-validation-regex-message="Date non valide" required>
+	                						<p class="help-block text-danger formationFin"></p>
+				                        </div>
+				                        <div class="form-group">
+				                          	<label class="label-input">Heure :</label>
+				                          	<input id="timepicker" value="" class="form-control timepicker" type="time" name="heure" title="timepicker" data-validation-required-message="Veuillez entrer l'heure d'entretien *" required="required" />
+				                          	<p class="help-block text-danger"></p>
+				                        </div>
+				                        <div class="form-group hidden">
+				                            <input class="form-control" id="statut" name="statut" type="text" value="en attente">
+				                        </div>
+				                        <div class="form-group hidden">
+				                            <input class="form-control" id="nbFois" name="nbFois" type="text" value="">
+				                        </div>
+					              	</div>
+					              	<div class="modal-footer modal-style-footer">
+			                			<button type="submit" id="submitEntretien" class="btn btn-success btn-sm">Enregistrer</button>
+					              	</div>
+					            </form>
+			          		</div>
+				        </div>  
+			      	</div>
+			      	<div class="modal fade" id="creationCompte" tabindex="-1" role="dialog" aria-hidden="true">
+				        <div class="modal-dialog modal-dialog-centered" role="document">
+				          	<div class="modal-content">
+					            <div class="modal-header modal-style-header">
+					                <h5 class="modal-title text-center">Creer un compte employé</h5> 
+					                <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+				                		<span aria-hidden="true">&times;</span>
+					                </button>
+					            </div>
+					            <form id="" action="" method="POST" enctype="multipart/form-data">
+					                <div class="form-group hidden">
+					                  	<input class="form-control" id="idCompte" name="idCompte" type="number">
+					                </div>
+					                <div class="form-group hidden">
+					                  	<input class="form-control" id="identifiant" name="identifiant" type="text" value="employe" readonly="">
+					                  	<p class="help-block text-danger"></p>
+					                </div>
+					                <div class="form-group">
+					                	<label class="label-input">Pseudo : </label>
+					                  	<input class="form-control text-lowercase focus_activated" id="login" name="login" type="text" required="required" data-validation-required-message="Veuillez entrer votre pseudo *" data-validation-regex-regex="^[a-z-_]*" data-validation-regex-message="Caractères non valide" aria-invalid="false">
+					                  	<p class="help-block text-danger"></p>
+					                </div>
+					                <div class="form-group">
+					                	<label class="label-input">Mot de passe : </label>
+					                  	<input class="form-control focus_activated" id="motDePasse" name="motDePasse" type="password" required="required" data-validation-required-message="Veuillez entrer votre mot de passe *" data-validation-regex-regex="^.{6,}$" data-validation-regex-message="6 caractères minimum *" aria-invalid="false">
+					                  	<p class="help-block text-danger"></p>
+					                </div>
+					                <div class="form-group">
+					                	<label class="label-input">Confirmation du mot de passe : </label>
+					                  	<input class="form-control focus_activated" id="confirmation" name="confirmation" type="password" required="required" data-validation-required-message="Veuillez confirmer votre mot de passe *" aria-invalid="false">
+					                  	<p class="help-block text-danger" id="match-message"></p>
+					                </div>
+					                <div class="form-group hidden">
+					                  	<input class="form-control" name="statut" type="text" value="desactive" required="required">
+					                </div>
+					              	<div class="modal-footer modal-style-footer">
+					                	<button type="submit" id="submitCompte" class="btn btn-success btn-sm">Enregistrer</button>
+					              	</div>
+					            </form>
+				          	</div>
+				        </div>  
+			      	</div>
+			      	<script id="newModalTemplate" type="text/x-kendo-template">
+					    <div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true">
+					        <div class="modal-dialog-centered modal-dialog modal-xl" role="document">
+					            <div class="modal-content">
+					                <div class="modal-header">
+					                    <h5 class="modal-title" id="newModalLabel"><img src='#= source #/Web/Ressources/images/candidats/#= image # ' class="rounded-circle" style="height:60px; width:60px">#= title #</h5>
+					                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					                        <span aria-hidden="true">&times;</span>
+					                    </button>
+					                </div>
+					                <div class="modal-body" style="background-color: rgb(185, 207, 235);">
+					                    <!-- Add the modal content here -->
+					                    <div class="row">
+					                    	<div class="col-md-9">
+					                    		<iframe id="myFrame" src="#= temp#/manage/commentaire&idCandidature=#= idCandidature #" width="100%" height="600px"></iframe>
+					                    	</div>
+					                    	<div class="col-md-3">
+					                    		<div class="">
+					                    			<div class="form-group">
+					                    				<div class="container">
+						                    				<button class="btn btn-secondary" onclick="dataOffre(#= idOffre #)"><i class="fa fas fa-paperclip"></i></button>
+					                    				</div>
+					                    				<div class="container">
+						                    				<strong class="form-label">Offre</strong>
+					                    				</div>
+						                    		</div> 
+						                    		<div class="form-group">
+						                    			<div class="container">
+						                    				<button class="btn btn-secondary" onclick="dataRide(#= id #)"><i class="fa fas fa-user"></i></button>
+						                    			</div>
+						                    			<div class="container">
+						                    				<strong class="form-label">CV</strong>
+						                    			</div>
+						                    		</div>
+						                    		<?php if ($_SESSION['compte']['identifiant'] === "entreprise" || $isAddMenu === 'YES') : ?>
+							                    		<div class="form-group">
+							                    			<div class="container">
+							                    				<button class="btn btn-secondary" onclick="selectInterlocuteur(#= idOffre #, #= idCandidature #, #= id #, '#= statut #')"><i class="fa fas fa-users"></i></button>
+							                    			</div>
+							                    			<div class="container">
+							                    				<strong class="form-label">Responsable</strong>
+							                    			</div>
+							                    		</div>
+						                    		<?php endif; ?>
+					                    		</div>
+					                    	</div>
+					                    </div>
+					                </div>
+					                <div class="modal-footer">
+					                </div>
+					            </div>
+					        </div>
+					    </div>
+					</script>
+					<script id="modalCV" type="text/x-kendo-template">
+						<div class="modal fade" id="cv" tabindex="-1" role="dialog" aria-hidden="true">
+					        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+					          	<div class="modal-content">
+						            <div class="modal-header modal-style-header">
+						                <h5 class="modal-title text-center">Curiculum Vitae</h5> 
+						                <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+					                		<span aria-hidden="true">&times;</span>
+						                </button>
+						            </div>
+						            <div class="modal-body">
+						            	<iframe src="#= url #/manage/cv_candidature?idCandidat=#= url1 #" id="sourceURL" width="100%" height="600px"></iframe>
+						            </div>
+						            <div class="modal-footer"></div>
+					          	</div>
+					        </div>  
+				      	</div>
+					</script>
+					<script id="modalOffre" type="text/x-kendo-template">
+						<div class="modal fade" id="offre" tabindex="-1" role="dialog" aria-hidden="true">
+					        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+					          	<div class="modal-content">
+						            <div class="modal-header modal-style-header">
+						                <h5 class="modal-title text-center">Offre</h5> 
+						                <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+					                		<span aria-hidden="true">&times;</span>
+						                </button>
+						            </div>
+						            <div class="modal-body">
+						            	<iframe src="#= url #/manage/offreCandidature?idOffre=#= offre #" id="sourceURL" width="100%" height="600px"></iframe>
+						            </div>
+						            <div class="modal-footer"></div>
+					          	</div>
+					        </div>  
+				      	</div>
+					</script>
+					<script id="modalDesignation" type="text/x-kendo-template">
+						<div class="modal fade" id="interlocuteur" tabindex="-1" role="dialog" aria-hidden="true">
+					        <div class="modal-dialog modal-dialog-centered" role="document">
+					          	<div class="modal-content">
+						            <div class="modal-header modal-style-header">
+						                <h5 class="modal-title text-center">Interlocuteurs</h5> 
+						                <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+					                		<span aria-hidden="true">&times;</span>
+						                </button>
+						            </div>
+						            <div class="modal-body">
+						            	<form action="#= url #/manage/save-attribution">
+							            	<input type="hidden" name="idCandidat" value="#= candidat #">
+						            		<input type="hidden" name="idCandidature" value="#= candidature #">
+						            		<input type="hidden" name="idOffre" value="#= offre #">
+						            		<input type="hidden" name="statut" value="#= statut #">
+						            		<input type="hidden" name="idEntreprise" value="<?= $_SESSION['user']['idEntreprise']; ?>">
+							            	<div>
+						                        <label for="interlocuteur-select">Employe :</label>
+				                        		<select name="idEmploye" id="interlocuteur-select" class="form-control" required="required">
+					                        		<?php if (isset($data['employes'])) : ?>
+					                        			<?php if (count($data['employes']) > 0) : ?>
+					                        				<?php foreach ($data['employes'] as $employe): ?>
+					                        					<option value="<?= $employe->getIdEmploye();?>"> <?= $employe->getNom()." ". $employe->getPrenom(); ?> </option>
+					                        				<?php endforeach; ?>
+					                        			<?php endif; ?>
+				                        			<?php endif; ?>
+						                        </select>
+						                    </div>
+							            	<button type="submit" id="submitAttr" class="btn btn-success btn-sm">Enregistrer</button>
+						            	</form>
+						            </div>
+						            <div class="modal-footer"></div>
+					          	</div>
+					        </div>  
+				      	</div>
+					</script>
+					<script id="modalCommentaire" type="text/x-kendo-template">
+						<div class="modal fade" id="commentaire" tabindex="-1" role="dialog" aria-hidden="true">
+					        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+					          	<div class="modal-content">
+						            <div class="modal-header modal-style-header">
+						                <h5 class="modal-title text-center">Commentaires</h5> 
+						                <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+					                		<span aria-hidden="true">&times;</span>
+						                </button>
+						            </div>
+						            <div class="modal-body">
+						            	<input type="hidden" name="idCandidat" value="#= candidat #">
+					            		<input type="hidden" name="idCandidature" value="#= candidature #">
+					            		<input type="hidden" name="idOffre" value="#= offre #">
+					            		<input type="hidden" name="statut" value="#= statut #">
+						            </div>
+						            <div class="modal-footer"></div>
+					          	</div>
+					        </div>  
+				      	</div>
+					</script>
+					<script>
+						var HOST = new URL(window.location);
+						function dataRide(self) {
+							// self.preventDefault();
+							var url1 = self;
+							var offre = offre;
+							var url  = HOST.origin;
+
+							var newModalData = kendo.template($("#modalCV").html());
+						    var dataModal = $(newModalData({
+						        url1:url1,
+						        url:url
+						    })).appendTo("body");
+						    dataModal.modal("show");
+						}
+						function dataOffre(self) {
+							var offre = self;
+							var url  = HOST.origin;
+							var newModalOffre = kendo.template($('#modalOffre').html());
+						    var dataOffre = $(newModalOffre({
+						    	url:url,
+						    	offre:offre
+						    })).appendTo("body");
+						    dataOffre.modal("show");
+						}
+						function selectInterlocuteur(offre, candidature, candidat, statut) {
+							var idOffre = offre;
+							var idCandidature = candidature;
+							var idCandidat = candidat;
+							var statutCandidature = statut;
+							var url  = HOST.origin;
+							var newModalInter = kendo.template($('#modalDesignation').html());
+						    var dataInter = $(newModalInter({
+						    	offre:idOffre,
+						    	statut:statutCandidature,
+						    	url:url,
+						    	candidature:idCandidature,
+						    	candidat:idCandidat
+						    })).appendTo("body");
+						    dataInter.modal("show");
+							console.log('rrrrr');
+						}
+						function commentaire(offre, candidature, candidat) {
+							var idOffre = offre;
+							var idCandidature = candidature;
+							var idCandidat = candidat;
+							var url  = HOST.origin;
+							var newModalCom = kendo.template($('#modalCommentaire').html());
+						    var dataCom = $(newModalCom({
+						    	offre:idOffre,
+						    	url:url,
+						    	candidature:idCandidature,
+						    	candidat:idCandidat
+						    })).appendTo("body");
+						    dataCom.modal("show");
+						}
+						$(document).ready(function() {
+
+							$('.close').click(function() {
+								$('#formEntretien').attr('action', '');
+				        		$('#idCandidature').attr('value', '');
+				        		$('#lieu').attr('value', '');
+				        		$('#idEntretien').attr('value', '');
+				        		$('#nbFois').attr('value', '');
+				        		$('#idNiveauEntretien').attr('value', '');
+				        		$('#timepicker').attr('value', '');
+				        		$('#datepicker').attr('value', '');
+							});
+							$('.k-taskboard-card.k-card.k-cursor-move.k-taskboard-card-category').click(function(){
+								if (status == "envoye") {
+									$('#cvCandidat').modal('show');
+								}
+							});
+							$(".k-taskboard-column-header-actions").hide();
+							$(".k-button").hide();
+				            $("#get").click(function() {
+				                alert("Attendees:\n\nRequired: " + required.value() + "\nOptional: " + optional.value());
+				            });
+						});
+						var HOST 		= new URL(window.location);
+					    var cardsData 	= <?= json_encode(isset($data['cardsData']) ? $data['cardsData'] : array()); ?>;
+					    var cvData 		= <?= json_encode(isset($data['candidatForm']) ? $data['candidatForm'] : array()); ?>;
+					    $("#taskBoard").kendoTaskBoard({
+					        columns: [
+				          		{ text: "Candidats suggérés", status: "suggere"},	
+					          	{ text: "Candidatures", status: "envoye"},	
+					          	{ text: "Qualification", status: "qualification"},	
+					          	{ text: "1er entretien", status: "entretien1"},	
+					          	{ text: "2ème entretien", status: "entretien2"},	
+					          	{ text: "Validée", status: "accepte"},	
+					          	{ text: "Non validée", status: "refuse"}
+					        ],
+					        dataSource: {
+					          	transport: {
+						            read: function(options) {
+						              	options.success(cardsData);
+						            },
+						            update: function(options) {
+								      	// récupérer la carte et le nouveau statut
+								      	var newStatus			= "";
+								      	var card 				= options.data;
+								      	newStatus 				= options.data.status;
+								      	var id 					= options.data.id;
+								      	var newIdEntretien 		= options.data.idEntretien;
+								      	var newLieuEntretien 	= options.data.lieu;
+								      	var newDateEntretien 	= options.data.date;
+								      	var newHeureEntretien 	= options.data.heure;
+								      	var id_candidat 		= options.data.idCandidat;
+								      	// envoyer une requête AJAX pour mettre à jour le statut sur le serveur
+								      	$.ajax({
+								        	url: HOST.origin + "/manage/accept-candidature",
+								        	type: 'POST',
+								        	data: 'idCandidature=' + id + '&statut=' + newStatus,
+								        	success: function(response) {
+								          		// gérer la réponse si nécessaire
+								        		if (newStatus == "entretien1"){ 
+								        			console.log('entretien1');
+								        			$('#entretien').modal('show');
+								        			$('#idEntretien').attr('value', newIdEntretien);
+								        			$('#idCandidature').attr('value', id);
+								        			$('#lieu').attr('value', newLieuEntretien);
+								        			$('#formEntretien').attr('action', HOST.origin + '/manage/save-entretien');
+								        			$('#nbFois').attr('value', '1');
+								        			$('#idNiveauEntretien').attr('value', '26');
+								        			$('#timepicker').attr('value', newHeureEntretien);
+								        			$('#datepicker').attr('value', newDateEntretien);
+								        		} else if (newStatus == "entretien2") { 
+								        			console.log('entretien2');
+								        			$('#entretien').modal('show');
+								        			$('#formEntretien').attr('action', HOST.origin + '/manage/save-entretien');
+								        			$('#idCandidature').attr('value', id);
+								        			$('#lieu').attr('value', newLieuEntretien);
+								        			$('#idEntretien').attr('value', newIdEntretien);
+								        			$('#nbFois').attr('value', '2');
+								        			$('#idNiveauEntretien').attr('value', '26');
+								        			$('#timepicker').attr('value', newHeureEntretien);
+								        			$('#datepicker').attr('value', newDateEntretien);
+								        		} else if (newStatus == "accepte") { 
+								        			// $('#creationCompte').modal('show');
+								        			$('#entretien').modal('hide');
+								        		} else if (newStatus == "refuse") { 
+								        			// alert('candidature refuse');
+								        			$('#entretien').modal('hide');
+								        		} else if (newStatus == "envoye"){
+								        			$('#entretien').modal('hide');
+								        			$(this).removeAttr('style');
+								        			$(this).attr('style','border-left-color:#ffa500');
+								        		} else if (newStatus == "qualification") {
+								        			$('#entretien').modal('hide');
+								        			$(this).removeAttr('style');
+								        			$(this).attr('style','border-left-color:#1f487c');
+								        		}
+								        	},
+								        	error: function(error) {
+								          		// gérer l'erreur si nécessaire
+								        		alert("Vous n'avez pas le droit de les modifier");
+								        	}
+								      	});
+								    }
+					          	},
+					          	schema: {
+					            	model: {
+					              		id: "id",
+					              		fields: {
+					                		id: { type: "number" },
+					                		order: { type: "number", defaultValue: 0 },
+					                		title: { field: "title", defaultValue: "No title" },
+					                		description: { field: "description", validation: { required: true } },
+					                		image: { from: "image",field:"title",defaultValue: "" },
+					              		}
+				            		}
+					          	}
+					        },
+					        dataStatusField: "status",
+					        dataOrderField: "order",
+					        dataCategoryField: "color",
+					        height: 750,
+					        sortable: false,
+					        resources: [
+					          	{
+					            	field: "color",
+					            	dataSource: [
+					              		{ value: "orange", color: "#ffa500" },
+					              		{ value: "green", color: "#008000" },
+					              		{ value: "blue", color: "#1f487c" },
+					              		{ value: "red", color: "red" },
+					              		{ value: "cyan", color: "#17a2b8" },
+					              		{ value: "purple", color: "#6f42c1" },
+				              			{ value: "black", color: "black" }
+					            	]
+					          	}
+					        ],
+					        template: "<div class='k-card-header k-hbox'><a class='k-card-title k-link font-weight-bold' data-id='#= data.idCandidat #' data-target='cardCandidat' data-toggle='modal' data-source='" + HOST.origin +"'data-statut='#= data.status #' data-candidature='#= data.id #' data-image='#= data.image #' data-title='#= data.title #' data-offre='#= data.idOffre #' data-image='#= data.imageUrl #' id='titleCard'><img src='#=data.imageUrl#' class='rounded-circle' style='height:30px;width:30px'> #= data.title #</a><span class='k-spacer'></span><div class='k-card-header-actions'></div></div><div class='k-card-body'> <p id='paragraphCard'> #= data.description # </p><p id='paragraphCard'> #= data.lieuEntretien # </p><p id='paragraphCard'> #= data.heureEntretien # </p><p id='paragraphCard'> #= data.dateEntretien # </p></div>"
+				      	});
+						$("#taskBoard").on("click", "a.k-card-title", function(e) {
+						    e.preventDefault();
+						    // Get the necessary data for the new modal
+						    var id = $(this).data("id");
+						    var idCandidature = $(this).data("candidature");
+						    var title = $(this).data("title");
+						    var source = $(this).data("source");
+						    var description = $(this).data("description");
+						    var imageUrl = $(this).data("imageUrl");
+						    var image = $(this).data("image");
+						    var idOffre = $(this).data("offre");
+						    var statut = $(this).data("statut");
+						    var url = window.location;
+						    var temp = url.origin;
+						    // Render the new modal
+						    var newModalTemplate = kendo.template($("#newModalTemplate").html());
+						    var newModal = $(newModalTemplate({
+						        id: id,
+						        idCandidature: idCandidature,
+						        title: title,
+						        source:source,
+						        description: description,
+						        imageUrl: imageUrl,
+						        image:image,
+						        idOffre:idOffre,
+						        statut:statut,
+						        temp:temp
+						    })).appendTo("body");
+						    // Show the new modal
+						    newModal.modal("show");
+						});
+						$('#taskBoard').on("click", "button#modales",function(){
+							var modalCVTemplate = kendo.template($("#modalCV").html());
+						    var modalCV = $(newModalTemplate({
+						    	source:source,
+						    	id:id
+						    })).appendTo("body");
+						    modalCV.modal("show");     
+						});
+				     	function getUniqueId() {
+					        var taskboard = $("#taskBoard").data("kendoTaskBoard");
+					        // return next unique id
+					        return taskboard.dataSource.total() + 1;
+				      	}
+					</script>
+					<style>
+						iframe #mainNav {
+						  	display: none;
+						}
+						iframe {
+						  	border: none;
+						  	overflow: hidden;
+						}
+						.k-taskboard-column-header-text{
+							color: #1f487c;
+							font-size: 16px;
+						}
+						.k-taskboard-column{
+							width: 270px;
+							max-height: 650px;
+							height: auto;
+
+						}
+						#paragraphCard{
+							font-size: 11px;
+						}
+						#titleCard {
+							font-size: 13px;
+						}
+						.k-button{
+							background: transparent;
+						}
+						.k-taskboard-column-header-actions{
+							color: white;
+						}
+						.k-button.k-button-md.k-rounded-md.k-button-flat.k-button-flat-base.k-taskboard-card-menu-button.k-icon-button{
+							color: white;
+						}
+					    .demo-section.wide {
+					        max-width: 6000px;
+					    }
+					    .k-taskboard-drag-hint {
+					        font: 400 14px Arial,Helvetica,sans-serif;
+					    }
+					    .blue{
+					    	margin-top: 5px;
+					    }
+					</style>
+				</div>
+			<?php endif; ?>
+		<?php elseif ($url == "comment") : $pageTitle = "mettre à jour commentaire" ?>
+			<div class="container">
+				<a class="btn btn-secondary rounded-circle" href="<?= HOST?>manage/commentaire?idCandidature=<?= $data->getIdCandidature();?>"><i class="fas fa-arrow-left"></i></a>
+			</div>
+			<form method="POST" action="<?= HOST?>manage/save-commentaire" enctype="multipart/form-data">
+				<div class="form-group">
+					<input type="hidden" name="idCommentaire" id="idCommentaire" value="<?= $data->getIdCommentaire();?>">
+					<input type="hidden" name="idCandidat" value="<?= $data->getIdCandidat();?>">
+					<input type="hidden" name="idCompte" value="<?= $_SESSION['compte']['idCompte'];?>">
+					<input type="hidden" name="idCandidature" value="<?= $data->getIdCandidature();?>">
+					<strong>Commentaire</strong>
+					<textarea id="addComment" type="text" name="commentaire" class="form-control" required="required" data-required-message="* Veuillez remplir le champ "><?= $data->getCommentaire();?></textarea>
+					<input type="hidden" name="statut" value="<?= $data->getStatut();?>">
+					<input type="submit" value="Enregistrer" class="btn btn-primary btn-sm" style="margin-top:10px">
+				</div>
+			</form>
+			<style type="text/css">
+				#newNav {
+					display: none;
+				}
+			</style>
+		<?php elseif ($url == "exportComment") : ?>
+			<base href="https://demos.telerik.com/kendo-ui/grid/pdf-export">
+		    <style>html { font-size: 14px; font-family: Arial, Helvetica, sans-serif; }</style>
+		    <title></title>
+		    <link href="https://kendo.cdn.telerik.com/themes/6.2.0/default/default-main.css" rel="stylesheet" />
+		    <script src="https://kendo.cdn.telerik.com/2023.1.314/js/jquery.min.js"></script>
+		    <script src="<?= HOST;?>Web/Ressources/Kendo UI/js/kendoV2.all.min.js"></script>
+		    <script src="<?= HOST;?>Web/Ressources/Kendo UI/js/jszipV2.min.js"></script>
+		    <script src="<?= HOST;?>Web/Ressources/Kendo UI/js/kendo-ui-license.js"></script>
+		    <!-- <script src="<?= HOST;?>Web/Ressources/Kendo UI/js/jqueryV2.min.js"></script> -->
+		    <div class="container" style="margin-top: -60px">
+		    	<a class="btn btn-secondary rounded-circle" href="<?= HOST?>manage/commentaire?idCandidature=<?= $data[0]['candidature']->getIdCandidature();?>"><i class="fas fa-arrow-left"></i></a>
+		    </div>
+		    <div id="example">
+				<div id="grid"></div>
+
+			    <style>
+			        .k-grid {
+			            font-family: "DejaVu Sans", "Arial", sans-serif;
+			        }
+			    </style>
+
+			    <script>
+			        kendo.pdf.defineFont({
+			            "DejaVu Sans"             : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans.ttf",
+			            "DejaVu Sans|Bold"        : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Bold.ttf",
+			            "DejaVu Sans|Bold|Italic" : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+			            "DejaVu Sans|Italic"      : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+			            "WebComponentsIcons"      : "https://kendo.cdn.telerik.com/2017.1.223/styles/fonts/glyphs/WebComponentsIcons.ttf"
+			        });
+			    </script>
+			    <script src="https://kendo.cdn.telerik.com/2023.1.314/js/pako_deflate.min.js"></script>
+			    <script type="x/kendo-template" id="page-template">
+			      	<div class="page-template">
+			        	<div class="header">
+			          		<div style="float: right">Page #: pageNum # sur #: totalPages #</div>
+			          		Liste des commentaires disponibles
+			        	</div>
+			        	<div class="watermark">HUMANEXUS</div>
+			        	<div class="footer">
+			          		Page #: pageNum # sur #: totalPages #
+			        	</div>
+			      	</div>
+			    </script>
+			    <script>
+			        $(document).ready( function() {
+			        	var data = <?= json_encode($data[0]['commentaires']); ?>;
+						$("#grid").kendoGrid({
+						    toolbar: ["pdf"],
+						    pdf: {
+						        allPages: true,
+						        avoidLinks: true,
+						        paperSize: "A4",
+						        margin: { top: "2cm", left: "1cm", right: "1cm", bottom: "1cm" },
+						        landscape: true,
+						        repeatHeaders: true,
+						        template: $("#page-template").html(),
+						        scale: 0.8
+						    },
+						    dataSource: {
+						        data: data,
+						        pageSize: 20
+						    },
+						    height: 550,
+						    sortable: true,
+						    pageable: {
+						        refresh: true,
+						        pageSizes: true,
+						        buttonCount: 5
+						    },
+						    columns: [{
+			                    template: "<div class='customer-photo'" +
+			                        "style='background-image: url(<?= HOST?>Web/Ressources/images/#:data.photo#);'></div>" +
+			                        "<div class='customer-name'>#: data.nom #</div>",
+			                    field: "data.nom",
+			                    title: "Nom",
+			                }, {
+			                    field: "commentaire",
+			                    title: "Commentaire",
+			                }, {
+			                    field: "dateCommentaire",
+			                    title: "Date"
+			                }, {
+			                    field: "statut",
+			                    title: "Statut",
+			                }]
+						});
+			        });
+			    </script>
+			    <style>
+			        .page-template {
+			          font-family: "DejaVu Sans", "Arial", sans-serif;
+			          position: absolute;
+			          width: 100%;
+			          height: 100%;
+			          top: 0;
+			          left: 0;
+			        }
+			        .page-template .header {
+			          position: absolute;
+			          top: 30px;
+			          left: 30px;
+			          right: 30px;
+			          border-bottom: 1px solid #888;
+			          color: #888;
+			        }
+			        .page-template .footer {
+			          position: absolute;
+			          bottom: 30px;
+			          left: 30px;
+			          right: 30px;
+			          border-top: 1px solid #888;
+			          text-align: center;
+			          color: #888;
+			        }
+			        .page-template .watermark {
+			          font-weight: bold;
+			          font-size: 400%;
+			          text-align: center;
+			          margin-top: 30%;
+			          color: #aaaaaa;
+			          opacity: 0.1;
+			          transform: rotate(-35deg) scale(1.7, 1.5);
+			        }
+
+			        .customer-photo {
+			          display: inline-block;
+			          width: 32px;
+			          height: 32px;
+			          border-radius: 50%;
+			          background-size: 32px 35px;
+			          background-position: center center;
+			          vertical-align: middle;
+			          line-height: 32px;
+			          box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+			          margin-left: 5px;
+			        }
+			        kendo-pdf-document .customer-photo {
+			          border: 1px solid #dedede;
+			        }
+			        .customer-name {
+			          display: inline-block;
+			          vertical-align: middle;
+			          line-height: 32px;
+			          padding-left: 3px;
+			        }
+			        .odd{
+			        	display: none;
+			        }
+			        #DataTables_Table_0_filter{
+			        	display: none;
+			        }
+			        .col-md-6{
+			        	display: none;
+			        }
+			    </style>
+			    <style type="text/css">
+					#newNav {
+						display: none;
+					}
+				</style>
+				<script type="text/javascript">
+		          	$('#back-section').css('overflow-y','initial');
+		        </script>
+		    </div>
+		<?php elseif ($url == "commentaire") : $pageTitle = "Commentaire" ?>
+			<script src="<?= HOST;?>../Web/Ressources/js/commentaires.js"></script>
+			<script src="<?= HOST;?>../Web/Ressources/Kendo UI/js/kendo.all.min.js"></script>
+			<link rel="stylesheet" type="text/css" href="<?= HOST;?>../Web/Ressources/css/commentaires.css">
+			<div class="row" style="margin-top: -55px">
+				<div class="col-md-6">
+					<h4>Commentaires</h4>
+				</div>
+				<div class="col-md-6">
+					<?php if (!empty($data[0]['commentaire'])) : ?>
+						<a href="<?= HOST?>manage/exportComment?idCandidature=<?= $data[0]['candidature']->getIdCandidature(); ?>" class="btn btn-secondary">Exporter</a>
+					<?php endif;?>
+				</div>
+			</div>
+			<div class="attribution">
+					<?php if (!empty($data[0]['attributions'])) : ?>
+						<strong>Participant</strong>
+						<div>
+							<?php foreach ($data[0]['attributions'] as $attribution) : ?>
+								<?php foreach($attribution['employe'] as $employe) : ?>
+									<?php foreach ($attribution['attribution'] as $attributionEmploye): ?>
+										<?php if ($data[0]['candidature']->getStatut() === $attributionEmploye->getStatut()) :?>
+											<img class="rounded-circle" src="<?= ($employe['employe']->getPhoto() != "") ? HOST . "../Web/Ressources/images/employes/" . $employe['employe']->getPhoto() : HOST ."../Web/Ressources/images/profilCandidat.png";?>" style='height:30px;width:30px'>
+										<?php endif?>
+									<?php endforeach?>
+								<?php endforeach; ?>
+							<?php endforeach; ?>
+						</div>
+					<?php endif ?>
+			</div>
+			<div class="container">
+				<?php foreach ($data as $commentaires): ?>
+					<?php if (!empty($commentaires['commentaire'])) : ?>
+						<div class="card" style="margin-bottom: 10px">
+							<div class="card-header">
+								<?php if ($commentaires['commentaire']['compte']->getIdentifiant() == "entreprise") : ?>
+									<?php foreach($commentaires['commentaire']['user'] as $entreprise) : ?>
+										<img src='<?= ($entreprise->getLogo() != "") ? HOST . "../Web/Ressources/images/entreprises/" . $entreprise->getLogo() : HOST ."../Web/Ressources/images/entreprises/entrepriseLogo.jfif";?>' class='rounded-circle' style='height:30px;width:30px'><?= $commentaires['commentaire']['commentaire']->getStatut(); ?> &nbsp;
+										<small><?= $entreprise->getNom();?> &nbsp; <?= $commentaires['commentaire']['commentaire']->getDateCommentaire(); ?></small>
+									<?php endforeach; ?>
+								<?php elseif ($commentaires['commentaire']['compte']->getIdentifiant() == "employe") : ?>
+									<?php foreach($commentaires['commentaire']['user'] as $employe): ?>
+										<img src='<?= ($employe->getPhoto() != "") ? HOST . "../Web/Ressources/images/employes/" . $employe->getPhoto() : HOST ."../Web/Ressources/images/profilCandidat.png";?>' class='rounded-circle' style='height:30px;width:30px'><?= $commentaires['commentaire']['commentaire']->getStatut(); ?>&nbsp;
+										<small><?= $employe->getNom()." ".$employe->getPrenom();?> &nbsp; <?= $commentaires['commentaire']['commentaire']->getDateCommentaire(); ?></small> 	
+									<?php endforeach; ?>
+								<?php endif; ?>
+								<?php if ($commentaires['commentaire']['compte']->getIdCompte() == $_SESSION['compte']['idCompte'] && $commentaires['commentaire']['commentaire']->getStatut() == $data[0]['candidature']->getStatut()) : ?>
+									<div class="dropdown">
+									  	<button class="btn btn-transparent dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									    	<i class="fa fa-edit" style="color: black;"></i>
+									  	</button>
+									  	<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+									    	<a class="dropdown-item" id="editComment" href="<?= HOST."manage/comment&idCommentaire=".$commentaires['commentaire']['commentaire']->getIdCommentaire()."&idCandidature=".$data[0]['candidature']->getIdCandidature(); ?>" value="<?= $commentaires['commentaire']['commentaire']->getIdCommentaire(); ?>">Editer</a>
+									    	<a class="dropdown-item" href="<?= HOST."manage/delete-commentaire&idCommentaire=".$commentaires['commentaire']['commentaire']->getIdCommentaire()."&idCandidature=".$data[0]['candidature']->getIdCandidature(); ?>" value="<?= $commentaires['commentaire']['commentaire']->getIdCommentaire(); ?>">Supprimer</a>
+									  	</div>
+									</div>
+								<?php endif ?>
+							</div>
+							<div class="card-body">
+								<label>
+									<?= $commentaires['commentaire']['commentaire']->getCommentaire(); ?>
+								</label>
+							</div>
+						</div>
+					<?php endif; ?>
+				<?php endforeach; ?>
+			</div>	
+			<form method="POST" action="<?= HOST?>manage/save-commentaire" enctype="multipart/form-data">
+				<div class="form-group">
+					<input type="hidden" name="idCommentaire" id="idCommentaire" value="">
+					<input type="hidden" name="idCandidat" value="<?= $data[0]['candidature']->getIdCandidat(); ?>">
+					<input type="hidden" name="idCompte" value="<?= $_SESSION['compte']['idCompte'];?>">
+					<input type="hidden" name="idCandidature" value="<?= $data[0]['candidature']->getIdCandidature(); ?>">
+					<strong>Commentaire</strong>
+					<textarea id="addComment" type="text" name="commentaire" class="form-control" required="required" data-required-message="* Veuillez remplir le champ "></textarea>
+					<input type="hidden" name="statut" value="<?= $data[0]['candidature']->getStatut(); ?>">
+					<input type="submit" value="Enregistrer" class="btn btn-primary btn-sm" style="margin-top:10px">
+				</div>
+			</form>
+			<?php if ($data[0]['candidature']->getStatut() == "accepte") : ?>
+				<div class="container">
+					<strong>Créer un compte employé : </strong>
+					<a class="btn btn-success" href="<?= HOST?>/manage/recover-data?idCandidat=<?= $data[0]['candidature']->getIdCandidat(); ?>&idCandidature=<?= $data[0]['candidature']->getIdCandidature(); ?>&idEntreprisePoste=<?= $data[0]['offre']->getIdEntreprisePoste(); ?>"> Ajouter </a>
+				</div>
+			<?php endif; ?>
+			<style type="text/css">
+				#newNav {
+					display: none;
+				}
+			</style>
+			<script type="text/javascript">
+	          	$('#back-section').css('overflow-y','initial');
+	        </script>
+		<?php elseif ($url == "suggest_offres") : $pageTitle = "Offres suggérées";?>
+			<div class="row">
+				<div class="col-md-3">
+						</div>
+						<div class="col-md-6">
+							<h4 class="text-center list-title section-heading">Offres suggérées</h4>
+						</div>
+					</div>
+					<div class="row block-section">
+						<div>
+							<table class="table table-striped small-first-col" id="table-back">
+								<thead>
+									<tr>
+										<th>Offre</th>
+									</tr>
+								</thead>
+								<tbody id="tableSearch" class="body-half-screen">
+							<tr>
+								<td>
+									<div class="row" id="list">
+						        	<div class="col-lg-12">
+						        		<ul class="offre-list" style="height: 100px;">
+						        			<?php if (!empty($data)) : extract($data); foreach ($data as $offre): ?>
+								        		<li>
+							                        <a href="<?= HOST . 'manage/offre?idOffre=' . $offre['offre']->getIdOffre(); ?>">
+							                        	<div class="row">
+							                        		<div class="col-md-4 entreprise-logo">
+							                        			<img class="img-fluid" src="<?= HOST; ?>../Web/Ressources/images/entreprises/<?= $offre['entreprise']->getLogo(); ?>" alt="">
+							                        			<br><?= $offre['entreprise']->getNom(); ?>
+							                        		</div>
+							                        		<div class="col-md-8">
+							                        			<h2 class="offre-poste"><?= ucfirst($offre['poste']->getPoste()); ?></h2>
+									                            <h3 class="offre-detail">
+								                                	Contrat : <?= $offre['contrat']->getDesignation();?> &nbsp; &nbsp; Date limite : 
+											              			<?php
+													   					$dateLimite   = str_replace('-', '/', $offre['offre']->getDateLimite()); 
+													   					echo date('d/m/Y', strtotime($dateLimite)); 
+													   				?> 
+													   			</h3>
+							                        		</div>
+							                        	</div>
+							                        </a>
+							                    </li>
+						      				<?php endforeach;?>
+											<?php else: ?>
+												<tr>
+													<td>Aucun enregistrement touvé</td>
+												</tr>
+											<?php endif; ?>
+						        		</ul>
+						        	</div>
+						        </div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif ($url == "suiviCandidature") : $pageTitle = "graphe candidature"; ?>
+			<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+			<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/tabs.css">
+			<script src="<?= HOST; ?>../Web/Ressources/js/parametrerGraphe.js"></script>    
+			<script src="<?= HOST; ?>../Web/Ressources/js/plugin/canvas.js"></script>
+			<!-- <script type="text/javascript">
+				var data = <?= json_encode(isset($data['offres']) ? $data['offres'] : array()); ?>;
+				console.log(data);
+			</script> -->
+			<div class="row" id="search-div">
+		       	<div class="col-md-4">
+		          	<select class="form-control span3" name="search-type" id="search-type">
+		            	<option value="">Type de recherche</option>
+		            	<option value="month">Mois</option>
+		            	<option value="year">Année</option>
+		            	<option value="twoDates">Entre deux dates</option>
+		          	</select>
+		        </div>
+		        <div class="col-md-8 hidden" id="block-mois">
+		          	<div class="row">
+		            	<div class="col-md-4">
+		              		<label for="datepicker">
+		                		<input class="form-control" type="text" id="mois" name="mois" autocomplete="off" placeholder="Mois">
+		              		</label>
+		              		<p class="help-block text-danger" id="mois-message"></p>
+		            	</div>
+		            	<div class="col-md-2">
+		              		<button class="btn btn-warning" id="link-search-month">
+		                		<i class="fas fa-search"></i>
+		              		</button>
+		            	</div>
+		          	</div>
+		        </div>
+		        <div class="col-md-8 hidden" id="block-annee">
+		          	<div class="row">
+		            	<div class="col-md-4">
+		              		<input class="form-control" id="annee" name="annee" type="number" list="annes" value="" required="required">
+		              			<datalist id="annes">
+					              	<?php
+					                	for ($i = 2000; $i <= 2050; $i += 1) {
+					                  		$option = "<option type='number' value='" . $i . "'>" . $i . "</option>";
+					                  		echo $option;
+					                	}
+					              	?>
+		              			</datalist>
+		              			<p class="help-block text-danger" id="annee-message"></p>  
+		            	</div>
+		            	<div class="col-md-2"> 
+		              		<button class="btn btn-warning" id="link-search-year">
+		              			<i class="fas fa-search"></i>
+		            		</button>
+		            	</div>
+		          	</div>
+		        </div> 
+		        <div class="col-md-8 hidden" id="block-deuxDates">
+		          	<div class="row">
+		            	<div class="col-md-4">
+		              		<label for="datepicker">
+		                		<input class="form-control" type="text" id="date1" name="date1" autocomplete="off" placeholder="Date début">
+		              		</label>
+	            		</div>
+		            	<div class="col-md-4">
+		              		<label for="datepicker">
+		                		<input class="form-control" type="text" id="date2" name="date2" autocomplete="off" placeholder="Date fin">
+		              		</label> 
+		            	</div>
+		            	<div class="col-md-4">
+		              		<button class="btn btn-warning" id="link-search-twoDates">
+		                		<i class="fas fa-search"></i>
+		              		</button>
+		            	</div>
+		          	</div>
+		          	<div class="row">
+		            	<p class="help-block text-danger text-center" id="date-message"></p>
+		          	</div>
+		        </div>
+	      	</div>
+			<div class="container">
+				<canvas id="myChart"></canvas>
+			</div>
+
+		    <script>
+		    	var data 			= <?= json_encode(isset($data['offres']) ? $data['offres'] : array()); ?>;
+		        // extraire les données de la variable JSON
+		        const labels 		= Object.keys(data).map(key => data[key].poste);
+		        const envoye 		= Object.keys(data).map(key => data[key].envoye);
+		        const qualification = Object.keys(data).map(key => data[key].qualification);
+		        const entretien1 	= Object.keys(data).map(key => data[key].entretien1);
+		        const entretien2 	= Object.keys(data).map(key => data[key].entretien2);
+		        const accepte 		= Object.keys(data).map(key => data[key].accepte);
+		        const refuse 		= Object.keys(data).map(key => data[key].refuse);
+		        const suggere 		= Object.keys(data).map(key => data[key].suggere);
+
+		        // créer le graphique avec Chart.js
+		        const config = {
+		            type: 'bar',
+		            data: {
+		                labels: labels,
+		                datasets: [{
+		                    label: 'Envoyé',
+		                    data: envoye,
+		                    backgroundColor: '#ffa500',
+		                    borderColor: '#ffa500',
+		                    borderWidth: 1
+		                }, {
+		                    label: 'Qualification',
+		                    data: qualification,
+		                    backgroundColor: '#1f487c',
+		                    borderColor: '#1f487c',
+		                    borderWidth: 1
+		                }, {
+		                    label: 'Entretien 1',
+		                    data: entretien1,
+		                    backgroundColor: '#17a2b8',
+		                    borderColor: '#17a2b8',
+		                    borderWidth: 1
+		                }, {
+		                    label: 'Entretien 2',
+		                    data: entretien2,
+		                    backgroundColor: '#6f42c1',
+		                    borderColor: '#6f42c1',
+		                    borderWidth: 1
+		                }, {
+		                    label: 'accepte',
+		                    data: accepte,
+		                    backgroundColor: '#008000',
+		                    borderColor: '#008000',
+		                    borderWidth: 1
+		                }, {
+		                    label: 'Refuse',
+		                    data: refuse,
+		                    backgroundColor: 'red',
+		                    borderColor: 'red',
+		                    borderWidth: 1
+		                }, {
+		                    label: 'Suggere',
+		                    data: suggere,
+		                    backgroundColor: 'black',
+		                    borderColor: 'black',
+		                    borderWidth: 1
+		                }]
+		            },
+		            options: {
+				        scales: {
+				            y: {
+				                beginAtZero: true
+				            }
+				        },
+				        backgroundColor: 'white',
+				        maxHeight: '750px'
+				    }
+		        };
+
+		        var myChart = new Chart(
+		            document.getElementById('myChart'),
+		            config
+		        );
+		        $('#back-section').css('overflow-y','initial');
+		    </script>
+		    <style type="text/css">
+		    	#mychart {
+		    		background-color: white;
+		    		
+		    	}
+		    </style>
+		<?php elseif ($url == "offres") : $pageTitle = "Offres";?>
+			<script src="<?= HOST; ?>../Web/Ressources/js/ajouterOffre.js"></script>  
+			<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  				<div class="modal-dialog modal-dialog-centered" role="document">
+    				<div class="modal-content">
+      					<div class="modal-header">
+        					<h5 class="modal-title" id="exampleModalLabel">Ajouter une offre pour un : </h5>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          	<span aria-hidden="true">&times;</span>
+					        </button>
+      					</div>
+      					<div class="modal-body">
+  							<p>
+  								<input type="radio" id="option1" name="option" value="option1">
+  								<label for="option1">Poste existant</label>
+							</p>
+							<p>
+  								<input type="radio" id="option2" name="option" value="option2">
+  								<label for="option2">Nouveau poste</label>
+							</p>
+      					</div>
+      					<div class="modal-footer">
+        					<button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+        					<button type="button" id="submit-btn" class="btn btn-primary">Valider</button>
+      					</div>
+    				</div>
+  				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					<button data-toggle="modal" data-target="#exampleModal" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter
+			  		</button>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Mes offres</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div class="col-md-12">
+					<table class="table table-striped small-first-col" style="margin-top:-10px">
+						<thead class="background" style="background:#647994!important">
+							<tr style="color: white;">
+								<th>Offre</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : extract($data); if(!empty($offres)): foreach ($offres as $offre): ?>
+							<tr>
+								<td>
+						   			<strong>
+						   				<?php
+							   				$months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+				                            $dateEmission = explode('-', $offre['offre']->getDateEmission());
+
+				                            $index = (int)$dateEmission[1] - 1;
+							   				echo "Emission : " . $dateEmission[2] . " " . $months[$index] . " " . $dateEmission[0];
+							   			?>
+						   			</strong>
+						   			<ul>
+						   				<li>
+						   					Poste : <?= ucfirst($offre['poste']->getPoste()); ?>
+						   				</li>
+						   				<li>
+						   					 Contrat : <?= $offre['contrat']->getDesignation(); ?>
+						   				</li>
+						   				<li>
+						   					Date limite de candidature : 
+						   					<?php
+							   					$months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+					                            $dateLimite = explode('-', $offre['offre']->getDateLimite());
+
+					                            $index = (int)$dateLimite[1] - 1;
+								   				echo $dateLimite[2] . " " . $months[$index] . " " . $dateLimite[0]." ";
+							   				?> 
+						   				</li>
+						   			</ul>
+								</td>
+								<td class="text-center">
+									<a href="<?= HOST . "manage/offre?idOffre=" . $offre['offre']->getIdOffre(); ?>" class="btn btn-info">
+							        	<i class="fas fa-eye"></i>
+							      	</a>
+							      	<!-- <a href="<?= HOST . "manage/actualize-offre?idOffre=" . $offre['offre']->getIdOffre(); ?>" class="btn btn-secondary">
+							        	Actualiser
+							      	</a> -->
+									<a href="<?= HOST . "manage/update-offre?idOffre=" . $offre['offre']->getIdOffre(); ?>" class="btn btn-warning">
+							        	<i class="fas fa-edit"></i>	
+							      	</a>
+								    <a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $offre['offre']->getIdOffre(); ?>" data-name="cette offre " data-url="delete-offre?idOffre=">
+					                  	<i class="fas fa-trash"></i> 
+					                </a>
+								</td>
+							</tr>
+							<?php endforeach; endif;?>
+							<?php else: ?>
+								<tr>
+									<td>Aucun enregistrement touvé</td>
+								</tr>
+							<?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif ($url == "entretiens"): $pageTitle = "Entretiens"; ?> 
+			<?php if(!empty($data)) : extract($data); ?>
+				<div class="row">
+					<div class="col-md-3">
+						<?php if (isset($params) && !empty($data)) : extract($data); ?>
+						<a href="<?= HOST . "manage/offre?idOffre=" . (int)$params['idOffre']; ?>" class="btn btn-primary rounded-circle">
+		                  <i class="fas fa-arrow-left"></i>
+		                </a>
+						<?php endif; ?>
+					</div>
+					<div class="col-md-6" style="margin-top:-10px">
+						<h4 class="text-center list-title section-heading">Liste des entretiens</h4>
+					</div>
+				</div>
+				<div class="row tab-menu" style="margin-top:-20px">
+					<ul id="tab-button">
+						<?php if (!empty($niveauxEntretiens)): $tabId = [] ; $i = 1; foreach ($niveauxEntretiens as $niveauEntretien): 
+							$href 			= HOST . "manage/entretiens";
+							$tabs 			= $niveauEntretien->getService();
+							$lowercase 		= strtolower($tabs);
+							$search 		= explode(",","ç,æ,œ,á,é,í,ó,ú,à,è,ì,ò,ù,ä,ë,ï,ö,ü,ÿ,â,ê,î,ô,û,å,e,i,ø,u"); 
+							$replace 		= explode(",","c,ae,oe,a,e,i,o,u,a,e,i,o,u,a,e,i,o,u,y,a,e,i,o,u,a,e,i,o,u"); 
+							$urlTitle 		= str_replace($search, $replace, $lowercase);
+							$replaceSpace 	= str_replace(' ', '_', $urlTitle);
+							$tabId[] 		= $replaceSpace;
+							$href 			.= (isset($_GET['idOffre'])) ? "?idOffre=" . $_GET['idOffre'] . "&idNiveauEntretien=" . $niveauEntretien->getIdNiveauEntretien(). "&tabs=".$replaceSpace : "?idNiveauEntretien=" . $niveauEntretien->getIdNiveauEntretien() . "&tabs=".$replaceSpace;								
+						?>
+						<li id="<?php echo $replaceSpace;?>" class="<?= $i ?>">
+							<a href="<?= $href; ?>"><?= $niveauEntretien->getService(); ?></a>
+						</li>
+						<?php $i+=1; endforeach; endif; ?>
+					</ul>
+				</div>
+				<div class="row block-section">
+					<div class="col-md-12">
+						<table class="table table-striped small-first-col" style="margin-top:-20px">
+							<thead style="background:#647994!important">
+								<tr style="color: white;">
+									<th class="text-center">Entretiens</th>
+									<th class="text-center">Statut</th>
+									<th class="text-center">Action</th>
+								</tr>
+							</thead>
+							<tbody id="tableSearch" class="body-half-screen">
+								<?php if(!empty($entretiens)) : foreach ($entretiens as $entretien): extract($entretien);?>
+									<tr>
+										<td>
+								   			<div class="row">
+												<div class="col-md-4 text-center">
+													<p><strong>
+										   				<?php
+											   				$date = str_replace('-', '/', $entretien->getDate());
+											   				echo "Date : " . date('d/m/Y', strtotime($date)) . " : ";
+											   			?>
+										   			</strong></p>
+													<img src="<?= ($candidat->getPhoto() != "") ? HOST . "../Web/Ressources/images/candidats/" . $candidat->getPhoto() : HOST ."../Web/Ressources/images/profilCandidat.png";?>" style="height: 100px; width: 100px; margin-top: -10px;">
+												</div>
+								   				<div class="col-md-8 text-left">
+								   					<p class="text-important"><?= $candidat->getCivilite() . " " . strtoupper($candidat->getNom()) . " " . ucwords($candidat->getPrenom()); ?></p>
+									   				<p><span class="titre">Poste : </span><?= ucfirst($poste->getPoste()); ?></p>
+									   				<p><span class="titre">Lieu : </span><?= ucfirst($entretien->getLieu()) . " à " . substr($entretien->getHeure(), 0, -3); ?></p>	
+									   			</div>
+											</div>
+										</td>
+										<td class="text-left">
+											<?php if ($entretien->getNbFois() > 1): ?>
+												<label><?= $entretien->getNbFois() . "ème "; ?> entretien</label>
+											<?php else: ?>
+												<label><?= $entretien->getNbFois() . "er "; ?> entretien</label>
+											<?php endif ?><br>
+											<?php if ($entretien->getStatut() != "rejete"): ?>
+												<div class="card card-blue p-1 text-center"> <?= $entretien->getStatut(); ?> </div>
+											<?php else : ?>
+												<div class="card card-red p-1 text-center"> <?= /*$entretien->getStatut();*/ "rejeté" ?> </div>
+											<?php endif ?>
+										</td>
+										<td class="text-center">
+											<?php if (!empty($engagedPost) && $entretien->getStatut() != "valide"): ?>
+												<div class="card card-red p-1 text-center">Poste non disponible</div>
+											<?php elseif (strtotime($offre->getDateLimite()) < strtotime(date("Y-m-d"))): ?>
+												<div class="card card-red p-1 text-center ">Poste non disponible </div>
+											<?php else: ?>
+												<?php if ($entretien->getStatut() == "en attente"): ?>
+										      		<a href="<?= HOST . "manage/edit-entretien?idEntretien=" . $entretien->getIdEntretien(); ?>" class="btn btn-warning">
+											        	<i class="fas fa-edit"></i>
+											      	</a>								      	
+											      	<a href="#" class="btn btn-success modal-confirmation" data-toggle="modal" data-target="#confirmationModal" data-id="<?= $entretien->getIdEntretien(); ?>" data-name="valider cet entretien" data-url="validate-entretien?idEntretien=">
+											      		<i class="fas fa-thumbs-up"></i>
+									                </a>
+											      	<a href="#" class="btn btn-danger modal-confirmation" data-toggle="modal" data-target="#confirmationModal" data-id="<?= $entretien->getIdEntretien(); ?>" data-name="rejeter cet entretien" data-url="reject-entretien?idEntretien=">
+											      		<i class="fas fa-thumbs-down"></i>
+									                </a>
+											      	<a href="<?= HOST . "manage/next_level-entretien?idEntretien=" . $entretien->getIdEntretien(); ?>" class="btn btn-info">
+											        	Passer à un niveau	
+											      	</a>
+											    <?php elseif ($entretien->getStatut() == "valide"): ?>
+											      	<a href="#" class="btn btn-danger modal-confirmation" data-toggle="modal" data-target="#confirmationModal" data-id="<?= $entretien->getIdEntretien(); ?>" data-name="annuler la validation de cet entretien" data-url="cancel-entretien?idEntretien=">Annuler la validation
+									                </a>
+
+									                <a href="<?= HOST . "manage/recover-data?idCandidat=" . $candidat->getIdCandidat() . "&idEntreprisePoste=" . $poste->getIdEntreprisePoste() . "&idOffre=" . $offre->getIdOffre(); ?>" class="btn btn-secondary">Embaucher</a>
+											    <?php elseif ($entretien->getStatut() == "rejete"): ?>
+											      	<a href="#" class="btn btn-danger modal-confirmation" data-toggle="modal" data-target="#confirmationModal" data-id="<?= $entretien->getIdEntretien(); ?>" data-name="annuler le rejet de cet entretien" data-url="cancel-entretien?idEntretien=">Annuler le rejet
+									                </a>
+										      	<?php endif; ?>
+											<?php endif ?>							      	
+										</td>
+									</tr>
+								<?php endforeach;?>
+								<?php else: ?>
+									<tr>
+										<td>Aucun enregistrement touvé</td>
+									</tr>
+								<?php endif; ?>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+			<?php endif;?>
+		<?php elseif ($url == "niveaux_entretiens") : $pageTitle = "Niveaux des entretiens";?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-niveau_entretien";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des niveaux d'entretien</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th class="text-center">Ordre</th>
+								<th>Niveau</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : $niveauxEntretiens = $data; $nbNiveau = count($niveauxEntretiens); foreach ($niveauxEntretiens as $niveauEntretien): ?>
+								<tr class="">
+									<td class="text-center">
+							   			<span class="text-important"><?= $niveauEntretien->getOrdre(); ?></span>
+									</td>
+									<td>
+							   			<?= $niveauEntretien->getService(); ?>
+									</td>
+									<td class="text-center">
+										<a href="<?= HOST . "manage/niveau_entretien?idNiveauEntretien=" . $niveauEntretien->getIdNiveauEntretien(); ?>" class="btn btn-info">
+								        	<i class="fas fa-eye"></i>
+								      	</a>
+										<a href="<?= HOST . "manage/update-niveau_entretien?idNiveauEntretien=" . $niveauEntretien->getIdNiveauEntretien(); ?>" class="btn btn-warning">
+								        	<i class="fas fa-edit"></i>	
+								      	</a>
+								      	<?php if ($nbNiveau != 1): ?>					      		
+									      	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $niveauEntretien->getIdNiveauEntretien(); ?>" data-name="<?= $niveauEntretien->getService(); ?>" data-url="delete-niveau_entretien?idNiveauEntretien=">
+							                 	<i class="fas fa-trash"></i>
+							                </a>
+								      	<?php endif ?>
+									</td>
+								</tr>
+							<?php endforeach;?>
+							<?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif ($url == "entreprise_services") : $pageTitle = "Services d'une entreprise"; extract($data);?>
+			<div class="row" style="margin-top: -15px;">
+				<div class="col-md-2">
+				</div>
+				<div class="col-md-8">
+					<h4 class="text-center list-title section-heading">Liste des services</h4>
+				</div>
+				<div class="col-md-2 text-right">
+					<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalEnregistrementEntrepriseService">
+						<i class="fas fa-plus"></i>
+						<span class="tippy-act ml-2">ajouter</span>
+					</button>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-service" style="background: #f6f9fe!important;">
+						<thead style="background: #647994!important; color: #ffffff;">
+							<tr>
+								<th style="width: 75%;">Service</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($services)) : foreach ($services as $service): ?>
+								<tr class="">
+									<td>
+							   			<?= ucfirst($service->getService()); ?>
+									</td>
+									<td class="text-center">
+										<a href="<?= HOST . "manage/entreprise_service?idEntrepriseService=" . $service->getIdEntrepriseService(); ?>" class="btn btn-info">
+								        	<i class="fas fa-eye"></i>
+								      	</a>
+								      	<button class="btn btn-warning" id="modifier-service<?=$service->getIdEntrepriseService()?>">
+								        	<i class="fas fa-edit"></i>	
+								      	</button>					      		
+								      	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $service->getIdEntrepriseService(); ?>" data-name="<?= $service->getService(); ?>" data-url="delete-entreprise_service?idEntrepriseService=">
+						                 	<i class="fas fa-trash"></i>
+						                </a>
+									</td>
+								</tr>
+								<script type="text/javascript">
+									$("#modifier-service<?=$service->getIdEntrepriseService()?>").click(function() {
+							  			$.ajax({
+				 							url : "<?= HOST . 'manage/update-entreprise_service'?>",
+				 							type : 'POST',
+				 							data : jQuery.param({idEntrepriseService: "<?=$service->getIdEntrepriseService()?>", action : "json"}),
+											dataType : "json",
+											success : function(data)
+											{
+												$('#idEntrepriseService').val(data['idEntrepriseService']);
+												$('#service').val(data['service']);
+												$('#ModalLabel').html("Modifier un service");
+												$('#modalEnregistrementEntrepriseService').modal('toggle');
+											}
+										});
+									});
+								</script>
+							<?php endforeach;?>
+							<?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal fade" id="modalEnregistrementEntrepriseService" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  				<div class="modal-dialog modal-dialog-centered" role="document">
+    				<div class="modal-content">
+    					<form method="POST" id="form" action="<?= HOST . 'manage/save-entreprise_service'?>" enctype="multipart/form-data" novalidate="novalidate">
+	      					<div class="modal-header">
+	        					<div class="text-center" style="width: 100%;">
+						      		<h5 class="modal-title" id="ModalLabel">Ajouter un nouveau service</h5>
+						      	</div>
+	        					<button type="button" class="close" id="close" data-dismiss="modal" aria-label="Close">
+	          						<span aria-hidden="true">&times;</span>
+	        					</button>
+	      					</div>
+	      					<div class="modal-body">
+	        					<div class="card p-3" style="background: #efefff;">
+	        						<div class="form-group hidden">
+					                  	<input class="form-control" id="idEntrepriseService" name="idEntrepriseService" type="number" value="">
+					                </div>
+	        						<div class="form-group hidden">
+					                  	<input class="form-control" id="idEntreprise" name="idEntreprise" type="number" value="<?=$entreprise->getIdEntreprise();?>">
+					                </div>
+	        						<div class="row">
+	        							<div class="col-md-4">
+	        								<span class="titre">Selectionner : </span>
+	        							</div>
+	        							<div class="col-md-8">
+	        								<div class="form-group">
+	        									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+							                  	<select  class="form-control span3 focus_activated modal-input" name="nomService" id="nomService">
+						                          	<option class="text-center" value="">__Choisir un service __</option>
+						                          	<?php foreach($allServices as $oneService): ?>
+						                            	<option 
+						                              	value="<?= $oneService->getNomService(); ?>">
+						                              	<?= ucfirst($oneService->getNomService()); ?>
+						                            	</option>
+						                          	<?php endforeach; ?>
+						                        </select>
+							                </div>
+	        							</div>
+	        						</div>
+	        						<hr>
+	        						<div class="row">
+	        							<div class="col-md-4">
+	        								<span class="titre">Saisir : </span>
+	        							</div>
+	        							<div class="col-md-8">
+	        								<div class="form-group">
+	        									<i class="fa fa-pencil-alt icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+	        									<input class="form-control focus_activated text-capitalize modal-input" id="service" name="service" type="text" required="required" data-validation-required-message="Veuillez entrer le nom du service" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùçâ |'-]*" data-validation-regex-message="Caractères non valide" placeholder="Saisir un service">
+			                  					<p class="help-block text-danger"></p>
+		        							</div>
+	        							</div>
+	        						</div>
+	        					</div>
+	      					</div>
+	      					<div class="modal-footer">
+	        					<div class="row" style="width: 105%!important;">
+						      		<div class="col-md-3">
+						      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+						      		</div>
+						      		<div class="col-md-5"></div>
+						      		<div class="col-md-4">
+						      			<div class="form-group"> 
+						      				<button type="submit" id="submit" class="btn btn-md btn-info">
+						      					Enregistrer 
+						      				</button>
+						      			</div>
+						      		</div>
+						      	</div>
+	      					</div>
+	      				</form>
+    				</div>
+  				</div>
+			</div>
+			<script>
+				$(document).ready(function() {
+				    $('#table-service').DataTable( {
+				        "pagingType" : "full_numbers",
+				        "language" : {
+					        "search" : "_INPUT_",
+					        "searchPlaceholder" : "rechercher",
+					        "zeroRecords": "Aucun service n'a été enregistré",
+		                    "oPaginate": {
+		                        "sFirst":    "Premier",
+		                        "sLast":    "Dernier",
+		                        "sNext":    "Suivant",
+		                        "sPrevious": "Précédent"
+		                    }
+					    },
+				        "searchPlaceholder" : "rechercher",
+				        "lengthMenu" : [[10, 25, 50, -1], [10, 25, 50, "All"]]
+				    } );
+				    $('#table-service_length').addClass("invisible");
+				    $('#table-service_info').parent().removeClass();
+				    $('#table-service_info').parent().addClass("col-md-4");
+				    $('#table-service_info').remove();
+				    $('#table-service_wrapper').css("padding","0px");
+				    tippy('.fa-plus', {
+						content: "Enregistrer un nouveau service"
+			  		});
+			  		$("#annuler").click(function(){
+						window.location.reload();
+					});
+					$("#close").click(function(){
+						window.location.reload();
+					});
+				} );
+			</script>
+		<?php elseif ($url == "entreprise_postes") :
+			$pageTitle 	= "Postes d'une entreprise";
+			$postes 	= $data;
+			$user 		= $_SESSION['compte']['identifiant'];
+		?>
+			<div class="row" style="margin-top: -15px;">
+				<div class="col-md-2">
+				</div>
+				<div class="col-md-8">
+					<h4 class="text-center list-title section-heading">Liste des postes <?=$_SESSION['compte']['identifiant'] == 'employe' ? 'de mes collaborateurs': ''; ?></h4>
+				</div>
+				<div class="col-md-2 text-right">
+					<?php if ($_SESSION['compte']['identifiant'] == 'entreprise' || $isAddMenu === 'YES') : ?>
+						<a class="btn btn-primary btn-sm" href="<?= HOST . "manage/create-entreprise_poste";?>" id="add-btn">
+							<i class="fa fa-plus" aria-hidden="true"></i>
+							<span class="ml-2">ajouter</span>
+						</a>
+					<?php endif; ?>
+				</div>
+			</div>
+			<div class="row block-section">
+				<?php if ($user == 'employe') : ?>
+					<div class="row">
+				        <ul id="new-tab-button">
+			        		<li id="tab1" >
+			        			<a href="<?= HOST. 'manage/' . $user . '/suivi/dashboard'?>">
+			        				Temps passé sur les tâches
+			        			</a>
+			        		</li>
+			        		<li id="tab3">
+			        			<a href="<?= HOST. 'manage/tracking'?>">
+			        				Tâches réalisée
+			        			</a>
+			        		</li>
+			        		<li id="tab4">
+			        			<a href="<?= HOST. 'manage/tracking/currentTask'?>">
+			        				Tâches en cours
+			        			</a>
+			        		</li>
+			        		<li id="tab2">
+			        			<a href="<?= HOST. 'manage/employe/interim'?>">
+			        				Subordonné intérimaire
+			        			</a>
+			        		</li> 
+			        		<li id="tab5" class="is-active">
+	        					<a href="<?= HOST. 'manage/entreprise_postes'?>">
+			        				Poste de mes collaborateurs
+			        			</a>
+			        		</li> 
+				        </ul>
+			      	</div>
+				<?php endif; ?>
+				<div>
+					<table class="table table-striped small-first-col" id="table-poste" style="background: #f6f9fe!important;">
+						<thead style="background: #647994!important; color: #ffffff;">
+							<tr>
+								<th style="width: 75%;">Poste</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($postes)) :
+								foreach ($postes as $poste): ?>
+									<tr class="">
+										<td>
+								   			<?= ucfirst($poste->getPoste()); ?>
+										</td>
+										<td class="text-center">
+											<a href="<?= HOST . "manage/entreprise_poste?idEntreprisePoste=" . $poste->getIdEntreprisePoste(); ?>" class="btn btn-info">
+									        	<i class="fas fa-eye"></i>
+									      	</a>
+									      	<a href="<?= HOST . "manage/update-entreprise_poste?idEntreprisePoste=" . $poste->getIdEntreprisePoste(); ?>" class="btn btn-warning">
+									        	<i class="fas fa-edit"></i>	
+									      	</a>
+											<?php if ($_SESSION['compte']['identifiant'] == 'entreprise' || $isAddMenu === 'YES') : ?>
+										      	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $poste->getIdEntreprisePoste(); ?>" data-name="<?= $poste->getPoste(); ?>" data-url="delete-entreprise_poste?idEntrepriseService=">
+								                 	<i class="fas fa-trash"></i>
+								                </a>
+							                <?php endif;?>
+										</td>
+									</tr>
+								<?php endforeach;?>
+							<?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script>
+				$(document).ready(function() {
+				    $('#table-poste').DataTable({
+				        "pagingType" : "full_numbers",
+				        "language" : {
+					        "search" : "_INPUT_",
+					        "searchPlaceholder" : "rechercher",
+					        "zeroRecords": "Aucun poste n'a été enregistré",
+		                    "oPaginate": {
+		                        "sFirst":    "Premier",
+		                        "sLast":    "Dernier",
+		                        "sNext":    "Suivant",
+		                        "sPrevious": "Précédent"
+		                    }
+					    },
+				        "searchPlaceholder" : "rechercher",
+				        "lengthMenu" : [[10, 25, 50, -1], [10, 25, 50, "All"]]
+				    } );
+				    $('#table-poste_length').addClass("invisible");
+				    $('#table-poste_info').parent().removeClass();
+				    $('#table-poste_info').parent().addClass("col-md-4");
+				    $('#table-poste_info').remove();
+				    $('#table-poste_wrapper').css("padding","0px");
+				    tippy('.fa-plus', {
+						content: "Enregistrer un nouveau poste"
+			  		});
+				});
+				$(window).on("load",function(){
+					var waiting;
+					    waiting = setInterval(function() {
+					        if (typeof($('section#back-section').attr('style')) != 'undefined') {
+					            clearInterval(waiting);
+					        } else {
+						  		$('section#back-section').attr('style', 'margin-top:93px!important');
+						  		$('.block-section').attr('style', 'min-height:0px!important');
+					        }
+					    }, 100);
+				});
+			</script>
+		<?php elseif ($url == "interlocuteurs") : $pageTitle = "Interlocuteurs";?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-interlocuteur";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des interlocuteurs</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Nom</th>
+								<th>Email</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : $interlocuteurs = $data; foreach ($interlocuteurs as $interlocuteur): ?>
+								<tr class="">
+									<td>
+							   			<?= ucwords($interlocuteur->getNom()); ?>
+									</td>
+									<td>
+							   			<?= $interlocuteur->getEmail(); ?>
+									</td>
+									<td class="text-center">
+										<a href="<?= HOST . "manage/update-interlocuteur?idInterlocuteur=" . $interlocuteur->getIdInterlocuteur(); ?>" class="btn btn-warning">
+								        	<i class="fas fa-edit"></i>		
+								      	</a>
+								      	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $interlocuteur->getIdInterlocuteur(); ?>" data-name="<?= ucwords($interlocuteur->getNom()); ?>" data-url="delete-interlocuteur?idInterlocuteur=">
+						                  <i class="fas fa-trash"></i>	
+						                </a>
+									</td>
+								</tr>
+							<?php endforeach;?>
+							<?php else: ?>
+								<tr>
+									<td>Aucun enregistrement touvé</td>
+								</tr>
+							<?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif ($url == "interlocuteurRecrutement") : $pageTitle = "Interlocuteurs";?>
+			<div class="row">
+				<div class="col-md-3">
+					<!-- <a href="<?= HOST . "manage/create-interlocuteur";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a> -->
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des interlocuteurs</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Nom</th>
+								<th>Email</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : $interlocuteurs = $data; foreach ($interlocuteurs as $interlocuteur): ?>
+								<tr class="">
+									<td>
+							   			<?= ucwords($interlocuteur->getNom()); ?>
+									</td>
+									<td>
+							   			<?= $interlocuteur->getEmail(); ?>
+									</td>
+									<td class="text-center">
+										<button data-id="<?= $interlocuteur->getIdInterlocuteur(); ?>" id="validate-interlocuteur" onclick="addIdInterlocuteur(<?= $interlocuteur->getIdInterlocuteur(); ?>)" Class="btn-primary btn">Designer</button>
+								</td>
+							</tr>
+							<?php endforeach;?>
+							<?php else: ?>
+								<tr>
+									<td>Aucun enregistrement touvé</td>
+								</tr>
+							<?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<input type="hidden" id="idInterlocuteur" name="idInterlocuteur" value="">
+			<style type="text/css">
+				#mainNav {
+					display: none;
+				}
+			</style>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+			<script>
+				function addIdInterlocuteur(id) 
+				{
+					$('#idInterlocuteur').attr('value', id);
+					$(this).attr('disabled', 'disabled');
+				}
+			</script>
+		<?php elseif ($url == "domaines") : $pageTitle = "Domaines";?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-domaine";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des domaines</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Domaine</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : $domaines = $data;
+								foreach ($domaines as $domaine): ?>
+									<tr>
+										<td>
+								   			<?= $domaine->getNomDomaine(); ?>
+										</td>
+										<td class="text-center">
+											<a href="<?= HOST . "manage/domaine?idDomaine=" . $domaine->getIdDomaine(); ?>" class="btn btn-info">
+									        	<i class="fas fa-eye"></i>
+									      	</a>
+											<a href="<?= HOST . "manage/update-domaine?idDomaine=" . $domaine->getIdDomaine(); ?>" class="btn btn-warning">
+									        	<i class="fas fa-edit"></i>
+									      	</a>
+									      	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $domaine->getIdDomaine(); ?>" data-name="<?= $domaine->getNomDomaine(); ?>" data-url="delete-domaine?idDomaine=">
+							                  	<i class="fas fa-trash"></i> 
+							                </a>
+										</td>
+									</tr>
+								<?php endforeach;?>
+							<?php else: ?>
+								<tr>
+									<td>Aucun enregistrement touvé</td>
+								</tr>
+							<?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif ($url == "personnalites") : $pageTitle = "Personnalités"; ?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-personnalite";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des personnalités</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Personnalités</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : $personnalites = $data; foreach ($personnalites as $personnalite):?>
+							<tr>
+								<td>
+						   			<?= ucfirst($personnalite->getQualite()); ?>
+								</td>
+								<td class="text-center">
+									<a href="<?= HOST . "manage/update-personnalite?idPersonnalite=" . $personnalite->getIdPersonnalite(); ?>" class="btn btn-warning">
+							        	<i class="fas fa-edit"></i>
+							      	</a>
+							      	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $personnalite->getIdPersonnalite(); ?>" data-name="<?= $personnalite->getQualite(); ?>" data-url="delete-personnalite?idPersonnalite=">
+					                  	<i class="fas fa-trash"></i> 
+					                </a>
+								</td>
+							</tr>
+							<?php endforeach;?>
+							<?php else: ?>
+								<tr>
+									<td>Aucun enregistrement touvé</td>
+								</tr>
+							<?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif ($url == "services") : $pageTitle = "Services"; ?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-service";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des services</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Services</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : $services = $data; foreach ($services as $service):?>
+							<tr>
+								<td>
+						   			<?= ucfirst($service->getNomService()); ?>
+								</td>
+								<td class="text-center">
+									<a href="<?= HOST . "manage/update-service?idService=" . $service->getIdService(); ?>" class="btn btn-warning">
+							        	<i class="fas fa-edit"></i>
+							      	</a>
+							      	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $service->getIdService(); ?>" data-name="<?= $service->getNomService(); ?>" data-url="delete-service?idService=">
+					                  	<i class="fas fa-trash"></i> 
+					                </a>
+								</td>
+							</tr>
+							<?php endforeach;?>
+							<?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif ($url == "postes") : $pageTitle = "Postes"; ?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-poste";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des postes</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back" style="margin-top: 10px!important;">
+						<thead>
+							<tr>
+								<th>Postes</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : $postes = $data; foreach ($postes as $poste):?>
+							<tr>
+								<td>
+						   			<?= ucfirst($poste->getNomPoste()); ?>
+								</td>
+								<td class="text-center">
+									<a href="<?= HOST . "manage/update-poste?idPoste=" . $poste->getIdPoste(); ?>" class="btn btn-warning">
+							        	<i class="fas fa-edit"></i>
+							      	</a>
+							      	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $poste->getIdPoste(); ?>" data-name="<?= $poste->getNomPoste(); ?>" data-url="delete-poste?idPoste=">
+					                  	<i class="fas fa-trash"></i> 
+					                </a>
+								</td>
+							</tr>
+							<?php endforeach;?>
+							<?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif ($url == "contrats") : $pageTitle = "Contrats"; ?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-contrat";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des contrats</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Contrats</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : $contrats = $data; foreach ($contrats as $contrat):?>
+							<tr>
+								<td>
+						   			<?= $contrat->getDesignation(); ?>
+								</td>
+								<td class="text-center">
+									<a href="<?= HOST . "manage/update-contrat?idContrat=" . $contrat->getIdContrat(); ?>" class="btn btn-warning">
+							        	<i class="fas fa-edit"></i>
+							      	</a>
+							      	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $contrat->getIdContrat(); ?>" data-name="<?= $contrat->getDesignation(); ?>" data-url="delete-contrat?idContrat=">
+					                  	<i class="fas fa-trash"></i> 
+					                </a>
+								</td>
+							</tr>
+							<?php endforeach;?>
+							<?php else: ?>
+								<tr>
+									<td>Aucun enregistrement touvé</td>
+								</tr>
+							<?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif ($url == "niveaux_experiences") : $pageTitle = "Niveaux d'expérience";?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-niveau_experience";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des niveaux d'expérience</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Ordre</th>
+								<th>Niveau d'expérience</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : $niveauxExperiences = $data; foreach ($niveauxExperiences as $niveauExperience):?>
+							<tr class="">
+								<td>
+						   			<?= $niveauExperience->getOrdre(); ?>
+								</td>
+								<td>
+						   			<?= $niveauExperience->getNiveau(); ?>
+								</td>
+								<td class="text-center">
+									<a href="<?= HOST . "manage/update-niveau_experience?idNiveauExperience=" . $niveauExperience->getIdNiveauExperience(); ?>" class="btn btn-warning">
+							        	<i class="fas fa-edit"></i>
+							      	</a>
+							      	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $niveauExperience->getIdNiveauExperience(); ?>" data-name="<?= $niveauExperience->getNiveau(); ?>" data-url="delete-niveau_experience?idNiveauExperience=">
+					                  	<i class="fas fa-trash"></i> 
+					                </a>
+								</td>
+							</tr>
+							<?php endforeach;?>
+							<?php else: ?>
+								<tr>
+									<td>Aucun enregistrement touvé</td>
+								</tr>
+							<?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif ($url == "niveaux_etudes") : $pageTitle = "Niveaux d'étude"; ?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-niveau_etude";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des niveaux d'étude</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Ordre</th>
+								<th>Niveau d'étude</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) :
+								$niveauxEtudes = $data;
+								foreach ($niveauxEtudes as $niveauEtude):?>
+									<tr class="">
+										<td>
+								   			<?= $niveauEtude->getOrdre(); ?>
+										</td>
+										<td>
+								   			<?= $niveauEtude->getNiveau(); ?>
+										</td>
+										<td class="text-center">
+											<a href="<?= HOST . "manage/update-niveau_etude?idNiveauEtude=" . $niveauEtude->getIdNiveauEtude(); ?>" class="btn btn-warning">
+									        	<i class="fas fa-edit"></i>
+									      	</a>
+									      	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $niveauEtude->getIdNiveauEtude(); ?>" data-name="<?= $niveauEtude->getNiveau(); ?>" data-url="delete-niveau_etude?idNiveauEtude=">
+							                  <i class="fas fa-trash"></i> 
+							                </a>
+										</td>
+									</tr>
+								<?php endforeach;?>
+							<?php else: ?>
+								<tr>
+									<td>Aucun enregistrement touvé</td>
+								</tr>
+							<?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif($url == "suggest_candidats" || $url == "offre_candidatures") : extract($data);?>
+			<div class="row">
+				<div class="col-md-2">					
+		            <a href="<?= HOST . "manage/offre?idOffre=" . (int)$params['idOffre']; ?>" class="btn btn-primary rounded-circle">
+		              <i class="fas fa-arrow-left"></i>
+		            </a>
+				</div>
+				<div class="col-md-8">
+					<h4 class="text-center list-title section-heading"><?= $title; ?></h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Candidat</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) :
+								foreach ($data as $candidat): extract($candidat); ?>
+									<tr>
+										<td> 
+											<div class="row">
+												<div class="col-md-2">
+													<img src="<?= ($candidat['candidat']->getPhoto() != "") ? HOST . "../Web/Ressources/images/candidats/" . $candidat['candidat']->getPhoto() : HOST ."../Web/Ressources/images/profilCandidat.png";?>" class="img-fluid" style="max-height: 170px; max-width: 170px;">
+												</div>
+								   				<div class="col-md-8">
+								   					<div class="row">
+								   						<div class="col-md-6">
+								   							<h6>Nom : </h6>
+										   					<p class="margin-p"><?= strtoupper($candidat['candidat']->getNom()) ; ?></p>
+										   					<h6>Prénom : </h6>
+										   					<p class="margin-p"><?= strtoupper($candidat['candidat']->getPrenom()) ; ?></p>
+										   					<h6>Date de naissance : </h6>
+										   					<p class="margin-p">
+										   						<?php
+										                          $birth = explode('-', $candidat['candidat']->getDateNaiss());
+										                          $index = (int)$birth[1] - 1;
+										                          echo $birth[2] . " " . $months[$index] . " " . $birth[0];
+										                        ?>
+									                        </p>
+								   						</div>
+								   						<div class="col-md-6">
+								   							<h6>Personnalités : </h6>
+								   							<p class="margin-p">
+										   					<?php 
+										   						$personnalites = " ";
+										   						$tabs          = explode('_', $candidat['candidat']->getPersonnalite()); 
+										   						array_pop($tabs); 
+										   						foreach ($tabs as $tab) {
+										   							$personnalites .= ucfirst($tab) . ", ";
+										   						}
+										   						echo substr($personnalites, 0, -2);
+										   					?>
+										   					</p>
+																<?php if (isset($candidature)) : ?>
+																	<h6>Candidature : </h6>
+								   									<p class="margin-p">
+					   											<?php $dateCandidature = explode('-', $candidature->getDateCandidature());
+																	$index = (int)$dateCandidature[1] - 1;
+																	echo $dateCandidature[2] . " " . $months[$index] . " " . $dateCandidature[0];
+																endif;?>
+															</p>
+								   						</div>
+								   					</div>
+									   			</div>
+											</div>
+										</td>
+										<td class="text-center">
+											<a href="<?= HOST . "manage/cv_candidat?idCandidat=" . $candidat['candidat']->getIdCandidat(); ?>" class="btn btn-warning">
+									        	<i class="fas fa-eye"></i>	
+									      	</a>
+									      	<?php if ($url == "suggest_candidats") : ?>
+									      		<?php if (!empty($candidature)): ?>
+		              								<i class="fas fa-check"></i>
+		              							<?php else : ?>	
+									      			<a href="<?= HOST ?>manage/create-candidatureEntreprise?idCandidat=<?= $candidat['candidat']->getIdCandidat();?>&idOffre=<?= $_GET['idOffre'];?>" class="btn btn-success"><i class="fas fa-check"></i></a>
+									      		<?php endif; ?>	
+									      	<?php elseif ($url == "offre_candidatures" && $candidature->getStatut() == "envoye") : ?>
+										   		<!-- <a href="<?= HOST . "manage/accept-candidature?idCandidature=" . $candidature->getIdCandidature(); ?>" class="btn btn-success">
+										        	<i class="fas fa-check"></i>		
+										      	</a> -->
+
+										      	<a href="#" class="btn btn-success modal-confirmation" data-toggle="modal" data-target="#confirmationModal" data-id="<?= $candidature->getIdCandidature(); ?>" data-name="accepter cette candidature" data-url="accept-candidature?idCandidature=">
+										      		<i class="fas fa-check"></i>
+								                </a><!-- 
+										      	<a href="<?= HOST . "manage/refuse-candidature?idCandidature=" . $candidature->getIdCandidature(); ?>" class="btn btn-danger">
+										        	<i class="fas fa-times"></i>	
+										      	</a> -->
+										      	<a href="#" class="btn btn-danger modal-confirmation" data-toggle="modal" data-target="#confirmationModal" data-id="<?= $candidature->getIdCandidature(); ?>" data-name="refuser cette candidature" data-url="refuse-candidature?idCandidature=">
+										      		<i class="fas fa-times"></i>
+								                </a>
+										    <?php elseif ($url == "offre_candidatures" && $candidature->getStatut() == "refuse") : ?>
+										      	<a href="#" class="btn btn-success modal-confirmation" data-toggle="modal" data-target="#confirmationModal" data-id="<?= $candidature->getIdCandidature(); ?>" data-name="accepter cette candidature" data-url="accept-candidature?idCandidature=">
+										      		<i class="fas fa-check"></i>
+								                </a>
+										     	<label class="alert-danger">Candidature refusée</label>
+										    <?php elseif ($url == "offre_candidatures" && $candidature->getStatut() == "accepte") : ?>
+										      	<?php if (!empty($entretien)): ?>
+										      		<?php if ($entretien->getStatut() != "rejete"): ?>
+										      			<label class="alert-info">Etretien <?= $entretien->getStatut(); ?></label>
+										      		<?php else: ?>
+										      			<label class="alert-danger">Etretien rejeté</label>
+										      		<?php endif ?>
+										      	<? else : ?>
+										      		<a href="#" class="btn btn-danger modal-confirmation" data-toggle="modal" data-target="#confirmationModal" data-id="<?= $candidature->getIdCandidature(); ?>" data-name="refuser cette candidature" data-url="refuse-candidature?idCandidature=">
+											      		<i class="fas fa-times"></i>
+									                </a>
+											     	<a href="<?= HOST . "manage/create-entretien?idCandidature=" . $candidature->getIdCandidature(); ?>" class="btn btn-secondary">
+											        	Créer entretien	
+											      	</a><br>
+											     	<label class="alert-info">Candidature acceptée</label>
+										      	<?php endif ?>		
+										   	<?php endif; ?>
+										</td>
+									</tr>
+								<?php endforeach;?>
+							<?php else: ?>
+								<tr>
+									<td>Aucun enregistrement touvé</td>
+								</tr>
+							<?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+			<style type="text/css">
+				.margin-p{
+					margin-left: 10px;
+				}
+			</style>
+		<?php endif; ?>
+	</div>
+</section>
+ <!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="text-confirmation"></p>
+      </div>
+      <div class="modal-footer">
+        <a id="action-delete" class="btn btn-success">Oui</a>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Non</button>
+      </div>
+    </div>
+  </div>
+</div>
+ <!-- Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="text-confirmation"></p>
+      </div>
+      <div class="modal-footer">
+        <a id="action" class="btn btn-success">Oui</a>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Non</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="<?= HOST; ?>../Web/Ressources/js/listerRecrutement.js"></script>
+<?php if ($_SESSION['compte']['identifiant'] == "candidat"): ?>
+	<script src="<?= HOST; ?>../Web/Ressources/js/tabCandidat.js"></script>
+<?php elseif ($_SESSION['compte']['identifiant'] == "entreprise"): ?>
+	<script src="<?= HOST; ?>../Web/Ressources/js/tabEntreprise.js"></script>
+<?php endif; ?>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormRecrutement.js"></script>
+<script type="text/javascript">
+	var currentUrl      = window.location.href.split('&tabs=');
+	var currentTabs 	= <?php echo isset($tabId) ? json_encode($tabId) : "''"; ?>;
+	$(".1").addClass('is-active');
+	/* @changelog 06/12/2021 [FIX] (Lansky) currentTabs peut-être null */
+	if(currentTabs && currentTabs.includes(currentUrl[1])) {
+	    $(".1").removeClass('is-active');
+	    $("#"+currentUrl[1]).addClass('is-active');
+	}
+</script>
+<script>
+	$(function() {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+    });
+</script>

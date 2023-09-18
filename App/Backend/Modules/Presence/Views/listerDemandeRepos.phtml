@@ -1,0 +1,180 @@
+<?php extract($data); ?>
+<div class="">
+	<?php if ($repos != null) : ?>
+		<?php foreach ($repos as $reposMedical) : extract($reposMedical); ?>
+			<?php if ($demande->getStatut() == ManagerModulePresence::VALIDATED) :?>
+				<div class="card card-border-green p-2 m-2">
+			<?php elseif ($demande->getStatut() == ManagerModulePresence::PROPOSED) :?>
+				<div class="card card-border-yellow p-2 m-2">
+			<?php elseif ($demande->getStatut() == ManagerModulePresence::REFUSED) :?>
+				<div class="card card-border-red p-2 m-2">
+			<?php endif?>
+				<div class="row m-0 p-0">
+					<div class="col-md-1 text-center">
+						<?php if ($demande->getStatut() == ManagerModulePresence::VALIDATED) :?>
+							<i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+						<?php elseif ($demande->getStatut() == ManagerModulePresence::PROPOSED) :?>
+							<i class="fa fa-hourglass" style="color: #ffab00;" aria-hidden="true"></i>
+						<?php elseif ($demande->getStatut() == ManagerModulePresence::REFUSED) :?>
+							<i class="fa fa-times" style="color: #d32f2f;" aria-hidden="true"></i>
+						<?php endif?>
+					</div>
+					<div class="col-md-2">
+						<?php 
+							if ($demande->getStatut() == ManagerModulePresence::PROPOSED) {
+								echo "<span class='titre' style='color : #ffab00;'>en attente</span>";
+							} elseif ($demande->getStatut() == ManagerModulePresence::VALIDATED) {
+								echo "<span class='titre' style='color : #00c853;'>validée</span>";
+							} elseif ($demande->getStatut() == ManagerModulePresence::REFUSED) {
+								echo "<span class='titre' style='color : #d32f2f;'>refusée</span>";
+							}
+						?>
+					</div>
+					<div class="col-md-4 text-important">
+						<?= $employe->getNom() . ' ' . $employe->getPrenom()?>
+					</div>
+					<div class="col-md-3 titre">
+						<?= $demande->getDate() ?>
+					</div>
+					<div class="col-md-2 text-right">
+						<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal<?= $demande->getIdEmployeRepos();?>">
+							voir
+						</button>
+						<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modalSupprimer<?= $demande->getIdEmployeRepos();?>" 
+							<?php if (!$isEditable) { echo 'disabled'; } ?> >
+								retirer
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="modal<?= $demande->getIdEmployeRepos();?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			  	<div class="modal-dialog modal-dialog-centered" role="document">
+			    	<div class="modal-content">
+			      		<div class="modal-header text-center">
+			      			<div class="text-center" style="width: 100%;">
+			      				<h5 class="modal-title section-heading" id="exampleModalLabel">Détails de la demande</h5>
+			      			</div>
+			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          			<span aria-hidden="true">&times;</span>
+			        		</button>
+			      		</div>
+			      		<div class="modal-body">
+		      				<div class="card p-3" style="background: #ffffff;">
+		      					<div class="row">
+		      						<div class="col-sm-3">
+		      							<span class="titre">L'employé : </span>
+		      						</div>
+		      						<div class="col-sm-9">
+		      							<p><?= $employe->getCivilite() . ' ' . $employe->getNom() . ' ' . $employe->getPrenom() ?></p>
+		      						</div>
+		        				</div>
+		        				<div class="row">
+		      						<div class="col-sm-3">
+		      							<span class="titre">Service : </span>
+		      						</div>
+		      						<div class="col-sm-9">
+		      							<p><?= $service ?></p>
+		      						</div>
+		        				</div>
+		        				<div class="row">
+		      						<div class="col-sm-3">
+		      							<span class="titre">Poste : </span>
+		      						</div>
+		      						<div class="col-sm-9">
+		      							<p><?= $poste ?></p>
+		      						</div>
+		        				</div>
+		        				<hr>
+				      			<div class="row">
+				      				<div class="col-sm-3">
+				      					<span class="titre">Raison : </span>
+				      				</div>
+				      				<div class="col-sm-9">
+				      					<?= $demande->getRaison() ?>
+				      				</div>
+				        		</div>
+				        		<hr>
+				        		<div class="row">
+				      				<div class="col-sm-3">
+				      					<span class="titre">Date : </span>
+				      				</div>
+				      				<div class="col-sm-9">
+				      					<?= 'à partir du ' . $demande->getDate() ?>
+				      				</div>
+				        		</div>
+				        		<hr>
+				        		<div class="row">
+				      				<div class="col-sm-3">
+				      					<span class="titre">Durée : </span>
+				      				</div>
+				      				<div class="col-sm-9">
+				      					<?= $demande->getDuree() . ' jour(s)' ?>
+				      				</div>
+				        		</div>
+				        	</div>
+			      		</div>
+			      		<div class="modal-footer">
+			      			<div class="row" style="width: 105%!important;">
+			      				<?php $now = date("Y-m-d"); ?>
+			      				<div class="col-md-12 text-right">
+			      					<a href="<?= HOST . 'manage/rejeter-demandeRepos?idEmployeRepos=' . $demande->getIdEmployeRepos() ?>" class="btn btn-danger
+			      						<?php if (!$isEditable) { echo 'disabled';} ?>
+			      						">Refuser</a>
+			      					<a href="<?= HOST . 'manage/valider-demandeRepos?idEmployeRepos=' . $demande->getIdEmployeRepos() ?>" class="btn btn-success
+			      						<?php if (!$isEditable) { echo 'disabled';} ?>
+			      						">Valider</a>
+			      				</div>
+			      			</div>
+			      		</div>
+			    	</div>
+			  	</div>
+			</div>
+			<div class="modal fade" id="modalSupprimer<?= $demande->getIdEmployeRepos();?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			  	<div class="modal-dialog modal-dialog-centered" role="document">
+			    	<div class="modal-content">
+			      		<div class="modal-header text-center">
+			      			<div class="text-center" style="width: 100%;">
+			      				<h5 class="modal-title section-heading" id="exampleModalLabel">Confirmation de la suppression</h5>
+			      			</div>
+			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          			<span aria-hidden="true">&times;</span>
+			        		</button>
+			      		</div>
+			      		<div class="modal-body">
+			      				<div class="card p-3 text-center" style="background: #ffffff;">
+			      					Voulez-vous vraiment supprimer la demande de <?= $employe->getCivilite() . ' ' . $employe->getNom() . ' ' . $employe->getPrenom() ?> ?
+					        	</div>
+			      		</div>
+			      		<div class="modal-footer">
+			      			<div class="row" style="width: 105%!important;">
+			      				<?php $now = date("Y-m-d"); ?>
+			      				<div class="col-sm-3 text-left">
+			      					<a href="" class="btn btn-red">Annuler</a>
+			      				</div>
+			      				<div class="col-sm-5"></div>
+			      				<div class="col-sm-4">
+			      					<a href="<?= HOST . 'manage/delete-demandeRepos?idEmployeRepos=' . $demande->getIdEmployeRepos() ?>" class="btn btn-green">Confirmer</a>
+			      				</div>
+			      			</div>
+			      		</div>
+			    	</div>
+			  	</div>
+			</div>
+		<?php endforeach ?>
+	<?php /** @changelog 06/12/2021 [EVOL] (Lansky) Ajout une annimation vidéo pour la liste d'une table vide*/
+	else : ?>
+		<div class="row add-video" style="position: relative;">
+			<video width="50%" autoplay="" muted="" loop="" style="left:50%; position: absolute; transform: translate(-50%, 0%);">
+				<source src="<?= HOST; ?>../Web/Ressources/videos/empty.mp4" type="video/mp4">
+			</video>
+		</div>
+	<?php endif ?>
+</div>
+<script>
+	tippy('.fa-info-circle', {
+		content: "Voir détails"
+	});
+	tippy('.fa-trash', {
+		content: "Supprimer"
+	});
+</script>

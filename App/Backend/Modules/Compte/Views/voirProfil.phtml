@@ -1,0 +1,2522 @@
+
+  <?php 
+    use \Core\PublicFonctions;
+    
+    $url = explode('/', $_GET['page']);
+  ?>
+  <section>  
+    <?php if ($url[1] == "candidat") : extract($data); $pageTitle = strtoupper($candidat->getNom());?>
+      <link rel="stylesheet" type="text/css" href="<?= HOST;?>../Web/Ressources/css/voirProfilCandidat.css">
+      <link href="https://cdn.jsdelivr.net/gh/ka215/jquery.timeline@master/dist/jquery.timeline.min.css" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/gh/ka215/jquery.timeline@master/dist/jquery.timeline.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>  
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script> 
+      <link rel="stylesheet" href="<?= HOST;?>../Web/Ressources/Kendo UI/styles/kendo.default-ocean-blue.min.css" />
+      <script src="<?= HOST;?>../Web/Ressources/Kendo UI/js/kendo.all.min.js"></script>
+      <!-- Place des photos et des 4 bouttons pour editer identité et pour les parametres du compte -->
+      <div id="candidat-menu" class="row">
+        <div class="col-md-12">
+          <div class="place-couverture-profil sticky-top second-nav">
+            <div class="place-couverture wave">
+              <img src="<?= ($candidat->getPhotoCouverture() != "") ? HOST . "../Web/Ressources/images/candidats/" . $candidat->getPhotoCouverture() : HOST ."../Web/Ressources/images/candidats/panorama-3767580_1920.jpg";?>" class="img-fluid photo-couverture">
+              <input type="hidden" class="photoCouverture" id="valPhotoCouverture" value="<?=$candidat->getPhotoCouverture();?>">
+              <input type="hidden" name="photoCouverture" id="photoCouvertureCandidat" value="<?= ($candidat->getPhotoCouverture() != "") ? HOST . "../Web/Ressources/images/candidats/" . $candidat->getPhotoCouverture() : HOST ."../Web/Ressources/images/candidats/panorama-3767580_1920.jpg";?>">
+              <div class="row">
+                <button class="btn btn-circle ml-auto format-camera" id="fileProfilCouverture" name="camera-couverture" data-toggle="modal" data-target="#modalPhotoDeCouverture" data-url="<?= HOST. "manage/edit-candidat?idCandidat=" . $candidat->getIdCandidat();?>" style="margin-right: 60px;margin-top: -250px;"><i class="fa fas fa-camera" style="color:white;"></i></button>
+              </div>
+            </div>
+            <div class="place-boutton-photo sticky" id="place-boutton-photo">
+              <div class="row">
+                <!-- photo de profil -->
+                <div class="col-md-2">
+                  <div class="">
+                    <div class="container margin-photoProfil photoProfil">
+                      <img class="place-profil-rond photo-profil" name="photoProfil" src="<?= ($candidat->getPhoto() != "") ? HOST . "../Web/Ressources/images/candidats/" . $candidat->getPhoto() : HOST ."../Web/Ressources/images/profilCandidat.png";?>">
+                      <button class="btn btn-circle format-camera" id="filesProfil" name="camera-profil" data-toggle="modal" data-target="#modalPhotoDeProfil" data-url="<?= HOST. "manage/edit-candidat?idCandidat=" . $candidat->getIdCandidat();?>"><i class="fa fas fa-camera" style="color:white;"></i></button>
+                      <input type="hidden" name="photoProfil" id="photoProfilCandidat" value="<?= ($candidat->getPhoto() != "") ? HOST . "../Web/Ressources/images/candidats/" . $candidat->getPhoto() : HOST ."../Web/Ressources/images/profilCandidat.png";?>">
+                      <input type="hidden" class="photoProfil" id="valPhotoProfil" value="<?=$candidat->getPhoto();?>">
+                      <input type="hidden" class="urldata" value="<?= HOST. "manage/edit-candidat?idCandidat=" . $candidat->getIdCandidat();?>">
+                      <input type="hidden" class="candidat" value="<?=$candidat->getIdCandidat();?>">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="col-md-6 container" id="dropdownContainer"></div>
+                </div>
+              </div>
+              <div class="row">
+                <button class="btn ml-auto dropdown-toggle" id="bouttonDropdown" style="background:transparent;text-align: center; margin-right: 50px;" data-toggle="dropdown">Paramêtres</button>
+                <div class="dropdown-menu" id="dropdownParametre">
+                  <button class="dropdown-item editAnimation" data-toggle="modal" data-target="#modalEditPseudo" data-url="<?= HOST . 'manage/edit-pseudo?idCompte=' . $_SESSION['compte']['idCompte']; ?>">Pseudo</button>
+                  <button class="dropdown-item editAnimation" data-url="<?= HOST . 'manage/update-password?idCompte=' . $_SESSION['compte']['idCompte']; ?>" data-toggle="modal" data-target="#modalEditPassword">Mot de passe</button>
+                  <button class="dropdown-item editAnimation" id="editProfil" data-toggle="modal" data-target="#modalEditProfil" data-url="<?= HOST. "manage/edit-candidat?idCandidat=" . $candidat->getIdCandidat();?>">Editer profil</button>
+                  <div class="custom-control custom-switch" style="margin-left: 25px;">
+                    <?php if ($candidat->getPublique() == 0) : ?>
+                      <input type="checkbox" name="arretActive" class="custom-control-input" id="switchArret">
+                      <label class="custom-control-label" for="switchArret">Privée <i class='far fa-eye-slash' style="color:red;"></i></label>
+                    <?php else : ?>
+                      <input type="checkbox" name="arretActive" class="custom-control-input" id="switchArret" checked="checked">
+                      <label class="custom-control-label" for="switchArret">Publique <i class='far fa-eye' style="color:green;"></i></label>
+                    <?php endif; ?>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12" style="color:white;margin-left: 70px;">
+                  <h4><?= ($candidat->getNom()); ?><br></h4>
+                  <h4><?= ($candidat->getPrenom()); ?><br></h4>
+                  <p class="font-weight-bold"><button class="btn" style="background:transparent;text-align: center;" id="Plus-information" data-toggle="modal" data-target="#modalIdentite">plus d'information, </button><a href="<?= HOST ."manage/creerCV" ?>" class="btn" style="background:transparent;text-align: center;">Curiculum Vitae</a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Modal pour afficher les informations supplémentaires su le candidat -->
+      <div class="modal fade" id="modalCV" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5 class="modal-title text-center"> Curiculum vitae </h5>
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div id="candidatCV" name="canidatCV" class="modal-body canidatCV modal-style-body">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="photoDuCandidat">
+                    <img class="img-fluid profil-cv rounded-circle" src="<?= ($candidat->getPhoto() != "") ? HOST . "../Web/Ressources/images/candidats/" . $candidat->getPhoto() : HOST ."../Web/Ressources/images/profilCandidat.png";?>">
+                  </div>
+                  <hr>
+                  <div class="contact">
+                    <h3 class="text-uppercase">Contact</h3>
+                    <hr>
+                    <p><i class="fas fa-phone" style="color:#1f487c"></i> <?php $contact = explode('/', $candidat->getContact()); echo $contact[1]; ?></p>
+                    <p><i class="fa fas fa-home" style="color:#1f487c"></i> <?= $candidat->getAdresse(); ?></p>
+                    <p><i class="fa fas fa-city" style="color:#1f487c"></i> <?= ($candidat->getVille());?></p>
+                    <p><i class="fas fa-envelope" style="color:#1f487c"></i> <?= strtolower($candidat->getEmail()); ?></p>
+                    <br>
+                  </div>
+                  <div class="langue">
+                    <h3 class="text-uppercase">Langue</h3>
+                    <hr>
+                    <?php foreach($langues as $langue): ?>
+                      <p><?= ucfirst($langue->getNomLangue());?></p>
+                    <?php endforeach; ?>
+                    <br>
+                  </div>
+                  <div class="centreDinteret">
+                    <h3 class="text-uppercase">Centre d'interêt</h3>
+                    <hr>
+                    <?php foreach($centreInterets as $centreInteret): ?>
+                      <div>
+                        <strong><?= $centreInteret->getCategorieCentreInteret() ?></strong>
+                      </div>
+                    <?php endforeach; ?>
+                    <br>
+                  </div>
+                  <div class="logicelCV">
+                    <h3 class="text-uppercase">Logiciel</h3>
+                    <hr>
+                    <?php foreach($logiciels as $logicel): ?>
+                      <div>
+                        <strong><?= $logicel->getNomLogiciel() ?></strong>
+                      </div>
+                    <?php endforeach; ?>
+                  </div>
+                </div>
+                <div class="col-md-8">
+                  <div class="identite">
+                    <h5>Nom :</h5><p><?= ($candidat->getNom()); ?></p>
+                    <h5>Prénom : </h5><p><?= ($candidat->getPrenom()); ?></p>
+                    <h5>Date de naissance : </h5>
+                      <p>
+                        <?php 
+                          $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                          $birth = explode('-', $candidat->getDateNaiss());
+                          $index = (int)$birth[2] - 1;
+                          $dateBirth = $index < 12 ? $birth[1] . " " . $months[$index] . " " . $birth[0] : $birth[2] . " " . $months[(int)$birth[1] - 1] . " " . $birth[0];
+                          echo $dateBirth;
+                        ?>
+                      </p>
+                  </div>
+                  <div class="profil">
+                    <h3 class="text-uppercase">Profil</h3>
+                    <hr>
+                    <h4 class="underline">Déscription</h4>
+                    <p><?= $candidat->getDescription(); ?></p>
+                    <!-- <h4 class="underline">Personnalités</h4>
+                    <p><?php /*$personnalite = explode('_',$candidat->getPersonnalite()); echo ucfirst($personnalite);*/ ?></p> -->
+                    <br>
+                  </div>
+                  <div class="experience">
+                    <h3 class="text-uppercase">éxpériences</h3>
+                    <hr>
+                    <?php foreach ($experiences as $experience):?>
+                      <div class="container-fluid">
+                        <h4><?= ucfirst($experience->getPoste()); ?></h4>
+                        <p>Entreprise : <?= $experience->getEntreprise(); ?> </p>
+                        <p>Déscription du poste : <?= ucfirst($experience->getDescription()); ?></p>
+                      </div>
+                    <?php endforeach;?>
+                  </div>
+                  <div class="formation">
+                    <h3 class="text-uppercase">Formation</h3>
+                    <hr>
+                    <?php foreach ($formations as $formation):?>
+                      <div class="container-fluid">
+                        <h4><?= is_object($formation['sousDomaine']) ? ucfirst($formation['sousDomaine']->getNomSousDomaine()) : ucfirst($formation['sousDomaine']); ?></h4>
+                        <p> Date :
+                          <?php 
+                            $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                            $dateDebut = explode('-', $formation['formation']->getDateDebut());
+                            $dateFin = explode('-', $formation['formation']->getDateFin());
+                            $index = (int)$dateDebut[1] - 1;
+                            $index2 = (int)$dateFin[1] - 1;
+                            echo $dateDebut[2] . " " . $months[$index] . " " . $dateDebut[0] ." - ";
+                            echo $dateFin[2] . " " . $months[$index2] . " " . $dateFin[0];
+                          ?> 
+                        </p>
+                        <p>Etablissement : <?= ucfirst($formation['formation']->getEtablissement()); ?> </p>
+                        <p>Niveau : <?= is_object($formation['niveauEtude']) ? ucfirst($formation['niveauEtude']->getNiveau()) : 'aucun'; ?> </p>
+                        <p>Déscription : <?= ucfirst($formation['formation']->getDescription()); ?> </p>
+                      </div>
+                    <?php endforeach;?>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer modal-style-footer">
+              <input type="button" id="create_pdf" value="Generate PDF">  
+              <button class="btn btn-success btn-sm" id="exportPDF" name="exportPDF">Telecharger</button>
+              <button class="btn btn-danger btn-sm" data-dismiss="modal">Fermer</button>
+            </div>
+          </div>
+        </div>      
+      </div>
+      <!-- Modal pour afficher l'identité du candidat !-->
+      <div class="modal fade" id="modalIdentite" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5 class="modal-title text-center"> Information </h5>
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body modal-style-body">
+              <div class="">
+                <strong><i class="fas fa-calendar-day me-3" style="color:#1f487c"></i>
+                  <?php 
+                    $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                    $birth = explode('-', $candidat->getDateNaiss());
+                    $index = (int)$birth[1] - 1;
+                    echo $birth[2] . " " . $months[$index] . " " . $birth[0];
+                  ?>
+                  <br>
+                </strong> 
+                <strong><i class="fas fa-phone me-3" style="color:#1f487c"></i> <?php $contact = explode('/', $candidat->getContact()); echo $contact[0]. " ". $contact[1]; ?><br></strong> 
+                <strong><i class="fas fa-envelope me-3" style="color:#1f487c"></i> <?= strtolower($candidat->getEmail()); ?> <br></strong>
+                <strong><i class="fa fas fa-home" style="color:#1f487c"></i> <?= $candidat->getAdresse(); ?></strong>
+                <strong><i class="fa fas fa-city" style="color:#1f487c"></i> <?= ($candidat->getVille());?></strong>
+              </div>
+            </div>
+            <div class="modal-footer modal-style-footer">
+              <button class="btn btn-danger btn-sm" data-dismiss="modal">Fermer</button>
+            </div>
+          </div>  
+        </div>
+      </div>
+      <div>
+        <div class="form-group hidden">
+          <input class="form-control" id="idCandidat" name="idCandidat" type="number" value="<?= $candidat->getIdCandidat() ;?>">
+        </div>
+      </div>  
+      <!-- modal pour ajouter, modifier et supprimer !-->
+      <!-- Modal pour mettre a jour la photo de profil !-->
+      <div class="modal fade" id="modalPhotoDeProfil" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+                <h5 class="modal-title text-center">Modifier la photo de profil</h5> 
+                <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form id="photoProfil" action="<?= HOST. "manage/save-candidat";?>" method="POST" enctype="multipart/form-data">
+              <div class="modal-body modal-style-body">
+                <input type="hidden" name="idCandidat" value="<?= $candidat->getIdCandidat();?>">
+                <img class="img-fluid user rounded-circle" id="image-profil" name="photo" src="">
+                <button type="button" class="btn-sm btn-success" onclick="$('#PhotoDeProfil').click(); return false;" style="margin-left: 165px;">Importer une photo</button>
+                <input class="form-control hidden" id="PhotoDeProfil" name="photo" type="file" accept="image/*" value="">
+              </div>
+              <div class="modal-footer modal-style-footer">
+                <button type="submit" id="submitPhotoDeProfil" class="btn btn-success btn-sm">Enregistrer</button>
+                <button class="btn btn-danger btn-sm" id="cancel-photo-profil" data-dismiss="modal">Annuler</button>
+              </div>
+            </form>
+          </div>
+        </div>  
+      </div>
+      <!-- Modal pour mettre à jour la photo de couverture -->
+      <div class="modal fade" id="modalPhotoDeCouverture" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+                <h5 class="modal-title text-center">Modifier la photo de couverture</h5> 
+                <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form id="photoCouverture" action="<?= HOST. "manage/save-candidat";?>" method="POST" enctype="multipart/form-data">
+              <div class="modal-body modal-style-body">
+                <input type="hidden" name="idCandidat" value="<?= $candidat->getIdCandidat();?>">
+                <img class="img-fluid couverture" id="image-couverture" name="photoCouverture" src="">
+                <div class="row">
+                  <div class="col-md-4"></div>
+                  <div class="col-md-4">
+                    <button type="button" class="btn-sm btn-success" onclick="$('#PhotoDeCouverture').click(); return false;" style="margin-left: 100px;">
+                      Importer une photo
+                    </button>
+                  </div>
+                </div>
+                <input class="form-control hidden" id="PhotoDeCouverture" name="photoCouverture" type="file" accept="image/*" value="">
+              </div>
+              <div class="modal-footer modal-style-footer">
+                <button type="submit" id="submitPhotoDeCouverture" class="btn btn-success btn-sm">Enregistrer</button>
+                <button class="btn btn-danger btn-sm" id="cancel-photo-couverture" data-dismiss="modal">Annuler</button>
+              </div>
+            </form>
+          </div>
+        </div>  
+      </div>
+      <!-- Modal pour editer le pseudo du candidat  -->
+      <div class="modal fade" id="modalEditPseudo" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5 class="modal-title text-center">Modifier le pseudo</h5> 
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form id="form-pseudo" method="POST" action="<?= HOST. "manage/save-pseudo";?>" enctype="multipart/form-data" novalidate="novalidate">
+              <div class="modal-body modal-style-body">
+                <div class="form-group hidden">
+                  <input class="form-control" id="idCompte" name="idCompte" type="number" value="<?= $_SESSION['compte']['idCompte'] ?>">
+                </div>
+                <div class="form-group row">
+                  <label class="label-input col-md-3">Pseudo :</label>
+                    <input class="form-control text-lowercase col-md-8" id="login" name="login" type="text" value="<?= $_SESSION['compte']['login'] ?>" required="required" data-validation-required-message="Veuillez entrer votre pseudo *" data-validation-regex-regex="^[a-zA-Z-_]*" data-validation-regex-message="Caractères non valide *">
+                    <p class="help-block text-danger"></p>
+                </div>
+              </div>
+              <div class="modal-footer modal-style-footer">
+                <button type="submit" id="submit-pseudo" class="btn btn-success btn-sm">Enregistrer</button>
+                <button class="btn btn-danger btn-sm" data-dismiss="modal">Annuler</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- Modal pour editer les mots de passe du compte  -->
+      <div class="modal fade" id="modalEditPassword" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5 class="modal-title text-center">Modifier le mot de passe</h5> 
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form id="form-motDePasse" method="POST" action="<?= HOST. "manage/update-password";?>" enctype="multipart/form-data" novalidate="novalidate">
+              <div class="modal-body modal-style-body">
+                <div class="form-group hidden">
+                    <input class="form-control" name="idCompte" type="number" value="<?= $_SESSION['compte']['idCompte'] ?>">
+                </div>
+                <div class="form-group row" style="position: relative;">
+                  <label class="label-input col-md-3 ">Mot de passe actuel :</label>
+                  <input class="form-control col-md-8" id="ancienMotDePasse" name="ancienMotDePasse" type="password" required="required" data-validation-required-message="Veuillez entrer votre mot de passe actuel *">
+                  <i class="fas fa-eye eye-icon" style="position: absolute; right: 53px; top: 60%; transform: translateY(-50%); z-index: 2;"></i>
+                  <p class="help-block text-danger"></p>
+                </div>
+                <div class="form-group row" style="position: relative;">
+                  <label class="label-input col-md-3">Nouveau mot de passe :</label>
+                    <input class="form-control col-md-8" id="motDePasse" name="motDePasse" type="password" required="required" data-validation-required-message="Veuillez entrer votre nouveau mot de passe *"  data-validation-regex-regex="^.{6,}$" data-validation-regex-message="6 caractères minimum *">
+                  <i class="fas fa-eye eye-icon" style="position: absolute; right: 53px; top: 60%; transform: translateY(-50%); z-index: 2;"></i>
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="form-group row" style="position: relative;">
+                  <label class="label-input col-md-3">Confirmation du nouveau mot de passe :</label>
+                    <input class="form-control col-md-8" id="confirmation" name="confirmation" type="password" required="required" data-validation-required-message="Veuillez confirmer votre nouveau mot de passe.">
+                  <i class="fas fa-eye eye-icon" style="position: absolute; right: 53px; top: 60%; transform: translateY(-50%); z-index: 2;"></i>
+                    <p class="help-block text-danger" id="match-message"></p>
+                </div>
+              </div>
+              <div class="modal-footer modal-style-footer">
+                <button type="submit" id="submit-password" class="btn btn-success btn-sm">Enregistrer</button>
+                <button class="btn btn-danger btn-sm" data-dismiss="modal">Annuler</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- modal pour editer le profil du candidat !-->
+      <div class="modal fade" id="modalEditProfil" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5 class="modal-title text-center">Editer profil</h5> 
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form id="form-profil" method="POST" action="<?= HOST. "manage/save-candidat" ;?>" enctype="multipart/form-data" novalidate="novalidate">  
+              <div class="modal-body modal-style-body"> 
+                <div class="form-group hidden">
+                  <input class="form-control" id="idCandidat" name="idCandidat" type="number" value="<?= $candidat->getIdCandidat(); ?>">
+                </div>
+                <div class="form-group row">
+                  <label class="label-input col-md-3">Civilité </label>
+                  <select  class="form-control col-md-8" name="civilite" id="civilite" required="required" data-validation-required-message="Veuillez séléctionner votre civilité.">
+                    <option class="text-center" value="">-- Choisir -- </option>
+                    <option <?php if ($candidat->getCivilite()== "Mr") { echo "selected"; } ?> value="Mr">Monsieur</option>
+                    <option <?php if ($candidat->getCivilite()== "Mme") { echo "selected"; } ?> value="Mme">Madame</option>
+                    <option <?php if ($candidat->getCivilite()== "Mlle") { echo "selected"; } ?> value="Mlle">Mademoiselle</option>
+                  </select>
+                  <p class="help-block text-danger"></p>
+                </div>
+                <div class="form-group row">
+                  <label class="label-input col-md-3">Nom </label>
+                  <input class="form-control col-md-8" id="nom" name="nom" type="text" value="<?= $candidat->getNom(); ?>" required="required" data-validation-required-message="Veuillez entrer votre nom *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+                  <p class="help-block text-danger"></p>
+                </div>
+                <div class="form-group row">
+                  <label class="label-input col-md-3">Prénom </label>
+                    <input class="form-control col-md-8" id="prenom" name="prenom" type="text" value="<?= $candidat->getPrenom(); ?>" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="form-group row">
+                  <label class="label-input col-md-3">Date de naissance </label>
+                  <label for="datepicker">
+                    <input class="form-control datepicker col-md-8" type="text" value="<?php $date = explode('-', $candidat->getDateNaiss()); echo $date[2] . "/" . $date[1] . "/" . $date[0]; ?>" autocomplete="off" placeholder="Date de naissance">
+                  </label>
+                    <input class="form-control hidden" id="dateNaiss" name="dateNaiss" type="date"  required="required" data-validation-required-message="Veuillez entrer votre date de naissance *">
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="form-group hidden">
+                    <input class="form-control" name="idCompte" type="number" value="<?= $candidat->getIdCompte(); ?>">
+                </div>
+                <div class="form-group row">
+                  <label class="label-input col-md-3">Adresse </label>
+                    <input class="form-control col-md-8" id="adresse" name="adresse" type="text" value="<?= $candidat->getAdresse(); ?>" required="required" data-validation-required-message="Veuillez entrer adresse *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="form-group row">
+                  <label class="label-input col-md-3">Ville</label>
+                    <input class="form-control text-capitalize col-md-8" id="ville" name="ville" type="text" value="<?= $candidat->getVille(); ?>" required="required" data-validation-required-message="Veuillez entrer ville *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="form-group row">
+                  <label class="label-input col-md-3">Contact :</label>
+                  <select id="select-country" class="form-control col-md-8">
+                    <option value="">votre pays</option>
+                      <?php 
+                        $candidatContact = explode('/', $candidat->getContact());
+                        foreach(unserialize(COUNTRIES) as $country): ?>
+                          <option 
+                            <?php if ($candidatContact[0] == $country['code']) { echo "selected"; } ?> value="<?= $country['code']; ?>">
+                            <?= $country['country'] ?>
+                          </option>
+                        <?php endforeach; ?>
+                  </select>
+                  <input style="margin-left:122px" type="text" id="input-phone" class="form-control col-md-8" value="<?= $candidatContact[1]; ?>" required="required" data-validation-required-message="Veuillez entrer votre contact">      
+                  <p class="help-block text-danger"></p>        
+                </div>
+                <div class="form-group hidden">
+                    <input class="form-control focus_activated" id="contact" name="contact" type="text" value="">
+                </div>
+                <div class="form-group row">
+                  <label class="label-input col-md-3">Adresse Email </label>
+                    <input class="form-control col-md-8" id="email" name="email" type="email" value="<?= $candidat->getEmail(); ?>" required="required" data-validation-required-message="Veuillez entrer email.">
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="form-group row">
+                  <label class="label-input col-md-3">Votre description </label>
+                    <textarea class="form-control col-md-8" data-limit-rows=true rows="4" id="description" name="description" required="required" data-validation-required-message="Veuillez entrer votre description."><?= $candidat->getDescription(); ?></textarea>
+                    <p class="help-block text-danger"></p>
+                </div>
+              </div>
+              <div class="modal-footer modal-style-footer">
+                <button type="submit" id="submit-profil" class="btn btn-success btn-sm">Enregistrer</button>
+                <button class="btn btn-danger btn-sm" data-dismiss="modal">Annuler</button>
+              </div>
+            </form>
+          </div>  
+        </div>
+      </div> 
+      <!-- modal pour editer les formations !-->
+      <div class="modal fade" id="modalAddFormation" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5 id="titre-modal-formation" class="modal-title text-center">Ajouter une formation</h5> 
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form id="form-formation" method="POST" action="<?= HOST."manage/create-formation-candidat";?>" enctype="multipart/form-data" novalidate="true">
+              <div class="modal-body modal-style-body">
+                <input type="hidden" name="idFormation" class="formation" value="">
+                <div class="form-group hidden">
+                  <input class="form-control" name="idCandidat" type="number" value="<?= $candidat->getIdCandidat();?>">
+                </div>
+                <div class="form-group row">
+                  <label class="label-input col-md-3">Sous domaine</label>
+                  <select  class="form-control col-md-8" name="idSousDomaine" id="idSousDomaineFormation" required data-validation-required-message="Veuillez choisir un sous domaine.">
+                  <option class="text-center" value="">-- Choisir --</option>
+                  <?php foreach($sousDomaines as $sousDomaine): ?>
+                      <option 
+                        value="<?= $sousDomaine->getIdSousDomaine(); ?>">
+                        <?= $sousDomaine->getNomSousDomaine(); ?>
+                      </option>
+                  <?php endforeach; ?>
+                      <option class="text-center" value="autre">Autre</option>
+                      </select>
+                          <p class="help-block text-danger col-md-8"></p>
+                </div>
+                <div class="form-group" id="block-sousDomaine-formation">
+                  <div class="form-group row">
+                    <label class="label-input col-md-3">Domaine</label>
+                    <select  class="form-control col-md-8" name="idDomaine" id="idDomaineFormation">
+                      <option class="text-center" value="">-- Choisir --</option>
+                      <?php foreach($domaines as $domaine): ?>
+                        <option value="<?= $domaine->getIdDomaine(); ?>">
+                          <?= $domaine->getNomdomaine(); ?>
+                        </option>
+                      <?php endforeach; ?>
+                        <option class="text-center" value="autre">Autre</option>
+                    </select>
+                    <p class="help-block text-danger" id="idDomaine-message"></p>
+                  </div>
+                  <div class="form-group row" id="block-domaine-formation">
+                    <label class="label-input col-md-3">Nom de domaine</label>
+                    <input class="form-control col-md-8" id="nomDomaineFormation" placeholder="nom du domaine" name="nomDomaine" type="text" value="" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+                    <p class="help-block text-danger" id="nomDomaine-message"></p>
+                  </div>
+                  <div class="form-group row">
+                    <label class="label-input col-md-3">Nom de sous domaine</label>
+                      <input class="form-control col-md-8" id="nomSousDomaineFormation" name="nomSousDomaine" placeholder="nom du sous domaine" type="text" value="" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+                      <p class="help-block text-danger" id="nomSousDomaine-message"></p>
+                  </div>
+                </div>
+                <div class="form-group row" id="block-niveauEtude-formation">
+                  <label class="label-input col-md-3">Niveau d'étude</label>
+                  <select  class="form-control focus_activated col-md-8" name="idNiveauEtude" id="idNiveauEtudeFormation" required="required" data-validation-required-message="Veuillez choisir un niveau d'étude.">
+                    <option class="text-center" value="">-- Choisir --</option>
+                    <?php foreach($niveauEtudes as $niveauEtude): ?>
+                    <option 
+                      value="<?= $niveauEtude->getIdNiveauEtude(); ?>">
+                        <?= $niveauEtude->getNiveau(); ?>
+                    </option>
+                    <?php endforeach; ?>
+                  </select>
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Date debut </label>
+                  <div class="col-md-8">
+                    <input class="datepicker form-control formation datepicker-debut visible" id="dateDebutFormationModal" placeholder="date début de la formation" autocomplete="off" name="dateDebut" data-date-format="dd/mm/yyyy" value="" data-validation-regex-regex="^(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])/(19|20)\d\d$" data-validation-required-message="Veuillez renseigner la date de début" data-validation-regex-message="Date non valide" required>
+                    <p class="help-block text-danger formationDebut"></p>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Date fin </label>
+                  <div class="col-md-8">
+                    <input class="datepicker form-control formation datepicker-fin visible" id="dateFinFormationModal" autocomplete="off" name="dateFin" data-date-format="dd/mm/yyyy" value="" data-validation-required-message="Veuillez renseigner la date de la fin du formaion" placeholder="date fin de la formation" data-validation-regex-regex="^(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])/(19|20)\d\d$" data-validation-regex-message="Date non valide" required>
+                    <p class="help-block text-danger formationFin"></p>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Etablissement </label>
+                  <div class="col-md-8">
+                    <input type="text" name="etablissement" id="etablissementFormationModal" placeholder="Le nom de l'etablissement" data-validation-required-message="Veuillez entrer l' établissemment" class="form-control formation visible" value="" required>
+                    <p class="help-block text-danger formationFin"></p>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Description</label>
+                  <div class="col-md-8">
+                    <textarea id="textarea-formation" data-limit-rows=true placeholder="Description de la formation" data-validation-required-message="veuillez entrer la déscription de la formation *" class="form-control visible" data-limit-rows=true rows="4" name="description" required></textarea>
+                    <p class="help-block text-danger formationFin"></p>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer modal-style-footer">
+                <button type="submit" id="submitFormation" class="btn btn-success btn-sm">Enregistrer</button>
+                <button class="btn btn-danger btn-sm" id="annuler-formation" data-dismiss="modal">Annuler</button>
+                <div class="delete-formation">
+                  <a href="#" class="btn btn-warning btn-sm" id="delete-formation-button" data-id="" data-toggle="modal" data-target="#modalDeleteFormation" data-url="manage/delete-formation-candidat?idFormation=">Supprimer</a>
+                </div>
+              </div>
+            </form>
+          </div>  
+        </div>
+      </div>
+      <!-- Modal pour supprimmer les formation -->
+      <div class="modal fade" id="modalDeleteFormation" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5>Confirmation</h5>
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body modal-style-body">
+              <label class="form-label font-weight-bold">
+                Voulez vous supprimer cette formation ?
+              </label>
+            </div>
+            <div class="modal-footer modal-style-footer">
+              <a type="submit" id="confirm-yes-formation" class="btn btn-success btn-sm" href="<?= HOST. "manage/delete-formation-candidat?idFormation=";?>">Oui</a>
+              <button class="btn btn-danger btn-sm" id="data-annuler-supprFormation">Non</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- modal pour editer les experiences !-->
+      <div class="modal fade" id="modalAddExperience" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5 id="titre-modal-experience" class="modal-title text-center"></h5>
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button> 
+            </div>
+            <form id="form-experience" method="POST" class="form-experience" action="<?= HOST."manage/create-experience-candidat";?>" enctype="multipart/form-data" novalidate="novalidate">
+              <div class="modal-body modal-style-body">
+                <input type="hidden" name="idExperience" class="id-experience" value="">
+                <div class="form-group hidden">
+                  <input class="form-control focus_activated" name="idCandidat" type="number" value="<?= $candidat->getIdCandidat();?>">
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Status </label>
+                  <div class="col-md-8">
+                    <select id="stautExperience" class="form-control">
+                      <option value="encours">En cours</option>
+                      <option value="termine">Terminé</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Date debut </label>
+                  <div class="col-md-8">
+                    <input class="datepicker form-control experience" id="dateDebutExperienceModal" autocomplete="off" name="dateDebut" data-date-format="mm/dd/yyyy" value="" data-validation-regex-regex="^(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])/(19|20)\d\d$" data-validation-required-message="Veuillez renseigner la date de début" data-validation-regex-message="Date non valide" placeholder="mm/dd/yyyy" required>
+                    <p class="help-block text-danger"></p>
+                  </div>
+                </div>
+                <div id="dateFinExperienceDiv" class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Date fin </label>
+                  <div class="col-md-8">
+                    <input class="datepicker form-control experience" id="dateFinExperienceModal" autocomplete="off" name="dateFin" data-date-format="mm/dd/yyyy" value="" data-validation-regex-regex="^(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])/(19|20)\d\d$" data-validation-required-message="Veuillez renseigner la date fin de l'experience" data-validation-regex-message="Date non valide" placeholder="mm/dd/yyyy" required>
+                    <p class="help-block text-danger"></p>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Entreprise </label>
+                  <div class="col-md-8">
+                    <input class="form-control experience" type="text" name="entreprise" id="entrepriseExperienceModal" value="" data-validation-required-message="Veuillez entrer le nom de l'entreprise" placeholder="Nom de l'entreprise" required>
+                    <p class="help-block text-danger"></p>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Poste </label>
+                  <div class="col-md-8">
+                    <input class="form-control experience" type="text" id="posteExperienceModal" name="poste" value="" data-validation-required-message="Veuillez entrer le nom du poste" placeholder="Poste" required>
+                    <p class="help-block text-danger"></p> 
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Description du poste </label>
+                  <div class="col-md-8">
+                    <textarea id="textarea-experience" data-limit-rows=true data-limit-rows=true rows="4" class="form-control" name="description" data-validation-required-message="Veuillez remplir la déscription" placeholder="déscription de l'éxperience" required></textarea>
+                    <p class="help-block text-danger"></p>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer modal-style-footer">
+                <button type="submit" id="submitExperience" class="btn btn-success btn-sm">Enregistrer</button>
+                <button class="btn btn-danger btn-sm" data-dismiss="modal">Annuler</button>
+                <div class="delete-experience">
+                  <a href="#" class="btn btn-warning btn-sm" id="delete-experience-button" data-id="" data-toggle="modal" data-target="#modalDeleteExperience" data-url="manage/delete-experience-candidat?idExperience=">Supprimer</a>
+                </div>
+              </div>  
+            </form>
+          </div>  
+        </div>
+      </div>
+      <!-- Modal pour supprimmer les experiences -->
+      <div class="modal fade" id="modalDeleteExperience" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5>Confirmation</h5>
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body modal-style-body">
+              <label class="form-label font-weight-bold">
+                Voulez vous supprimer cette experience ?
+              </label>
+            </div>
+            <div class="modal-footer modal-style-footer">
+              <a type="submit" id="confirm-yes-experience" class="btn btn-success btn-sm" href="<?= HOST. "manage/delete-experience-candidat?idExperience=";?>">Oui</a>
+              <button class="btn btn-danger btn-sm" id="data-annuler-supprExperience">Non</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- modal pour editer un centre d'interet !-->
+      <div class="modal fade" id="modalAddCentreInteret" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5 class="modal-title text-center" id="titre-modal-centre">Ajouter un centre d'interet</h5>
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button> 
+            </div>
+            <form id="form-centre-interet" method="POST" class="form-centre-interet" action="<?= HOST. "manage/create-centre_interet";?>" enctype="multipart/form-data" novalidate="novalidate">
+              <div class="modal-body modal-style-body">
+                <input type="hidden" name="idCentreInteret" class="id-centre-modal" value="">
+                <input type="hidden" name="idCandidat" value="<?= $candidat->getIdCandidat()?>">
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Catégorie</label>
+                  <div class="col-md-8">
+                    <input type="text" name="categorieCentreInteret" id="categorieCentreModal" class="categorieCentres form-control" placeholder="Ex: sport, mécanique,..." list="categorie-centre-interet" value="" required data-validation-required-message="Veuillez remplir ce formulaire">
+                    <datalist id="categorie-centre-interet">
+                      <?php foreach ($centreInterets as $centreInteret): ?>
+                        <option value="<?= $centreInteret->getCategorieCentreInteret();?>">
+                      <?php endforeach ; ?>
+                    </datalist>
+                    <p class="help-block text-danger"></p>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Déscription</label>
+                  <div class="col-md-8">
+                    <textarea class="form-control" id="description-centre" data-limit-rows=true rows="4" name="descriptionCentreInteret" placeholder="Déscription sur le centre d'interet" data-validation-required-message="veuillez entrer la description*" required></textarea>
+                    <p class="help-block text-danger"></p>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer modal-style-footer">
+                <button type="submit" class="btn btn-success btn-sm">Enregistrer</button>
+                <button class="btn btn-danger btn-sm" data-dismiss="modal">Annuler</button>
+                <div class="delete-centre hidden">
+                  <a href="#" class="btn btn-warning btn-sm" id="delete-centre-boutton" data-id="" data-toggle="modal" data-target="#modalDeleteCentreInteret" data-url="manage/delete-centre_interet?idCentreInteret=">Supprimer</a>        
+                </div>
+              </div>
+            </form>
+          </div>  
+        </div>
+      </div>
+      <!-- modal pour supprimer un centre d'interet !-->
+      <div class="modal fade" id="modalDeleteCentreInteret" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5>Confirmation</h5>
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body modal-style-body">
+              <label class="form-label font-weight-bold">
+                Voulez vous supprimer ce centre d'interet ?
+              </label>
+            </div>
+            <div class="modal-footer modal-style-footer">
+              <a type="submit" id="confirm-yes-centre" class="btn btn-success btn-sm" href="<?= HOST. "manage/delete-centre_interet?idCentreInteret=";?>">Oui</a>
+              <button class="btn btn-danger btn-sm" id="data-annuler-supprCentre">Non</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- modal pour editer les logiciels !-->
+      <div class="modal fade" id="modalAddLogiciel" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5 class="modal-title text-center" id="titre-modal-logiciel"></h5>
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button> 
+            </div>
+            <form id="form-logiciel" method="POST" class="form-logiciel" action="<?= HOST. "manage/create-logiciel";?>" enctype="multipart/form-data" novalidate="novalidate">
+              <div class="modal-body modal-style-body">
+                <input type="hidden" name="idLogiciel" class="idLogiciels" value="">
+                <input type="hidden" name="idCandidat" value="<?= $candidat->getIdCandidat()?>">
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Categorie</label>
+                  <div class="col-md-8">
+                    <input type="text" name="categorieLogiciel" id="categorieLogicielModal" placeholder="Categorie du logiciel" class="form-control" list="Logiciel-utilises" value="" data-validation-required-message="veuillez entrer la catégorie du logiciel *" required>
+                    <datalist id="Logiciel-utilises">
+                      <?php foreach ($logiciels as $logiciel): ?>
+                        <option value="<?= $logiciel->getCategorieLogiciel();?>">
+                      <?php endforeach ; ?>
+                    </datalist>
+                    <p class="help-block text-danger"></p>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Nom</label>
+                  <div class="col-md-8">
+                    <input type="text" class="form-control" id="nomLogicielModal" placeholder="nom du logiciel" name="nomLogiciel" value="" data-validation-required-message="veuillez entrer le nom du logiciel *" required>
+                    <p class="help-block text-danger"></p>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Date de sortie</label>
+                  <div class="col-md-8">
+                    <input class="datepicker form-control" id="dateDeSortieModal" placeholder="Date de sortie" name="dateDeSortie" autocomplete="off" value="" data-date-format="mm/dd/yyyy" value="" data-validation-regex-regex="^(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])/(19|20)\d\d$" data-validation-required-message="Veuillez renseigner la date de sortie du logiciel" data-validation-regex-message="Date non valide" required>
+                    <p class="help-block text-danger"></p>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-input col-form-label">Fonctionnalité</label>
+                  <div class="col-md-8">
+                    <textarea class="form-control" data-limit-rows=true rows="4" placeholder="fonctionnalité du logiciel" name="fonctionnaliteLogiciel" id="textarea-logiciel" data-validation-required-message="veuillez entrer la fonctionnalité du logiciel *" required></textarea>
+                    <p class="help-block text-danger"></p>
+                  </div>
+                </div>
+                <div class="row">
+                  <label class="col-md-3 label-input" style="margin-top: 12px;"> Maitrise logiciel</label>
+                  <div class="col-md-9" style="text-align:left;">
+                    <div class="rate">
+                      <input type="hidden" name="maitriseLogiciel" class="maitriseLogiciel" value="">
+                      <?php  for ($etoile = 5 ; $etoile >=1 ; $etoile--):?>
+                        <input value="<?= $etoile?>" type="radio" class="maitriseLogiciels animation-plus" name="maitriseLogiciel" id="etoile<?= $etoile?>" required/>
+                        <label for="etoile<?= $etoile?>" class="hover animation-plus" title="Note sur 5"></label>
+                      <?php endfor ; ?> 
+                      <p class="help-block text-danger"></p> 
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="label-input">Image du logiciel</label>
+                  <img src="" name="image-logiciels" class="img-fluid image-load rounded-circle" value="" accept="image/*" style="width: 100px;
+                  height: 100px;">
+                  <button type="button" class="btn-sm btn-success" onclick="$('#fileToUpload').click(); return false;">Ajouter une photo</button>
+                  <input type="file" name="photoLogiciel" id="fileToUpload" class="form-control image-input hidden" value="">
+                </div>
+              </div>
+              <div class="modal-footer modal-style-footer">
+                <button type="submit" class="btn btn-success btn-sm">Enregistrer</button>
+                <button class="btn btn-danger btn-sm" id="cancel-logiciel" data-dismiss="modal">Annuler</button>
+                <div class="delete-logiciel hidden">
+                  <a href="#" class="btn btn-warning btn-sm" id="delete-logiciel-boutton" data-id="" data-toggle="modal" data-target="#modalDeleteLogiciel" data-url="manage/delete-logiciel?idLogiciel=">Supprimer</a>        
+                </div>
+              </div>
+            </form>
+          </div>  
+        </div>
+      </div>
+      <!-- modal pour supprimer un logiciel !-->
+      <div class="modal fade" id="modalDeleteLogiciel" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5>Confirmation</h5>
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body modal-style-body">
+              <label class="form-label font-weight-bold">
+                Voulez vous supprimer ce logiciel ?
+              </label>
+            </div>
+            <div class="modal-footer modal-style-footer">
+              <a type="submit" id="confirm-yes-logiciel" class="btn btn-success btn-sm" href="<?= HOST. "manage/delete-logiciel?idLogiciel=";?>">Oui</a>
+              <button class="btn btn-danger btn-sm" id="data-annuler-supprLogiciel">Non</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- modal pour editer language !-->
+      <div class="modal fade" id="modalUpdateLanguage" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5 class="modal-title text-center" id="titre-modal-langue"></h5> 
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form id="form-langue" method="POST" class="form-langue" action="<?= HOST. "manage/create-langue";?>" enctype="multipart/form-data" novalidate="novalidate">
+              <div class="modal-body modal-style-body">
+                <input type="hidden" name="idLangue" class="idLanguage" value="">
+                <input type="hidden" name="idCandidat" class="form-control" value="<?= $candidat->getIdCandidat()?>">
+                <div class="row">
+                  <label class="col-md-3 label-input col-form-label">Langues </label>
+                  <div class="col-md-9">
+                    <input type="text" name="nomLangue" id="nomLangueModal" class="form-control nomLangue" list="Langues-internationales" value=""  data-validation-required-message="Veuillez remplir ce champ*"  data-validation-regex-regex="/^[a-z]*$/" data-validation-regex-message="Langue invalide**" placeholder="Langue" required>
+                      <datalist id="Langues-internationales">
+                        <?php foreach ($langues as $langue): ?>
+                          <option value="<?= $langue->getNomLangue();?>">
+                        <?php endforeach ; ?>
+                      </datalist>
+                      <p class="help-block text-danger"></p>
+                  </div>
+                </div>
+                <div class="row">
+                  <label class="col-md-3 label-input" style="margin-top: 12px;"> Communication écrite</label>
+                  <div class="col-md-9" style="text-align:left;">
+                    <div class="rate langueNiveauEcrit">
+                      <?php  for ($etoile = 5 ; $etoile >=1 ; $etoile--):?>
+                        <input value="<?= $etoile?>" type="radio" class="niveauEcrits" name="niveauEcrit" id="star<?= $etoile?>"/>
+                        <label for="star<?= $etoile?>" class="hover animation-plus" title="Note sur 5"></label>
+                      <?php endfor ; ?>  
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <label class="col-md-3 label-input" style="margin-top: 12px;"> Communication verbale</label>
+                  <div class="col-md-9" style="text-align:left;">
+                    <div class="rate langueNiveauParle">
+                      <?php  for ($etoile = 5 ; $etoile >=1 ; $etoile--):?>
+                        <input value="<?= $etoile?>" type="radio" class="niveauParles" name="niveauParle" id="stars<?= $etoile?>"/>
+                        <label for="stars<?= $etoile?>" class="hover animation-plus" title="Note sur 5"></label>
+                      <?php endfor ; ?>  
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer modal-style-footer">
+                <button type="submit" class="btn btn-success btn-sm">Enregistrer</button>
+                <button class="btn btn-danger btn-sm" data-dismiss="modal">Annuler</button>
+                <div class="delete-language hidden">
+                  <a href="#" class="btn btn-warning btn-sm" id="delete-langue-boutton" data-id="" data-toggle="modal" data-target="#modalDeleteLanguage" data-url="manage/delete-langue?idLangue=">Supprimer</a>        
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- modal pour supprimer une langue !-->
+      <div class="modal fade" id="modalDeleteLanguage" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header modal-style-header">
+              <h5>Confirmation</h5>
+              <button type="button" class="close animation-plus" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body modal-style-body">
+              <label class="form-label font-weight-bold">
+                Voulez vous supprimer cette langue ?
+              </label>
+            </div>
+            <div class="modal-footer modal-style-footer">
+              <a type="submit" id="confirm-yes-langue" class="btn btn-success btn-sm" href="<?= HOST. "manage/delete-langue?idLangue=";?>">Oui</a>
+              <button class="btn btn-danger btn-sm" id="data-annuler-supprLangue">Non</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- fin modal !-->
+      <div class="row placementElement">
+        <div class="col-md-9">
+          <!-- experience !-->
+          <div class="experience annimation-to-left">
+            <div class="format-div-updown">
+              <div class="format-div-up row">
+                <div class="col-md-10">
+                  <h4 class="titre-div-up">Experience :</h4>
+                </div>
+                <div class="col-md-2" style="text-align:left;">
+                  <button type="button" class="btn titre-div-up addExperience animation-plus" id="addExperience" data-toggle="modal" data-target="#modalAddExperience"><i class="fa fas fa-plus"></i></button>
+                </div>
+              </div>
+              <div class="format-div-down">
+                <div class="container">
+                  <?php foreach ($experiences as $experience):?>
+                    <div class="row experiences">
+                      <div class="col-md-10 placement-experience">
+                        <input type="hidden" name="idExperience" class="id-experience" value="<?= ucfirst($experience->getIdExperience());?>">
+                          <?php
+                            $debut = str_replace('-', '/', $experience->getDateDebut());
+                            $fin   = str_replace('-', '/', $experience->getDateFin());
+                          ?>
+                        <input type="hidden" class="dateDebutExperience" name="dateDebutExperience" value="<?= date('d/m/Y', strtotime($debut));?>">
+                        <input type="hidden" class="dateFinExperience" name="dateFinExperience" value="<?= date('d/m/Y', strtotime($fin));?>"> 
+                        <div class="row">
+                          <div class="col-md-5">
+                            <strong style="color:#1f487c;">Poste :</strong><p><?= ucfirst($experience->getPoste()); ?></p>
+                            <input type="hidden" class="posteExperience" name="posteExperience" value="<?= ucfirst($experience->getPoste()); ?>">
+                            <p>
+                              <?php 
+                                $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                                $dateDebut = explode('-', $experience->getDateDebut());
+                                $dateFin = explode('-', $experience->getDateFin());
+                                $index = (int)$dateDebut[1] - 1;
+                                $index2 = (int)$dateFin[1] - 1;
+                                if ($dateFin[0] == 1970){
+                                  echo $dateDebut[2] . " " . $months[$index] . " " . $dateDebut[0] ." - à ce jour"; 
+                                }
+                                else {
+                                  echo $dateDebut[2] . " " . $months[$index] . " " . $dateDebut[0] ." - ";
+                                  echo $dateFin[2] . " " . $months[$index2] . " " . $dateFin[0];
+                                }
+                              ?>
+                            </p>
+                          </div>
+                          <div class="col-md-3">
+                            <strong style="color:#1f487c;">Entreprise :</strong><p><?= $experience->getEntreprise(); ?></p>
+                            <input type="hidden" class="nomEntreprise" name="nomEntreprise" value="<?= $experience->getEntreprise(); ?>">
+                          </div>
+                          <div class="col-md-4">
+                            <strong style="color:#1f487c;">Description du poste :</strong><p><?= ucfirst($experience->getDescription()); ?></p>
+                            <input type="hidden" class="descriptionExperience" name="descriptionExperience" value="<?= ucfirst($experience->getDescription()); ?>">
+                          </div>
+                        </div>
+                        <br>
+                      </div>
+                      <div class="col-md-2" style="text-align: left;">
+                        <button type="button" class="btn titre-div-up editExperience editAnimation" id="editExperience" data-toggle="modal" data-target="#modalAddExperience"><i class="fa fas fa-pen" style="color:#1f487c;"></i></button>
+                      </div>
+                    </div>
+                  <?php endforeach;?>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- formation !-->
+          <div class="formation annimation-to-left">
+            <div class="format-div-updown">
+              <div class="format-div-up row">
+                <div class="col-md-10">
+                  <h4 class="titre-div-up">Formation :</h4>
+                </div>
+                <div class="col-md-2" style="text-align:left;">
+                  <button type="button" class="btn titre-div-up animation-plus" id="addFormation" data-toggle="modal" data-target="#modalAddFormation"><i class="fa fas fa-plus"></i></button>
+                </div>
+              </div>
+              <div class="format-div-down">
+                <div class="container">
+                  <?php if (isset($formations)) : ?>
+                    <?php foreach ($formations as $formation) : ?>
+                      <div class="row formations animated"  data-mdb-toggle="animation" data-mdb-animation="tada" data-mdb-animation-start="onScroll" data-mdb-animation-on-scroll="repeat">
+                        <div class="col-md-10" style="margin-top: 20px">
+                          <input type="hidden" name="idFormation" class="id-formation" value="<?= ucfirst($formation['formation']->getIdFormation());?>">
+                          <strong style="color:#1f487c;"> 
+                            <?php
+                              $debut = str_replace('-', '/', $formation['formation']->getDateDebut());
+                              $fin   = str_replace('-', '/', $formation['formation']->getDateFin()); 
+                            ?>
+                          </strong>
+                          <input type="hidden" class="dateDebutFormation" name="dateDebutFormation" value="<?= date('d/m/Y', strtotime($debut));?>">
+                          <input type="hidden" class="dateFinFormation" name="dateFinFormation" value="<?= date('d/m/Y', strtotime($fin));?>">
+                          <div class="row">
+                            <div class="col-md-3">
+                              <strong style="color:#1f487c;">Etablissement :</strong>
+                              <p><?= ucfirst($formation['formation']->getEtablissement());?></p> 
+                              <input type="hidden" class="etablissementFormation" name="etablissementFormation" value="<?= ucfirst($formation['formation']->getEtablissement()); ?>">
+                              <p>
+                                <?php 
+                                  $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                                  $dateDebut = explode('-', $formation['formation']->getDateDebut());
+                                  $dateFin = explode('-', $formation['formation']->getDateFin());
+                                  $index = (int)$dateDebut[1] - 1;
+                                  $index2 = (int)$dateFin[1] - 1;
+                                  echo $dateDebut[2] . " " . $months[$index] . " " . $dateDebut[0] ." - ";
+                                  echo $dateFin[2] . " " . $months[$index2] . " " . $dateFin[0];
+                                ?>
+                              </p>
+                            </div>
+                            <div class="col-md-3">
+                              <strong style="color:#1f487c;">Sous domaine : </strong>
+                              <p><?= is_object($formation['sousDomaine']) ? ucfirst($formation['sousDomaine']->getNomSousDomaine()) : ucfirst($formation['sousDomaine']);?></p>
+                              <input type="hidden" name="idSousDomaine" class="idSousDomaine" value="<?= is_object($formation['sousDomaine']) ? ucfirst($formation['sousDomaine']->getIdSousDomaine()) : null; ?>"> 
+                            </div>
+                            <div class="col-md-3">
+                              <strong style="color:#1f487c;">Degrée : </strong>
+                              <p><?= ucfirst($formation['niveauEtude']->getNiveau()); ?></p> 
+                              <input type="hidden" class="niveauEtudeFormation" name="niveauFormation" value="<?= ucfirst($formation['formation']->getIdNiveauEtude()); ?>">
+                            </div>
+                            <div class="col-md-3">
+                              <strong style="color:#1f487c;">Description : </strong>
+                              <p><?= ucfirst($formation['formation']->getDescription());?></p>
+                              <input type="hidden" class="descriptionFormation" name="descriptionFormation" value="<?= ucfirst($formation['formation']->getDescription()); ?>"> 
+                            </div>
+                          </div>
+                          <br>
+                        </div>
+                        <div class="col-md-2" style="text-align:left;">
+                          <button type="button" class="btn titre-div-up editFormation editAnimation" id="editFormation" data-toggle="modal" data-target="#modalAddFormation"><i class="fa fas fa-pen" style="color:#1f487c;"></i></button>
+                        </div>
+                      </div>
+                    <?php endforeach;?>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- personnalités !-->
+          <div class="personnalites annimation-to-left">
+            <div class="format-div-updown">
+              <div class="format-div-up row">
+                <div class="col-md-10">
+                  <h4 class="titre-div-up"> Personnalité : </h4>
+                </div>
+              </div>
+              <div class="format-div-down row">
+                <div class="col-md-12">
+                  <div class="hidden">
+                        <input class="form-control" type="number" name="idCandidat" value="<?= $candidat->getIdCandidat(); ?>" />
+                      </div> 
+                      <div class="hidden">
+                        <input class="form-control" type="text" name="personnalite" id="personnalite"/>
+                      </div>
+                  <div class="form-group trait-personnalite" id="personnaliteCandidat">
+                  <?php foreach($personnalites as $personnalite):?>
+                    <label class="text-left"> 
+                      <input type="checkbox" name="qualite" value="<?= $personnalite->getQualite(); ?>" class="qualite editAnimation" 
+                      <?php /*if($candidat->getPersonnalite() != "") : ?>
+                        <strong> Personnalité : </strong>
+                        <ul> <?php 
+                        $personnalite = "";
+                        */
+                        $persos = explode('_', $candidat->getPersonnalite());
+                        foreach ($persos as $perso) {
+                          /*if (!empty($perso)) {
+                            $personnalite .= "<li><i>" . ucfirst($perso) . "</i></li>";
+                          }*/
+                          if ($personnalite->getQualite() == ucfirst($perso)) {
+                            echo "checked";
+                          }
+                        }?>
+                        >
+                      <?= $personnalite->getQualite(); ?>
+                      </label><br>
+                    <?php endforeach;?>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- logiciel !-->
+          <div class="logiciel annimation-to-left">
+            <div class="format-div-updown format-logiciel-fond">
+              <div class="format-div-up row">
+                <div class="col-md-10">
+                  <h4 class="titre-div-up">Logiciel :</h4>
+                </div>
+                <div class="col-md-2" style="text-align:left;">
+                  <button type="button" class="btn create-logiciel titre-div-up animation-plus" data-toggle="modal" data-target="#modalAddLogiciel"><i class="fa fas fa-plus" ></i></button>
+                </div>
+              </div>
+              <div class="format-div-down">
+                <?php foreach ($logiciels as $logiciel): ?>
+                  <div class="card" style="background:transparent;">
+                    <input type="hidden" class="id-logiciel" id="id-logiciel" value=" <?= $logiciel->getIdLogiciel() ?>">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-10">
+                          <div class="row">
+                            <div class="col-md-3">
+                              <div class="card card-image">
+                                <div class="card-body" style="height: 120px;">
+                                  <input type="hidden" class="photo-logiciel" id="photo-logiciel" value="<?= ($logiciel->getPhotoLogiciel() != "") ? $logiciel->getPhotoLogiciel() : "photologiciel_defaut.png" ?>">
+                                  <img class="img-fluid rounded-circle" name="image-logiciel" id="image-logiciels" src="<?=($logiciel->getPhotoLogiciel() != "") ? HOST . "../Web/Ressources/images/logiciels/" . $logiciel->getPhotoLogiciel() : HOST ."../Web/Ressources/images/logiciels/photologiciel_defaut.png";?>" style="width: 65px;height: 65px;margin-top: -10px;">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-8">
+                              <input type="hidden" class="categorie-logiciel" id="categorie-logiciel" value="<?= $logiciel->getCategorieLogiciel()?>">
+                              <h5 class="font-weight-bold" style="color:#1f487c;"><?= $logiciel->getNomLogiciel();?></h5>
+                              <input type="hidden" class="nom-logiciel" id="nom-logiciel" value="<?= $logiciel->getNomLogiciel()?>">
+                              <input type="hidden" class="date-deSortie" id="date-de-sortie" value="<?= $logiciel->getDateDeSortie()?>">
+                              <p class="lead">
+                                <?php 
+                                  $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                                  $dateSortie = explode('-', $logiciel->getDateDeSortie());
+                                  $index = (int)$dateSortie[1] - 1;
+                                  echo $dateSortie[2] . " " . $months[$index] . " " . $dateSortie[0]; 
+                                ?>
+                                 | 
+                                <?= $logiciel->getCategorieLogiciel();?>
+                                
+                              </p>
+                              <div class="format-etoile">
+                                <div class="rate">
+                                  <input type="hidden" class="maitrise-logiciel" id="maitrise-logiciel" value="<?= $logiciel->getMaitriseLogiciel()?>">
+                                  <?php  for ($etoile = 5 ; $etoile >=1 ; $etoile--):?>
+                                    <input value="<?= $etoile?>" disabled="disabled" type="checkbox" class="maitriseLogiciels" name="maitrise-logiciel" id="etoile<?= $logiciel->getIdLogiciel() . '-' . $etoile?>" readonly <?= $logiciel->getMaitriseLogiciel() == $etoile ? 'checked' : ''; ?>/>
+                                    <label for="etoile<?= $etoile?>" title="Note sur 5"></label>
+                                  <?php endfor ; ?>  
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="container-fluid">
+                            <input type="hidden" class="fonctionnalite-logiciel" id="fonctionnalite-logiciel" value="<?= $logiciel->getFonctionnaliteLogiciel()?>"> 
+                            <label class="font-weight-bold"><?= $logiciel->getFonctionnaliteLogiciel();?></label>
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          <button type="button" class="btn update-logiciel editAnimation" data-toggle="modal" data-target="#modalAddLogiciel"><i class="fa fas fa-pen" style="color:#1f487c;" title="Modifier un logiciel"></i></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <?php endforeach ?>
+              </div>
+            </div>
+          </div>
+          <!-- laguage !-->
+          <div class="language annimation-to-left">
+            <div class="format-div-updown format-langue-fond">
+              <div class="format-div-up row">
+                <div class="col-md-10">
+                  <h4 class="titre-div-up">Langue :</h4>
+                </div>
+                <div class="col-md-2" style="text-align:left;">
+                  <button type="button" class="btn titre-div-up animation-plus" id="add-langue" data-toggle="modal" data-target="#modalUpdateLanguage"><i class="fa fas fa-plus" title="ajouter une langue"></i></button>
+                </div>
+              </div>
+              <div class="format-div-down">
+                <div class="card-body">
+                  <?php if (isset($langues)) : ?>
+                  <div class="row">
+                    <div class="col-md-10">
+                      <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                          <strong style="color:#1f487c;">Communication ecrite</strong>
+                        </div>
+                        <div class="col-md-4">
+                          <strong style="color:#1f487c;">Communication verbale</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <?php endif;?>
+                  <?php foreach($langues as $langue):?>
+                    <div class="placeLangue" style="margin-top:3px;">
+                      <input type="hidden" class="languageId" value="<?= $langue->getIdLangue();?>">
+                      <div class="row">
+                        <div class="col-md-10">
+                          <div class="row">
+                            <div class="col-md-4" style="text-align:center;margin-top: 7px;font-size: 1.3em;">
+                              <label class="nom-langue font-weight-bold form-label" style="margin-top:1px;"><?= ucfirst($langue->getNomLangue());?></label>
+                            </div>    
+                            <div class="col-md-4">
+                              <div class="rate">
+                                <input type="hidden" class="niveau-ecrit" value="<?= $langue->getNiveauEcrit();?>">
+                                <?php  for ($etoile = 5 ; $etoile >=1 ; $etoile--):?>
+                                  <input value="<?=$etoile;?>" type="checkbox" id="star<?= $langue->getIdLangue() . '-' . $etoile?>" readonly <?= $langue->getNiveauEcrit() == $etoile ? 'checked' : ''; ?> disabled="disabled" />
+                                  <label for="star<?= $langue->getIdLangue() . '-' . $etoile?>" title="Communication ecrite"></label>
+                                <?php endfor ; ?>
+                              </div>
+                            </div>
+                            <div class="col-md-4">
+                              <div class="rate">
+                                <input type="hidden" class="niveau-parle" value="<?= $langue->getNiveauParle();?>">
+                                <?php  for ($etoile = 5 ; $etoile >=1 ; $etoile--):?>
+                                  <input value="<?=$etoile;?>" type="checkbox" id="star<?= $langue->getIdLangue() . '-' . $etoile?>" readonly <?= $langue->getNiveauParle() == $etoile ? 'checked' : ''; ?> disabled="disabled"  />
+                                  <label for="star<?= $langue->getIdLangue() . '-' . $etoile?>" title="Communication verbale"></label>
+                                <?php endfor ; ?>
+                              </div>
+                            </div>
+                          </div>                  
+                        </div>
+                        <div class="col-md-2" style="text-align:left;">
+                          <button type="button" class="btn update-language editAnimation" data-toggle="modal" data-target="#modalUpdateLanguage"><i class="fa fas fa-pen" style="color:#1f487c;" title="Modifier une langue"></i></button>
+                        </div>
+                      </div> 
+                    </div> 
+                  <?php endforeach?>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- centre d'interet !-->
+          <div class="centre-interet annimation-to-left">
+            <div class="format-div-updown format-centre-interet">
+              <div class="format-div-up row">
+                <div class="col-md-10">
+                  <h4 class="titre-div-up">Centre d'interet :</h4>
+                </div>
+                <div class="col-md-2" style="text-align:left;">
+                  <button type="button" class="btn create-centre-interet titre-div-up animation-plus" data-toggle="modal" data-target="#modalAddCentreInteret"><i class="fa fas fa-plus"></i></button>
+                </div>
+              </div>
+              <div class="format-div-down container" style="margin-top: 15px;">
+                <?php foreach($centreInterets as $centreInteret): ?>
+                  <div class="row centre">
+                    <input type="hidden" name="id-centre-interet" class="id-centre-interet" value="<?= $centreInteret->getIdCentreInteret() ?>">
+                    <div class="col-md-9">
+                      <input type="hidden" name="categorie-centre-interet" class="categorie-centre-interet" value="<?= $centreInteret->getCategorieCentreInteret() ?>">
+                      <h4 class="underline" style="color: #1f487c;"><?= $centreInteret->getCategorieCentreInteret() ?></h4>
+                      <input type="hidden" name="description-centre-interet" class="description-centre-interet" value="<?= $centreInteret->getDescriptionCentreInteret() ?>">
+                      <p class="font-weight-bold"><?= $centreInteret->getDescriptionCentreInteret() ?></p>
+                    </div>
+                    <div class="col-md-3" style="color:black; text-align: center;">
+                      <button type="button" class="btn update-centre-interet editAnimation" data-toggle="modal" data-target="#modalAddCentreInteret"><i class="fa fas fa-pen" style="color:#1f487c;" title="Modifier un centre d'interet"></i></button>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- reste à droite -->
+        <div class="col-md-3">
+          <!-- Offres -->
+          <div class="offres annimation-to-left">
+            <div class="format-offre-updown format-offre">
+              <div class="offres-design">
+                <h4 class="offres-titre">Offres</h4>
+              </div>
+              <div class="format-offre-down">
+                <div class="input-group-prepend barre-recherche-offre">
+                  <span class="input-group-text" id="validationTooltipUsernamePrepend"><i class="fas fa-search" style="color:#1f487c"></i></span>
+                  <input type="text" name="barreOffre" id="barre-offre" class="form-control">
+                </div>
+                <div class="list-group-dark" id="offres-disponible">
+                    <?php foreach ($offres as $offre): ?>
+                      <a href="<?= HOST."offre?idOffre=". ucfirst($offre['offre']->getIdOffre());?>" class="list-group-item list-group-item-dark flex-column list-group-item-action align-items-start editAnimation active" style="background-image: linear-gradient(to right, #454D61 , #312828 , #454D61 );">
+                        <div class="d-flex w-100 justify-content-between">
+                          <h5 class="mb-1 titreOffre"><?= ucfirst($offre['poste']->getPoste());?></h5>
+                          <small><?= ucfirst($offre['contrat']->getDesignation())?></small>
+                        </div>
+                        <p class="mb-1">Date d'émission : <?= ucfirst($offre['offre']->getDateEmission());?></p>
+                        <p class="mb-1">Date limite : <?= ucfirst($offre['offre']->getDateLimite());?></p>
+                        <small><?= ucfirst($offre['entreprise']->getNom())?></small>
+                      </a>
+                    <?php endforeach ;?>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- fin offres -->
+          <!-- candidature -->
+          <div class="Candidature annimation-to-left">
+            <div class="format-div-updown format-offre">
+              <div class="offres-design">
+                <h4 class="offres-titre">Candidatures</h4>
+              </div>
+              <div class="format-div-down">
+                <div class="input-group-prepend barre-recherche-offre">
+                  <span class="input-group-text" id="validationTooltipUsernamePrepend"><i class="fas fa-search" style="color:#1f487c"></i></span>
+                  <input type="text" name="barreOffre" id="barre-candidature" class="form-control">
+                </div>
+                <div class="list-group-dark" id="candidature-envoye">
+                  <?php if (isset($candidatures)):?>
+                    <?php foreach ($candidatures as $candidature): ?>
+                      <div class="editAnimation active candidature" style="background-image: linear-gradient(to right, #454D61 , #312828 , #454D61 );">
+                        <div class="justify-content-between select-candidature">
+                          <h5 class="col-md-12 poste-candidature"><?= ucfirst($candidature['poste']->getPoste());?></h5>
+                          <div class="container">
+                            <p>Date candidature : <?= ucfirst($candidature['candidature']->getDateCandidature());?></p>
+                            <p> 
+                            <?php if (!empty($candidature['entretien'])): ?>
+                              <?php if ($candidature['candidature']->getStatut() == "entretien1" || $candidature['candidature']->getStatut() == "entretien2") : ?>
+                                  <label>
+                                    Vous avez un rendez-vous pour un entretien
+                                    <?php if (!empty($candidature['interlocuteurs'])):
+                                      $collaborateurs = "";
+                                      echo " avec "; 
+                                      foreach ($candidature['interlocuteurs'] as $interlocuteur) {
+                                        $collaborateurs .= ucfirst($interlocuteur->getNom()) . ", ";
+                                      }
+                                      ?>
+                                      <?= substr($collaborateurs, 0, -2); ?>
+                                    <?php endif; ?>
+                                  </label><br>
+                                  <label>Lieu : </label><?= $candidature['entretien']->getLieu() . " à " . substr($candidature['entretien']->getHeure(), 0, -3);?><br>
+                                  <label> Date : </label>
+                                  <?php
+                                      $date = str_replace('-', '/', $candidature['entretien']->getDate());
+                                      echo date('d/m/Y', strtotime($date));
+                                    ?>
+                                <?php elseif ($candidature['entretien']->getStatut() == "valide"): ?>
+                                  <!-- <label>Votre entretien s'est bien passé</label><br> -->
+                              <?php else : ?>
+                        <!-- <label>Dommage que votre entretien a été rejeté</label><br> -->
+                                <?php endif ?>
+                                <label>Statut : <?= $candidature['candidature']->getStatut();?></label>
+                                <?php if ($candidature['entretien']->getStatut() != "rejete") : ?>
+                                  <!-- <label class="alert-info"><?= $candidature['entretien']->getStatut();?></label> -->
+                                <?php else : ?>
+                                  <!-- <label class="alert-danger">rejeté</label> -->
+                                <?php endif ?>
+                              <?php else : ?>
+                                <!-- <label>Entretien en attente</label> -->
+                            <?php endif ?>
+                            </p>
+                            <small class="col-md-5">
+                              <?= ucfirst($candidature['entreprise']->getNom())?>
+                            </small><br>
+                          </div>
+                        </div>
+                      </div>
+                      <hr>
+                    <?php endforeach ;?>
+                  <?php endif;?>
+                </div>
+              </div>
+            </div>
+          </div> 
+        </div>
+      </div>
+      <!-- place de l'élément footer -->
+      <div class="container">
+        <footer class="footer-candidat">
+          <div class="">
+            <div class="container text-center text-md-start mt-5">
+              <div class="row mt-3">
+                <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-2">
+                  <div class="container-fluid">
+                    <a href="https://hco.mg">
+                      <img src="<?= HOST."../Web/Ressources/images/entreprises/hco-white.png"?>" class="elements-footer img-fluid image-footerCandidat">
+                        </a>
+                    </div>
+                    <a
+                    class="btn text-white btn-floating m-1"
+                    style="background-color: #3b5998;"
+                    href="https://www.facebook.com/humancartoffice"
+                    role="button"
+                    ><i class="fab fa-facebook-f"></i> 
+                  </a>
+                  <a
+                    class="btn text-white btn-floating m-1"
+                    style="background-color: #0082ca;"
+                    href="https://www.linkedin.com/company/human-cart-office-hco/"
+                    role="button"
+                    ><i class="fab fa-linkedin-in"></i>
+                  </a>
+                  </div>
+                  <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-2">
+                  <h6 class="text-uppercase fw-bold mb-2 elements-footer">
+                    Recrutement
+                  </h6>
+                  <p class="paragraphe">
+                    <a href="<?= HOST. "manage/suggest_offres";?>" class="text-reset">Offres suggérées</a>
+                  </p>
+                  <p class="paragraphe">
+                    <a href="<?= HOST."offres";?>" class="text-reset">Offres disponibles</a>
+                  </p>
+                  <p class="paragraphe">
+                    <a href="<?= HOST."manage/candidatures"?>" class="text-reset">Candidatures envoyés</a>
+                  </p>
+                </div>
+                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-2">
+                  <h6 class="text-uppercase fw-bold mb-2 elements-footer">
+                    HCO
+                  </h6>
+                  <p class="paragraphe">
+                    <a href="https://hco.mg/services/" class="text-reset">Nos services</a>
+                  </p>
+                  <p class="paragraphe">
+                    <a href="https://hco.mg/contact/" class="text-reset">Contactez nous</a>
+                  </p>
+                  <p class="paragraphe">
+                    <a href="https://hco.mg/apropos/" class="text-reset">A propos</a>
+                  </p>
+                </div>
+                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-2">
+                  <h6 class="text-uppercase fw-bold mb-2 elements-footer">Contact</h6>
+                  <p class="paragraphe"><i class="fas fa-home me-3 text-secondary"></i> Près Logt 19 Cité Gallois Ouest Ambohijanahary</p>
+                  <p class="paragraphe">
+                    <i class="fas fa-envelope me-3 text-secondary"></i>
+                    contact@hco.mg
+                  </p>
+                  <p class="paragraphe"><i class="fas fa-phone me-3 text-secondary"></i> (+261) 34 55 462 70</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    <?php elseif ($url[1] == "entreprise") : extract($data); $pageTitle = strtoupper($entreprise->getNom()); ?>
+      <link rel="stylesheet" type="text/css" href="<?= HOST;?>../Web/Ressources/css/voirProfilEntreprise.css">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12 entreprise-margin" id="profil">
+                  <div class="row" style="margin-top: -15px;">
+                    <div class="col-md-3"></div>
+                    <div class="col-lg-6 text-center">
+                      <h4 class="text-center list-title section-heading">Profil de l'entreprise</h4>
+                    </div>
+                  </div>
+                  <div class="text-center">
+                      <a class="btn btn-transparent text-primary btn-circle-sm" href="<?= HOST. "manage/edit-entreprise?idEntreprise=" . $entreprise->getIdEntreprise();?>">
+                        <i class="fas fa-edit fa-15x tippy-act"></i>
+                      </a>
+                      <button class="btn btn-transparent btn-circle-sm text-primary mt-0" data-toggle="modal" data-target="#modalLogin">
+                        <i class="fa fa-user fa-15x tippy-act" aria-hidden="true"></i>
+                      </button>
+                      <button class="btn btn-transparent btn-circle-sm text-primary mt-0" data-toggle="modal" data-target="#modalPassword">
+                        <i class="fa fa-key fa-15x tippy-act" aria-hidden="true"></i>
+                      </button>
+                      <a class="btn ml-2 btn-transparent text-primary btn-circle-sm" href="<?= HOST. 'manage/organigramme'?>">
+                        <i class="fas fa-sitemap fa-15x tippy-act"></i>
+                      </a>
+                    </div>
+                  <div class="row block-section">
+                    <table class="table table-striped table-section">
+                      <thead>
+                        <tr style="background: #b0bec5;">
+                          <th class="text-center" colspan="3">Informations sur l'entreprise</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="text-center" style="background: #eceff1;">
+                            <img class="img-fluid userDetail" src="<?= ($entreprise->getLogo() != "") ? HOST . "../Web/Ressources/images/entreprises/" . $entreprise->getLogo() : HOST ."../Web/Ressources/images/entreprises/entrepriseLogo.jfif";?>" style="height: auto;max-height: 140px;width: auto;max-width: 140px;">
+                          </td>
+                          <td class="text-important"><?= $entreprise->getNom(); ?></td>
+                          </tr>
+                        <tr>
+                          <td class="titre-label">Collaborateurs actifs</td>
+                          <td><?= number_format($effectifCollaborateur, 0, ',', ' '); ?></td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label">Repésentant</td>
+                          <td><?= ucwords($entreprise->getNomRepresentant()) . ', ' . ucwords($entreprise->getQualiteRepresentant()); ?></td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label">Secteur d'activité</td>
+                          <td><?= $entreprise->getSecteurActivite(); ?></td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label">Description</td>
+                          <td><?= ucfirst($entreprise->getDescription()); ?></td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label">Pseudo sur le site</td>
+                          <td>
+                            <a id="pseudo-btn" href="<?= HOST . 'manage/edit-pseudo?idCompte=' . $_SESSION['compte']['idCompte']; ?>">
+                              <i> <?= $_SESSION['compte']['login'] ?> </i>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label">Référence NIF</td>
+                          <td><?= $entreprise->getNif(); ?></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <table class="table table-striped table-section">
+                      <tr>
+                        <td class="titre-label">Référence STAT</td>
+                        <td class="titre-label">Référence RCS</td>
+                      </tr>
+                      <tr>
+                        <td><?= $entreprise->getStat(); ?></td>
+                        <td><?= $entreprise->getRcs(); ?></td>
+                      </tr>
+                    </table>
+                    <table class="table table-striped table-section">
+                      <thead>
+                        <tr style="background: #b0bec5;">
+                          <th colspan="4" class="text-center"> Adresse et contacts </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="titre-label" colspan="2">Adresse</td>
+                          <td class="titre-label" colspan="2">Email</td>
+                        </tr>
+                        <tr>
+                          <td colspan="2"><?= $entreprise->getAdresse() . " " . ucwords($entreprise->getVille()); ?></td>
+                          <td colspan="2"><?= strtolower($entreprise->getEmail()); ?></td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label" colspan="2">Contact RH</td>
+                          <td class="titre-label" colspan="2">Contact</td>
+                        </tr>
+                        <tr>
+                          <td colspan="2"><?= $entreprise->getContactRh(); ?></td>
+                          <td colspan="2"><?php $contact = explode('/', $entreprise->getContact()); echo $contact[1]; ?></td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label" colspan="2"><u>Dernière connexion</u></td>
+                          <td class="titre-label" colspan="2"><u>Dernière logout</u></td>
+                        </tr>
+                          <?php 
+                            $histories    = unserialize($_SESSION['compte']['history']);
+                            if (is_array($histories)) :
+                              if (count($histories) > 1) : ?>
+                              <tr>
+                                <td colspan="2">
+                                  <?php 
+                                    $lastHistory  = $histories[count($histories) - 2];
+                                    $resriteDate  = new PublicFonctions();
+                                    echo $resriteDate->writeDate($lastHistory['login'], true);
+                                  ?>
+                                </td>
+                                <td colspan="2">
+                                  <?= $resriteDate->writeDate($lastHistory['logout'], true); ?>
+                                </td>
+                              </tr>
+                            <?php endif; ?>
+                          <?php endif; ?>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="modal fade" id="modalLogin" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <form id="form" method="POST" action="<?= HOST . 'manage/save-pseudo' ?>"  enctype="multipart/form-data" enctype="multipart/form-data" novalidate="novalidate">
+                          <input type="hidden" id="page" value="employe" >
+                          <input class="form-control focus_activated" id="idCompte" name="idCompte" type="hidden" value="<?= $entreprise->getIdCompte();?>">
+                          <div class="modal-header">
+                            <div class="text-center" style="width: 100%;">
+                              <h5 class="modal-title" id="exampleModalLabel">Modification du login</h5>
+                            </div>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="card p-3" style="background: #efefff; max-height: 350px; overflow-y: auto;">
+                                <div class="row">
+                                  <div class="col-md-3">
+                                    <label class="label-input">Pseudo :</label>
+                                  </div>
+                                  <div class="col-md-9">
+                                    <div class="form-group">
+                                      <input class="form-control text-lowercase focus_activated" id="login" name="login" type="text" value="<?= $compte->getLogin(); ?>" required="required" data-validation-required-message="Veuillez entrer votre pseudo *" data-validation-regex-regex="^[a-zA-Z-_]*" data-validation-regex-message="Caractères non valide *">
+                                      <p class="help-block text-danger"></p>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <div class="row" style="width: 105%!important;">
+                              <div class="col-md-3">
+                                <button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+                              </div>
+                              <div class="col-md-5"></div>
+                              <div class="col-md-4">
+                                <div class="form-group"> 
+                                  <button type="submit" id="submit" class="btn btn-md btn-info">
+                                    Enregistrer
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal fade" id="modalPassword" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <form id="form-motDePasse" method="POST" action="<?= HOST . 'manage/update-password' ?>"  enctype="multipart/form-data" enctype="multipart/form-data" novalidate="novalidate">
+                            <input type="hidden" id="page" value="entreprise" >
+                            <input class="form-control focus_activated" id="idCompte" name="idCompte" type="hidden" value="<?= $entreprise->getIdCompte();?>">
+                            <div class="modal-header">
+                              <div class="text-center" style="width: 100%;">
+                                <h5 class="modal-title" id="exampleModalLabel">Modification du mot de passe</h5>
+                              </div>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="card p-3" style="background: #efefff; max-height: 350px; overflow-y: auto;">
+                                  <div class="row">
+                                      <div class="col-md-12">
+                                        <div class="form-group" style="position: relative;">
+                                          <label class="label-input">Mot de passe actuel :</label>
+                                            <input class="form-control focus_activated" id="ancienMotDePasse" name="ancienMotDePasse" type="password" required="required" data-validation-required-message="Veuillez entrer votre mot de passe actuel *">
+                                            <i class="fas fa-eye eye-icon" style="position: absolute; right: 16px; top: 68%; transform: translateY(-42%); z-index: 2;"></i>
+                                            <p class="help-block text-danger"></p>
+                                        </div>
+                                        <div class="form-group" style="position: relative;">
+                                          <label class="label-input">Nouveau mot de passe :</label>
+                                            <input class="form-control focus_activated" id="motDePasse" name="motDePasse" type="password" required="required" data-validation-required-message="Veuillez entrer votre nouveau mot de passe *"  data-validation-regex-regex="^.{6,}$" data-validation-regex-message="6 caractères minimum *">
+                                            <i class="fas fa-eye eye-icon" style="position: absolute; right: 16px; top: 68%; transform: translateY(-42%); z-index: 2;"></i>
+                                            <p class="help-block text-danger"></p>
+                                        </div>
+                                        <div class="form-group" style="position: relative;">
+                                          <label class="label-input">Confirmation du nouveau mot de passe :</label>
+                                            <input class="form-control focus_activated" id="confirmation" name="confirmation" type="password" required="required" data-validation-required-message="Veuillez confirmer votre nouveau mot de passe.">
+                                            <i class="fas fa-eye eye-icon" style="position: absolute; right: 16px; top: 68%; transform: translateY(-42%); z-index: 2;"></i>
+                                            <p class="help-block text-danger" id="match-message"></p>
+                                        </div>
+                                      </div>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <div class="row" style="width: 105%!important;">
+                                <div class="col-md-3">
+                                  <button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+                                </div>
+                                <div class="col-md-5"></div>
+                                <div class="col-md-4">
+                                  <div class="form-group"> 
+                                    <button type="submit" id="submit" class="btn btn-md btn-info">
+                                      Enregistrer
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  <script>
+                    tippy('.fa-sitemap', {
+                      content : "voir l'organigramme de l'entreprise"
+                    });
+                    tippy('.fa-key', {
+                      content : "Modifier le mot de passe"
+                    });
+                    tippy('.fa-edit', {
+                      content : "Editer votre profil"
+                    });
+                    tippy('.fa-user', {
+                      content : "Modifier le login"
+                    });
+                    tippy('.fa-envelope.me-3', {
+                      content: 'E-mail'
+                    });
+                  </script>
+                </div>
+              </div>
+            </div>
+          <?php elseif ($url[1] == "superadmin") : $superadmin = $data; $pageTitle = strtoupper($superadmin->getNom()); ?>
+            <div class="container">
+              <div class="row" >
+                <div class="col-lg-12" id="profil">
+                  <div class="row" style="margin-top: -15px;">
+                    <div class="col-md-3"></div>
+                    <div class="col-lg-6 text-center">
+                      <h4 class="text-center list-title section-heading">Mon profil</h4>
+                    </div>
+                    <div class="col-md-3 text-right">
+                      <button class="btn btn-transparent btn-circle-sm text-primary mt-0" data-toggle="modal" data-target="#modalEnregistrement">
+                        <i class="fa fa-edit fa-15x tippy-act" aria-hidden="true"></i>
+                      </button>
+                      <button class="btn btn-transparent btn-circle-sm text-primary mt-0" data-toggle="modal" data-target="#modalLogin">
+                        <i class="fa fa-user fa-15x tippy-act" aria-hidden="true"></i>
+                      </button>
+                      <button class="btn btn-transparent btn-circle-sm text-primary mt-0" data-toggle="modal" data-target="#modalPassword">
+                        <i class="fa fa-key fa-15x tippy-act" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="row block-section">
+                      <table class="table table-striped" style="width: 100%;">
+                        <thead>
+                          <tr style="background: #b0bec5;">
+                            <th class="text-center" colspan="5">Informations personnelles</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td rowspan="5" class="text-center" style="background: #eceff1;">
+                              <img class="img-fluid user rounded-circle" src="
+                                <?php
+                                  if ($superadmin->getPhoto() != "") {
+                                    echo HOST; ?>Web/Ressources/images/superadmins/<?=  $superadmin->getPhoto();
+                                  } else {
+                                    echo HOST ."../Web/Ressources/images/profilAdmin.png";
+                                  }
+                                ?>
+                              ">
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="titre-label">Nom</td>
+                            <td><?= " " . strtoupper($superadmin->getNom()); ?></td>
+                            <td class="titre-label">Rôle</td>
+                            <td><?= " " . ucwords($superadmin->getRole()); ?></td>
+                          </tr>
+                          <tr>
+                            <td class="titre-label">Contact</td>
+                            <td><?php $contact = explode('/', $superadmin->getContact()); echo " " . $contact[1]; ?></td>
+                            <td class="titre-label">Email</td>
+                            <td><?= " " . ucwords($superadmin->getEmail()); ?></td>
+                          </tr>
+                          <tr>
+                            <td class="titre-label">Pseudo</td>
+                            <td><?= $_SESSION['compte']['login'] ?></td>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <td class="titre-label" colspan="3"><u>Dernière connexion</u></td>
+                            <td class="titre-label" colspan="3"><u>Dernière logout</u></td>
+                          </tr>
+                          <?php if (count(unserialize($_SESSION['compte']['history'])) > 1) : ?>
+                            <tr>
+                              <td colspan="3">
+                                <?php 
+                                  $histories    = unserialize($_SESSION['compte']['history']);
+                                  $lastHistory  = $histories[count($histories) - 2];
+                                  $resriteDate  = new PublicFonctions();
+                                  echo $resriteDate->writeDate($lastHistory['login'], true);
+                                ?>
+                              </td>
+                              <td colspan="3">
+                                <?= $resriteDate->writeDate($lastHistory['logout'], true); ?>
+                              </td>
+                            </tr>
+                          <?php endif; ?>
+                        </tfoot>
+                      </table>
+                  </div>
+                  <div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <form method="POST" id="form" action="<?= HOST . 'manage/save-superadmin'?>" enctype="multipart/form-data" novalidate="novalidate">
+                            <input type="hidden" id="page" value="superadmin" >
+                            <input class="form-control focus_activated" id="idSuperadmin" name="idSuperadmin" type="hidden" value="<?= $superadmin->getIdSuperadmin();?>">
+                            <input class="form-control focus_activated" id="idCompte" name="idCompte" type="hidden" value="<?= $superadmin->getIdCompte();?>">
+                            <div class="modal-header">
+                              <div class="text-center" style="width: 100%;">
+                                <h5 class="modal-title" id="exampleModalLabel">Modification du profil</h5>
+                              </div>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="card p-3" style="background: #efefff; max-height: 350px; overflow-y: auto;">
+                                <div class="row">
+                                  <div class="col-md-3">
+                                    <span class="titre-label">Photo</span>
+                                  </div>
+                                  <div class="col-md-9">
+                                    <div class="form-group row">
+                                      <div class="col-md-5">
+                                        <img class="img-fluid user rounded-circle" id="image" src="
+                                          <?php
+                                              if ($superadmin->getPhoto() != "") {
+                                                echo HOST . "../Web/Ressources/images/superadmins/" . $superadmin->getPhoto();
+                                              } else {
+                                                echo HOST ."../Web/Ressources/images/profilAdmin.png";
+                                              }
+                                            ?>
+                                          " style="width: 80px; height: 80px; border-radius: 10px;">
+                                      </div>
+                                      <div class="col-md-7">
+                                        <button class="btn btn-info btn-sm" style="margin-top: 25px;" id="files" onclick="$('#photo').click(); return false;">Télécharger une photo </button>
+                                        <input class="form-control hidden" id="photo" name="photo" type="file" accept="image/*" value="<?= $superadmin->getPhoto(); ?>">
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-md-3">
+                                    <span class="titre-label">Nom : </span>
+                                  </div>
+                                  <div class="col-md-9">
+                                    <input class="form-control text-uppercase modal-input" id="nom" name="nom" type="text" value="<?= $superadmin->getNom(); ?>" required="required" data-validation-required-message="Veuillez entrer un nom" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide">
+                                    <p class="help-block text-danger"></p>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-md-3">
+                                    <span class="titre-label">Contact : </span>
+                                  </div>
+                                  <div class="col-md-9">
+                                    <div class="form-group">
+                                      <select id="select-country" class="form-control focus_activated modal-input">
+                                        <option value="">Séléctionner un pays</option>
+                                          <?php 
+                                            $superadminContact = explode('/', $superadmin->getContact());
+                                            foreach(unserialize(COUNTRIES) as $country): ?>
+                                                <option 
+                                                  <?php if ($superadminContact[0] == $country['code']) { echo "selected"; } ?> value="<?= $country['code']; ?>">
+                                                  <?= $country['country'] ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                      </select>
+                                      <input type="text" id="input-phone" class="form-control focus_activated modal-input" name="contact" value="<?= $superadminContact[1]; ?>" required="required" data-validation-required-message="Veuillez entrer un contact">     
+                                      <p class="help-block text-danger"></p>  
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="form-group hidden">
+                                  <input class="form-control focus_activated" id="contact" name="contact" type="text" value="test">
+                                </div>
+                                <div class="row">
+                                  <div class="col-md-3">
+                                    <span class="titre-label">Email : </span>
+                                  </div>
+                                  <div class="col-md-9">
+                                    <div class="form-group">
+                                      <input class="form-control text-lowercase focus_activated modal-input" id="email" name="email" type="email" value="<?= $superadmin->getEmail(); ?>" required="required" data-validation-required-message="Veuillez entrer un email.">
+                                      <p class="help-block text-danger"></p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <div class="row" style="width: 105%!important;">
+                                <div class="col-md-3">
+                                  <button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+                                </div>
+                                <div class="col-md-5"></div>
+                                <div class="col-md-4">
+                                  <div class="form-group"> 
+                                    <button type="submit" id="submit" class="btn btn-md btn-info">
+                                      Enregistrer
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal fade" id="modalLogin" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <form id="form" method="POST" action="<?= HOST . 'manage/save-pseudo' ?>"  enctype="multipart/form-data" enctype="multipart/form-data" novalidate="novalidate">
+                            <input type="hidden" id="page" value="superadmin" >
+                            <input class="form-control focus_activated" id="idCompte" name="idCompte" type="hidden" value="<?= $superadmin->getIdCompte();?>">
+                            <div class="modal-header">
+                              <div class="text-center" style="width: 100%;">
+                                <h5 class="modal-title" id="exampleModalLabel">Modification du login</h5>
+                              </div>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="card p-3" style="background: #efefff; max-height: 350px; overflow-y: auto;">
+                                  <div class="row">
+                                    <div class="col-md-3">
+                                      <label class="label-input">Pseudo :</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                      <div class="form-group">
+                                        <input class="form-control text-lowercase focus_activated" id="login" name="login" type="text" value="<?= $_SESSION['compte']['login']; ?>" required="required" data-validation-required-message="Veuillez entrer votre pseudo *" data-validation-regex-regex="^[a-zA-Z-_]*" data-validation-regex-message="Caractères non valide *">
+                                        <p class="help-block text-danger"></p>
+                                      </div>
+                                    </div>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <div class="row" style="width: 105%!important;">
+                                <div class="col-md-3">
+                                  <button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+                                </div>
+                                <div class="col-md-5"></div>
+                                <div class="col-md-4">
+                                  <div class="form-group"> 
+                                    <button type="submit" id="submit" class="btn btn-md btn-info">
+                                      Enregistrer
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal fade" id="modalPassword" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <form id="form" method="POST" action="<?= HOST . 'manage/update-password' ?>"  enctype="multipart/form-data" enctype="multipart/form-data" novalidate="novalidate">
+                            <input type="hidden" id="page" value="superadmin" >
+                            <input class="form-control focus_activated" id="idCompte" name="idCompte" type="hidden" value="<?= $superadmin->getIdCompte();?>">
+                            <div class="modal-header">
+                              <div class="text-center" style="width: 100%;">
+                                <h5 class="modal-title" id="exampleModalLabel">Modification du mot de passe</h5>
+                              </div>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="card p-3" style="background: #efefff; max-height: 350px; overflow-y: auto;">
+                                  <div class="row">
+                                      <div class="col-md-12">
+                                        <div class="form-group" style="position: relative;">
+                                          <label class="label-input">Mot de passe actuel :</label>
+                                            <input class="form-control focus_activated" id="ancienMotDePasse" name="ancienMotDePasse" type="password" required="required" data-validation-required-message="Veuillez entrer votre mot de passe actuel *">
+                                            <i class="fas fa-eye eye-icon" style="position: absolute; right: 16px; top: 68%; transform: translateY(-42%); z-index: 2;"></i>
+                                            <p class="help-block text-danger"></p>
+                                        </div>
+                                        <div class="form-group" style="position: relative;">
+                                          <label class="label-input">Nouveau mot de passe :</label>
+                                            <input class="form-control focus_activated" id="motDePasse" name="motDePasse" type="password" required="required" data-validation-required-message="Veuillez entrer votre nouveau mot de passe *"  data-validation-regex-regex="^.{6,}$" data-validation-regex-message="6 caractères minimum *">
+                                            <i class="fas fa-eye eye-icon" style="position: absolute; right: 16px; top: 68%; transform: translateY(-42%); z-index: 2;"></i>
+                                            <p class="help-block text-danger"></p>
+                                        </div>
+                                        <div class="form-group" style="position: relative;">
+                                          <label class="label-input">Confirmation du nouveau mot de passe :</label>
+                                            <input class="form-control focus_activated" id="confirmation" name="confirmation" type="password" required="required" data-validation-required-message="Veuillez confirmer votre nouveau mot de passe.">
+                                            <i class="fas fa-eye eye-icon" style="position: absolute; right: 16px; top: 68%; transform: translateY(-42%); z-index: 2;"></i>
+                                            <p class="help-block text-danger" id="match-message"></p>
+                                        </div>
+                                      </div>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <div class="row" style="width: 105%!important;">
+                                <div class="col-md-3">
+                                  <button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+                                </div>
+                                <div class="col-md-5"></div>
+                                <div class="col-md-4">
+                                  <div class="form-group"> 
+                                    <button type="submit" id="submit" class="btn btn-md btn-info">
+                                      Enregistrer
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <script src="<?= HOST; ?>../Web/Ressources/js/afficherFormCompte.js"></script>
+                    <script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+                    <script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+                    <script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+                    <script> 
+                      var pathname = new URL(window.location.href).pathname; 
+                      var cleave = new Cleave('#input-phone', {
+                          phone:true,
+                          phoneRegionCode: $('#select-country').children("option:selected").val()
+                      });
+                      if ($('#select-country').children("option:selected").val() == "") {
+                          $('#input-phone').addClass('hidden');
+                      }
+                      $('#select-country').change(function(){
+                        if ($('#select-country').children("option:selected").val() == "") {
+                            $('#input-phone').addClass('hidden');
+                        } else {
+                          $('#input-phone').removeClass('hidden');
+                            cleave.setPhoneRegionCode(this.value);
+                            cleave.setRawValue('');
+                        }
+                      });
+                      tippy('.fa-key', {
+                        content: "Modifier le mot de passe"
+                      });
+                      tippy('.fa-user', {
+                        content: "Modifier le login"
+                      });
+                      tippy('.fa-edit', {
+                        content: "Editer votre profil"
+                      });
+                    </script>
+                </div>
+              </div>
+            </div>
+          <?php elseif ($url[1] == "employe") : extract($data); $pageTitle = strtoupper($employe->getNom());?>
+            <div class="container" style="margin-top: 70px">
+              <div class="row" >
+                <div class="col-lg-12" id="profil">
+                  <div class="row" style="margin-top: -15px;">
+                    <div class="col-lg-12 text-center">
+                      <h4 class="text-center list-title section-heading">Mon profil</h4>
+                    </div>
+                  </div>
+                  <div>  
+                    <div class="col-md-12 text-center">
+                      <button class="btn btn-transparent btn-circle-sm text-primary mt-0" data-toggle="modal" data-target="#modalEnregistrement">
+                        <i class="fa fa-edit fa-15x tippy-act" aria-hidden="true"></i>
+                      </button>
+                      <button class="btn btn-transparent btn-circle-sm text-primary mt-0" data-toggle="modal" data-target="#modalLogin">
+                        <i class="fa fa-user fa-15x tippy-act" aria-hidden="true"></i>
+                      </button>
+                      <button class="btn btn-transparent btn-circle-sm text-primary mt-0" data-toggle="modal" data-target="#modalPassword">
+                        <i class="fa fa-key fa-15x tippy-act" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="row block-section">
+                    <table class="table table-striped" style="width: 100%;">
+                      <thead>
+                        <tr style="background: #b0bec5;">
+                          <th class="text-center" colspan="3">Informations personnelles</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="text-center" rowspan="2" style="background: #eceff1;">
+                            <img class="img-fluid userDetail" src="<?= ($employe->getPhoto() != "") ? HOST . "../Web/Ressources/images/employes/" . $employe->getPhoto() : HOST ."../Web/Ressources/images/profilCandidat.png";?>" style="height: auto;max-height: 140px;width: auto;max-width: 140px;">
+                          </td>
+                          <td class="text-important"><?= " " . strtoupper($employe->getNom()); ?></td>
+                        </tr>
+                        <tr>
+                          <td class="text-important"><?= " " . ucwords($employe->getPrenom()); ?></td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label">Adresse</td>
+                          <td><?= " " . ucwords($employe->getAdresse()) . " " . ucwords($employe->getVille()); ?></td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label">Téléphone</td>
+                          <td><?php $contact = explode('/', $employe->getContact()); echo " " . $contact[1]; ?></td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label">Né(e) le</td>
+                          <td>
+                            <?php 
+                              $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+                              $birth = explode('-', $employe->getDateNaissance());
+                              $index = (int)$birth[1] - 1;
+                              echo $birth[2] . " " . $months[$index] . " " . $birth[0];
+                            ?>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label">à</td>
+                          <td><?= ucwords($employe->getLieuNaissance()); ?></td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label">Email</td>
+                          <td><?= " " . strtolower($employe->getEmail()); ?></td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label">Pseudo sur le site</td>
+                          <td>
+                            <a id="pseudo-btn" href="<?= HOST . 'manage/edit-pseudo?idCompte=' . $_SESSION['compte']['idCompte']; ?>"><?= $_SESSION['compte']['login'] ?></a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="text-center font-weight-bold" colspan="4" style="background: #b0bec5;">Informations professionnelles</td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label">Catégorie professionnelle</td>
+                          <td colspan="2">
+                            <?php
+                              if ($categorie != null) {
+                                echo $categorie->getDesignation();
+                              } else {
+                                echo "N/A";
+                              }
+                            ?>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label">Service</td>
+                          <td colspan="2"> 
+                            <?php
+                              if ($service != null) {
+                                echo $service->getService();
+                              } else {
+                                echo "N/A";
+                              }
+                            ?>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label">Poste</td>
+                          <td colspan="2">
+                            <?php
+                              if ($poste != null) {
+                                echo $poste->getPoste();
+                              } else {
+                                echo "N/A";
+                              }
+                            ?>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="titre-label"><u>Dernière connexion</u></td>
+                          <td class="titre-label" colspan="2"><u>Dernière logout</u></td>
+                        </tr>
+                        <?php $histories = unserialize($_SESSION['compte']['history']);
+                          if (is_array($histories)) : 
+                            if (count($histories) > 1) : ?>
+                              <tr>
+                                <td>
+                                  <?php 
+                                    $lastHistory  = $histories[count($histories) - 2];
+                                    $resriteDate  = new PublicFonctions();
+                                    if(array_key_exists('login', $lastHistory)) :
+                                      echo $resriteDate->writeDate($lastHistory['login'], true);
+                                    endif;
+                                  ?>
+                                </td>
+                                <td colspan="2">
+                                  <?php if(array_key_exists('logout', $lastHistory)) :
+                                      echo $resriteDate->writeDate($lastHistory['logout'], true);
+                                    endif;
+                                  ?>
+                                </td>
+                              </tr>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <form method="POST" id="form" action="<?= HOST . 'manage/save-employe'?>" enctype="multipart/form-data" novalidate="novalidate">
+                          <input type="hidden" id="page" value="employe" >
+                          <input class="form-control focus_activated" id="idEmploye" name="idEmploye" type="hidden" value="<?= $employe->getIdEmploye();?>">
+                          <input class="form-control focus_activated" id="idCompte" name="idCompte" type="hidden" value="<?= $employe->getIdCompte();?>">
+                          <input class="form-control focus_activated" id="idEntreprise" name="idEntreprise" type="hidden" value="<?= $employe->getIdEntreprise();?>">
+                          <div class="modal-header">
+                            <div class="text-center" style="width: 100%;">
+                              <h5 class="modal-title" id="exampleModalLabel">Modification du profil</h5>
+                            </div>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="card p-3" style="background: #efefff; max-height: 350px; overflow-y: auto;">
+                              <div class="row">
+                                <div class="col-md-3">
+                                  <span class="titre-label">Photo : </span>
+                                </div>
+                                <div class="col-md-9">
+                                  <div class="form-group row">
+                                    <div class="col-md-5">
+                                      <img class="img-fluid user " id="image" src="
+                                        <?php
+                                          if ($employe->getPhoto() != "") {
+                                            echo HOST . "../Web/Ressources/images/employes/" . $employe->getPhoto();
+                                          } else {
+                                            echo HOST ."../Web/Ressources/images/profilCandidat.png";
+                                          }
+                                        ?>
+                                      " style="width: 100px; height: 100px; border-radius: 10px;">
+                                    </div>
+                                    <div class="col-md-7">
+                                      <button class="btn  btn-info btn-sm user" style="margin-top: 70px;" id="files" onclick="$('#photo').click(); return false;">Télécharger photo</button>
+                                      <input class="form-control hidden" id="photo" name="photo" type="file" accept="image/*" value="">
+                                      <input class="form-control hidden" id="photo" name="photo" type="text" value="<?= $employe->getPhoto(); ?>">
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <hr>
+                              <div class="row">
+                                <div class="col-md-3">
+                                  <span class="titre-label">Civilité : </span>
+                                </div>
+                                <div class="col-md-9">
+                                  <div class="form-group">
+                                    <select  class="form-control span3 modal-input" name="civilite" id="civilite" required="required" data-validation-required-message="Veuillez séléctionner un civilité.">
+                                      <option class="text-center" value="">-- Choisir -- </option>
+                                      <option <?php if ($employe->getCivilite()== "Mr") { echo "selected"; } ?> value="Mr">Monsieur</option>
+                                      <option <?php if ($employe->getCivilite()== "Mme") { echo "selected"; } ?> value="Mme">Madame</option>
+                                      <option <?php if ($employe->getCivilite()== "Mlle") { echo "selected"; } ?> value="Mlle">Mademoiselle</option>
+                                    </select>
+                                    <p class="help-block text-danger"></p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-3">
+                                  <span class="titre-label">Nom : </span>
+                                </div>
+                                <div class="col-md-9">
+                                  <input class="form-control text-uppercase modal-input" id="nom" name="nom" type="text" value="<?= $employe->getNom(); ?>" required="required" data-validation-required-message="Veuillez entrer un nom" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide">
+                                  <p class="help-block text-danger"></p>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-3">
+                                  <span class="titre-label">Prénom : </span>
+                                </div>
+                                <div class="col-md-9">
+                                  <input class="form-control text-capitalize modal-input" id="prenom" name="prenom" type="text" value="<?= $employe->getPrenom(); ?>" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide">
+                                  <p class="help-block text-danger"></p>
+                                </div>
+                              </div>
+                              <hr>
+                              <div class="row">
+                                <div class="col-md-3">
+                                  <span class="titre-label">Né(e) le : </span>
+                                </div>
+                                <div class="col-md-9">
+                                  <div class="form-group">
+                                    <i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+                                    <label for="datepicker">
+                                      <input class="form-control datepicker modal-input" id="datepicker_dateNaissance" type="text" value="<?php $date = explode('-', $employe->getDateNaissance()); echo $date[2] . "/" . $date[1] . "/" . $date[0]; ?>" autocomplete="off" placeholder="Date de naissance">
+                                    </label>
+                                      <input class="form-control hidden modal-input" id="dateNaissance" name="dateNaissance" type="date"  required="required" data-validation-required-message="Veuillez entrer une date de naissance">
+                                      <p class="help-block text-danger"></p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-3">
+                                  <span class="titre-label">à : </span>
+                                </div>
+                                <div class="col-md-9">
+                                  <div class="form-group">
+                                    <input class="form-control text-capitalize modal-input" id="lieuNaissance" name="lieuNaissance" type="text" value="<?= $employe->getLieuNaissance(); ?>" required="required" data-validation-required-message="Veuillez entrer un lieu de naissance" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide">
+                                    <p class="help-block text-danger"></p>
+                                  </div>
+                                </div>
+                              </div>
+                              <hr>
+                              <div class="row">
+                                <div class="col-md-3">
+                                  <span class="titre-label">Adresse : </span>
+                                </div>
+                                <div class="col-md-9">
+                                  <div class="form-group">
+                                    <input class="form-control text-capitalize modal-input" id="adresse" name="adresse" type="text" value="<?= $employe->getAdresse(); ?>" required="required" data-validation-required-message="Veuillez entrer un adresse" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide">
+                                    <p class="help-block text-danger"></p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-3">
+                                  <span class="titre-label">Ville : </span>
+                                </div>
+                                <div class="col-md-9">
+                                  <div class="form-group">
+                                    <input class="form-control text-capitalize modal-input" id="ville" name="ville" type="text" value="<?= $employe->getVille(); ?>" required="required" data-validation-required-message="Veuillez entrer une ville" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide">
+                                    <p class="help-block text-danger"></p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-3">
+                                  <span class="titre-label">Contact : </span>
+                                </div>
+                                <div class="col-md-9">
+                                  <div class="form-group">
+                                    <select id="select-country" class="form-control focus_activated modal-input">
+                                      <option value="">Séléctionner un pays</option>
+                                        <?php 
+                                          $employeContact = explode('/', $employe->getContact());
+                                          foreach(unserialize(COUNTRIES) as $country): ?>
+                                              <option 
+                                                <?php if ($employeContact[0] == $country['code']) { echo "selected"; } ?> value="<?= $country['code']; ?>">
+                                                <?= $country['country'] ?>
+                                              </option>
+                                          <?php endforeach; ?>
+                                    </select>
+                                    <input type="text" id="input-phone" class="form-control focus_activated modal-input" name="contact" value="<?= $employeContact[1]; ?>" required="required" data-validation-required-message="Veuillez entrer un contact">     
+                                    <p class="help-block text-danger"></p>  
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="form-group hidden">
+                                <input class="form-control focus_activated" id="contact" name="contact" type="text" value="test">
+                              </div>
+                              <div class="row">
+                                <div class="col-md-3">
+                                  <span class="titre-label">Email : </span>
+                                </div>
+                                <div class="col-md-9">
+                                  <div class="form-group">
+                                    <input class="form-control text-lowercase focus_activated modal-input" id="email" name="email" type="email" value="<?= $employe->getEmail(); ?>" required="required" data-validation-required-message="Veuillez entrer un email.">
+                                    <p class="help-block text-danger"></p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <div class="row" style="width: 105%!important;">
+                              <div class="col-md-3">
+                                <button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+                              </div>
+                              <div class="col-md-5"></div>
+                              <div class="col-md-4">
+                                <div class="form-group"> 
+                                  <button type="submit" id="submit" class="btn btn-md btn-info">
+                                    Enregistrer
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal fade" id="modalLogin" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <form id="form" method="POST" action="<?= HOST . 'manage/save-pseudo' ?>"  enctype="multipart/form-data" enctype="multipart/form-data" novalidate="novalidate">
+                          <input type="hidden" id="page" value="employe" >
+                          <input class="form-control focus_activated" id="idCompte" name="idCompte" type="hidden" value="<?= $employe->getIdCompte();?>">
+                          <div class="modal-header">
+                            <div class="text-center" style="width: 100%;">
+                              <h5 class="modal-title" id="exampleModalLabel">Modification du login</h5>
+                            </div>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="card p-3" style="background: #efefff; max-height: 350px; overflow-y: auto;">
+                                <div class="row">
+                                  <div class="col-md-3">
+                                    <label class="label-input">Pseudo :</label>
+                                  </div>
+                                  <div class="col-md-9">
+                                    <div class="form-group">
+                                      <input class="form-control text-lowercase focus_activated" id="login" name="login" type="text" value="<?= $compte->getLogin(); ?>" required="required" data-validation-required-message="Veuillez entrer votre pseudo *" data-validation-regex-regex="^[a-zA-Z-_]*" data-validation-regex-message="Caractères non valide *">
+                                      <p class="help-block text-danger"></p>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <div class="row" style="width: 105%!important;">
+                              <div class="col-md-3">
+                                <button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+                              </div>
+                              <div class="col-md-5"></div>
+                              <div class="col-md-4">
+                                <div class="form-group"> 
+                                  <button type="submit" id="submit" class="btn btn-md btn-info">
+                                    Enregistrer
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal fade" id="modalPassword" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <form id="form" method="POST" action="<?= HOST . 'manage/update-password' ?>"  enctype="multipart/form-data" enctype="multipart/form-data" novalidate="novalidate">
+                          <input type="hidden" id="page" value="employe" >
+                          <input class="form-control focus_activated" id="idCompte" name="idCompte" type="hidden" value="<?= $employe->getIdCompte();?>">
+                          <div class="modal-header">
+                            <div class="text-center" style="width: 100%;">
+                              <h5 class="modal-title" id="exampleModalLabel">Modification du mot de passe</h5>
+                            </div>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="card p-3" style="background: #efefff; max-height: 350px; overflow-y: auto;">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                      <div class="form-group" style="position: relative;">
+                                        <label class="label-input">Mot de passe actuel :</label>
+                                          <input class="form-control focus_activated" id="ancienMotDePasse" name="ancienMotDePasse" type="password" required="required" data-validation-required-message="Veuillez entrer votre mot de passe actuel *">
+                                          <i class="fas fa-eye eye-icon" style="position: absolute; right: 16px; top: 68%; transform: translateY(-42%); z-index: 2;"></i>
+                                          <p class="help-block text-danger"></p>
+                                      </div>
+                                      <div class="form-group" style="position: relative;">
+                                        <label class="label-input">Nouveau mot de passe :</label>
+                                          <input class="form-control focus_activated" id="motDePasse" name="motDePasse" type="password" required="required" data-validation-required-message="Veuillez entrer votre nouveau mot de passe *"  data-validation-regex-regex="^.{6,}$" data-validation-regex-message="6 caractères minimum *">
+                                          <i class="fas fa-eye eye-icon" style="position: absolute; right: 16px; top: 68%; transform: translateY(-42%); z-index: 2;"></i>
+                                          <p class="help-block text-danger"></p>
+                                      </div>
+                                      <div class="form-group" style="position: relative;">
+                                        <label class="label-input">Confirmation du nouveau mot de passe :</label>
+                                          <input class="form-control focus_activated" id="confirmation" name="confirmation" type="password" required="required" data-validation-required-message="Veuillez confirmer votre nouveau mot de passe.">
+                                          <i class="fas fa-eye eye-icon" style="position: absolute; right: 16px; top: 68%; transform: translateY(-42%); z-index: 2;"></i>
+                                          <p class="help-block text-danger" id="match-message"></p>
+                                      </div>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <div class="row" style="width: 105%!important;">
+                              <div class="col-md-3">
+                                <button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+                              </div>
+                              <div class="col-md-5"></div>
+                              <div class="col-md-4">
+                                <div class="form-group"> 
+                                  <button type="submit" id="submit" class="btn btn-md btn-info">
+                                    Enregistrer
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+                  <script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+                  <script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+                  <script src="<?= HOST; ?>../Web/Ressources/js/tabEmploye.js"></script>
+                  <script>
+                    $("#submit").click(function(){
+                      var date = $("#datepicker_dateNaissance").val().split('/');
+                      $("#dateNaissance").val(date[2] + '-' + date[1] + '-' + date[0]);
+                      if ($('#select-country').val() != "" && $('#input-phone').val() != "") {
+                        $('#contact').val($('#select-country').val() + "/" + $('#input-phone').val());
+                      }
+                    });
+                    $("#annuler").click(function(){
+                      window.location.reload();
+                    });
+                    tippy('.fa-key', {
+                      content: "Modifier mot de passe"
+                    });
+                    tippy('.fa-user', {
+                      content: "Modifier le login"
+                    });
+                    tippy('.fa-edit', {
+                      content: "Editer votre profil"
+                    });
+                  </script>
+                  <script> 
+                    var pathname = new URL(window.location.href).pathname; 
+                    var cleave = new Cleave('#input-phone', {
+                        phone:true,
+                        phoneRegionCode: $('#select-country').children("option:selected").val()
+                      });
+                    if ($('#select-country').children("option:selected").val() == "") {
+                        $('#input-phone').addClass('hidden');
+                      }
+                    $('#select-country').change(function(){
+                      if ($('#select-country').children("option:selected").val() == "") {
+                          $('#input-phone').addClass('hidden');
+                        } else {
+                        $('#input-phone').removeClass('hidden');
+                            cleave.setPhoneRegionCode(this.value);
+                            cleave.setRawValue('');
+                        }
+                      });
+                  </script>
+                </div>
+              </div>
+            </div>
+          <?php endif ?>
+  </section>
+  <script src="<?= HOST; ?>../Web/Ressources/js/voirProfil.js"></script>
+  <?php if ($_SESSION['compte']['identifiant'] == "candidat"): ?>
+    <script src="<?= HOST; ?>../Web/Ressources/js/tabCandidat.js"></script>
+    <script src="<?= HOST; ?>../Web/Ressources/js/scroolPosition.js"></script>
+    <script src="<?= HOST; ?>../Web/Ressources/js/voirProfilCandidat.js"></script>
+  <?php endif ?>

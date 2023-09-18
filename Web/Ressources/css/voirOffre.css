@@ -1,0 +1,39 @@
+.logo-entreprise{
+	/*height: 125px;*/
+    /*width: 125px;*/
+	height: auto;
+    width: 150px;
+    text-align: center;
+}
+.details-offre{
+	margin-left: 15px;
+}
+.paragraphe-detail-offre{
+	margin-left: 25px;
+}
+.paragraphe-mission{
+	margin-left: 15px;
+}
+.h5-style{
+	margin-left: 5px;
+}
+.fond-offre{
+	background: linear-gradient(217deg, white, white 70.71%),
+                linear-gradient(127deg, grey, whitesmoke 70.71%),
+                linear-gradient(336deg, white, ghostwhite 70.71%);
+}
+.bg-color{
+	background: linear-gradient(135deg, #F8F8F8 25%, #FFFFFF 25%, #FFFFFF 50%, #F8F8F8 50%, #F8F8F8 75%, #FFFFFF 75%, #FFFFFF 100%);
+}
+.image-offre{
+	margin-top: -6.55px;
+	height: auto;
+    width: 111em;
+    /*max-height: 550px;*/
+    max-height: auto; /*soloina rehefa vita ny sary atao couverture an'lay offre*/
+}
+.style-boutton-retour{
+	text-align: left;
+	margin-top: -275px;
+	color: #bcfffd;
+}

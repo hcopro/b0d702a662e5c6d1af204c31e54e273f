@@ -1,0 +1,130 @@
+<?php
+  $url = explode('-', $_GET['page']);
+  $addTitle = "";
+  if (isset($_GET['month'])) {
+      $addTitle = "du mois de " . $_GET['month'];
+  }
+  if (isset($_GET['year'])) {
+    $addTitle = "de l'année " . $_GET['year'];
+  }
+  if (isset($_GET['date1']) && isset($_GET['date2'])) {
+    $date1 = explode('/', $_GET['date1']);
+    $date2 = explode('/', $_GET['date2']);
+    if (isset($mois[$date1[1] - 1]) && isset($mois[$date2[1] - 1])) {
+      $addTitle = " du " . $date1[0] . " " . $mois[$date1[1] - 1] . " " . $date1[2] . " au " . $date2[0] . " " . $mois[$date2[1] - 1] . " " . $date2[2];
+    }
+  }
+  $pageTitle = "Tableau de bord : " . ucfirst($url[1]) . "\n" . $addTitle;
+?>
+<script>
+window.onload = function () {
+var valueData = <?php echo json_encode($data); ?>;
+var chart = new CanvasJS.Chart("chartContainer", {
+    animationEnabled: true,
+    exportEnabled: true,
+    theme: "light1", // "light1", "light2", "dark1", "dark2"
+    title:{
+      text: <?php echo json_encode($pageTitle); ?>
+    },
+    toolTip: {
+      shared: true
+    },
+    legend:{
+      verticalAlign: "top",
+      horizontalAlign: "center"
+    },
+    data: valueData
+  });
+  chart.render();
+}
+</script>
+</head>
+<body>
+  <section class="page-section" id="back-section">    
+    <div class="container">
+      <div class="row">
+        <ul id="tab-button">
+          <li id="a"><a href="<?= HOST . "manage/tableau_de_bord-offre" ?>">Offres</a></li>
+          <li id="b"><a href="<?= HOST . "manage/tableau_de_bord-entretien" ?>">Entretiens</a></li>
+          <li id="c"><a href="<?= HOST . "manage/tableau_de_bord-interlocuteur" ?>">Interlocuteurs</a></li>
+        </ul>
+      </div>
+      <div class="row" id="search-div">
+       <div class="col-md-4">
+          <select class="form-control span3" name="search-type" id="search-type">
+            <option value="">Type de recherche</option>
+            <option value="month">Dans un mois</option>
+            <option value="year">Dans une année</option>
+            <option value="twoDates">Entre 2 dates</option>
+          </select>
+        </div>
+        <div class="col-md-8 hidden" id="block-mois">
+          <div class="row">
+            <div class="col-md-4">
+              <label for="datepicker">
+                <input class="form-control" type="text" id="mois" name="mois" autocomplete="off" placeholder="Mois">
+              </label>
+              <p class="help-block text-danger" id="mois-message"></p>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-warning" id="link-search-month">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8 hidden" id="block-annee">
+          <div class="row">
+            <div class="col-md-4">
+              <input class="form-control" id="annee" name="annee" type="number" list="annes" value="" required="required">
+              <datalist id="annes">
+              <?php
+                for ($i = 2000; $i <= 2050; $i += 1) {
+                  $option = "<option type='number' value='" . $i . "'>" . $i . "</option>";
+                  echo $option;
+                }
+              ?>
+              </datalist>
+              <p class="help-block text-danger" id="annee-message"></p>  
+            </div>
+            <div class="col-md-2"> 
+              <button class="btn btn-warning" id="link-search-year">
+              <i class="fas fa-search"></i>
+            </button>
+            </div>
+          </div>
+        </div> 
+        <div class="col-md-8 hidden" id="block-deuxDates">
+          <div class="row">
+            <div class="col-md-4">
+              <label for="datepicker">
+                <input class="form-control" type="text" id="date1" name="date1" autocomplete="off" placeholder="Date début">
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label for="datepicker">
+                <input class="form-control" type="text" id="date2" name="date2" autocomplete="off" placeholder="Date fin">
+              </label> 
+            </div>
+            <div class="col-md-4">
+              <button class="btn btn-warning" id="link-search-twoDates">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <p class="help-block text-danger text-center" id="date-message"></p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">        
+        <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+      </div>
+      </div>
+    </div>
+  </section>
+<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/tabs.css">
+<script src="<?= HOST; ?>../Web/Ressources/js/tabs.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/parametrerGraphe.js"></script>    
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/canvas.js"></script>

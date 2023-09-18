@@ -1,0 +1,175 @@
+<div>
+	<table class="table table-borderless" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0">
+				<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Nom et Prénom</div></th>
+				<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Poste</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Evaluation</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Remarques</div></th>
+				<th class="p-0 text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Détails</div></th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php if (count($data) > ManagerModuleInterim::NO) : ?>
+				<?php foreach ($data as $datum) : extract($datum); ?>
+					<tr class="p-0" style="width: 30%;">
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey text-important text-left">
+								<?= $employe->getNom() . ' ' . $employe->getPrenom() ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey">
+								<?= $poste->getPoste() ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey text-important">
+								<?php if ($evaluation != null) : ?>
+									<?= $evaluation->getNote() . ' / 10' ?>
+								<?php else : ?>
+									N/A
+								<?php endif ?>
+							</div>
+						</td>
+						<td class="p-0" style="width: 25%;">
+							<div class="card p-2 m-1 card-light-grey" style="text-overflow: ellipsis; white-space: nowrap; max-width: 300px;overflow-x: hidden;">
+								<?php if ($evaluation != null) : ?>
+									<?= $evaluation->getRemarque() ?>
+								<?php else : ?>
+									N/A
+								<?php endif ?>
+							</div>
+						</td>
+						<td class="p-0">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<button class="btn btn-transparent btn-sm m-0 p-0" data-toggle="modal" data-target="#modalStatistique<?= $interim->getIdInterim();?>">
+									<i class="fa fa-info-circle text-dark" style="font-size: 1.4em;"></i>
+								</button>
+							</div>
+						</td>
+					</tr>
+					<div class="modal fade" id="modalStatistique<?= $interim->getIdInterim();?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered" role="document">
+					    	<div class="modal-content">
+					      		<div class="modal-header text-center">
+					      			<div class="text-center" style="width: 100%;">
+					      				<h5 class="modal-title section-heading" id="exampleModalLabel">Les détails</h5>
+					      			</div>
+					        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          			<span aria-hidden="true">&times;</span>
+					        		</button>
+					      		</div>
+					      		<div class="modal-body">
+					      			<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+						      			<div class="row">
+						      				<div class="col-md-3">
+					      						<img src="
+													<?php
+							            				if ($employe->getPhoto() != "") {
+							            					echo HOST . "../Web/Ressources/images/employes/" . $employe->getPhoto();
+							            				} else {
+							            					echo HOST ."../Web/Ressources/images/profilCandidat.png";
+							            				}
+							            			?>
+												" style="height: 100px; width: 100px;">
+											</div>
+											<div class="col-md-9 text-left">
+												<label class="text-important"><?= $employe->getNom() . ' ' . $employe->getPrenom();?></label><br>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-5 text-left">
+													<span class="titre">
+														Poste assuré :
+													</span>
+												</div>
+												<div class="col-md-7 text-left">
+													<?= $poste->getPoste(); ?>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-5 text-left">
+													<span class="titre">
+														Dates :
+													</span>
+												</div>
+												<div class="col-md-7 text-left">
+													<?= 'du ' . $debut . ' au ' . $fin ?>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-5 text-left">
+													<span class="titre">
+														Chef hiérarchique :
+													</span>
+												</div>
+												<div class="col-md-7 text-left">
+													<?php if ($chef != null) : ?>
+														<?= $chef->getCivilite() . ' ' . $chef->getNom() . ' ' . $chef->getPrenom() ?>
+													<?php else : ?>
+														N/A
+													<?php endif ?>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-5 text-left">
+													<span class="titre">
+														Note :
+													</span>
+												</div>
+												<div class="col-md-7 text-left">
+													<?php if ($evaluation != null) : ?>
+														<?= $evaluation->getNote() . '/10' ?>
+													<?php else : ?>
+														N/A
+													<?php endif ?>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-5 text-left">
+													<span class="titre">
+														Remarque :
+													</span>
+												</div>
+												<div class="col-md-7 text-left">
+													<?php if ($evaluation != null) : ?>
+														<span>
+															<?= $evaluation->getRemarque() ?>
+														</span>
+													<?php else : ?>
+														N/A
+													<?php endif ?>
+												</div>
+											</div>
+										</div>
+									</div>
+					      		</div>
+					    	</div>
+					  	</div>
+					</div>
+				<?php endforeach ?>
+			<?php else : ?>
+				<tr class="p-0">
+					<td class="p-0" colspan="5">
+						<div class="card p-2 m-1 card-light-grey">Aucun enregistrement trouvé</div>
+					</td>
+				</tr>
+			<?php endif ?>
+		</tbody>
+	</table>
+</div>
+<script type="text/javascript">
+	tippy('.fa-info-circle', {
+    	content : 'plus de détails'
+    });
+</script>

@@ -1,0 +1,546 @@
+<?php
+	$url = explode('-', $_GET['page']);
+?>
+<section class="page-section" id="back-section">
+    <div class="container">
+      	<div class="row">
+        	<div class="col-lg-12">
+          		<form id="form" method="POST" action="<?= HOST. "manage/save-" . $url[1];?>" enctype="multipart/form-data" novalidate="novalidate">
+	                <?php if ($url[1] == "banque" && !empty($data)): $pageTitle = "Enregistrement d'une banque"; $banque = $data; ?>	            
+				    	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-4"></div>
+		            		<div class="col-md-4 block-div">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idBanque" name="idBanque" type="number" value="<?= $banque->getIdBanque();?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Code banque :</label>
+				                  	<input class="form-control focus_activated text-uppercase" id="codeBanque" name="codeBanque" type="text" value="<?= $banque->getCodeBanque();?>" required="required" data-validation-required-message="Veuillez entrer le code banque" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide ">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Nom de la banque :</label>
+				                  	<input class="form-control focus_activated text-capitalize" id="nomBanque" name="nomBanque" type="text" value="<?= $banque->getNomBanque();?>" required="required" data-validation-required-message="Veuillez entrer le nom de la banque" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-.]*" data-validation-regex-message="Caractères non valide ">
+				                  	<p class="help-block text-danger"></p>
+				                </div>	
+				                <div class="form-group">
+				                	<label class="label-input">Ville :</label>
+				                  	<input class="form-control focus_activated text-capitalize" id="ville" name="ville" type="text" value="<?= $banque->getVille();?>" required="required" data-validation-required-message="Veuillez entrer le ville" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide ">
+				                  	<p class="help-block text-danger"></p>
+				                </div>			                			                
+			            	</div>
+		            	</div>
+		            <?php endif; ?>
+
+		            <?php if ($url[1] == "categorieProfessionnelle" && !empty($data)): $pageTitle = "Enregistrement d'une catégorie professionnelle"; $categorieProfessionnelle = $data; ?>
+		            	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+					    </div>
+					        <div class="row">
+		            		<div class="col-md-3"></div>
+		            		<div class="col-md-5 block-div" style="margin-left: 50px;">
+			           			<div class="form-group hidden">
+				               		<input type="hidden" id="idCategorieProfessionnelle" name="idCategorieProfessionnelle" value="<?= $categorieProfessionnelle->getIdCategorieProfessionnelle();?>">
+				               	</div>
+				               	<div class="form-group">
+				               		<label class="label-input">Catégorie professionnelle :</label>
+			                 		<input class="form-control focus_activated" id="designation" name="designation" type="text" value="<?= $categorieProfessionnelle->getDesignation();?>" required="required" data-validation-required-message="Veuillez entrer une catégorie professionnelle" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide ">
+			                  		<p class="help-block text-danger"></p>
+			                	</div>
+			                	<div class="form-group">
+			                		<label class="label-input">Indice d'embauche :</label>
+			                		<input class="form-control focus_activated" id="indiceEmbauche" name="indiceEmbauche" type="number" value="<?= $categorieProfessionnelle->getIndiceEmbauche();?>" required="required" data-validation-required-message="Veuillez entrer un indice d'embauche" data-validation-regex-regex="^[0-9]*" data-validation-regex-message="Caractères non valide ">
+			                  		<p class="help-block text-danger"></p>
+			                	</div>
+			                	<div class="form-group">
+			                		<label class="label-input">Indice d'ancienneté :</label>
+			                		<input class="form-control focus_activated" id="indiceAnciennete" name="indiceAnciennete" type="number" value="<?= $categorieProfessionnelle->getIndiceAnciennete();?>" required="required" data-validation-required-message="Veuillez entrer un indice d'ancienneté" data-validation-regex-regex="^[0-9]*" data-validation-regex-message="Caractères non valide ">
+			                  		<p class="help-block text-danger"></p>
+			                	</div>			                			                
+		            		</div>
+		          		</div>
+		            <?php endif; ?>
+
+		            <?php if ($url[1] == "employe" && !empty($data)) : $pageTitle = "Enregistrement d'un employe "; extract($data); 
+		            	$employe->setIdEntreprise($_SESSION['user']['idEntreprise']);
+		            	?>
+		            	<?php if (!isset($_SESSION['variable']) && $url[0] == "manage/register") : header("Location:" . HOST . "manage/employes"); ?>
+		            	<?php elseif (isset($_SESSION['candidat']) && isset($_SESSION['poste'])) : 
+		            		$employe->setPhoto($_SESSION['candidat']['photo']);
+		            		$employe->setCivilite($_SESSION['candidat']['civilite']);
+		            		$employe->setNom($_SESSION['candidat']['nom']);
+		            		$employe->setPrenom($_SESSION['candidat']['prenom']);
+		            		$employe->setDateNaissance($_SESSION['candidat']['dateNaiss']);
+		            		$employe->setAdresse($_SESSION['candidat']['adresse']);
+		            		$employe->setVille($_SESSION['candidat']['ville']);
+		            		$employe->setContact($_SESSION['candidat']['contact']);
+		            		$employe->setEmail($_SESSION['candidat']['email']);
+		            		$employe->setPersonnalite($_SESSION['candidat']['personnalite']);
+		            	?>
+		            	<?php endif; ?>
+		            	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+          				<div class="row">	
+          					<div class="col-md-4">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control focus_activated" id="idEmploye" name="idEmploye" type="number" value="<?= $employe->getIdEmploye();?>">
+				                </div>
+			            		<div class="form-group hidden">
+				                  	<input class="form-control focus_activated" id="idCompte" name="idCompte" type="number" value="<?= $employe->getIdCompte();?>">
+				                </div>
+			            		<div class="form-group hidden">
+				                  	<input class="form-control focus_activated" id="idEntreprise" name="idEntreprise" type="number" value="<?= $employe->getIdEntreprise();?>">
+				                </div>	
+			            		<div class="form-group text-center">
+			            			<img class="img-fluid user " id="image" src="
+				            			<?php
+				            				if ($employe->getPhoto() != "") {
+				            					echo HOST . "../Web/Ressources/images/candidats/" . $employe->getPhoto();				            					
+				            				} else {
+				            					echo HOST ."../Web/Ressources/images/profilCandidat.png";
+				            				}
+				            			?>
+				            		">
+				            		<button class="btn btn-primary user" id="files" onclick="$('#photo').click(); return false;">Télécharger photo</button>
+				                  	<input class="form-control hidden" id="photo" name="photo" type="file" accept="image/*" value="">
+				                  	<input class="form-control hidden" id="photo" name="photo" type="text" value="<?= $employe->getPhoto(); ?>">
+			            		</div>
+				                <div class="form-group">
+				                	<label class="label-input">Civilité :</label>
+				                	<select  class="form-control span3" name="civilite" id="civilite" required="required" data-validation-required-message="Veuillez séléctionner un civilité.">
+						                <option class="text-center" value="">-- Choisir -- </option>
+						                <option <?php if ($employe->getCivilite()== "Mr") { echo "selected"; } ?> value="Mr">Monsieur</option>
+						                <option <?php if ($employe->getCivilite()== "Mme") { echo "selected"; } ?> value="Mme">Madame</option>
+						                <option <?php if ($employe->getCivilite()== "Mlle") { echo "selected"; } ?> value="Mlle">Mademoiselle</option>
+						            </select>
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Nom : </label>
+				                  	<input class="form-control text-uppercase" id="nom" name="nom" type="text" value="<?= $employe->getNom(); ?>" required="required" data-validation-required-message="Veuillez entrer un nom" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Prénom : </label>
+				                  	<input class="form-control text-capitalize" id="prenom" name="prenom" type="text" value="<?= $employe->getPrenom(); ?>" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+					                	<label class="label-input">Nombre d'enfants : </label>
+					                  	<input class="form-control text-capitalize" id="nombreEnfants" name="nombreEnfants" type="number" value="<?= $employe->getNombreEnfants(); ?>" min="0" max="20">
+					                  	<p class="help-block text-danger"></p>
+					                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Date de naissance : </label>
+				                	<label for="datepicker">
+						                <input class="form-control datepicker" id="datepicker_dateNaissance" type="text" value="<?php if (!is_null($employe->getDateNaissance())): $date = explode('-', $employe->getDateNaissance()); echo $date[2] . "/" . $date[1] . "/" . $date[0]; endif; ?>" autocomplete="off" placeholder="Date de naissance">
+					              	</label>
+				                  	<input class="form-control hidden" id="dateNaissance" name="dateNaissance" type="date"  required="required" data-validation-required-message="Veuillez entrer une date de naissance">
+				                  	<p class="help-block text-danger"></p>
+				                </div>				                
+				                <div class="form-group">
+				                	<label class="label-input">Lieu de naissance :</label>
+				                  	<input class="form-control text-capitalize" id="lieuNaissance" name="lieuNaissance" type="text" value="<?= $employe->getLieuNaissance(); ?>" required="required" data-validation-required-message="Veuillez entrer un lieu de naissance" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Adresse : </label>
+				                  	<input class="form-control text-capitalize" id="adresse" name="adresse" type="text" value="<?= $employe->getAdresse(); ?>" required="required" data-validation-required-message="Veuillez entrer un adresse" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Ville</label>
+				                  	<input class="form-control text-capitalize" id="ville" name="ville" type="text" value="<?= $employe->getVille(); ?>" required="required" data-validation-required-message="Veuillez entrer une ville" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+			                        <label class="label-input">Contact :</label>
+								    <select id="select-country" class="form-control focus_activated">
+								    	<option value="">Séléctionner un pays</option>
+								      	<?php 
+								      		$employeContact = explode('/', $employe->getContact());
+								      		foreach(unserialize(COUNTRIES) as $country): ?>
+							                <option 
+							                	<?php if ($employeContact[0] == $country['code']) { echo "selected"; } ?> value="<?= $country['code']; ?>">
+							                	<?= $country['country'] ?>
+							                </option>
+							            <?php endforeach; ?>
+								    </select>
+								    <input type="text" id="input-phone" class="form-control focus_activated" value="<?= array_key_exists(1, $employeContact) ? $employeContact[1] : ''; ?>" required="required" data-validation-required-message="Veuillez entrer un contact">			
+								    <p class="help-block text-danger"></p>		    
+								</div>
+			                    <div class="form-group hidden">
+			                        <input class="form-control focus_activated" id="contact" name="contact" type="text" value="test">
+			                    </div>
+			                    <div class="form-group">
+			                        <label class="label-input">Email :</label>
+			                        <input class="form-control text-lowercase focus_activated" id="email" name="email" type="email" value="<?= $employe->getEmail(); ?>" required="required" data-validation-required-message="Veuillez entrer un email.">
+			                        <p class="help-block text-danger"></p>
+			                    </div>
+          					</div>
+          					<div class="col-md-4">		
+				                <div class="form-group">
+						        	<label class="label-input">N° matricule :</label>
+						          	<input class="form-control focus_activated" id="matricule" name="matricule" type="number" value="<?= $employe->getMatricule();?>" required="required" data-validation-required-message="Veuillez entrer le numéro matricule">
+						          	<p class="help-block text-danger"></p>
+						        </div>
+						        <div class="form-group">
+				                	<label class="label-input">Service :</label>
+									<select  class="form-control focus_activated span3" name="idEntrepriseService" id="idEntrepriseService" required="required" data-validation-required-message="Veuillez choisir un service">
+										<option class="text-center" value="">-- Choisir --</option>
+									<?php foreach($services as $service): ?>
+						                <option value="<?= $service->getIdEntrepriseService(); ?>">
+						                	<?= $service->getService(); ?>
+						                </option>
+						            <?php endforeach; ?>
+						            </select>
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Poste :</label>
+									<select  class="form-control focus_activated span3" name="idEntreprisePoste" id="idEntreprisePoste" required="required" data-validation-required-message="Veuillez choisir un poste">
+										<option class="text-center" value="">-- Choisir --</option>
+									<?php foreach($postes as $poste): ?>
+						                <option value="<?= $poste->getIdEntreprisePoste(); ?>">
+						                	<?= $poste->getPoste(); ?>
+						                </option>
+						            <?php endforeach; ?>
+						            </select>
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+					                <label class="label-input">Catégorie Professionnelle :</label>
+									<select  class="form-control focus_activated span3" name="idCategorieProfessionnelle" id="idCategorieProfessionnelle" required="required" data-validation-required-message="Veuillez choisir une catégorie Professionnelle">
+										<option class="text-center" value="">-- Choisir --</option>
+										<?php foreach($categories as $categorie): ?>
+								            <option value="<?= $categorie->getIdCategorieProfessionnelle(); ?>">
+								                	<?= $categorie->getDesignation(); ?>
+								            </option>
+							            <?php endforeach; ?>
+							        </select>
+					                <p class="help-block text-danger"></p>
+					            </div>
+				                <div class="form-group">
+				                	<input type="hidden" name="chefHierarchique">
+				                	<label class="label-input">Chef hiérarchique :</label>
+									<select  class="selectpicker form-control focus_activated span3" multiple id="chefHierarchique" required="required" data-validation-required-message="Veuillez choisir un Chef">
+										<option class="text-center" value="">-- Choisir --</option>
+										<option <?php if ($employe->getChefHierarchique() == "0") { echo "selected"; } ?> value="0">Personne &#x1F609;</option>
+										<?php foreach($chefs as $chef): ?>
+							                <option 
+							                	<?php if ($chef->getIdEmploye() == $employe->getChefHierarchique()) { echo "selected"; } ?> value="<?= $chef->getIdEmploye(); ?>">
+							                	<?= strtoupper($chef->getNom()) . " " . ucwords($chef->getPrenom()); ?>
+							                </option>
+							            <?php endforeach; ?>
+						            </select>
+				                  	<p class="help-block text-danger"></p>
+				                </div>	
+			                	<label class="label-input"><?= ucwords($employe->getPrenom())?> est chef validateur :</label>
+								<div style="background-color: white;">
+									<div class="form-group" style="margin-left: 30%;">
+					  					<input class="form-group-input" type="radio" name="isValidator" id="flexRadioDefault1" checked>
+					  					<label class="form-group-label" for="flexRadioDefault1"> OUI </label>
+									</div>
+									<div class="form-group" style="margin-left: 30%; margin-top: -4%;">
+					  					<input class="form-group-input" type="radio" name="isValidator" id="flexRadioDefault2 checked">
+					  					<label class="form-group-label" for="flexRadioDefault2"> NON </label>
+									</div>
+				                </div>
+				                <div class="form-group">
+				                	<input type="hidden" name="myTeam">
+						        	<label class="label-input">Mes équipes/Service(chef seulement):</label>
+						          	<select  class="selectpicker form-control span3 focus_activated modal-input select-employe" multiple data-live-search="true" id="myTeam">
+						    			<!-- <option value="all">Tout services</option> -->
+						    			<?php foreach($services as $service): ?>
+							                <option value="<?= $service->getIdEntrepriseService(); ?>">
+							                	<?= $service->getService(); ?>
+							                </option>
+							            <?php endforeach; ?>
+				        			</select>
+						        </div>
+				                <div class="form-group">
+						        	<label class="label-input">Salaire :</label>
+						          	<input class="form-control focus_activated" id="salaire" name="salaire" type="number" value="<?= $employe->getSalaire(); ?>" required="required" data-validation-required-message="Veuillez entrer le salaire"  data-validation-regex-regex="[0-9]*" data-validation-regex-message="Chriffre obligatoire">
+						          	<p class="help-block text-danger"></p>
+						        </div>
+						        <div class="form-group">
+							        	<label class="label-input">Salaire en lettre</label>
+							        	<input class="form-control focus_activated" id="salaireEnLettre" name="salaireEnLettre" value="<?= $employe->getSalaireEnLettre(); ?>" required="required" data-validation-required-message="Veuillez entrer le salaire en lettre">
+							        	<p class="help-block text-danger"></p>
+							        </div>
+						        <div class="form-group">
+			                        <label class="label-input">Type de paiement :</label>
+								    <select class="form-control span3 focus_activated" name="typePaiement" id="typePaiement" required="required" data-validation-required-message="Veuillez choisir un type">
+								    	<option value="">-- Choisir --</option>
+								      	<?php 
+								      		foreach(unserialize(TYPE_PAIEMENT) as $typePaiement): ?>
+							                <option 
+							                	<?php if ($typePaiement == $employe->getTypePaiement()) { echo "selected"; } ?> value="<?= $typePaiement; ?>">
+							                	<?= $typePaiement ?>
+							                </option>
+							            <?php endforeach; ?>
+								    </select>	
+								    <p class="help-block text-danger"></p>		    
+								</div>
+				                <div class="form-group" id="block-banque">
+					                <div class="form-group hidden">
+							          	<input class="form-control" id="idCompteBanque" name="idCompteBanque" type="number" value="<?= $compteBanque->getIdCompteBanque(); ?>">
+					                </div>
+				                  	<div class="form-group">
+					                	<label class="label-input">Code banque : </label>
+										<select  class="form-control focus_activated span3" name="idBanque" id="idBanque">
+											<option class="text-center" value="">--Choisir--</option>
+										<?php foreach($banques as $banque): ?>
+							                <option 
+							                <?php if ($compteBanque->getIdBanque() == $banque->getIdBanque()) {
+							                	echo "selected";
+							                } ?>
+							                value="<?= $banque->getIdBanque(); ?>">
+							                	<?= $banque->getCodeBanque() . '(' . ucwords($banque->getNomBanque()) . ' ' . ucwords($banque->getVille()) . ')'; ?>
+							                </option>
+							            <?php endforeach; ?>
+							            </select>
+					                  	<p class="help-block text-danger" id="idBanque-message"></p>
+					                </div>
+					                <div class="form-group">
+					                	<label class="label-input">Numéro de compte :</label>
+							          	<input class="form-control" id="numeroCompte" name="numeroCompte" type="text" value="<?= $compteBanque->getNumeroCompte(); ?>">
+							          	<p class="help-block text-danger" id="numeroCompte-message"></p>
+					                </div>
+				                </div>
+						        <div class="form-group">
+						        	<label class="label-input">Numéro CNAPS :</label>
+						          	<input class="form-control focus_activated" id="numeroCnaps" name="numeroCnaps" type="number" value="<?= $employe->getNumeroCnaps(); ?>" required="required" data-validation-required-message="Veuillez entrer le numéro CNAPS"  data-validation-regex-regex="[0-9]*" data-validation-regex-message=" chiffre obligatoire">
+						          	<p class="help-block text-danger"></p>
+						        </div>
+						        <div class="form-group">
+			                        <label class="label-input">Statut CNAPS :</label>
+								    <select class="form-control span3 focus_activated" name="statutCnaps" id="statutCnaps" required="required" data-validation-required-message="Veuillez choisir un statut">
+								    	<option value="">-- Choisir --</option>
+								      	<?php 
+								      		foreach(unserialize(STATUT_CNAPS) as $statutCnaps): ?>
+							                <option 
+							                	<?php if ($statutCnaps == $employe->getStatutCnaps()) { echo "selected"; } ?> value="<?= $statutCnaps; ?>">
+							                	<?= $statutCnaps ?>
+							                </option>
+							            <?php endforeach; ?>
+								    </select>	
+								    <p class="help-block text-danger"></p>		    
+								</div>
+				                <div class="form-group">
+				                	<label class="label-input">OSIE :</label><br>
+						            <label class="container"><span style="margin-left: 35px;">Oui</span>
+							          <input type="radio" class="form-control" name="osie" id="osie" required="required" data-validation-required-message="Veuillez cochez une valeur" value="1" 
+							          <?php if ($employe->getOsie()== "1") { echo "checked"; } ?> >
+							          <span class="checkmark"></span>
+							        </label>
+						            <label class="container"><span style="margin-left: 35px;">Non</span>
+							          <input type="radio" class="form-control" name="osie" id="osie" required="required" data-validation-required-message="Veuillez cochez une valeur" value="0" 
+							          <?php if ($employe->getOsie()== "0") { echo "checked"; } ?>>
+							          <span class="checkmark"></span>
+							        </label> 
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Avance salaire :</label><br>
+						            <label class="container"><span style="margin-left: 35px;">Oui</span>
+							          <input type="radio" class="form-control" name="avanceSalaire" id="avanceSalaire" required="required" data-validation-required-message="Veuillez cochez une valeur" value="1" 
+							          <?php if ($employe->getAvanceSalaire()== "1") { echo "checked"; } ?> >
+							          <span class="checkmark"></span>
+							        </label>
+						            <label class="container"><span style="margin-left: 35px;">Non</span>
+							          <input type="radio" class="form-control" name="avanceSalaire" id="avanceSalaire" required="required" data-validation-required-message="Veuillez cochez une valeur" value="0" 
+							          <?php if ($employe->getAvanceSalaire()== "0") { echo "checked"; } ?> >
+							          <span class="checkmark"></span>
+							        </label> 
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Avance spéciale :</label><br>
+						            <label class="container"><span style="margin-left: 35px;">Oui</span>
+							          <input type="radio" class="form-control" name="avanceSpeciale" id="avanceSpeciale" required="required" data-validation-required-message="Veuillez cochez une valeur" value="1" 
+							          <?php if ($employe->getAvanceSpeciale()== "1") { echo "checked"; } ?> >
+							          <span class="checkmark"></span>
+							        </label>
+						            <label class="container"><span style="margin-left: 35px;">Non</span>
+							          <input type="radio" class="form-control" name="avanceSpeciale" id="avanceSpeciale" required="required" data-validation-required-message="Veuillez cochez une valeur" value="0" 
+							          <?php if ($employe->getAvanceSpeciale()== "0") { echo "checked"; } ?> >
+							          <span class="checkmark"></span>
+							        </label> 
+				                  	<p class="help-block text-danger"></p>
+				                </div>				                
+          					</div>
+          					<div class="col-md-4">
+          						<div class="form-group">
+							        <label class="label-input">Numéro CIN :</label>
+							       	<input class="form-control focus_activated" id="numeroCin" name="numeroCin" type="number" value="<?= $employe->getNumeroCin(); ?>" required="required" data-validation-required-message="Veuillez entrer le numéro de CIN"  data-validation-regex-regex="[0-9]{12}" data-validation-regex-message="12 chiffres obligatoires">
+							        <p class="help-block text-danger"></p>
+							    </div>
+							    <div class="form-group">
+					               	<label class="label-input">Date d'émission de la CIN : </label>
+					               	<label for="datepicker">
+					            		<input class="form-control datepicker" id="datepicker_dateCin" type="text" value="<?php if (!is_null($employe->getDateNaissance())): $date = explode('-', $employe->getDateCin()); echo $date[2] . "/" . $date[1] . "/" . $date[0]; endif; ?>" autocomplete="off">
+						            </label>
+					                <input class="form-control hidden" id="dateCin" name="dateCin" type="date"  required="required" data-validation-required-message="Veuillez entrer la date d'émission de la CIN">
+					                <p class="help-block text-danger"></p>
+					            </div>			                				                
+					            <div class="form-group">
+					                <label class="label-input">Lieu d'émission de la CIN :</label>
+					              	<input class="form-control text-capitalize" id="lieuCin" name="lieuCin" type="text" value="<?= $employe->getLieuCin(); ?>" required="required" data-validation-required-message="Veuillez entrer le lieu d'émission de la CIN" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide">
+					                <p class="help-block text-danger"></p>
+					            </div>
+								<label class="label-input">Trait de personnalité :</label>
+								<div class="form-group trait-personnalite">
+									<?php foreach($personnalites as $personnalite) : ?>
+										<label class="text-left"> 
+										  <input type="checkbox" name="qualite" value="<?= $personnalite->getQualite(); ?>" class="qualite" 
+										  <?php
+										  	$persos = explode('_', $employe->getPersonnalite());
+							                foreach ($persos as $perso) {
+							                  if ($personnalite->getQualite() == ucfirst($perso)) {
+							                  	echo "checked";
+							                  }
+							                }
+										  ?>
+										  >
+										  <?= $personnalite->getQualite(); ?>
+										</label><br>
+									<?php endforeach; ?>
+								</div>
+								<div class="form-group">
+									<input class="btn btn-warning" type="button" value="Ajouter une autre personnalité" id="autre" >
+									<input class="form-control hidden" id="autrePersonnalite" name="autrePersonnalite" type="text">
+								</div>
+								<div class="form-group" id="block-personnalite"></div>
+								<div class="form-group hidden">
+									<input class="form-control" type="text" name="personnalite" id="personnalite" />
+								</div>
+
+			            		<div class="form-group hidden">
+				                  	<input class="form-control focus_activated" id="statut" name="statut" type="number" value="<?php 
+				                  		if ($employe->getStatut() == "") {
+				                  			echo "1";
+				                  		} else {
+				                  			echo $employe->getStatut();
+				                  		}
+				                  	?>">
+				                </div>
+				                <label class="label-input">Donner autorisation comme :</label>
+				                <input type="hidden" name="menuAutorised" id="menuAutorised" value="">
+								<div style="background-color: white; padding-top: 15px;"> 
+									<?php  foreach($defaultMenuAutorisation as $key => $menu) : ?>
+										<?php  foreach($menu as $index => $subMenu) : ?>
+				                			<label class="label-input-submenu" style="margin-left: 30px;"><?=strtoupper($index)?> :</label>
+											<?php  foreach($subMenu as $titre) : $random = random_int(0, 100); ?>
+												<div class="form-group" style="margin-left: 30%;">
+								  					<input class="form-group-input" type="checkbox" name="addMenu" id="menu-<?=$random?>">
+								  					<label class="form-group-label" for="menu-<?=$random?>"> <?= $titre['title'];?></label>
+												</div>
+											<?php endforeach; ?>
+										<?php endforeach; ?>
+									<?php endforeach; ?>
+								</div>
+			            		<div class="form-group">
+				            		<button class="btn btn-secondary" id="files" onclick="$('#cin').click(); return false;">Télécharger CIN</button>
+				                  	<input class="form-control hidden" id="cin" name="cin" type="file" accept=".pdf" value="<?= $employe->getCin(); ?>">
+			            		</div>
+			            		<div class="form-group">
+				            		<button class="btn btn-secondary" id="files" onclick="$('#residence').click(); return false;">Télécharger le cértificat de résidence</button>
+				                  	<input class="form-control hidden" id="residence" name="residence" type="file" accept=".pdf" value="<?= $employe->getResidence(); ?>">
+			            		</div>
+			            		<div class="form-group">
+				            		<button class="btn btn-secondary" id="files" onclick="$('#bulletin').click(); return false;">Télécharger le bulletin n° 3</button>
+				                  	<input class="form-control hidden" id="bulletin" name="bulletin" type="file" accept=".pdf" value="<?= $employe->getBulletin(); ?>">
+			            		</div>
+			            		<div class="form-group">
+				            		<button class="btn btn-secondary" id="files" onclick="$('#cv').click(); return false;">Télécharger CV</button>
+				                  	<input class="form-control hidden" id="cv" name="cv" type="file" accept=".pdf" value="<?= $employe->getCv(); ?>">
+			            		</div>	
+			            		<div class="form-group">
+				            		<button class="btn btn-secondary" id="files" onclick="$('#lettreMotivation').click(); return false;">Télécharger la lettre de motivation </button>
+				                  	<input class="form-control hidden" id="lettreMotivation" name="lettreMotivation" type="file" accept=".pdf" value="">
+			            		</div> 
+			            		<div class="form-group">
+				            		<button class="btn btn-secondary" id="files" onclick="$('#autreDossier').click(); return false;">Télécharger autres dossiers</button>
+				                  	<input class="form-control hidden" id="autreDossier" name="autreDossier[]" type="file" accept=".pdf" value="" multiple>
+			            		</div>
+          					</div>
+          				</div>
+		            <?php endif;?>	            
+
+		            <div class="col-lg-12 text-center">
+	                	<div id="success"></div>
+	                	<button id="submit" class="btn btn-info btn-xl" type="submit">
+	                		Enregistrer
+	                	</button>
+	                	<a class="btn btn-danger btn-xl cancel" href="#" data-toggle="modal" data-target="#cancelModal" data-url="<?= 'cancel-' . $url[1]; ?>">Annuler</a>          	
+	              	</div>
+          		</form>
+        	</div>
+      	</div>
+    </div>
+</section>
+
+<!-- Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="text-confirmation"></p>
+      </div>
+      <div class="modal-footer">
+        <a id="action-cancel" class="btn btn-success">Oui</a>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Non</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script> 
+	var defaultMenuAutorisation = <?= json_encode($defaultMenuAutorisation) ?>;
+	var pathname = new URL(window.location.href).pathname; 
+	var cleave = new Cleave('#input-phone', {
+      phone:true,
+      phoneRegionCode: $('#select-country').children("option:selected").val()
+    });
+	if ($('#select-country').children("option:selected").val() == "") {
+    	$('#input-phone').addClass('hidden');
+    }
+	$('#select-country').change(function(){
+		if ($('#select-country').children("option:selected").val() == "") {
+	    	$('#input-phone').addClass('hidden');
+	    } else {
+			$('#input-phone').removeClass('hidden');
+	      	cleave.setPhoneRegionCode(this.value);
+	      	cleave.setRawValue('');
+	    }
+    });
+    $("#submit").click(function(){
+		var date = $("#datepicker_dateNaissance").val().split('/');
+		$("#dateNaissance").val(date[2] + '-' + date[1] + '-' + date[0]);
+		var date = $("#datepicker_dateCin").val().split('/');
+		$("#dateCin").val(date[2] + '-' + date[1] + '-' + date[0]);
+		if ($('#select-country').val() != "" && $('#input-phone').val() != "") {
+			$('#contact').val($('#select-country').val() + "/" + $('#input-phone').val());
+		}
+	});
+</script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/bootstrap-select.min.js"></script>

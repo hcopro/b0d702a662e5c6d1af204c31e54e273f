@@ -1,0 +1,134 @@
+	<table class="table table-striped small-first-col" id="table-back">
+		<thead>
+			<tr>
+				<th>Items</th>
+				<th class="text-center">Actions</th>
+			</tr>
+		</thead>
+		<tbody id="tableSearch" class="body-half-screen"> 
+			<?php foreach ($data['items'] as $item): ?>
+				<tr class="">
+					<td>
+		   				<? if ($item) : echo $item->getDescription(); endif; ?>
+					</td>
+					<td class="text-center">
+						<a href="item_detail?idItem=<?= $item->getIdItem(); ?>" class="btn btn-info">
+			        		<i class="fas fa-eye"></i>
+					    </a>
+				      	<button class="btn btn-warning" data-toggle="modal" data-target="#modalEnregistrement<?=$item->getIdItem()?>" id="modifier-item<?=$item->getIdItem()?>" data-url="update-item?idItem=<?=$item->getIdItem()?>" >
+				        	<i class="fas fa-edit"></i>	
+				      	</button>
+				      	<a href="delete-item?idItem= <?= $item->getIdItem(); ?>" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal<?=$item->getIdItem(); ?>" data-id="<?= $item->getIdItem(); ?>"  data-url="delete-item?idItem=<?= $item->getIdItem(); ?>">
+				         	<i class="fas fa-trash"></i>
+				        </a>
+					</td>
+					<!-- Debut Modal suppression item-->
+						<div class="modal fade" id="deleteModal<?=$item->getIdItem(); ?>" tabindex="-1" role="dialog" aria-hidden="true">
+						  <div class="modal-dialog modal-dialog-centered" role="document">
+						    <div class="modal-content">
+						      <div class="modal-header">
+						        <h5 class="modal-title text-center">Confirmation</h5>
+						        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          <span aria-hidden="true">&times;</span>
+						        </button>
+						      </div>
+						      <div class="modal-body">
+						        <p id="text-confirmation"> Voulez-vous vraiment supprimer " <?= $item->getDescription(); ?>" ?</p>
+						      </div>
+						      <div class="modal-footer">
+						        <a id="action-delete" class="btn btn-success" href="delete-item?idItem= <?= $item->getIdItem(); ?>">Oui</a>
+						        <button type="button" class="btn btn-danger" data-dismiss="modal">Non</button>
+						      </div>
+						    </div>
+						  </div>
+						</div>
+					<!-- Fin du Modal Suppression item -->
+
+					<!-- Debut du Modal Modification item -->
+						<div class="modal fade" id="modalEnregistrement<?=$item->getIdItem()?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+							<div class="modal-dialog modal-dialog-centered" role="document">
+								<div class="modal-content">
+									<form method="POST" id="form" action="<?= HOST . 'manage/entreprise/evaluation/update-item' ?>" enctype="multipart/form-data" novalidate="novalidate">
+										<div class="modal-header">
+											<div class="text-center" style="width: 100%;">
+									      		<h5 class="modal-title" id="exampleModalLabel"> <?= 'Modification '.lcfirst($pageTitle) ?></h5>
+									      	</div>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+						  					<div class="card p-3" style="background: #efefff;">
+						  						<div class="form-group hidden">
+									              	<input class="form-control" id="idItem" name="idItem" type="number" value="<?= $item->getIdItem(); ?>" readonly>
+									              	<p class="help-block text-danger"></p>
+												</div>
+												<div class="form-group hidden">
+														<input class="form-control" id="idEntreprise" name="idEntreprise" type="number" value="<?= $_SESSION['user']['idEntreprise']; ?>" readonly>
+														<p class="help-block text-danger"></p>
+												</div>
+									            <div class="row">
+						  							<div class="col-md-4">
+						  								<span class="titre">Trait : </span>
+						  							</div>
+						  							<div class="col-md-8">
+						  								<div class="form-group">
+						  									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+										                  	<select  class="form-control span3 focus_activated modal-input" name="idTrait" id="idTrait">
+										                    	<option class="text-center" value=""></option>
+										                    	<?php foreach($data['traits'] as $trait): ?>
+										                      	<option 
+										                        	value="<?= $trait->getIdItem(); ?>">
+										                        	<?= ucfirst($trait->getDescription()); ?>
+										                      	</option>
+										                    	<?php endforeach; ?>
+										                  	</select>
+									                	</div>
+						  							</div>
+						  						</div>
+						  						<div class="form-group hidden">
+									              	<input class="form-control" id="idTrait" name="idTrait" type="number" value="<?= $trait->getIdItem(); ?>" readonly>
+									              	<p class="help-block text-danger"></p>
+												</div>
+						  						<hr>
+												<div class="row">
+													<div class="col-md-4">
+														<span class="titre">Item : </span>
+													</div>
+													<div class="col-md-8">
+														<div class="form-group">
+															<i class="fa fa-pencil-alt icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+															<input class="form-control focus_activated text-capitalize modal-input" id="description" name="description" type="text" required="required" data-validation-required-message="Entrez l'item svp!" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùçâ |'-?<>,;:!\/'']*" data-validation-regex-message="Caractères non valide" placeholder="Saisir un item" value="<?=$item->getDescription(); ?>">
+															<p class="help-block text-danger"></p>
+														</div>
+													</div>
+												</div>
+												<hr>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<div class="row" style="width: 105%!important;">
+									      		<div class="col-md-3">
+									      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+									      		</div>
+									      		<div class="col-md-5"></div>
+									      		<div class="col-md-4">
+									      			<div class="form-group"> 
+									      				<button type="submit" id="submit" class="btn btn-md btn-info">
+									      					Enregister 
+									      				</button>
+									      			</div>
+									      		</div>
+									      	</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					<!-- Fin du Modal Modification item -->
+				</tr>
+			<?php endforeach;?>
+		</tbody>
+	</table>
+
+

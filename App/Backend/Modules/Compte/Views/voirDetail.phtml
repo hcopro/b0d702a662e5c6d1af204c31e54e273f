@@ -1,0 +1,138 @@
+<?php
+  $url = explode("/", $_GET['page']);
+  $url = $url[1];
+?>
+<section class="page-section" id="back-section">
+    <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <a href="<?= HOST . $_SESSION['previousUrl'];?>" class="btn btn-primary rounded-circle">
+              <i class="fas fa-arrow-left"></i>
+            </a>
+            <h2 class="text-capitalize section-heading text-center">Détail</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+              <div class="row profil-detail">
+                <?php if ($url == "candidat" && !empty($data)): extract($data); $pageTitle = "Candidat : " . ucwords($candidat->getNom()); ?>
+                  <div class="col-md-4">
+                    <img class="img-fluid userDetail " src="
+                      <?php
+                        if ($candidat->getPhoto() != "") {
+                          echo HOST . "../Web/Ressources/images/candidats/" . $candidat->getPhoto();
+                        } else {
+                          echo HOST ."../Web/Ressources/images/profilCandidat.png";
+                        }
+                      ?>
+                    ">
+                    <h4> <?= $candidat->getCivilite() . ' ' . strtoupper($candidat->getNom()) . ' ' . ucwords($candidat->getPrenom()); ?> </h4>
+                    <?php $age = date("Y-m-d") - $candidat->getDateNaiss(); echo "<h5>" . $age . " ans</h5>"; ?> 
+                    <i> <?= ucfirst($candidat->getDescription()); ?> </i><hr> 
+                  </div>
+                  <div class="col-md-4">
+                    <?php if($candidat->getPersonnalite() != "") : ?>
+                      <strong> Personnalité : </strong>
+                      <ul> <?php 
+                      $personnalite = "";
+                      $persos = explode('_', $candidat->getPersonnalite());
+                      foreach ($persos as $perso) {
+                        if (!empty($perso)) {
+                          $personnalite .= "<li><i>" . $perso . "</i></li>";
+                        }
+                      }
+                      echo ucfirst($personnalite);
+                      ?></ul>
+                    <?php endif; ?>
+                    <strong> Adresse : </strong><i> <?= $candidat->getAdresse() . " " . ucwords($candidat->getVille()); ?> </i> <br>
+                    <strong> Contact : </strong><i> <?php $contact = explode('/', $candidat->getContact()); echo $contact[1]; ?> </i><br>
+                    <strong> Email : </strong><i> <?= strtolower($candidat->getEmail()); ?> </i>                
+                  </div>
+                <?php endif ?>
+
+                <?php if ($url == "entreprise" && !empty($data)): extract($data); $pageTitle = "Entreprise : " . ucwords($entreprise->getNom()); ?>
+                  <div class="col-md-4">
+                    <img class="img-fluid userDetail " src="
+                      <?php
+                        if ($entreprise->getLogo() != "") {
+                          echo HOST . "../Web/Ressources/images/entreprises/" . $entreprise->getLogo();
+                        } else {
+                          echo HOST ."../Web/Ressources/images/defaultLogo.png";
+                        }
+                      ?>
+                    ">
+                    <h4> <?= $entreprise->getNom(); ?> </h4> 
+                    <strong>Secteur d'activité : </strong> <i><?= ucfirst($entreprise->getSecteurActivite()); ?></i><br>
+                    
+                  </div>
+                  <div class="col-md-4">
+                    <strong>Description : </strong> <i><?= ucfirst($entreprise->getDescription()); ?></i><hr>
+                    <strong> Représentant : </strong>
+                    <i> <?= ucwords($entreprise->getNomRepresentant()) . ', ' . $entreprise->getQualiteRepresentant(); ?> </i> <br>
+                    <strong> Référence RCS : </strong>
+                    <i> <?= $entreprise->getRcs(); ?> </i><br>
+                    <strong> Référence NIF : </strong>
+                    <i> <?= $entreprise->getNif(); ?> </i><br>
+                    <strong> Référence STAT : </strong>
+                    <i> <?= $entreprise->getStat(); ?> </i> <hr>
+                    <strong> Adresse : </strong>
+                    <i> <?= $entreprise->getAdresse() . " " . ucwords($entreprise->getVille()); ?> </i><br>
+                    <strong> Contact : </strong>
+                    <i> <?php $contact = explode('/',  $entreprise->getContact()); echo $contact[1]; ?> </i><br>
+                    <?php if($entreprise->getContactRh() != 0) : ?>
+                      <strong> Contact RH : </strong>
+                      <i> <?= $entreprise->getContactRh(); ?> </i><br>
+                    <?php endif; ?>
+                    <strong> Email : </strong>
+                    <i> <?= strtolower($entreprise->getEmail()); ?> </i>                
+                  </div>
+                <?php endif ?>
+
+                <?php if ($url == "superadmin" && !empty($data)): extract($data); $pageTitle = "Superadministrateur : " . ucwords($superadmin->getNom()); ?>
+                  <div class="col-md-2"></div>
+                  <div class="col-md-4"><img class="img-fluid userDetail " src="
+                      <?php
+                        if ($superadmin->getPhoto() != "") {
+                          echo HOST . "../Web/Ressources/images/superadmins/" . $superadmin->getPhoto();
+                        } else {
+                          echo HOST ."../Web/Ressources/images/profilAdmin.png";
+                        }
+                      ?>
+                    ">
+                    <h4> <?= ucwords($superadmin->getNom()); ?> </h4> 
+                    <strong>Rôle : </strong> <label><?= ucfirst($superadmin->getRole()); ?></label><br>
+                    <strong> Contact : </strong>
+                    <label> <?php $contact = explode('/', $superadmin->getContact()); echo $contact[1]; ?> </label><br>
+                    <strong> Email : </strong>
+                    <label> <?= strtolower($superadmin->getEmail()); ?> </label>                
+                  </div>
+                <?php endif ?>
+
+                <?php if (($url == "superadmin" || $url == "entreprise" || $url == "candidat") && !empty($data)): ?>
+                  <div class="col-md-4">
+                    <strong>Compte :</strong><hr>
+                    <strong>Pseudo : </strong> <label><?= $compte->getLogin(); ?></label><br>
+                    <strong>Statut du compte :</strong>
+                    <?php 
+                      if ($compte->getStatut() == "active") {
+                        echo "<i style='color:green'>Activé</i>";
+                        echo "<a class='btn btn-danger' href='" . HOST . "manage/update-compte?idCompte=" . $compte->getIdCompte() . "' id='update'>Désactiver</a>";
+                      } else if ($compte->getStatut() == "desactive"){
+                        echo "<i style='color:red'>Désactivé</i>";
+                        echo "<a class='btn btn-success' href='" . HOST . "manage/update-compte?idCompte=" . $compte->getIdCompte() . "' id='update'>Activer</a>";
+                      } else if ($compte->getStatut() == "archive"){
+                        echo "<i style='color:yellow'>Archivé</i>";
+                        echo "<a class='btn btn-success' href='" . HOST . "manage/update-compte?idCompte=" . $compte->getIdCompte() . "' id='update'>Réstaurer</a>";
+                      }
+                    ?>
+                  </div>
+                <?php endif ?>
+
+                <?php if (empty($data)): ?>
+                  <label><?= $url ?> introuvable</label>
+                <?php endif ?>
+              </div>
+          </div>
+        </div>
+    </div>
+</section>

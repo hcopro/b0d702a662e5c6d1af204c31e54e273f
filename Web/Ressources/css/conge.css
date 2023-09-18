@@ -1,0 +1,180 @@
+.card-light-grey {
+	background: #cfd8dc;
+}
+
+.card-extra-light-grey {
+	background: #ecf2f4;
+}
+
+.card-light-blue {
+	background: #9cc6f0;
+}
+
+.card-light-green {
+	background: #b1f0cb;
+}
+
+.card-light-red {
+	background: #f0b9b9;
+}
+
+.card-light-pink {
+	background: #feb7d1;
+}
+
+.card-light-cyan {
+	background: #9cf2fc;
+}
+
+.card-light-yellow {
+	background: #fbdfa5;
+}
+
+.card-border-green {
+	border: 1px solid #00c853;
+}
+.card-border-green:hover {
+	background:  #a2f4c3;
+}
+
+.card-border-yellow {
+	border: 1px solid #ffab00;
+}
+.card-border-yellow:hover {
+	background:  #fbdfa5;
+}
+
+.card-border-red {
+	border: 1px solid #d32f2f;
+}
+.card-border-red:hover {
+	background:  #fbb5b5;
+}
+
+.card-border-blue {
+	border: 1px solid #1976d2;
+}
+.card-border-blue:hover {
+	background:  #b5d9fc;
+}
+
+.card-border-grey {
+	border: 1px solid #546e7a;
+}
+.card-border-grey:hover {
+	background:  #d2d3d3;
+}
+
+.card-border-light-grey {
+	border: 1px solid #cfd8dc;
+}
+.card-border-light-grey:hover {
+	background:  #edf0f1;
+}
+
+.card-container {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.card-down {
+	filter: brightness(100%);
+}
+
+.card-jump {
+	filter: brightness(75%);
+}
+
+.card-hover:hover {
+	filter: brightness(75%);
+}
+
+.card-1 {
+	width: 7%;
+	margin-left: 0.5%;
+}
+
+.card-2 {
+	width: 14.5%!important;
+	margin-left: 0.5%;
+}
+
+.card-3 {
+	width: 22%!important;
+	margin-left: 0.5%;
+}
+
+.card-4 {
+	width: 29.5%!important;
+	margin-left: 0.5%;
+}
+
+.card-5 {
+	width: 37%!important;
+	margin-left: 0.5%;
+}
+
+.card-pointage {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.th-pointage {
+	width: 9%!important;
+	max-width: 9%!important;
+}
+
+#new-tab-button {
+	display: table;
+    table-layout: fixed;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    margin-bottom: 10px;
+}
+
+#new-tab-button li {
+    display: table-cell;
+    width: 20%;
+}
+
+#new-tab-button li a {
+    display: block;
+    padding: .5em;
+    background: #f4f5f9;
+    text-align: center;
+    color: #283e5a;
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 2px;
+    font-weight: bolder;
+    opacity: 0.8;
+}
+
+#new-tab-button li a:hover, #new-tab-button .is-active a {
+    border-bottom: 3px solid #1f487c;
+    background: #e8eaf3;
+    opacity: 1.0;
+}
+
+#form > div.modal-body > div > hr {
+	margin: -15px 0px 10px 0px!important;
+}
+
+.fixe-droite-1 {
+	bottom: 30px;
+	right: 20px;
+	font-size: 0.8em!important;
+}
+
+.fixe-droite-2 {
+	bottom: 70px;
+	right: 20px;
+}
+
+.tippy-act:hover {
+	transform: scale(1.2);
+}

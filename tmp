@@ -1,0 +1,1325 @@
+3
+# début
+# nom: table_présence
+# description: Créer une ligne de présence pour chaque employé de chaque entreprise.
+00 02 * * * /usr/bin/php /var/www/html/sites/fabrice_randriamihamina/sirhprod.s188766.com/html/App/Crons/presence.php
+# nom: nouveau_congé
+# description: Créer un nouveau cumul de congé pour l'année courante pour chaque employé de tous les entreprises.
+01 01 01 01 * /usr/bin/php /var/www/html/sites/fabrice_randriamihamina/sirhprod.s188766.com/html/App/Crons/nouveauConge.php
+# nom: cumul_congé
+# description: Ajouter 2,5 jours aux congés de chaque employé de chaque entreprise
+01 02 28 * * /usr/bin/php /var/www/html/sites/fabrice_randriamihamina/sirhprod.s188766.com/html/App/Crons/cumulConge.php
+# fin
+
+
+    
+    OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    OOOOO                         EN ATTENTE                            OOOOO
+    OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    
+     
+        DOWNLOAD 
+        MANAGER CONGE
+        MANAGER PRESENCE
+        TRACKINGTASK
+        LISTERTRACKING
+        ROOT
+        CURRENTTASK
+        MENUENTREPRISE
+        
+        1 ) Planning de congé ampina FILTRE:
+                      - absent ==> si et seulement si la date est aujourd'hui ou hier car le jour est précis
+                      - présent ==> si et seulement si la date est aujourd'hui ou hier car le jour est précis
+                      - congé ==> si et seulement si la date est aujourd'hui ou hier car le jour est précis
+                      - permission ==> si et seulement si la date est aujourd'hui ou hier car le jour est précis
+                      - date (aujourd'hui, hier, cette semaine, semaine passée, en mois)
+        *********************************************************************************************************************************************************************                
+                  
+                  
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            2 ) debug sur localisation salarié de se connecter
+            *********************************************************************************************************************************************************************
+            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            3 ) Importer tous les employe de l'entreprise en xlxsx ou csv
+            *********************************************************************************************************************************************************************
+            
+                            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            
+            4 ) reglage abscense par congé si employé est présent lee matin mais partir l'apres-midi
+            *********************************************************************************************************************************************************************
+                            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            5 ) TABLE BANQUE SIGLE, CODE BANQUE LASA MIFANGARO AM CODE BIC IBAN SNS
+            *********************************************************************************************************************************************************************
+            Nampiko codde_bic sy sigle ao am table banque le 23/08/2022 ts mbola ao am prod io a, fa ao am pre-prod iany atreto aloh e
+                            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            6 ) AFFICHAGE AUTOMATIQUE SALAIRE EN LETTRE LORS AJOUT OU MODIFICATION EMPLOYE
+            *********************************************************************************************************************************************************************
+                            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+             
+            7 ) AFFICHAGE LE MOT DE PASSE POUR VOIR & VÉRIFIER L'INPUT
+            *********************************************************************************************************************************************************************
+                            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+    
+
+        Ao amny  madanet.info no midoc 23/05/2022
+        
+        jerena hoe hebergement local tanteraka ve no proposénzareo,
+
+        inona ilay type hébergement
+
+        Local = eto Mada fa tsy hoe OVH ou autre
+
+        ahoana ny sécurité donnée
+
+        Merci
+
+    
+
+    
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+    
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        DijlG$ooLJ0li2HHyr => mdp wordpress unsing twigg
+
+        install timber.
+        terminal Alt+1 install on git clone https://github.com/JakeWharton/timber.git
+
+
+
+
+        mdp mail ity an
+
+          Vous pouvez accéder au webmail en utilisant cet URL : https://wm.simafri.com/aser25
+        - h.rajaoarisoa@hco.mg
+          mdp: RTF4LqxqHl
+        
+        - a.narimilanto@hco.mg => M3r95YVhl
+        - recrutement@hco.mg => f3VkPYDI
+        
+        - t.ndrosonirina@hco.mg => lH32ufiNyk
+        - contact@hco.mg => Vg3wOx1G8
+        - info@hco.mg => rjrKpWs5A
+        
+        - l.raveloarison@hco.mg => jygRdyxbP6
+        - technique@hco.mg => te8ccnB2E_DD:JJiv
+        - super.admin@hco.mg => QVmSEz76qw
+        
+        - noreply@hco.mg => u1fnuoJv5
+
+        ************** da-uk2.cloudns.io
+
+        FTP
+
+          devlanskysirh@hco.mg => xCVKdXD1mx , hôte : 81.19.215.20
+
+          db => Cdna7K6m1 sirh => user sirhdev :oDABuL1PJa
+
+
+        WORDPRESS
+        AO AM LAY site.presentation.hco.mg
+        Admin Username => admin
+        Admin Password => W$2cWykX#6
+        Admin Email => super.admin@hco.mg
+
+
+        WORDPRESS
+        AO AM LAY site.hco.mg
+        Database Name   hcomg_wp794
+        Database User   hcomg_wp794
+        Database Host   localhost
+
+        Admin Username => admin
+        Admin Password => i#P1qIaSI(PuJ6CHb6U@WSCX
+        Admin Email => 
+
+
+
+
+        WORDPRESS
+        AO AM LAY hco.mg
+        Database Name   hcomg_wp451
+        Database User   hcomg_wp451
+        Database Host   localhost
+
+        Admin Username => adminhco
+        Admin Password => 56YKKZ$Hkm
+        Admin Email => admin@hco.mg
+        url : https://hco.mg/site.hco
+
+
+
+
+        t6GdAvPMKB
+
+
+          var tab4 = "/manage/entreprise/formation";
+         tabformationemployeeeee
+
+
+        login: adminlanskyhco
+        mdp: 2J%1$bJ00Q
+
+
+        login: admintest
+         mdp: SHskQ8^(#FCM*0eqh6
+
+         Imagine a farmer wants to expand his farm, but he does not have enough money for further development. Business is going well, but it requires additional capital to make it even better. There is not enough money for the supply of seeds, construction of a chicken coop, hiring of milkmaids. In this case, the farmer can issue shares, for example 1,000 shares. And sell some of these shares to investors.
+
+        Each share is an ownership in the company. Anyone who buys a share will become a co-owner of the farm and will be able to influence it’s strategy: vote at shareholders' meetings, nominate managers. The more shares the investor has - the greater is his influence on the business. In addition, the company can decide to send him a part of annual profits, called dividends.
+
+        DEFINITION:
+
+        A stock is a unit of ownership in a company — If you own a stock, that makes you a shareholder, meaning that you may be eligible to receive dividends if the company succeeds and you may have a vote in some company decisions. 
+            
+
+         Now that the company has shares, at any time you can evaluate its market value, that is, find out it’s capitalization.
+
+        To do this, the number of shares must be multiplied by their price per share.
+
+        As the price of the stock changes (or the number of shares outstanding changes), so will the company’s market cap. Companies can be sorted into three market capitalization categories: “small cap” ( $300M–$2B), “mid cap” ($2B–$10B), and “large cap” ($10B+).
+
+        EXAMPLE:
+
+        On 27th of May 2022, Microsoft’s market capitalization was $2 trillion. Doing the math: Its nearly 7.5 billion shares * the $270 share price it hit that day = $2 trillion.
+
+        DEFINITION: 
+
+        Market capitalization (aka “market cap”) is one way to measure the size of a company by multiplying its total number of shares by its stock price. 
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+    OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    OOOOO                         EN COURS                              OOOOO  voir chat le ,20 avr., 09:22
+    OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    
+    
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php
+        
+        MANOMBOKA 08/11/2022 NY PRESENCE LASA DUPLIQUE JUSQUE 20/12/2022
+
+
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+           
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/.htaccess compression files  ????????
+
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/index.phtml ???????????????????????????????
+        
+        ===> reconnexion wordpressdia wp-admin na admin na wp-login vo afak manao (redirige vers) connexion indray sinon ts maita ny back-office na le fanamboara ny page
+        
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+        NONTE IMPORTANT:
+            1) mila amboarina ny ao am getSuivis fa pointage tsis fin no statik ho $pointage->setFin('18:30:21')
+            2) declarena ny durée de trravail an'le entreprise hanaovana an'le calcul d'heure de travail par rapport an'le tâche
+         
+     
+          
+         Aaffichage de  graph ddu retard, ce 25/10/2022
+        *********************************************************************************************************************************************************************
+
+    
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+               
+            Solde de congé deebhugena fa misy diso ny affichage na calcule en heure mihitsy a. ary asiana soldecumuule dans l'année
+            *********************************************************************************************************************************************************************
+
+            
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+               
+            historique de conggé :  raha vao eo amin'ny Historique de congé aho dia tsy afaka manao clic eo amin'ilay flèche hampiditra congé
+            *********************************************************************************************************************************************************************
+
+            
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              
+                      
+              
+            
+            
+                 
+            
+            ===> reconnexion wordpressdia wp-admin na admin na wp-login vo afak manao (redirige vers) connexion indray sinon ts maita ny back-office na le fanamboara ny page
+            
+                            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+               
+                                ce 2023-05-08 j'ai oublié ce que signifie ?????
+                                                            manage/candidatures_entreprise
+                                                            manage/offres
+                                                            manage/create-offre
+                                                            manage/entretiens
+                                                            manage/interlocuteurs
+
+        *********************************************************************************************************************************************************************
+
+    
+                            
+       ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+       debug barometer ce 2023-08-02 suspondu ce 2023-08-03 suspendu
+
+       /home/lansky/SIRH_PROJECT/DevReal_SIRH/Web/Ressources/js/listeBarometre.js
+       /home/lansky/SIRH_PROJECT/DevReal_SIRH/Web/Ressources/js/barometerGraph.js
+       /home/lansky/SIRH_PROJECT/DevReal_SIRH/Web/Ressources/js/listeBarometre.js
+       /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Modules/Barometre/Model/ManagerModuleBarometre.php
+       /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Modules/Barometre/Views/barometerGraph.phtml
+       /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Modules/Barometre/Views/drawBarometer.phtml
+        /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Config/routes.xml
+        
+
+OPTIMISATION DU CODE ET DEBUG LES EREURS DANS LE LOGS
+
+/home/hcomg/domains/sirh.hco.mg/public_html/index.php => ok
+/home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Paie/Model/ManagerModulePaie.php => ok
+/home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Presence/Model/ManagerModulePresence.php  => ok
+/home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Formation/Views/listerFormations.phtml => ok
+/home/hcomg/domains/sirh.hco.mg/public_html/Lib/Core/Application.php => ok
+/home/hcomg/domains/sirh.hco.mg/public_html/App/Frontend/FrontendApplication.php => ok
+/home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Presence/Views/voirTemps.phtml => ok
+/home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Presence/Views/listerRetards.phtml => ok
+/home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Presence/Views/listerJournees.phtml => ok
+/home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Conge/Views/voirPlanning.phtml => ok
+/home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Evaluation/Model/ManagerModuleEvaluation.php => ok
+/home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Recrutement/Model/ManagerModuleRecrutement.php => ok
+/home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Recrutement/Views/afficherForm.phtml 
+=> ok
+/home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Conge/Model/ManagerModuleConge.php => ok : égal tout
+/home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Barometre/Views/lister.phtml => ok
+/home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Employe/Model/ManagerModuleEmploye => ok
+/home/hcomg/domains/sirh.hco.mg/public_html/Lib/Core/PhpDocx.php => ok
+
+  
+************
+    Repartition heure affaire personne ST-1er Tri 23
+
+    /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Core/PublicFonctions.php
+    /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+    
+        
+       
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    ùùùùùùùùùùùùùùùùùù%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùù
+    IDÉE OFFLINE :
+        - créer une application hors ligne
+        - creer les compte du salarié en ligne et importer la base de donnée de l'entreprise seulement (les identifiant concernant des salariés est imporant) => quelques clicks
+        - lors de modif et ajout écrire dans un fichier requette sql par exemple et le cripter
+        - vider le fichier lorsqu'on le prendre (action irreversible ou on archive), faire chaque mois  => quelques clicks 
+        - envoyer le scripte télécharger via facebook, mail, etc... (réseaux sociaux) => sans besoin se deplacer
+        - importer le fichier et mettre à jours la base de données  => quelques clicks
+    ùùùùùùùùùùùùùùùùùù%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùù
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    OOOOO                                                               OOOOO
+    OOOOO                         FAIT                                  OOOOO
+    OOOOO                                                               OOOOO
+    OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    
+
+            2023-08-30 tracking extraction en xlsx fait ce 2023-09-12
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+            
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Core/PublicFonctions.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerTypePermission.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/PresenceController.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerTracking.phtml
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/voirSuivi.phtml
+        *********************************************************************************************************************************************************************
+
+            https://trello.com/c/xPccvbNS/110-le-dimanche-est-d%C3%A9duit-des-jours-de-cong%C3%A9 modif ce 2023-08-25 => fait ce 2023-08-28
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+            ALTER TABLE `employe_permission` ADD `motif_refus` TEXT NOT NULL AFTER `date`;
+            ALTER TABLE `parametre_conge` ADD `deduct_weekend` TINYINT(2) NOT NULL DEFAULT '0' AFTER `calcul`;
+            ALTER TABLE `parametre_conge` ADD `notify_absence` TINYINT(2) NOT NULL DEFAULT '1' AFTER `deduct_weekend`;
+            ALTER TABLE `conge` ADD `allow` TINYINT(2) NOT NULL DEFAULT '0' COMMENT 'Autorisation de redemander un congé dans la plage de date qui ont été réfusée' AFTER `motifRefus`;
+
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Core/PublicFonctions.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/EmployePermission.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/ParametreConge.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Conge.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php ::: ESORINA LE TAO
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Views/voir.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Views/listerValidationConges.phtml
+
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Views/listerValidationConges.phtml :::ty miandry an'i Hasina
+
+
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerDemandePermissions.phtml
+        *********************************************************************************************************************************************************************
+
+            https://trello.com/c/KPdJ77aZ/106-ne-pas-recevoir-mail-de-notification-en-ajoutant-un-choix-au-param%C3%A8tre-du-pointage ce 2023-08-22 fait 2023-08-23
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            ALTER TABLE `parametre_pointage` ADD `receive_notif` TINYINT NOT NULL DEFAULT '0' AFTER `is_fixed_time`;
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/Lib/Core/PublicFonctions.php
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/Lib/Vendors/Entity/ParametrePointage.php
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Frontend/Modules/Compte/CompteController.php
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Modules/Presence/Views/voirTemps.phtml
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Modules/Presence/Views/currentTask.phtml
+
+        *********************************************************************************************************************************************************************
+
+         https://trello.com/c/nqjwFYG3/99-calcule-moyenne-dune-s%C3%A9rie-questionnaire-du-barom%C3%A8tre ao am humanexus 2023-07-24 fait ce 2023-07-26
+            *********************************************************************************************************************************************************************
+
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/Web/Ressources/js/barometerGraph.js
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/Web/Ressources/css/barometerGraph.css
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Modules/Barometre/BarometreController.php
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/Lib/Vendors/Model/ManagerBarometreList.php
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Modules/Barometre/Model/ManagerModuleBarometre.php
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Modules/Barometre/Views/lister.phtml
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Modules/Barometre/Views/barometerGraph.phtml
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Templates/index.phtml
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+           besoin sary tany           
+        Pouvez-vous afficher directement la mention (congé validé par son .....) pour que  la Direction puisse effectuer la validation rapidement, et supprimer l'envoi des mails notifiant les validations des absences. 2023-08-03 fait ce 2023-08-03
+
+            *********************************************************************************************************************************************************************
+
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Views/listerValidationConges.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        SHIFT PLANNING ce 28/12/2022 => reprendre ce 2023-05-26 fait ce 2023-07-21
+            *********************************************************************************************************************************************************************
+            CREATE TABLE shift (
+              id_shift INT (15) PRIMARY KEY AUTO_INCREMENT,
+              id_campaign INT NOT NULL,
+              id_employe INT NOT NULL,
+              start_time DATETIME NOT NULL,
+              end_time DATETIME NOT NULL,
+              FOREIGN KEY (id_campaign) REFERENCES campaign(id_campaign),
+              FOREIGN KEY (id_employe) REFERENCES employe(idEmploye)
+            );
+            CREATE TABLE campaign (
+              id_campaign INT PRIMARY KEY AUTO_INCREMENT,
+              libelle VARCHAR (250) NOT NULL,
+              start_date DATE NOT NULL,
+              end_date DATE NOT NULL,
+              start_time TIME NOT NULL,
+              end_time TIME NOT NULL
+            );
+
+            home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/images/employe : mr, mme, mlle
+            
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/plugin/moment-with-locales.min.js
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/plugin/moment.min.js
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/voirShift.js
+            home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/css/voirShift.css
+
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Core/DbManager.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Core/PublicFonctions.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerShift.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerCampaign.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Shift.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Campaign.php
+
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/PresenceController.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/voirShift.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/voirTemps.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Templates/menuEntreprise.phtml
+
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                     
+
+         Passer la Validation de demande de permission comme congé ce 2023-06-07   https://trello.com/c/ybbl0E9Z/95-21-passer-la-validation-possible-de-la-permission  => FAIT ce 2023-06-29 En prod et en real_dev        
+            ***************************************************************************************************************************************
+            ******************************
+                
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+                
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Core/PublicFonctions.php
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/ValidationPermission.php
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerValidationPermission.php
+
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/PresenceController.php
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+                
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/lister.phtml
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/voirTemps.phtml
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerDemandePermissions.phtml
+
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/CongeController.php
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Views/listerValidationConges.phtml
+
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+               
+
+        ** 'Rappel congé' message no mianmpy fa ny demande hovalidena dia iray (01) iany. => tsis redondence ----------- DATE 17/04/2022
+        ** nosoloina ho date ilay nombre de jour d'absence rah reglé par congé ny absence + notification vers les suppérieurs ----------- DATE 25/03/2022
+        ** Retirer sa demande de congé + notification ho an'izay nohazo notification de validation ----------- DATE 10/04/2022
+        ** Affichage historique de congé  ----------- DATE 07/04/2022
+        DEV-LANSKY 18/04/2022 ** PRE-PROD 18/04/2022 ** PRODUCTION 18/04/2022
+
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        ** Optimiser regler son abscence par congé en mi-temps et le contenu d'e-mail est vide (notif salarié)
+        *********************************************************************************************************************************************************************
+        DEV-LANSKY 21/04/2022 ** PRE-PROD 22/04/2022 ** PRODUCTION 25/04/2022
+
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Presence\Views\listerJournees.phtml
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Presence\Views\voirTemps.phtml
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Conge\Model\ManagerModuleConge.php
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        ** Vérifier que la date de demande de congé est pas la même qu'avant et Redondence demannde de congé de même date
+        *********************************************************************************************************************************************************************
+        DEV-LANSKY 26/04/2022 ** PRE-PROD 26/04/2022 ** PRODUCTION 26/04/2022
+
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\Pre_Prod\Lib\Core\DbManager.php
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\Pre_Prod\App\Backend\Modules\Conge\Model\ManagerModuleConge.php
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        ** Vérification la demande de congé (congé fin vendredi et debut lundi) => on ajjout 2jours pour samedi et dimanche
+        *********************************************************************************************************************************************************************
+        DEV-LANSKY 02/05/2022 ** PRE-PROD 02/05/2022 ** PRODUCTION 02/05/2022
+
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\Pre_Prod\App\Backend\Modules\Conge\Model\ManagerModuleConge.php
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Conge\Views\listerValidationConges.phtml
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        ** Access sur les donnée mais ne rien valider
+         *********************************************************************************************************************************************************************
+
+        DEV-LANSKY 03/05/2022 ** PRE-PROD 02/05/2022 ** PRODUCTION 03/05/2022
+
+       ==> nampiana ny colonne base is_validator
+       C:\Users\Lansky\Desktop\SIRH_PROJECTS\Pre_Prod\App\Backend\Modules\Employe\Views\afficherForm.phtml
+       C:\Users\Lansky\Desktop\SIRH_PROJECTS\Pre_Prod\App\Backend\Modules\Conge\Model\ManagerModuleConge.php
+       C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\Lib\Vendors\Entity\Employe.php
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\Pre_Prod\App\Backend\Modules\Employe\Model\ManagerModuleEmploye.php
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\Pre_Prod\App\Backend\Modules\Conge\Views\voir.phtml
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\Pre_Prod\App\Backend\Templates\menuEmploye.phtml
+        
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+        ** Filtre soldes de congés de mes cpllaborateurs tsy bola mety
+        *********************************************************************************************************************************************************************
+        
+        DEV-LANSKY 03/05/2022 ** PRE-PROD 02/05/2022 ** PRODUCTION 03/05/2022
+
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\Pre_Prod\App\Backend\Modules\Conge\Views\listerConges.phtml
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+        DEV-LANSKY 04/05/2022 ** PRE-PROD 05/05/2022 ** PRODUCTION 05/05/2022
+
+        ** titre du tableau mila fixena daolo toy ny :
+        - Les congés de chaque employé 
+        - fa ny planning de conge no tena maika 
+        
+        ** Scroll mila ovaina ho (height) alavan'ny écran
+        *********************************************************************************************************************************************************************
+        
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Conge\Views\voirPlanning.phtml
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Conge\Views\listerConges.phtml
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Conge\Model\ManagerModuleConge.php
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        Baromètre Versoin 2.0
+        *********************************************************************************************************************************************************************
+        
+        DEV-LANSKY 05/05/2022 ** PRE-PROD 23/05/2022 ** PRODUCTION 23/05/2022
+
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Config\routes.xml
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Templates\menuEmploye.phtml
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\Lib\Vendors\Entity\BarometreList.php
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\Web\Ressources\images\icon...(misy folo izy ireo)
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\Web\Ressources\css\barometerGraph.css
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\Web\Ressources\js\barometerGraph.js
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\Web\Ressources\js\listeBarometre.js
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\Web\Ressources\js\tabBarometre.js
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\Web\Ressources\js\menuEmploye.js
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Templates\menuEmploye.phtml
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Barometre\BarometreController.php
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Barometre\Model\ManagerModuleBarometre.php
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Barometre\Views\lister.phtml
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\Lib\Vendors\Model\ManagerBarometreList.php
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Barometre\Views\listeBarometre.phtml
+        C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Barometre\Views\barometerGraph.phtml
+                        
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+
+            5 ) modifierna ny après midi ho demi-journee matin na aprem
+            *********************************************************************************************************************************************************************
+            
+            DEV-LANSKY 25/05/2022 ** PRE-PROD 25/05/2022 ** PRODUCTION 25/05/2022
+
+            C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Conge\Model\ManagerModuleConge.php
+            C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Conge\Views\voir.phtml
+            
+            
+                            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            
+            -- Correction sur le solde de congé dans le fiche de paie.
+           -- Debug sur fiche de paie mois du congé prie atao an'le jours d congé mihits , lasa erreur le izy oh: 
+                    congé alaina plannifier sept nefa lasa voacompte io 
+            *********************************************************************************************************************************************************************
+          
+            DEV-LANSKY 30/05/2022 ** PRE-PROD 30/05/2022 ** PRODUCTION 30/05/2022
+
+            C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\Lib\Core\DbManager.php
+            C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Paie\Model\ManagerModulePaie.php
+
+                            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+           Baromtre V2.1
+            *********************************************************************************************************************************************************************
+           
+            C:\Users\Lansky\Desktop\SIRH_PROJECTS\Pre_Prod\App\Backend\Templates\menuEntreprise.phtml
+            C:\Users\Lansky\Desktop\SIRH_PROJECTS\Pre_Prod\Web\Ressources\js\tabEntreprise.js
+            C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\Web\Ressources\js\listeBarometre.js
+            C:\Users\Lansky\Desktop\SIRH_PROJECTS\Pre_Prod\Web\Ressources\js\barometerGraph.js
+            C:\Users\Lansky\Desktop\SIRH_PROJECTS\Pre_Prod\Web\Ressources\css\barometerGraph.css
+            C:\Users\Lansky\Desktop\SIRH_PROJECTS\Pre_Prod\App\Backend\Modules\Barometre\BarometreController.php
+            C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Barometre\Model\ManagerModuleBarometre.php
+            C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Barometre\Views\lister.phtml
+            C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Modules\Barometre\Views\barometerGraph.phtml
+            
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+          
+
+          REFONT DANS LA SOLUTON efa ny am production ireo ce 22/07/2022
+            *********************************************************************************************************************************************************************
+           
+            E:\Pre-Prod.sirh.hco\App\Frontend\Templates\Solution\gestionTalents.phtml
+            E:\Pre-Prod.sirh.hco\App\Frontend\Templates\Solution\adminPersonnel.phtml
+            E:\Pre-Prod.sirh.hco\Web\Ressources\css\style.css
+
+            VIDEO DEMO CONGE
+            E:\Pre-Prod.sirh.hco\App\Backend\Modules\Conge\Views\voir.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Views/listerConges.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Templates/Solution/AdminPersonnel/adminPersonnelExplanation.phtml
+                 
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+             DEBUG SUR MODULE CONGE ce 18/07/2022
+            *********************************************************************************************************************************************************************
+           
+            E:\Pre-Prod.sirh.hco\App\Backend\Modules\Conge\Views\voir.phtml 
+            E:\Pre-Prod.sirh.hco\App\Backend\Modules\Conge\Model\ManagerModuleConge.php
+                            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+             
+            DEBUG SUR L'AFFICHAGE HEURE DU PRÉSENCE et MODAL POPUP LORS ABSENCE 27/07/2022
+            *********************************************************************************************************************************************************************  CE 27/07/2022
+            
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerJournees.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+                            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            NOTIFICATION MAIL ET MESSAGE DE LA RÉGLAGE PAR PEREMISSION
+            *********************************************************************************************************************************************************************
+               BEGING 25/07/2022 fait ce 29/07/2022
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerJournees.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/EmployePermission.php
+            add column in table employe_permission 
+                => ALTER TABLE `employe_permission` ADD `settled` CHAR(3) NOT NULL DEFAULT 'NO' AFTER `idMessage`;
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/EmployePermission.php
+
+                            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            NOTIFICATION MAAIL ET MESSAGE DE LA RÉGLAGE PAR REPOS MEDICAL NA REPOS FOTSINY
+            *********************************************************************************************************************************************************************
+               BEGING 25/07/2022 fait ce 29/07/2022
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerJournees.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/EmployeRepos.php
+            add column in table employe_repos 
+                => ALTER TABLE `employe_repos` ADD `settled` CHAR(3) NOT NULL DEFAULT 'NO' AFTER `statut`;
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/EmployeRepos.php
+                => ALTER TABLE `employe_repos` ADD `justify` VARCHAR(225) NOT NULL AFTER `settled`;
+                
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              
+            PIÈCE JOINTE IMAGE ORDONANCE JUSTIFICATIVE LE 01/08/2022
+            *********************************************************************************************************************************************************************
+            faite ce 02/08/2022
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerJournees.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            Vérification du jour ferier initier par l'entreprise de la date du debut et du fin le jour de la demande du congé
+            ********************************************************************************************************************************************************************* fait ce 02/08/2022
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php
+            
+            
+            
+            
+                            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+
+            
+            urgent log in 05 /09/2022 fait le 07/09/2022
+            *********************************************************************************************************************************************************************
+                
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Model/ManagerModuleCompte.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Views/voirProfil.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Views/lister.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Modules/Compte/CompteController.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Core/PublicFonctions.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Compte.php
+            BD => ALTER TABLE `compte` ADD `last_loggedin` DATETIME NOT NULL AFTER `statut`, ADD `last_loggedout` DATETIME NOT NULL AFTER `last_loggedin`, ADD `history` LONGTEXT NOT NULL AFTER `last_loggedout`;
+           
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            
+            Ajouté un champs de contact et nom du personne qui a fait l'inscription 07/09/2022 en prod ce 08/09/2022
+            *********************************************************************************************************************************************************************
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Modules/Compte/Views/creerCompte.phtml
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Modules/Compte/CompteController.php
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Modules/Compte/Model/ManagerModuleCompte.php
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/creerCompte.js
+                
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            
+            IMPORT EMPLOYES EN CSV LE 09/08/2022 en prod ce 08/09/2022
+            *********************************************************************************************************************************************************************
+           
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/index.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/css/styleBack.css
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Employe/EmployeController.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Employe/Model/ManagerModuleEmploye.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Employe/Views/afficherForm.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Employe/Views/lister.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerJournees.phtml correction
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Core/ChiffreEnLettre.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Banque.php
+            ----------->>>>> nampina colonne code_bic sy sigle varchaar 25 define null table banque
+                    ALTER TABLE `banque` ADD `code_bic` VARCHAR(50) NULL DEFAULT NULL AFTER `codeBanque`, ADD `sigle` VARCHAR(50) NULL DEFAULT NULL AFTER `code_bic`;
+
+
+        WARNING  : Undefined variable: poste in /home/hcomg/domains/pre-prod.sirh.hco.mg/public_html/App/Backend/Modules/Compte/Model/ManagerModuleCompte.php on line 338   
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            
+            CREATION COMPTE, menu dédié au entreprises
+            *********************************************************************************************************************************************************************
+           
+            E:\Pre-Prod.sirh.hco\App\Frontend\Modules\Compte\CompteController.php
+            E:\Pre-Prod.sirh.hco\App\Frontend\Modules\Compte\Model\ManagerModuleCompte.php
+
+            
+            
+        Deprecated: Methods with the same name as their class will not be constructors in a future version of PHP; PclZip has a deprecated constructor in /home/hcomg/domains/pre-prod.sirh.hco.mg/public_html/Lib/Core/pclzip.lib.php on line 190
+            
+           
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+               
+            
+            IMPORT EMPLOYES EN CSV LE 09/08/2022 en attente la suite À SUIVRE... 20/09/2022 fait ce 22/09/2022
+            *********************************************************************************************************************************************************************
+           
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Employe/EmployeController.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Employe/Views/lister.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Employe/Model/ManagerModuleEmploye.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/creerCompte.js
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/fichiers/template/templates_import_employés.xlsx
+
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+           
+            Ajouter selecte multiple du messaage lu 
+             * j'ai des validations que je ne peux pas archiver car je n'ai pas pu les valider (pendant mes congés) et les dates sont dépassées.
+             * idem dans la liste des messages, il faudrait pouvoir archiver en masse les messages sans avoir besoin de tous les lire
+             * idem pour la restauration les deux
+           https://sirh.hco.mg/manage/employe/validation
+           https://sirh.hco.mg/manage/show-messages
+            *********************************************************************************************************************************************************************
+            
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Views/voirMessage.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Views/listerMessages.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Model/ManagerModuleCompte.php
+            ************************************************************************************************
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%io ambony fait ce 14/09/2022 io ambany fait ce 15/09/2022 %%%%%%%%%%%%%%%%%%
+
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Views/listerValidationConges.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php
+
+            ****%%%% MARQUER COMME LU MESSAGE DE NOTIFICATION ET VALIDATION DU CONGÉ AINSI QUE LA RESTAURATION %%%%**** FAIT 23/09/2022
+
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/findListSelected.js
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Views/listerMessages.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Model/ManagerModuleCompte.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Views/listerValidationConges.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+              
+            1) Partager le planning du congé aux suppétieurs 13/09/2022 fait ce 28/09/2022
+            2) Filttre ne fonctionne pas DEBUG 
+            *********************************************************************************************************************************************************************
+            C:\Users\Lansky\Desktop\SIRH_PROJECTS\lansky_dev\App\Backend\Config\routes.xml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh\App\Backend\Modules\Conge\CongeController.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh\App\Backend\Modules\Conge\Views\voirPlanning.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh\App\Backend\Modules\Conge\Views\voir.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh\Web\Ressources\js\menuEmploye.js
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh\Web\Ressources\js\tabCongeEmploye.js
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/css/plugin/bootstrap.min.css
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh\App\Backend\Templates\menuEmploye.phtml
+                     
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+               
+         
+          Passer validation du congé lors le validateur est en congé le 28/09/2022 fait ce 29/09/2022
+            *********************************************************************************************************************************************************************
+           
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php    
+            
+                 
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+         
+          Inactive bouton congé pour CDD et CDI BÉSEOIN SPÉCIF DE CONNECTEO  le 03/10/2022 fait ce le 03/10/2022
+            *********************************************************************************************************************************************************************
+           /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Templates/menuEmploye.phtml
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+            ATTRIBUER TÂCHE AUX SUBORDONNÉE le 04/10/2022 fait ce 10/10/2022
+            *********************************************************************************************************************************************************************
+
+            $$$$$$$$$$$$$$$$$$$   ajouter heure de présence  ce-ci est heure d'arrivée lors de se connecter $$$$$$$$$$$$$$$
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/voirTemps.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/ParametrePointage.php
+            
+            ALTER TABLE `parametre_pointage` ADD `heure_debut` TIME NOT NULL AFTER `heureArret`;
+
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/images/icon/icons-Blue-Folder.png
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/css/plugin/virtual-select.min.css
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/plugin/virtual-select.min.js
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Tache.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Templates/menuEmploye.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Interim/Views/voir.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/PresenceController.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerSuivis.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerJournees.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/voirSuivi.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/trackingTask.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerTracking.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/currentTask.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php
+
+            ALTER TABLE `tache` ADD `attributor` INT NOT NULL AFTER `idEmploye`, ADD `estimated` TINYINT(4) NOT NULL AFTER `attributor`, ADD `date_debut` DATETIME NOT NULL AFTER `estimated`, ADD `activities` VARCHAR(500) NOT NULL AFTER `date_debut`;
+            ALTER TABLE `tache` ADD `worked_time` TINYINT(4) NOT NULL AFTER `estimated`;
+            ALTER TABLE `tache` CHANGE `worked_time` `worked_time` DOUBLE NOT NULL;
+            ALTER TABLE `tache` CHANGE `estimated` `estimated` DOUBLE NOT NULL;
+
+            ??? ALTER TABLE `tache` ADD FOREIGN KEY (`attributor`) REFERENCES `employe`(`idEmploye`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+             
+              Voir tâche courante subodinates, ce 10/10/2022, fait ce 10/10/2022
+            *********************************************************************************************************************************************************************
+            
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/currentTask.phtml
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerTracking.phtml
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/trackingTask.phtml
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+           
+            Dupliquer Temps passé sur les tâches, Tâches réalisée et Tâches en cours compte entreprise, ce 10/10/2022 fait ce 13/10/2022
+            *********************************************************************************************************************************************************************
+            Pièce jointe base de données au trello
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Core/DbManager.php
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Recovery.php
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Retard.php
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/ParametrePointage.php
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerRecovery.php
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerRetard.php
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerPointages.phtml
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/trackingTask.phtml
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/voirSuivi.phtml
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/voirTemps.phtml
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Interim/Views/voir.phtml
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/menuEmploye.js
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/menuEntreprise.js
+             /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Modules/Compte/CompteController.php
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+             Retard ajout un onglet, ce 13/10/2022 fait ce 20/10/2022
+            *********************************************************************************************************************************************************************
+
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerRetard.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Core/DbManager.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/PresenceController.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerPointages.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerRetards.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/voirTemps.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/menuEntreprise.js
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/tabPointage.js
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+             Cummule le solde de congé annuel, ce 26/10/2022 fait ce 26/10/2022
+            *********************************************************************************************************************************************************************
+
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Crons/cumulConge.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Views/voir.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php EFA VITTAA
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+          
+           
+            DEBUG AND EVOL 06/12/2022
+             *********************************************************************************************************************************************************************
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Views/voirMessage.phtml 
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Model/ManagerModuleCompte.php 
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Views/voir.phtml 
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Barometre/Model/ManagerModuleBarometre.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Barometre/BarometreController.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Barometre/Views/lister.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Barometre/Views/listeBarometre.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/listeBarometre.js
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/backend_datatable.js
+
+          ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+             
+            historique de conggé :  Ajout solde annuel dans légende ce 23/12/2022 fait ce 26/12/2022 matin
+            *********************************************************************************************************************************************************************
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/voirHistoriqueCongeGraph.js
+            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              
+            https://trello.com/c/bXUVo30u/82-optimisation-du-groupament-t%C3%A2che ce 16/01/2023, fait ce 17/01/2023
+                *********************************************************************************************************************************************************************
+                
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Views/voir.phtml
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Views/voirHistoriqueConge.phtml
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/voirHistoriqueCongeGraph.js
+
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/voirTemps.phtml
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+                
+
+            ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+
+            https://trello.com/c/phYHwhjE/68-%C3%A9volution-gestion-du-temps , ce 08/11/2022 FAIT ce 19/01/2023 cf BUG
+            *********************************************************************************************************************************************************************
+            
+            ALTER TABLE `tache` ADD `id_mission` INT NOT NULL AFTER `attributor`;   
+            
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/BackendApplication.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Interim/Views/voir.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Recrutement/Model/ManagerModuleRecrutement.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Recrutement/Views/lister.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Templates/index.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/PresenceController.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/voirTemps.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/voirSuivi.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerSuivis.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/trackingTask.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/css/presence.css
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/menuEmploye.js
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/plugin/bootstrap-select.min.js
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Core/PublicFonctions.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Tache.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerMission.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Modules/Compte/CompteController.php
+
+
+            RESTE À FAIRE
+            #3F58F5  #DE2FBB  #FF9747   #33DEA0   #DFFF54
+            #FF746F  #82F9FF  #A0EB75   #FFD3A3   #D5CDEB
+            #FFCFCC   #DDFFB9  #EBD5A9  #A7EBE2   #DFDBFF
+            #FFEBB0   #A39EFF  #EB6B6A  #C0EBD7   #FCF497
+            #D0FFA4   #BDD9FF  #8DF0C9  #CFB2EB   #FCB1BA
+            POLICE
+            TAILLE
+            BACKGROUND
+
+        Notice: Undefined variable: taskList in /home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Presence/Model/ManagerModulePresence.php on line 1985
+        Notice: Undefined variable: taskList in /home/hcomg/domains/sirh.hco.mg/public_html/App/Backend/Modules/Presence/Model/ManagerModulePresence.php on line 1985
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+             
+            https://trello.com/c/aDtZArGy/91-import-csv-barom%C3%A8tre barometre évolution & debug:  24/04/2023, fait ce 28/04/2023
+            *********************************************************************************************************************************************************************
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/menuEmploye.js
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/menuEntreprise.js
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/tabBarometre.js
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/listeBarometre.js
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Barometre/Views/lister.phtml
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Barometre/Views/listeBarometre.phtml
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Barometre/Model/ManagerModuleBarometre.php
+            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  
+            Donner acces à todisoa le modeule offre 28/03/2023 en PROD CE 2023-05-08
+        *********************************************************************************************************************************************************************
+        pièce jointe sql autorized
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Modules/Compte/CompteController.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerAutorized.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Autorized.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Employe/Views/afficherFormUpdate.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Employe/Views/afficherForm.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Employe/Model/ManagerModuleEmploye.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/afficherFormEmploye.js
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/BackendApplication.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Core/PublicFonctions.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Templates/menuEmploye.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Recrutement/Model/ManagerModuleRecrutement.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Recrutement/Views/lister.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/listerRecrutement.js
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/menuEmploye.js
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Templates/index.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Templates/index.phtml
+
+
+
+
+        ---------------------------- fichier dev Billy ------------------------   en PROD CE 2023-05-08
+        nofafana ny idsousdomaine ao am experience => base?? error????
+        
+        Download Évolution Billy:
+
+
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Core/PublicFonctions.php
+
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Attribution.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Candidat.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/CentreInteret.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Commentaire.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Competence.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Formation.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Experience.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Langue.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Logiciel.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Offre.php
+
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerAttribution.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerCandidat.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerCentreInteret.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerCommentaire.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerCompetence.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerLangue.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerLogiciel.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Model/ManagerOffre.php
+
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/css/creerCV.css
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/css/listerOffres.css
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/css/styleBack.css
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/css/style.css
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/css/voirOffre.css
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/css/voirProfilCandidat.css
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/css/voirProfilEntreprise.css
+
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/ajouterOffre.js
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/commentaires.js
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/creerCV.js
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/indexPlace.js
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/listerCandidatures.js
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/voirCandidat.js
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/voirProfilCandidat.js
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/images/recrutement/
+
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/images/entreprises/logoHumanxeus.png
+
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Templates/index.phtml
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Templates/index.phtml
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Templates/menuEntreprise.phtml
+
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Modules/Recrutement/RecrutementController.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Modules/Recrutement/Models/ManagerModuleRecrutement.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Modules/Recrutement/Views/listerOffres.phtml
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Modules/Recrutement/Views/voirOffre.phtml
+
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/CompteController.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Model/ManagerModuleCompte.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Views/afficherForm.phtml
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Views/creerCV.phtml
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Views/voirProfil.phtml
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Recrutement/RecrutementController.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Recrutement/Model/ManagerModuleRecrutement.php
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Recrutement/Views/afficherForm.phtml
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Recrutement/Views/lister.phtml
+        /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Recrutement/Views/voirDetail.phtml
+        D:\public_html\Web\Ressources\Kendo UI
+
+                        
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+           Atao manaraka ny année ny solde songé an'lay salarié  => déjà reglé il y a long temps
+            *********************************************************************************************************************************************************************
+            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              
+            Debug sur l'alignement de la liste du planning  => déjà reglé il y a long temps
+            *********************************************************************************************************************************************************************
+                            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+              
+            Erreur log mila jerena tsar fa lasa miseho any daolo ny code am le message d'erreur  => déjà reglé il y a long temps
+            *********************************************************************************************************************************************************************
+            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            CRON TS MANDEHA FA DISO CHEMIN => déjà reglé il y a long temps
+            *********************************************************************************************************************************************************************
+                            
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+            OMENA ACCESS À TODY 2023-05-19 fait ce 2023-05-19 CRUD entreprise post et entreprise service
+            *********************************************************************************************************************************************************************
+            
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Recrutement/Model/ManagerModuleRecrutement.php
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Templates/menuEmploye.phtml
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+            debug recrutement 2023-05-22 fait ce 2023-05-23
+            *********************************************************************************************************************************************************************
+            
+                
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Frontend/Modules/Recrutement/Views/voirOffre.phtml => fait
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Recrutement/Model/ManagerModuleRecrutement.php  => fait
+
+
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+
+         Urgent ajouter les chef hiérarchique en forme piramide et antonoire ( un salarié peut contenir plus de un chef). ce 2023-05-04 https://trello.com/c/EWMibN7z/92-multiple-chef-de-m%C3%AAme-niveau => en PROD ce 2023-05-24
+            *********************************************************************************************************************************************************************
+                
+                ALTER TABLE `employe` CHANGE `chefHierarchique` `chefHierarchique` VARCHAR(225) NOT NULL;
+                ALTER TABLE `employe` ADD `my_team` VARCHAR(225) NOT NULL AFTER `is_validator`;
+                
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Config/routes.xml
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Core/PublicFonctions.php
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Lib/Vendors/Entity/Employe.php
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/afficherFormEmploye.js
+                
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Barometre/Model/ManagerModuleBarometre.php
+                
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Compte/Views/lister.phtml
+                
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Model/ManagerModuleConge.php
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Conge/Views/voirPlanning.phtml
+
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Employe/EmployeController.php
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Employe/Model/ManagerModuleEmploye.php
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Employe/Views/afficherFormUpdate.phtml
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Employe/Views/afficherForm.phtml
+                
+                /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+
+            IRETO AVY NY MISY LISTE COLLAB
+            https://pre-prod.sirh.hco.mg/manage/employe/suivi/dashboard => ok
+            https://pre-prod.sirh.hco.mg/manage/collaborater/planning => ok
+            https://pre-prod.sirh.hco.mg/manage/employe/congeCollaborateur => ok
+            https://pre-prod.sirh.hco.mg/manage/barometre_list => ok
+            https://pre-prod.sirh.hco.mg/manage/linear_answers_barometer => ok
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+             
+            Ajout congé sur voir suivi en prod ce 2023-05-09 otry ny efa vita avant FIM ity ah
+            *********************************************************************************************************************************************************************
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/listerSuivis.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Views/voirSuivi.phtml
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/App/Backend/Modules/Presence/Model/ManagerModulePresence.php
+            /home/lansky/SIRH_PROJECT/Pre-Prod_sirh/Web/Ressources/js/reportingGraph.js
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+          
+
+  
+            Arrêter le pointage lors éteindre machine au cas d'oublie  fait, ce 2023-06-15
+            *********************************************************************************************************************************************************************
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Config/routes.xml
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Modules/Presence/PresenceController.php
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/Web/Ressources/js/menuEmploye.js
+            /home/lansky/SIRH_PROJECT/DevReal_SIRH/App/Backend/Templates/menuEmploye.phtml
+
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+          
+
+
+
+           41.188.57.165   
+          
+         name fttp : backups-ftp-mannual@hco.mg  path:     /home/hcomg/.softaculous    
+         HAr1lUmns
+
+
+    
+    OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    OOOOO                À FAIRE À TRAAITER À REFLÉCHIR                 OOOOO
+    OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    
+     
+        POINT CE 29/08/2022
+      *********************************************************************************************************************************************************************
+        1) Asiaana scroll ny contrat => technisu & comercial
+        2) Web callback ???? ts mazava aatreto aloh
+        3) Ra prrésent ny maarian ary absent ny aariva dia mila jerrena tsar io cas io
+        4) Filtre annonce
+        5) Azo telechargenna ny profil candidat ary azo safidiana zay ilana eo am sehatry ny calification
+            ex: za mitad controlleur dia misesho eo  daolo ze proffil controlleur reehetra
+        6) Planning => gestion d'équipe
+                    => plannifie l'équipe
+                    * grouper les employés par exemple service, poste, heure du shift, durée de travail, travail pour le jour ferié, etc...
+        7) Heure de réécupéraation à définir    => congé
+                                                => heur suplémentaire
+                    * volume horaire journalier à ddéfinir (ex: 1 jour -> Recup 1H)
+        table recuperation (date, durée, idemploye, idretard,, statut, fin, debut,idtache)
+        ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            RECRUTEMENT
+           *********************************************************************************************************************************************************************
+            * Sélection ana CV
+            * Annonce
+            * atao ajout am base
+            * ADDÉQUATION => offre & demande
+                critaires:
+                    - trait de personnalité
+                    - poste
+                    - type contrat
+                    - année d'expérience
+                    - etc...
+                60% et plus dia proposena ny candidat andefa ny candidature-ny @ le offre
+            * Validation contrat et annuler sa candidature lors validé 
+            
+            
+           
+
+           $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+           $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+           $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+        BASCULEMENT VERS HUMANEXUS
+
+        RewriteEngine On
+
+        RewriteCond %{REQUEST_FILENAME} !-f 
+        RewriteCond %{REQUEST_FILENAME} !-d
+
+        RewriteCond %{HTTP_HOST} ^sirh.hco.mg$ [NC]
+        RewriteRule ^(.*)$ https://humanexus.hco.mg/connexion [R=301,L]
+
+        <IfModule mod_deflate.c>
+          # Compress HTML, CSS, JavaScript, Text, XML and fonts
+          AddOutputFilterByType DEFLATE application/javascript
+          AddOutputFilterByType DEFLATE application/rss+xml
+          AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+          AddOutputFilterByType DEFLATE application/x-font
+          AddOutputFilterByType DEFLATE application/x-font-opentype
+          AddOutputFilterByType DEFLATE application/x-font-otf
+          AddOutputFilterByType DEFLATE application/x-font-truetype
+          AddOutputFilterByType DEFLATE application/x-font-ttf
+          AddOutputFilterByType DEFLATE application/x-javascript
+          AddOutputFilterByType DEFLATE application/xhtml+xml
+          AddOutputFilterByType DEFLATE application/xml
+          AddOutputFilterByType DEFLATE font/opentype
+          AddOutputFilterByType DEFLATE font/otf
+          AddOutputFilterByType DEFLATE font/ttf
+          AddOutputFilterByType DEFLATE image/svg+xml
+          AddOutputFilterByType DEFLATE image/x-icon
+          AddOutputFilterByType DEFLATE text/css
+          AddOutputFilterByType DEFLATE text/html
+          AddOutputFilterByType DEFLATE text/javascript
+          AddOutputFilterByType DEFLATE text/plain
+          AddOutputFilterByType DEFLATE text/xml
+
+          # Remove browser bugs (only needed for really old browsers)
+          BrowserMatch ^Mozilla/4 gzip-only-text/html
+          BrowserMatch ^Mozilla/4\.0[678] no-gzip
+          BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+          Header append Vary User-Agent
+        </IfModule>
+
+        Options +FollowSymLinks
+
+        RewriteEngine On
+        RewriteBase /
+
+
+
+   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$

@@ -1,0 +1,218 @@
+<?php extract($data); ?>
+<div class="">
+	<?php if ($permissions != null) :
+		foreach ($permissions as $permission) :
+			extract($permission);
+			if ($demande->getStatut() == ManagerModulePresence::VALIDATED) : 
+				$color 		= 'green';
+				$colorIcon 	= '#00c853';
+				$icon 		= 'fa-check';
+				$text 		= 'validée';
+			elseif ($demande->getStatut() == ManagerModulePresence::PROPOSED) : 
+				$color 		= 'yellow';
+				$colorIcon 	= '#ffab00';
+				$icon 		= 'fa-hourglass';
+				$text 		= 'en attente';
+			elseif ($demande->getStatut() == ManagerModulePresence::REFUSED) : 
+				$color 		= 'red';
+				$colorIcon 	= '#d32f2f';
+				$icon 		= 'fa-times';
+				$text 		= 'refusée';
+			endif;?>
+			<div class="card card-border-<?=$color;?> p-2 m-2">
+				<div class="row m-0 p-0">
+					<div class="col-md-2 text-center">
+						<i class="fa <?=$icon;?>" style="color: <?=$colorIcon;?>;" aria-hidden="true"></i>
+						<span class='titre' style='color : <?=$colorIcon;?>;'><?=$text;?></span>
+					</div>
+					<div class="col-md-3 text-important">
+						<?= $employe->getNom() . ' ' . $employe->getPrenom()?>
+					</div>
+					<div class="col-md-2 titre">
+						<?= $demande->getDate() ?>
+					</div>
+					<div class="col-md-3">
+						<span class='titre'><?=$type->getDesignation()?></span>
+						   <?=$demande->getStatut() == ManagerModulePresence::REFUSED && $_SESSION['compte']['identifiant'] == 'entreprise' ? '<br>Motif refus: <span class="titre">'. ($demande->getMotifRefus() ? $demande->getMotifRefus() : 'Aucun') .'</span>' : '' ;?>
+					</div>
+					<div class="col-md-2 text-right">
+						<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal<?= $validationPermission->getIdValidationPermission();?>">voir
+						</button>
+						<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modalSupprimer<?= $validationPermission->getIdValidationPermission();?>" <?= !$isEditable ? 'disabled': '';?>>retirer
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="modal<?= $validationPermission->getIdValidationPermission();?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			  	<div class="modal-dialog modal-dialog-centered" role="document">
+			    	<div class="modal-content">
+			      		<div class="modal-header text-center">
+			      			<div class="text-center" style="width: 100%;">
+			      				<h5 class="modal-title" id="exampleModalLabel">Détails de la demande</h5>
+			      			</div>
+			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          			<span aria-hidden="true">&times;</span>
+			        		</button>
+			      		</div>
+			      		<div class="modal-body">
+		      				<div class="card p-3" style="background: #ffffff;">
+		      					<div class="row">
+		      						<div class="col-sm-3">
+		      							<span class="titre">L'employé : </span>
+		      						</div>
+		      						<div class="col-sm-9">
+		      							<p><?= $employe->getCivilite() . ' ' . $employe->getNom() . ' ' . $employe->getPrenom() ?></p>
+		      						</div>
+		        				</div>
+		        				<div class="row">
+		      						<div class="col-sm-3">
+		      							<span class="titre">Service : </span>
+		      						</div>
+		      						<div class="col-sm-9">
+		      							<p><?= $service ?></p>
+		      						</div>
+		        				</div>
+		        				<div class="row">
+		      						<div class="col-sm-3">
+		      							<span class="titre">Poste : </span>
+		      						</div>
+		      						<div class="col-sm-9">
+		      							<p><?= $poste ?></p>
+		      						</div>
+		        				</div>
+		        				<hr>
+				      			<div class="row">
+				      				<div class="col-sm-3">
+				      					<span class="titre">Raison : </span>
+				      				</div>
+				      				<div class="col-sm-9">
+				      					<?= $type->getDesignation() ?>
+				      				</div>
+				        		</div>
+				        		<hr>
+				        		<div class="row">
+				      				<div class="col-sm-3">
+				      					<span class="titre">Date : </span>
+				      				</div>
+				      				<div class="col-sm-9">
+				      					<?= 'le ' . $demande->getDate() ?>
+				      				</div>
+				        		</div>
+				        		<hr>
+				        		<div class="row">
+				      				<div class="col-sm-10">
+				      					<span class="titre">Validation : </span>
+				      				</div>
+				      				<div class="col-sm-2"></div>
+				        		</div>
+				        		<?php foreach ($hasValidatedBy as $value) : extract($value);
+				        			if ($status == ManagerModulePresence::VALIDATED) : 
+										$teint 		= '#00c853';
+										$showIcon 	= 'fa-check';
+									elseif ($status == ManagerModulePresence::PROPOSED) : 
+										$teint 		= '#ffab00';
+										$showIcon 	= 'fa-hourglass';
+									elseif ($status == ManagerModulePresence::REFUSED) : 
+										$teint 		= '#d32f2f';
+										$showIcon 	= 'fa-times';
+									endif;?>
+					        		<div class="row">
+					      				<div class="col-sm-2"></div>
+					      				<div class="col-sm-8"><?=$name;?></div>
+					      				<div class="col-sm-2">
+											<i class="fa <?=$showIcon;?>" style="color: <?=$teint;?>;" aria-hidden="true"></i>
+					      				</div>
+					        		</div>
+				        		<?php endforeach; ?>
+				        	</div>
+		      				<div class="card p-3 text-center" style="background: #ffffff;">
+		      					<div class="form-outline">
+								  <textarea class="form-control form-motif-refus" id="motifRefus-<?= $validationPermission->getIdValidationPermission();?>" rows="2" placeholder="Motif refus"></textarea>
+								  <label class="form-label" for="motifRefus-<?= $validationPermission->getIdValidationPermission();?>"></label>
+								</div>
+				        	</div>
+			      		</div>
+			      		<?php if($validationPermission->getStatut() == ManagerModulePresence::PROPOSED) : ?>
+				      		<div class="modal-footer">
+				      			<div class="row" style="width: 105%!important;">
+				      				<?php $now = date("Y-m-d"); ?>
+				      				<div class="col-md-12 text-right">
+				      					<a href="<?= HOST . 'manage/rejeter-demandePermission?idValidationPermission=' . $validationPermission->getIdValidationPermission() . "&idEmployePermission=" . $demande->getIdEmployePermission() . "&demandeur=" . $demande->getIdEmploye() . '&motifRefus=';?>" class="btn btn-sm btn-danger <?= !$isEditable ? 'disabled' : '';?> btn-refus">
+				      						Refuser
+				      					</a>
+				      					<a href="<?= HOST . 'manage/valider-demandePermission?idValidationPermission=' . $validationPermission->getIdValidationPermission() . "&idEmployePermission=" . $demande->getIdEmployePermission() . "&demandeur=" . $demande->getIdEmploye();?>" class="btn btn-sm btn-success <?= !$isEditable ? 'disabled' : '';?>">
+				      						Valider
+				      					</a>
+				      				</div>
+				      			</div>
+				      		</div>
+			      		<?php endif;?>
+			    	</div>
+			  	</div>
+			</div>
+			<div class="modal fade" id="modalSupprimer<?= $validationPermission->getIdValidationPermission();?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			  	<div class="modal-dialog modal-dialog-centered" role="document">
+			    	<div class="modal-content">
+			      		<div class="modal-header text-center">
+			      			<div class="text-center" style="width: 100%;">
+			      				<h5 class="modal-title section-heading" id="exampleModalLabel">Confirmation de la suppression</h5>
+			      			</div>
+			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          			<span aria-hidden="true">&times;</span>
+			        		</button>
+			      		</div>
+			      		<div class="modal-body">
+		      				<div class="card p-3 text-center" style="background: #ffffff;">
+		      					Voulez-vous vraiment supprimer la demande de <?= $employe->getCivilite() . ' ' . $employe->getNom() . ' ' . $employe->getPrenom() ?> ?
+				        	</div>
+			      		</div>
+			      		<div class="modal-footer">
+			      			<div class="row" style="width: 105%!important;">
+			      				<?php $now = date("Y-m-d"); ?>
+			      				<div class="col-sm-3 text-left">
+			      					<a href="" class="btn btn-red">Annuler</a>
+			      				</div>
+			      				<div class="col-sm-5"></div>
+			      				<div class="col-sm-4">
+			      					<a href="<?= HOST . 'manage/delete-demandePermission?idEmployePermission=' . $demande->getIdEmployePermission() . '&idValidationPermission=' . $validationPermission->getIdValidationPermission();?>" class="btn btn-green">Confirmer</a>
+			      				</div>
+			      			</div>
+			      		</div>
+			    	</div>
+			  	</div>
+			</div>
+				<script>
+				$("#annuler").click(function(){
+					window.location.reload();
+				});
+				</script>
+		<?php endforeach ?>
+	<?php /** @changelog 2021-12-06 [EVOL] (Lansky) Ajout une annimation vidéo pour la liste d'une table vide*/
+	else : ?>
+		<div class="row add-video" style="position: relative;">
+			<video width="50%" autoplay="" muted="" loop="" style="left:50%; position: absolute; transform: translate(-50%, 0%);">
+				<source src="<?= HOST; ?>../Web/Ressources/videos/empty.mp4" type="video/mp4">
+			</video>
+		</div>
+	<?php endif ?>
+</div>
+<script>
+	tippy('.fa-info-circle', {
+		content: "Voir détails"
+	});
+	tippy('.fa-edit', {
+		content: "Modifier"
+	});
+	tippy('.fa-trash', {
+		content: "supprimer"
+	});
+	/*@changeLog 2023-20-28 [EVOL] (Lansky) Ajout un motif lors de rejet de la demande de permission */
+	$('.form-motif-refus').on('change', function(event) {
+		event.preventDefault();
+		let hRef = $(this).closest('.modal-content').find('.btn-refus').attr('href');
+		$(this).closest('.modal-content').find('.btn-refus').attr('href', hRef.replace(/(motifRefus=)[^&]*/, '$1' + $(this).val())); // Extraire la partie de la chaîne après 'motifRefus=' du href
+	});
+</script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>

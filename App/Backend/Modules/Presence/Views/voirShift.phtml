@@ -1,0 +1,27 @@
+<?php extract($data); ?>
+
+<link rel="stylesheet" href="<?= HOST;?>../Web/Ressources/css/voirShift.css" />
+<link rel="stylesheet" href="<?= HOST;?>../Web/Ressources/Kendo UI/styles/kendo.default-ocean-blue.min.css" />
+<base href="<?= HOST;?>../Web/Ressources/Kendo UI/examples/colorpicker/index">
+<base href="https://demos.telerik.com/kendo-ui/multiselect/template">
+<script src="<?= HOST;?>../Web/Ressources/Kendo UI/js/kendo.all.min.js"></script>
+
+<script type="text/javascript">
+  var cardsData   = <?= json_encode(count($cardColumn) > 0 ? $cardColumn : array()); ?>;
+  var shiftColumn = <?= json_encode(count($shiftColumn) > 0 ? $shiftColumn : array()); ?>;
+  var colorItem   = new kendo.data.DataSource({data: <?= json_encode(count($colorItem) > 0 ? $colorItem : array()); ?>});
+</script>
+<section class="pagee-section" id="back-section">
+    <div class="container">
+        <div class="col-md-12">
+            <div class="block-section">
+                <div class="row">
+                    <div id="taskBoard"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="<?= HOST;?>../Web/Ressources/js/plugin/moment.min.js"></script>
+<script src="<?= HOST;?>../Web/Ressources/js/plugin/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="<?= HOST;?>../Web/Ressources/js/voirShift.js"></script>

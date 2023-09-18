@@ -1,0 +1,437 @@
+<?php
+	extract($data);
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row" style="margin-top: -15px;">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h4 class="text-center list-title section-heading">Planning de congé <?= $_SESSION['compte']['identifiant'] == 'employe' ? 'de mes collaborateurs': ''?></h4>
+			</div>
+			<div class="col-md-2 text-right <?= $_SESSION['compte']['identifiant'] == 'employe' ? 'd-none': ''?>">
+				<a class="btn btn-transparent text-primary btn-circle-sm" href="<?= HOST . 'manage/entreprise/validation' ?>">
+					<i class="fa fa-list fa-15x tippy-act" aria-hidden="true"></i>
+				</a>
+			</div>
+		</div>
+		<div class="block-section" style="font-size: 0.8em;">
+			<?php if ($_SESSION['compte']['identifiant'] == "employe") : 
+	            extract($filtres);
+	            $redirectEmployePlanning 	= 'manage/collaborater/employePlanning';
+	            $redirectDatePlanning 		= 'manage/collaborater/datePlanning';
+	            $redirectContenuPlanning 	= 'manage/collaborater/contenuPlanning';
+             ?>
+				<div class="row">
+			        <ul id="new-tab-button">
+		        		<li id="tab1">
+		        			<a href="<?= HOST. 'manage/employe/conge'?>">
+		        				Mes demandes de congé
+		        			</a>
+		        		</li>
+		        		<li id="tab3">
+		        			<a href="<?= HOST. 'manage/employe/historiqueConge'?>">
+		        				Historique de mes congés
+		        			</a>
+		        		</li>
+		        		<?php if ($employe) : ?>
+			        		<?php if ($employe->getIsValidator() == 1) : ?>
+				        		<li id="tab2">
+				        			<a href="<?= HOST. 'manage/employe/validation'?>">
+				        				Mes validations de demande de congé
+				        			</a>
+				        		</li>   
+			        		<?php endif; ?>
+		        		<?php endif; ?>
+		        		<li id="tab4" class="d-none">
+		        			<a href="<?= HOST. 'manage/employe/congeCollaborateur'?>">
+		        				Solde de congés de mes collaborateurs
+		        			</a>
+		        		</li>        
+		        		<li id="tab5" class="d-none">
+		        			<a href="<?= HOST. 'manage/collaborater/planning'?>">
+		        				Planning de congés de mes collaborateurs
+		        			</a>
+		        		</li>        			    
+			        </ul>
+		      	</div>
+		      	<script src="<?= HOST; ?>../Web/Ressources/js/tabCongeEmploye.js"></script>
+	      	<?php elseif ($_SESSION['compte']['identifiant'] == "entreprise") : 
+	            $redirectEmployePlanning 	= 'manage/entreprise/employePlanning';
+	            $redirectDatePlanning 		= 'manage/entreprise/datePlanning';
+	            $redirectContenuPlanning 	= 'manage/entreprise/contenuPlanning';
+	      	?>
+	      	<?php endif;?>
+			<div class="row">
+				<div class="col-md-3 card p-2" style="width: 100%; font-weight: bold; background: #647994; color: #ffffff; height: 47.5px;">
+					<span style="display: inline;">Filter par :
+						<select class="select-time" id='filter-group' style="height: 25px!important;">
+							<option value="1">Aucun</option>
+							<option value="2">Service</option>
+							<option value="3">Poste</option>
+							<option value="4">Employé</option>
+						</select>
+					</span>
+				</div>
+				<div class="col-md-9 card p-2 text-center" style="width: 100%; font-weight: bold; background: #647994; color: #ffffff;">
+					<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+					  	<div class="carousel-inner">
+					    	<div class="carousel-item">
+					      		<span style="font-size: 1.2em!important;" id="mois-0"><?= $mois['prev'] ?></span>
+					    	</div>
+					    	<div class="carousel-item active">
+					    		<input type="hidden" id="mois" value="<?= $date['now'] ?>">
+					      		<span style="font-size: 1.2em!important;" id="mois-1"><?= $mois['now'] ?></span>
+					    	</div>
+					    	<div class="carousel-item">
+					    		<span style="font-size: 1.2em!important;" id="mois-2"><?= $mois['next'] ?></span>
+					    	</div>
+					 	</div>
+					  	<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev" id="prev-month">
+					    	<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					    	<span class="sr-only">Previous</span>
+					  	</a>
+					  	<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next" id="next-month">
+					    	<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					    	<span class="sr-only">Next</span>
+					  	</a>
+					</div>
+				</div>
+			</div>
+			<!-- /**@changelog 2022/05/04 [FIX] (Lansky) Fixer l'entête et scroll juste en bas du block section */ -->
+			<div class="row" style="height: 60vh; overflow: auto;">
+				<div class="col-md-3 card p-2" style="white-space: nowrap; /*overflow: auto*/; /* position: relative; */position: sticky;left: 0;z-index: 8999;">
+					<div class="p-0" style="width: 100%;position: sticky; top: 0;z-index: 8999;background: var(--white);/* padding-top: 2px; */padding-top: 3px!important;">
+						<div class="card p-2 mt-1 card-extra-light-grey" style="width: auto!important; font-weight: bold;">
+							<select class="" id="filter-element" style="height: 100%; width: 100%; border: none; font-weight: bold; background: #ecf2f4;">
+								<option class="option-tout" id="o-t" value="o-t">Tous</option>
+								<option class="option-service invisible" id="s-t" value="s-t">-- Choisir une service --</option>
+								<?php foreach ($services as $service) : ?>
+									<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+								<?php endforeach ?>
+								<option class="option-poste invisible" id="p-t" value="p-t">-- Choisir un poste --</option>
+								<?php foreach ($postes as $poste) : ?>
+									<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+								<?php endforeach ?>
+								<option class="option-employe invisible" id="sa-t" value="sa-t">-- Choisir un salarié --</option>
+								<?php foreach ($employes as $employe) : ?>
+									<option class="option-employe invisible" value="<?=$employe->getIdEmploye();?>"><?=$employe->getNom() . ' ' . $employe->getPrenom()?></option>
+								<?php endforeach ?>
+							</select>
+						</div>
+					</div>
+					<div id="container-employes" class="p-0 m-0" style="min-height: 300px;"></div>
+				</div>
+				<div class="col-md-9 card p-2" style="white-space: nowrap; /* overflow: scroll; *//* height: calc(100vh - 329px); */position: relative; margin-top: -4px;">
+					<div class="p-0 m-0" id="container-dates" style="position: sticky; top: 0;z-index: 1000;background: var(--white);"></div>
+					<div id="container-contenus" class="p-0 m-0" style="min-height: 300px;">
+						<div class="text-center" style="width: 100%; height:300px;">
+							<i class="fa fa-spinner fa-pulse fa-5x fa-fw" style="margin-top: 100px; color: #647994;"></i>
+							<span class="sr-only">Loading...</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<script>
+	tippy('.fa-list', {
+		content: "voir la liste des demandes de congé"
+		});
+</script>
+<script>
+	const FILTER_GROUP_ALL     = 1;
+	const FILTER_GROUP_SERVICE = 2;
+	const FILTER_GROUP_POSTE   = 3;
+	const FILTER_GROUP_EMPLOYE = 4;
+	const ONE_MONTH            = 1;
+	const MONTHS               = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+	const MODULO               = 3;
+	var   carouselItem         = 1;
+
+	$('document').ready(function(){
+		if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+			loadEmploye($("#filter-group").val(), $('#filter-element').val());
+		}
+		if ($('#mois').val() != null) {
+			loadDate($('#mois').val());
+			loadContenu($("#filter-group").val(), $('#filter-element').val(), $('#mois').val());
+		}
+		$('.carousel').carousel({
+			interval: false
+		});
+	});
+	$('#filter-group').change(function(){
+		if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+			loadEmploye($("#filter-group").val(), '');
+			loadLoading();
+			loadContenu($("#filter-group").val(), '', $('#mois').val());
+			$('#filter-element').val("");
+			$('.option-service').addClass('invisible');
+			$('.option-poste').addClass('invisible');
+			$('.option-employe').addClass('invisible');
+			$('#filter-element').val("o-t");
+		} else if ($('#filter-group').val() == FILTER_GROUP_SERVICE) {
+			$('.option-tout').addClass('invisible');
+			$('.option-service').removeClass('invisible');
+			$('.option-poste').addClass('invisible');
+			$('.option-employe').addClass('invisible');
+			$('#filter-element').attr("disabled", false);
+			$('#filter-element').val("s-t");
+		} else if ($('#filter-group').val() == FILTER_GROUP_POSTE) {
+			$('.option-tout').addClass('invisible');
+			$('.option-service').addClass('invisible');
+			$('.option-poste').removeClass('invisible');
+			$('.option-employe').addClass('invisible');
+			$('#filter-element').attr("disabled", false);
+			$('#filter-element').val("p-t");
+		} else if ($('#filter-group').val() == FILTER_GROUP_EMPLOYE) {
+			$('.option-tout').addClass('invisible');
+			$('.option-service').addClass('invisible');
+			$('.option-poste').addClass('invisible');
+			$('.option-employe').removeClass('invisible');
+			$('#filter-element').attr("disabled", false);
+			$('#filter-element').val("sa-t");
+		}
+	});
+	$('#filter-element').change(function(){
+		loadEmploye($("#filter-group").val(), $('#filter-element').val());
+		loadLoading();
+		loadContenu($("#filter-group").val(), $('#filter-element').val(), $('#mois').val());
+	});
+	$('#prev-month').click(function(){
+		var dateNow  = new Date($('#mois').val() + '-01');
+		var datePrev = new Date(dateNow.getFullYear(), dateNow.getMonth() - ONE_MONTH, dateNow.getDate());
+		var dateNext = new Date(dateNow.getFullYear(), dateNow.getMonth() + ONE_MONTH, dateNow.getDate());
+		$('#mois').val(datePrev.getFullYear() + '-' + (datePrev.getMonth() + ONE_MONTH));
+		loadDate($('#mois').val());
+		loadContenu($("#filter-group").val(), $('#filter-element').val(), $('#mois').val());
+		$('#mois-' + getPrevious(carouselItem)).html(MONTHS[datePrev.getMonth()] + ' ' + datePrev.getFullYear());
+		$('#mois-' + getNext(carouselItem)).html(MONTHS[dateNext.getMonth()] + ' ' + dateNext.getFullYear());
+		carouselItem = getPrevious(carouselItem);
+		loadLoading();
+	});
+	$('#next-month').click(function(){
+		var dateNow  = new Date($('#mois').val() + '-01');
+		var datePrev = new Date(dateNow.getFullYear(), dateNow.getMonth() - ONE_MONTH, dateNow.getDate());
+		var dateNext = new Date(dateNow.getFullYear(), dateNow.getMonth() + ONE_MONTH, dateNow.getDate());
+		$('#mois').val(dateNext.getFullYear() + '-' + (dateNext.getMonth() + ONE_MONTH));
+		loadDate($('#mois').val());
+		loadContenu($("#filter-group").val(), $('#filter-element').val(), $('#mois').val());
+		$('#mois-' + getPrevious(carouselItem)).html(MONTHS[datePrev.getMonth()] + ' ' + datePrev.getFullYear());
+		$('#mois-' + getNext(carouselItem)).html(MONTHS[dateNext.getMonth()] + ' ' + dateNext.getFullYear());
+		carouselItem = getNext(carouselItem);
+		loadLoading();
+	});
+	function loadEmploye(groupe, id)
+	{
+		$.ajax({
+			url : "<?= HOST . $redirectEmployePlanning?>",
+			data : "groupe=" + groupe + "&id=" + id,
+			dataType : "json",
+			success : function(data)
+			{
+				var classeEmploye = "card p-2 mt-1 text-important card-container card-light-grey card-hover";
+				var photo = "";
+				$('#container-employes').empty();
+				$.each(data, function(indice, donnees) {
+					classeEmploye = "card p-2 mt-1 text-important card-container card-light-grey card-hover emp-" + donnees['idEmploye'];
+					if (donnees['photo'] != "") {
+						photo = "<?= HOST . '../Web/Ressources/images/employes/' ?>" + donnees['photo'];
+					} else {
+						photo = "<?= HOST . '../Web/Ressources/images/profilCandidat.png' ?>";
+					}
+					contentHtml = "<div class='row' style='width: 400px;'>" +
+									"<div class='col-md-2'>" +
+										"<img src=" + photo + " style='height: 50px; width: 50px;'>" +
+									"</div>" +
+									"<div class='col-md-10'>" +
+										"<span>" + donnees['nom'] + ' ' + donnees['prenom'] + "<span/></br>" +
+										"<span>" + donnees['service'] + "<span/></br>" +
+										"<span>" + donnees['poste'] + "<span/></br>" +
+									"</div>" +
+								"</div>";
+					$('#container-employes').append('<div class="' + classeEmploye + '" id="employe-' + donnees['idEmploye'] + '" style="height: 36px!important;">' + donnees['nom'] + ' ' + donnees['prenom'] + '</div>');
+					setHtmlTippy("emp-" + donnees['idEmploye'], contentHtml);
+					$('#employe-' + donnees['idEmploye']).mouseenter(function(){
+						lineJump(indice);
+					});
+					$('#employe-' + donnees['idEmploye']).mouseleave(function(){
+						lineDown(indice);
+					});
+				});
+			}
+		});
+	}
+	function loadDate(mois)
+	{
+		$.ajax({
+			url : "<?= HOST . $redirectDatePlanning?>",
+			data : "mois=" + mois,
+			dataType : "json",
+			success : function(data)
+			{
+				$('#container-dates').empty();
+				$.each(data, function(indice, date) {
+					var classeDate = "card p-2 mt-1 text-center card-1 card-container text-important";
+					if (date['isFerie'] != false) {
+						classeDate += " card-blue date-" + indice;
+						setTippy('date-' + indice, date['dateComplete'] + ' : ' + date['isFerie']);
+					} else if (date['isWeekend'] != false) {
+						classeDate += " card-grey date-" + indice;
+						setTippy('date-' + indice, date['dateComplete']);
+					} else {
+						classeDate += " card-green date-" + indice;
+						setTippy('date-' + indice, date['dateComplete']);
+					}
+					$('#container-dates').append('<div class="' + classeDate + '" style="display: inline-block;">' + date['jour'] + '</div>');
+				});
+			}
+		});
+	}
+	function loadContenu(groupe, id, mois)
+	{
+		$.ajax({
+			url : "<?= HOST . $redirectContenuPlanning?>",
+			data : "mois=" + mois + "&groupe=" + groupe + "&id=" + id,
+			dataType : "json",
+			success : function(data)
+			{
+				$('#container-contenus').empty();
+				$.each(data, function(indice, employeDates) {
+					$('#container-contenus').append('<div id="container-ligne-' + indice + '" class="p-0 mt-1" style="max-height: 36px!important;"></div>');
+					$.each(employeDates, function(numero, date) {
+						var classeContenu  = "card p-2 text-center card-container card-1 card-down ligne-" + indice;
+						var contenu = ".";
+						if (date['isFerie'] != false) {
+							setTippy('fe' + numero, date['isFerie']);
+						 	classeContenu += " card-light-blue fe" + numero;
+						 	contenu = "<span class='text-important'>" + date['isFerie'] + "</span>";
+					 	} else if (date['isWeekend'] != false) {
+					 		classeContenu += " card-light-grey we";
+					 		contenu = "<span class='text-important'>We</span>";
+					 		setTippy('we', 'Weekend');
+					 	} else {
+					 		if (date['presence'] != false) {
+					 			if (date['isPresent'] == true) {
+					 				if (date['isConge'] != false) {
+					 					if (date['isConge']['dateDebut'] == date['isConge']['dateFin']) {
+					 						if (date['isConge']['heureFin'] == 2) {
+					 							classeContenu += " card-cyan-to-green co-pr";
+						 						contenu = "<i class='fa fa-sun mr-2 text-warning'></i><i class='fa ml-2 fa-check text-success'></i>";
+						 						setTippy('co-pr', 'congé le matin, présent l\'après-midi');
+					 						} else if (date['isConge']['heureDebut'] == 2) {
+						 						classeContenu += " card-green-to-cyan pr-co";
+							 					contenu = "<i class='fa mr-2 fa-check text-success'></i><i class='fa fa-sun ml-2 text-warning'></i>";
+							 					setTippy('pr-co', 'présent le matin, congé l\'après-midi');
+						 					}
+						 				} else {
+						 					if (date['dateEcrite'] == date['isConge']['dateDebut'] && date['isConge']['heureDebut'] == 2) {
+						 						classeContenu += " card-green-to-cyan pr-co";
+							 					contenu = "<i class='fa mr-2 fa-check text-success'></i><i class='fa fa-sun ml-2 text-warning'></i>";
+							 					setTippy('pr-co', 'présent le matin, congé l\'après-midi');
+						 					} else if (date['dateEcrite'] == date['isConge']['dateFin'] && date['isConge']['heureFin'] == 2) {
+						 						classeContenu += " card-cyan-to-green co-pr";
+						 						contenu = "<i class='fa fa-sun mr-2 text-warning'></i><i class='fa ml-2 fa-check text-success'></i>";
+						 						setTippy('co-pr', 'congé le matin, présent l\'après-midi');
+						 					}
+						 				}
+					 				} else {
+					 					classeContenu += " card-light-green pr";
+					 					contenu = "<i class='fa fa-check text-success'></i>";
+					 					setTippy('pr', 'présent');
+					 				}
+					 			} else if (date['isPermission'] != false) {
+				 					setTippy('pe-' + indice + '-' + numero, "permission : " + date['isPermission']);
+			 						classeContenu += " card-yellow pe-" + indice + '-' + numero;
+			 						contenu = "<span class='text-important'>"  + date['isPermission'] + "</span>";
+				 				} else if (date['isRepos'] != false) {
+				 					classeContenu += " card-pink re";
+				 					contenu = "<i class='fa fa-plus'></i>";
+				 					setTippy('re', 'repos médical');
+				 				} else if (date['isConge'] != false) {
+				 					if (date['isConge']['dateDebut'] == date['isConge']['dateFin']) {
+					 					if (date['isConge']['heureFin'] == 2) {
+					 						classeContenu += " card-cyan-to-red co-ab";
+						 					contenu = "<i class='fa fa-sun mr-2 text-warning'></i><i class='fa ml-2 fa-times text-danger'></i>";
+						 					setTippy('co-ab', 'congé le matin, absent l\' après-midi');
+					 					} else if (date['isConge']['heureDebut'] == 2) {
+					 						classeContenu += " card-red-to-cyan ab-co";
+						 					contenu = "<i class='fa mr-2 fa-times text-danger'></i><i class='fa fa-sun ml-2 text-warning'></i>";
+						 					setTippy('ab-co', 'absent le matin, congé l\'après-midi');
+					 					} else {
+					 						classeContenu += " card-cyan co";
+				 							contenu = "<i class='fa fa-sun text-warning'></i>";
+				 							setTippy('co', "congé");
+					 					}
+					 				} else {
+						 				if (date['dateEcrite'] == date['isConge']['dateDebut'] && date['isConge']['heureDebut'] == 2) {
+						 					classeContenu += " card-red-to-cyan ab-co";
+							 				contenu = "<i class='fa mr-2 fa-times text-danger'></i><i class='fa fa-sun ml-2 text-warning'></i>";
+							 				setTippy('ab-co', 'absent le matin, congé l\'après-midi');
+						 				} else if (date['dateEcrite'] == date['isConge']['dateFin'] && date['isConge']['heureFin'] == 2) {
+											classeContenu += " card-cyan-to-red co-ab";
+					 						contenu = "<i class='fa fa-sun mr-2 text-warning'></i><i class='fa ml-2 fa-times text-danger'></i>";
+					 						setTippy('co-ab', 'congé le matin, absent l\'après-midi');
+					 					} else {
+					 						classeContenu += " card-cyan co";
+				 							contenu = "<i class='fa fa-sun text-warning'></i>";
+				 							setTippy('co', "congé");
+					 					}
+					 				}
+				 				} else {
+				 					classeContenu += " card-light-red ab";
+				 					contenu = "<i class='fa fa-times text-danger'></i>";
+				 					setTippy('ab', 'absent');
+				 				}
+					 		} else if (date['isConge'] != false) {
+					 			if (date['isConge']['dateDebut'] == date['isConge']['dateFin']) {
+					 				if (date['isConge']['heureFin'] == 2) {
+					 					classeContenu += " card-cyan-to-grey co-ma";
+						 				contenu = "<i class='fa fa-sun mr-2 text-warning'></i><span class='ml-2'> . </span>";
+						 				setTippy('co-ma', 'congé le matin');
+					 				} else if (date['isConge']['heureDebut'] == 2) {
+										classeContenu += " card-grey-to-cyan ma-co";
+					 					contenu = "<span class='mr-2'> . </span><i class='fa fa-sun ml-3 text-warning'></i>";
+					 					setTippy('ma-co', 'congé l\'après-midi');
+				 					} else {
+					 					classeContenu += " card-cyan co" + date['isConge']['idConge'];
+					 					contenu = "<i class='fa fa-sun text-warning'></i>";
+				 						setTippy('co' + date['isConge']['idConge'], "congé le " + date['isConge']['dateDebut'] + " jusqu'au " + date['isConge']['dateFin']);
+					 				}
+					 			} else {
+					 				if (date['dateEcrite'] == date['isConge']['dateDebut'] && date['isConge']['heureDebut'] == 2) {
+					 					classeContenu += " card-grey-to-cyan ma-co";
+						 				contenu = "<span class='mr-2'> . </span><i class='fa fa-sun ml-2 text-warning'></i>";
+						 				setTippy('ma-co', 'congé l\'après-midi');
+					 				} else if (date['dateEcrite'] == date['isConge']['dateFin'] && date['isConge']['heureFin'] == 2) {
+										classeContenu += " card-cyan-to-grey co-ma";
+					 					contenu = "<i class='fa fa-sun mr-2 text-warning'></i><span class='ml-2'> . </span>";
+					 					setTippy('co-ma', 'congé le matin');
+									} else {
+				 						classeContenu += " card-cyan co" + date['isConge']['idConge'];
+					 					contenu = "<i class='fa fa-sun text-warning'></i>";
+				 						setTippy('co' + date['isConge']['idConge'], "congé le " + date['isConge']['dateDebut'] + " jusqu'au " + date['isConge']['dateFin']);
+				 					}
+					 			}
+					 		} else if (date['isPermission'] != false) {
+			 					setTippy('pe-' + indice + '-' + numero, "permission : " + date['isPermission']);
+			 					classeContenu += " card-yellow pe-" + indice + '-' + numero;
+			 					contenu = "<span class='text-important'>"  + date['isPermission'] + "</span>";
+			 				} else if (date['isRepos'] != false) {
+			 					classeContenu += " card-pink re";
+			 					contenu = "<i class='fa fa-plus'></i>";
+			 					setTippy('re', 'repos médical');
+			 				} else {
+					 			classeContenu += " card-extra-light-grey";
+					 		}
+					 	}
+						$('#container-ligne-' + indice).append('<div class="' + classeContenu + '" style="display: inline-block; height:36px!important;">' + contenu + '</div>');
+					});
+				});
+			}
+		});
+	}
+</script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/planning.js"></script>

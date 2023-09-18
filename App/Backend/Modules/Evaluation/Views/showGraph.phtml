@@ -1,0 +1,66 @@
+<section class="page-section" id="back-section">
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+      <h4 class="text-center list-title section-heading">Graphique</h4>
+    </div>
+  </div>
+  <div class="row">
+    <a href="<?= HOST. 'manage/entreprise/evaluation'?>" class="btn btn-primary rounded-circle">
+      <i class="fas fa-arrow-left"></i>
+    </a>
+    <!-- <i class="fas fa-search-minus"></i>
+    <i class="fas fa-search-plus"></i>  -->            
+  </div>
+    <div class="row align-items-center">
+      <div class="col-md-12 infoEvaluation">
+        <h4><?= $data->getLibelle(); ?></h4>
+        <h5>
+          <?php if (count($data->getEvaluateur()) > 1): ?>
+            Évaluateurs:
+          <?php else : ?>
+            Évaluateur:
+          <?php endif; ?>
+          <br>
+          <?php foreach ($data->getEvaluateur() as $key => $evaluateur) :
+            $evaluateurs[] = $evaluateur->toArray();
+          ?>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            - <?= $evaluateur->getPrenom(); ?>&nbsp;<?= $evaluateur->getNom(); ?>
+            <br>
+          <?php endforeach; ?>
+          <script type="text/javascript">
+            var evaluateurs = <?= json_encode($evaluateurs); ?> ;
+            var idEvaluation = <?= json_encode($data->getIdEvaluationEmploye()); ?> ;
+          </script>
+        </h5>
+        <br>
+        <h6>Personne évaluée: <?= $data->getPoint()['evaluee'];?></h6>
+        <h6>Date d'évaluation: <?= $data->getDateCreation(); ?></h6>
+      </div>
+    </div>
+  <div class="row offre-body">
+    <div class="row">
+      <div class="col-md-12" id="graph" style="font-size: 1.2em;">
+        <!-- Chart container -->
+        <div id="container"></div>
+      </div>
+    </div>
+    <div class="row offre-footer">
+      <div class="container">
+        <p> <u>LÉGENDE</u>&nbsp;:</p>
+        <hr>
+        <div class="row align-items-center" id="legend">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script type="text/javascript">
+  var responsePoint = <?= json_encode($data->getPoint()); ?>
+</script>
+<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/evaluationGraph.css">
+<!-- Adding ej2.min.js CDN link in script file -->
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/ej2CHART.min.js" type="text/javascript"></script>
+<!-- Adding hexagone.js script file -->
+<script src="<?= HOST; ?>../Web/Ressources/js/hexagone.js" type="text/javascript"></script>

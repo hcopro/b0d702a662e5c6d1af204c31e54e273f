@@ -1,0 +1,58 @@
+<?php
+	extract($data);
+?>
+<div class="">
+	<?php if ($entrepriseFeries != null) :?>
+		<?php foreach ($entrepriseFeries as $entrepriseFerie) : extract($entrepriseFerie); ?>
+			<div class="card card-border-grey m-2 p-2">
+				<div class="row">
+					<div class="col-md-3">
+						<span class="titre"> <?= $ferie->getDate(); ?> </span>
+					</div>
+					<div class="col-md-7">
+						<span class="text-important"> <?= $type->getDesignation(); ?> </span>
+					</div>
+					<div class="col-md-2 text-right">
+						<button  class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalSupprimer<?=$ferie->getIdEntrepriseFerie()?>">
+							supprimer
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="modalSupprimer<?= $ferie->getIdEntrepriseFerie() ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			  	<div class="modal-dialog modal-dialog-centered" role="document">
+			    	<div class="modal-content">
+			      		<div class="modal-header text-center">
+			      			<div class="text-center" style="width: 100%;">
+			      				<h5 class="modal-title section-heading" id="exampleModalLabel">Confirmation de la suppression</h5>
+			      			</div>
+			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          			<span aria-hidden="true">&times;</span>
+			        		</button>
+			      		</div>
+			      		<div class="modal-body">
+		      				<div class="card p-3 text-center" style="background: #ffffff;">
+		      					<p>Voulez-vous vraiment supprimer le jour férié : " <span class="titre"><?= $type->getDesignation();?> </span> " de votre calendrier ?</p>
+				        	</div>
+			      		</div>
+			      		<div class="modal-footer">
+			      			<div class="row" style="width: 105%!important;">
+			      				<div class="col-sm-12 text-right">
+			      					<a href="" class="btn btn-sm btn-danger">Annuler</a>
+			      					<a href="<?= HOST . 'manage/delete-entrepriseFerie?idEntrepriseFerie=' . $ferie->getIdEntrepriseFerie() ?>" class="btn btn-sm btn-success">Confirmer</a>
+			      				</div>
+			      			</div>
+			      		</div>
+			    	</div>
+			  	</div>
+			</div>
+		<?php endforeach ?>
+	<?php /** @changelog 06/12/2021 [EVOL] (Lansky) Ajout une annimation vidéo pour la liste d'une table vide*/
+	else : ?>
+		<div class="row add-video" style="position: relative;">
+			<video width="50%" autoplay="" muted="" loop="" style="left:50%; position: absolute; transform: translate(-50%, 0%);">
+				<source src="<?= HOST; ?>../Web/Ressources/videos/empty.mp4" type="video/mp4">
+			</video>
+		</div>
+	<?php endif ?>
+</div>

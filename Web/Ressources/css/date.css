@@ -1,0 +1,5 @@
+#annee::-webkit-datetime-edit-month-field,
+	::-webkit-datetime-edit-day-field,
+	::-webkit-datetime-edit-text {
+	  display:none;
+	}

@@ -1,0 +1,286 @@
+<?php if ($_SESSION['compte']['identifiant'] == 'entreprise') :
+  if (strstr($_GET['page'],'-') == "-evaluation_modele") : ?>
+    <section class="page-section" id="back-section">
+      <div class="row">
+        <a href="<?= HOST. 'manage/entreprise/evaluation_modele'?>" class="btn btn-primary rounded-circle">
+          <i class="fas fa-arrow-left"></i>
+        </a>             
+      </div>
+      <div class="row offre-body">
+        <div class="col-md-12"  style="font-size: 1.2em;">
+          <h4> <?= $data->getLibelle() ?></h4>
+          <h6>Date de création: <?= $data->getDateCreation(); ?></h6>
+          <?php foreach ($data->getCategory() as $key => $value) :
+            $parent   = $value['parent'];
+            $category = $value['category'];
+          ?>
+            <table class="table table-borderless" style="width: 100%; font-size: 0.9em; border : none;">
+              <thead>
+                <tr class="p-0">
+                  <th class="p-0 text-left"><div class="card-text p-2 m-1 card-grey"><?= $parent->getLibelle()?></div></th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($category as $keyTwo => $val) :
+                  $sousCategorie  = $val['sousCategories'];
+                  $questionnaires = $val['questionnaires'];
+                ?>
+                  <tr class="p-0">
+                    <td class="p-0" colspan="5">
+                      <div class="card-text p-2 m-1 card-light-grey"><?= $parent->getLibelle()?>&nbsp;<b>&gt;</b>&nbsp;<?= $sousCategorie->getLibelle()?> </div>
+                    </td>
+                  </tr>
+                  <?php if (count($questionnaires) > 0) : ?>
+                    <?php foreach ($questionnaires as $indice => $question) : ?>
+                      <?php if (is_object($question)) : ?>
+                        <tr class="p-0" style="width: 30%;">
+                          <td class="p-0">
+                            <ul>
+                              <li><?= $question->getLibelle() ?></li>  
+                            </ul>
+                          </td>
+                        </tr>
+                      <?php endif; ?>
+                    <?php endforeach; ?>
+                  <?php else : ?>
+                    <tr class="p-0" style="width: 30%;">
+                      <td class="p-0">
+                        <ul>
+                          Aucune question à cette dimension...
+                        </ul>
+                      </td>
+                    </tr>
+                  <?php endif; ?>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          <?php endforeach; ?> 
+        </div>
+        <div class="row offre-footer"></div>
+      </div>
+    </section>
+  <?php elseif (strstr($_GET['page'],'-') == '-evaluation') : ?>
+    <section class="page-section" id="back-section">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+          <h4 class="text-center list-title section-heading">Détail d'évaluation</h4>
+        </div>
+      </div>
+      <div class="row">
+        <a href="<?= $_SERVER['HTTP_REFERER']; ?>" class="btn btn-primary rounded-circle">
+          <i class="fas fa-arrow-left"></i>
+        </a>             
+      </div>
+      <div class="row offre-body">
+        <div class="col-md-12"  style="font-size: 1.2em; overflow-x:scroll;">
+          <h4> <?= strtoupper($data["evaluation"]->getLibelle()); ?></h4>
+          <h4>Personne à évaluer: <?= $data["evaluation"]->getPoint()["evaluee"]->getPrenom(); ?></h4>
+          <h5>Point moyenne d'évaluation: <strong><?= number_format($data["evaluation"]->getMoyenne(),2,',','.').' / '.POINT_MAX; ?></strong></h5>
+            <table class="table table-borderless" style="width: 100%; font-size: 0.9em; border : none;">
+              <thead>
+                <tr class="p-0">
+                  <th class="p-0 text-left"><div class="card-text p-2 m-1 card-grey">Évaluation</div></th>
+                  <?php $colSpan = 3; foreach ($data["answers"] as $clefAnswer => $dataTemporary) : ?>
+                    <?php foreach ($data["evaluation"]->getPoint()["evaluateurs"] as $clef => $evaluateur) : $colSpan++; ?>
+                      <?php if ($dataTemporary->getIdEvaluateur() == $evaluateur->getIdEmploye()) : ?>
+                        <th class="p-0 text-left">
+                          <div class="card-text p-2 m-1 card-grey">Évaluation par <?= $evaluateur->getPrenom(); ?> le <?= explode('à',$dataTemporary->getDateRepondre())[0]; ?></div> 
+                        </th>
+                      <?php break; endif; ?>
+                    <?php endforeach;?>
+                  <?php endforeach;?>
+                  <th class="p-0 text-left">
+                    <div class="card p-2 m-1 card-grey">Moyenne par question</div> 
+                  </th>
+                    <?php if (true) : ?>
+                      <th class="p-0 text-left">
+                        <div class="card p-2 m-1 card-grey">Interprétation</div>
+                      </th>
+                    <?php endif; ?>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($data["evaluation"]->getPoint()["points"] as $key => $datas) : ?>
+                  <tr class="p-0">
+                    <td class="p-0" colspan="<?= $colSpan; ?>">
+                      <div class="card-text p-2 m-1 card-light-blue"><?= ucfirst($datas["parent"]->getLibelle());?> &nbsp;&#8209;&nbsp; <strong><?= number_format($datas['moyenneCategory'],2,',','.').' / '.POINT_MAX; ?></strong></div>
+                    </td>
+                  </tr>
+                  <?php foreach ($datas["category"] as $keyTwo => $sousCategories) : ?>
+                    <?php if (is_string($keyTwo) && $keyTwo == 'sousCategories') :
+                      $value = $data->getIdCategorie()[$key+1]['sousCategories']; 
+                      $questionnaires = $data->getIdCategorie()[$key+1]['questionnaires']; ?>
+                      <?php if (count($questionnaires) > 0) : ?>
+                        <?php foreach ($questionnaires as $indice => $question) : ?>
+                          <tr class="p-0" style="width: 30%;">
+                            <td class="p-0">
+                              <ul>
+                                <li><?= $question->getLibelle() ?></li>  
+                              </ul>
+                            </td>
+                          </tr>
+                        <?php endforeach; ?>
+                      <?php else : ?>
+                        <tr class="p-0" style="width: 30%;">
+                          <td class="p-0">
+                            <ul>
+                              Aucune question à cette dimension...
+                            </ul>
+                          </td>
+                        </tr>
+                      <?php endif; ?>
+                    <?php elseif (is_array($sousCategories)) : ?>
+                      <?php foreach ($sousCategories as $keyThree => $sousCategorie) : ?>
+                        <?php if (is_string($keyThree) && $keyThree == 'sousCategories') : ?>
+                          <?php $value = $sousCategories['sousCategories']; 
+                          $questionnaires = $sousCategories['questionnaires'];?>
+                          <tr class="p-0">
+                            <td class="p-0" colspan="<?= $colSpan; ?>">
+                              <div class="card-text p-2 m-1 card-light-grey"><?= $datas["parent"]->getLibelle();?>&nbsp;<b>&gt;</b>&nbsp;<?= ucfirst($value->getLibelle())?> &nbsp;&#8209;&nbsp; <strong><?= number_format($sousCategories['moyenne'],2,',','.').' / '.POINT_MAX; ?></strong></div>
+                            </td>
+                          </tr>
+                          <?php if (count($questionnaires) > 0) : ?>
+                            <?php foreach ($questionnaires as $indice => $questions) :
+                              $question = $questions['question'];
+                              $point = $questions['point'];
+                              $interpretation = $question->getInterpretation(); ?>
+                              <tr class="p-0" style="width: 30%;">
+                                <td class="p-0">
+                                  <?php if ($question) : ?>
+                                    <ul>
+                                      <li><?= ucfirst($question->getLibelle()); ?></li>  
+                                    </ul>
+                                <?php endif; ?>
+                                </td>
+                                <?php for ($clef=0; $clef < count($data["answers"]); $clef++) :  ?>
+                                  <?php if ($data['answers'][$clef]->getDonneeEvaluation()[$key]["category"][$keyTwo]) :
+                                    foreach ($data['answers'][$clef]->getDonneeEvaluation()[$key]["category"][$keyTwo] as $keys => $points) : 
+                                      if ($keys == 'questionnaires') :  ?>
+                                        <td class="p-0 text-center">
+                                         <?= $points[$indice]["point"]; ?>
+                                        </td>
+                                      <?php endif;?>
+                                    <?endforeach;
+                                  endif; ?>
+                                <?php endfor; ?>
+                                <td class="p-0 text-center">
+                                  <strong><?= round($point, 0).' / '.POINT_MAX; ?></strong>
+                                </td>
+                                  <?php if ($interpretation) : 
+                                    foreach ($interpretation as $ky => $interpret) :
+                                      if (explode(' ', $ky)[1] == round($point, 0) ) : 
+                                        if ($interpret) : ?>
+                                          <td class="p-0 text-left">
+                                            <label><?=$interpret; ?>&nbsp;&period;</label>
+                                          </td>
+                                        <?php else : ?>
+                                          <td class="p-0 text-left">
+                                            <label><strong><em> Aucune&nbsp;interprétation&nbsp;&period;</em></strong></label>
+                                          </td>
+                                        <?php endif; ?>
+                                      <? endif;
+                                    endforeach; 
+                                  endif; ?>
+                              </tr>
+                            <?php endforeach; ?>
+                          <?php else : ?>
+                            <tr class="p-0" style="width: 30%;">
+                              <td class="p-0">
+                                <ul>
+                                  Aucune question à cette dimension...
+                                </ul>
+                              </td>
+                            </tr>
+                          <?php endif; ?>
+                        <?php endif; ?>
+                      <?php endforeach; ?>
+                    <?php endif; ?>
+                  <?php endforeach;  ?>
+                <?php endforeach; ?> 
+              </tbody>
+            </table>
+        </div>
+        <div class="row offre-footer"></div>
+      </div>
+    </section>
+  <?endif; ?>
+<?php elseif ($_SESSION['compte']['identifiant'] == 'employe') :
+  $url = explode('/', $_GET['page']); 
+  if ($url[1] =='employe') : ?>
+    <section class="page-section" id="back-section">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+          <h4 class="text-center list-title section-heading">Détail d'évaluation validée</h4>
+        </div>
+      </div>
+      <div class="row">
+        <a href="<?= $_SERVER['HTTP_REFERER']; ?>" class="btn btn-primary rounded-circle">
+          <i class="fas fa-arrow-left"></i>
+        </a>
+      </div>
+      <div class="row offre-body">
+        <div class="col-md-12"  style="font-size: 1.2em;">
+          <h4> <?= $data->getLibelle(); ?></h4>
+          <h5>Évaluation pour <?= $data->getIdEvaluee()->getPrenom(); ?></h5>
+          <h6>Répondue le: <?= $data->getDateRepondre(); ?></h6>
+          <?php foreach ($data->getDonneeEvaluation() as $key => $categorie) : ?>
+            <table class="table table-borderless" style="width: 100%; font-size: 0.9em; border : none;">
+              <thead>
+                <tr class="p-0">
+                  <th class="p-0 text-left" colspan="4">
+                    <div class="card-text p-2 m-1 card-grey"><?= $categorie["parent"]->getLibelle()?></div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($categorie["category"] as $keyTwo => $sousCategories) :
+                  $sousCategorie = $sousCategories['sousCategories']; 
+                  $questionnaires = $sousCategories['questionnaires']; ?>
+                  <tr class="p-0">
+                    <td class="p-0" colspan="1">
+                      <div class="card-text p-2 m-1 card-light-grey"><?= $categorie["parent"]->getLibelle()?>&nbsp;<b>&gt;</b>&nbsp;<?= $sousCategorie->getLibelle()?> </div>
+                    </td>
+                    <td class="p-0" colspan="1" style="width: 6%;">
+                      <div class="card p-2 m-1 card-light-grey">Point</div>
+                    </td>
+                    <td class="p-0" colspan="1">
+                      <div class="card p-2 m-1 card-light-grey">Note</div>
+                    </td>
+                  </tr>
+                  <?php if (count($questionnaires) > 0) : ?>
+                    <?php foreach ($questionnaires as $indice => $question) : ?>
+                      <tr class="p-0" style="width: 30%;">
+                        <td class="p-0" colspan="1">
+                          <ul>
+                            <li><?= $question['question']->getLibelle() ?></li>
+                          </ul>
+                        </td>
+                        <td class="p-0 text-center" colspan="1">
+                          <?= $question['point']; ?>
+                        </td>
+                        <td class="p-0 text-left" colspan="1">
+                          <?=$question['note']; ?>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  <?php else : ?>
+                    <tr class="p-0" style="width: 30%;">
+                      <td class="p-0">
+                        <ul>
+                          Aucune question à cette dimension...
+                        </ul>
+                      </td>
+                    </tr>
+                  <?php endif; ?>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          <?php endforeach; ?> 
+        </div>
+        <div class="row offre-footer"></div>
+      </div>
+    </section>
+  <?php endif;?>
+<?php endif;?>

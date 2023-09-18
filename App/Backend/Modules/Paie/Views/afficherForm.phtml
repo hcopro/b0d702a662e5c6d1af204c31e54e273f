@@ -1,0 +1,794 @@
+<?php
+	extract($data);
+	$url = explode('/', $_GET['page']);
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row" style="margin-top: -15px;">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h4 class="text-center list-title section-heading">Edition de fiche paie</h4>
+			</div>
+			<div class="col-md-2 text-right">
+
+			</div>
+		</div>
+		<div class="block-section">
+			<form method="POST" id="form" action="<?= HOST . 'manage/edit-fichePaie'?>" enctype="multipart/form-data" novalidate="novalidate">
+				<input type="hidden" name="idEmploye" value="<?= $employe->getIdEmploye() ?>">
+				<input type="hidden" name="mois" value="<?= $mois ?>">
+				<input type="hidden" name="annee" value="<?= $annee ?>">
+				<input type="hidden" name="heureSupplementaireActive" value="<?= $parametreHeure->getHeureSupplementaireActive() ?>">
+				<input type="hidden" name="heureSupplementaireImposable" value="<?= $parametreHeure->getHeureSupplementaireImposable() ?>">
+				<input type="hidden" name="heureNuitImposable" value="<?= $parametreHeure->getHeureNuitImposable() ?>">
+				<input type="hidden" name="heureDimancheImposable" value="<?= $parametreHeure->getHeureDimancheImposable() ?>">
+				<input type="hidden" name="heureFerieImposable" value="<?= $parametreHeure->getHeureFerieImposable() ?>">
+				<table id="table-fiche-paie" class="table">
+					<thead>
+						<tr>
+							<th colspan="1">
+								<span class="titre">Mois : </span>
+								<?= ManagerModulePaie::getMonthLetter($mois); ?>
+							</th>
+							<th colspan="1">
+								<span class="titre">Année : </span>
+								<?= $annee ?>
+							</th>
+							<th>
+							</th>
+							<th>
+								<div class="row">
+									<div class="col-md-8"></div>
+									<div class="col-md-2 text-center">
+										<button class="btn btn-sm btn-success" type="submit" name="actualiser" value="1">
+											<i class="fa fa-undo"></i>
+										</button>
+									</div>
+									<div class="col-md-2 text-center">
+										<button class="btn btn-sm btn-info" type="submit" name="sauvegarder" value="1">
+											<i class="fa fa-save"></i>
+										</button>
+									</div>
+								</div>
+							</th>
+						</tr>
+						<tr>
+		  					<th colspan="2">
+		  						<div class="row">
+		  							<div class="col-md-4">
+		  								<span class="titre">L'entreprise :</span>
+		  							</div>
+		  							<div class="col-md-8">
+		  								<span><?= $entreprise->getNom() ?></span>
+		  							</div>
+		  						</div>
+		  						<div class="row">
+		  							<div class="col-md-4">
+		  								<span class="titre">Adresse :
+		  							</div>
+		  							<div class="col-md-8">
+		  								<span class="font-weight-normal"><?= $entreprise->getAdresse() . " " . $entreprise->getVille() ?></span>
+		  							</div>
+		  						</div>
+		  					</th>
+		  					<th colspan="2">
+		  						<div class="row">
+		  							<div class="col-md-5">
+		  								<span class="titre">
+		  									L'employé :
+		  								</span>
+		  							</div>
+		  							<div class="col-md-7">
+		  								<span><?= $employe->getCivilite() . ' ' . $employe->getNom() . ' ' . $employe->getPrenom() ?></span>
+		  							</div>
+		  						</div>
+		  						<div class="row">
+		  							<div class="col-md-5">
+		  								<span class="titre">
+		  									Poste :
+		  								</span>
+		  							</div>
+		  							<div class="col-md-7">
+		  								<span><?= $poste ?></span>
+		  								<input type="hidden" name="poste" value="<?= $poste ?>">
+		  							</div>
+		  						</div>
+		  						<div class="row">
+		  							<div class="col-md-5">
+		  								<span class="titre">
+		  									Période :
+		  								</span>
+		  							</div>
+		  							<div class="col-md-7">
+		  								<input type="hidden" name="debut" value="<?= $debut ?>">
+		  								<input type="hidden" name="fin" value="<?= $fin ?>">
+		  								<span class="font-weight-normal">
+		  									du
+		  									<b><?= date("d/m/Y", strtotime($debut)) ?></b>
+		  									au
+		  									<b><?= date("d/m/Y", strtotime($fin)) ?></b>
+		  								</span>
+		  							</div>
+		  						</div>
+		  						<div class="row">
+		  							<div class="col-md-5">
+		  								<span class="titre">
+		  									Salaire de base :
+		  								</span>
+		  							</div>
+		  							<div class="col-md-7">
+		  								<input type="number" name="salaireDeBase" id="salaireDeBase" value="<?= $salaireDeBase ?>">
+		  							</div>
+		  						</div>
+		  						<div class="row">
+		  							<div class="col-md-5">
+		  								<span class="titre">
+		  									Solde congé début du mois :
+		  								</span>
+		  							</div>
+		  							<div class="col-md-7">
+		  								<input type="number" name="soldeCongeDebut" id="soldeCongeDebut" value="<?= $soldeCongeDebut ?>">
+		  							</div>
+		  						</div>
+		  						<div class="row">
+		  							<div class="col-md-5">
+		  								<span class="titre">
+		  									congé pris :
+		  								</span>
+		  							</div>
+		  							<div class="col-md-7">
+		  								<input type="number" name="congePris" id="congePris" value="<?= $congePris ?>">
+		  							</div>
+		  						</div>
+		  						<div class="row">
+		  							<div class="col-md-5">
+		  								<span class="titre">
+		  									solde congé :
+		  								</span>
+		  							</div>
+		  							<div class="col-md-7">
+		  								<input type="number" name="soldeCongeFin" id="soldeCongeFin" value="<?= $soldeCongeFin ?>">
+		  							</div>
+		  						</div>
+		  					</th>
+		  				</tr>
+		  				<tr class="" style="background: #eceff1; padding: 10px!important;">
+		  					<th> Rubrique </th>
+		  					<th> Quantité </th>
+		  					<th> Gain </th>
+		  					<th> Déduction </th>
+		  				</tr>
+		  			</thead>
+		  			<tbody>
+		  				<tr>
+	      					<td>
+	      						<span class="titre">Salaire de base au prorata</span>
+	      					</td>
+	      					<td>
+	      						pour <input type="number" name="presence" id="presence" value="<?= $presence ?>" style="width: 100px;"> jours
+	      					</td>
+	      					<td>
+	      						<?= number_format($salaire, 2); ?>
+	      						<input type="hidden" name="salaire" value="<?= $salaire ?>">
+	      					</td>
+	      					<td></td>
+	      				</tr>
+	      				<tr>
+	      					<td>
+	      						<span class="titre">Allocation de congé</span>
+	      					</td>
+	      					<td>
+	      						pour <input type="number" name="quantiteAllocation" id="quantiteAllocation" value="<?= $quantiteAllocation ?>" style="width: 100px;"> jours
+	      					</td>
+	      					<td>
+	      						<?= number_format($allocationConge, 2); ?>
+	      						<input type="hidden" name="allocationConge" value="<?= $allocationConge ?>">
+	      					</td>
+	      					<td></td>
+	      				</tr>
+	      				<?php if ($parametreHeure->getHeureSupplementaireActive() && $parametreHeure->getHeureSupplementaireImposable()) : ?>
+				      		<tr>
+				      			<td>
+				      				<span class="titre">Heures supplémentaires</span>
+				      			</td>
+				      			<td>
+				      				pour <input type="number" name="quantiteHeureSupplementaire" id="quantiteHeureSupplementaire" value="<?= $quantiteHeureSupplementaire ?>" style="width: 100px;">  heures
+				      			</td>
+				      			<td>
+				      				<?= number_format($majorationSupplementaire, 2); ?>
+				      				<input type="hidden" name="majorationHeureSupplementaire" value="<?= $majorationSupplementaire ?>">
+				      			</td>
+				      			<td></td>
+				      		</tr>
+				      	<?php endif ?>
+				      	<?php if ($parametreHeure->getHeureNuitImposable()) : ?>
+				      		<tr>
+				      			<td>
+				      				<span class="titre">Heures de nuit</span>
+				      			</td>
+				      			<td>
+				      				pour <input type="number" name="quantiteHeureNuit" id="quantiteHeureNuit" value="<?= $quantiteHeureNuit ?>" style="width: 100px;">  heures
+				      			</td>
+				      			<td>
+				      				<?= number_format($majorationNuit, 2); ?>
+				      				<input type="hidden" name="majorationHeureNuit" value="<?= $majorationNuit ?>">
+				      			</td>
+				      			<td></td>
+				      		</tr>
+				      	<?php endif ?>
+				      	<?php if ($parametreHeure->getHeureDimancheImposable()) : ?>
+				      		<tr>
+				      			<td>
+				      				<span class="titre">Heures de Dimanche</span>
+				      			</td>
+				      			<td>
+				      				pour <input type="number" name="quantiteHeureDimanche" id="quantiteHeureDimanche" value="<?= $quantiteHeureDimanche ?>" style="width: 100px;">  heures
+				      			</td>
+				      			<td>
+				      				<?= number_format($majorationDimanche, 2); ?>
+				      				<input type="hidden" name="majorationHeureDimanche" value="<?= $majorationDimanche ?>">
+				      			</td>
+				      			<td></td>
+				      		</tr>
+				      	<?php endif ?>
+				      	<?php if ($parametreHeure->getHeureFerieImposable()) : ?>
+				      		<tr>
+				      			<td>
+				      				<span class="titre">Heures jour férié</span>
+				      			</td>
+				      			<td>
+				      				pour <input type="number" name="quantiteHeureFerie" id="quantiteHeureFerie" value="<?= $quantiteHeureFerie ?>" style="width: 100px;">  heures
+				      			</td>
+				      			<td>
+				      				<?= number_format($majorationFerie, 2); ?>
+				      				<input type="hidden" name="majorationHeureFerie" value="<?= $majorationFerie ?>">
+				      			</td>
+				      			<td></td>
+				      		</tr>
+				      	<?php endif ?>
+				      	<?php foreach ($avantageImposables as $avantageImposable) : ?>
+				      		<tr>
+				      			<td>
+				      				<span class="titre"><?= $avantages[$avantageImposable->getIdAvantageEmploye()] ?></span>
+				      			</td>
+				      			<td>
+				      				<span class=""><?= $avantageImposable->getRatioImposable() . ' %' ?></span>
+				      			</td>
+				      			<td>
+				      				<?= number_format(($avantageImposable->getMontant() * $avantageImposable->getRatioImposable()) / ManagerModulePaie::CENT_POUR_CENT , 2); ?>
+				      			</td>
+				      			<td>
+				      		</tr>
+				      	<?php endforeach ?>
+				      	<tr>
+				      		<td>
+				      			<span class="titre font-italic text-success">Ajouter un avantage</span>
+				      		</td>
+				      		<td></td>
+				      		<td></td>
+				      		<td class="text-right">
+				      			<button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalEnregistrement">
+				      				<i class="fa fa-plus fa-15x text-white"></i>
+				      			</button>
+				      		</td>
+				      	</tr>
+				      	<tr style="background: #eeeeee;">
+			      			<td>
+			      				<span class="text-important">Salaire Brut</span>
+			      			</td>
+			      			<td></td>
+			      			<td>
+			      				<span class="text-important"><?= number_format($salaireBrut, 2); ?></span>
+			      				<input type="hidden" name="salaireBrut" value="<?= $salaireBrut ?>">
+			      			</td>
+			      			<td></td>
+			      		</tr>
+			      		<tr>
+			      			<td>
+			      				<span class="titre">Cnaps</span>
+			      			</td>
+			      			<td>1 %</td>
+			      			<td></td>
+			      			<td>
+			      				<input type="hidden" name="quantiteCnaps" value="1">
+			      				<?= number_format($deductionCnaps, 2); ?>
+			      				<input type="hidden" name="deductionCnaps" value="<?= $deductionCnaps ?>">
+			      			</td>
+			      		</tr>
+			      		<tr>
+			      			<td>
+			      				<span class="titre">Ostie</span>
+			      			</td>
+			      			<td>1 %</td>
+			      			<td></td>
+			      			<td>
+			      				<input type="hidden" name="quantiteOstie" value="1">
+			      				<?= number_format($deductionOstie, 2); ?>
+			      				<input type="hidden" name="deductionOstie" value="<?= $deductionOstie ?>">
+			      			</td>
+			      		</tr>
+			      		<tr style="background: #eeeeee;">
+			      			<td>
+			      				<span class="text-important">Revenu Imposable</span>
+			      			</td>
+			      			<td></td>
+			      			<td>
+			      				<span class="text-important"><?= number_format($revenuImposable, 2); ?></span>
+			      				<input type="hidden" name="revenuImposable" value="<?= $revenuImposable ?>">
+			      			</td>
+			      			<td></td>
+			      		</tr>
+			      		<tr>
+			      			<td>
+			      				<span class="titre">IRSA</span>
+			      			</td>
+			      			<td></td>
+			      			<td></td>
+			      			<td>
+			      				<?= number_format($irsa, 2); ?>
+			      				<input type="hidden" name="irsa" value="<?= $irsa ?>">
+			      			</td>
+			      		</tr>
+			      		<tr>
+			      			<td>
+			      				<span class="titre">Charge</span>
+			      			</td>
+			      			<td>
+			      				pour <input type="number" name="quantiteCharge" id="quantiteCharge" value="<?= $quantiteCharge ?>" style="width: 70px;">  enfants
+			      			</td>
+			      			<td>
+			      				<?= number_format($deductionCharge, 2); ?>
+			      				<input type="hidden" name="deductionCharge" value="<?= $deductionCharge ?>">
+			      			</td>
+			      			<td></td>
+			      		</tr>
+			      		<tr>
+			      			<td>
+			      				<span class="titre">IRSA net</span>
+			      			</td>
+			      			<td>
+			      			</td>
+			      			<td></td>
+			      			<td>
+			      				<?= number_format($irsaNet, 2); ?>
+			      				<input type="hidden" name="irsaNet" value="<?= $irsaNet ?>">
+			      			</td>
+			      		</tr>
+			      		<?php if ($parametreHeure->getHeureSupplementaireActive() && !$parametreHeure->getHeureSupplementaireImposable()) : ?>
+				      		<tr>
+				      			<td>
+				      				<span class="titre">Heures supplémentaires</span>
+				      			</td>
+				      			<td>
+				      				pour <input type="number" name="quantiteHeureSupplementaire" id="quantiteHeureSupplementaire" value="<?= $quantiteHeureSupplementaire ?>" style="width: 100px;">  heures
+				      			</td>
+				      			<td>
+				      				<?= number_format($majorationSupplementaire, 2); ?>
+				      				<input type="hidden" name="majorationHeureSupplementaire" value="<?= $majorationSupplementaire ?>">
+				      			</td>
+				      			<td></td>
+				      		</tr>
+				      	<?php endif ?>
+				      	<?php if (!$parametreHeure->getHeureNuitImposable()) : ?>
+				      		<tr>
+				      			<td>
+				      				<span class="titre">Heures de nuit</span>
+				      			</td>
+				      			<td>
+				      				pour <input type="number" name="quantiteHeureNuit" id="quantiteHeureNuit" value="<?= $quantiteHeureNuit ?>" style="width: 100px;">  heures
+				      			</td>
+				      			<td>
+				      				<?= number_format($majorationNuit, 2); ?>
+				      				<input type="hidden" name="majorationHeureNuit" value="<?= $majorationNuit ?>">
+				      			</td>
+				      			<td></td>
+				      		</tr>
+				      	<?php endif ?>
+				      	<?php if (!$parametreHeure->getHeureDimancheImposable()) : ?>
+				      		<tr>
+				      			<td>
+				      				<span class="titre">Heures de Dimanche</span>
+				      			</td>
+				      			<td>
+				      				pour <input type="number" name="quantiteHeureDimanche" id="quantiteHeureDimanche" value="<?= $quantiteHeureDimanche ?>" style="width: 100px;">  heures
+				      			</td>
+				      			<td>
+				      				<?= number_format($majorationDimanche, 2); ?>
+				      				<input type="hidden" name="majorationHeureDimanche" value="<?= $majorationDimanche ?>">
+				      			</td>
+				      			<td></td>
+				      		</tr>
+				      	<?php endif ?>
+				      	<?php if (!$parametreHeure->getHeureFerieImposable()) : ?>
+				      		<tr>
+				      			<td>
+				      				<span class="titre">Heures jour férié</span>
+				      			</td>
+				      			<td>
+				      				pour <input type="number" name="quantiteHeureFerie" id="quantiteHeureFerie" value="<?= $quantiteHeureFerie ?>" style="width: 100px;">  heures
+				      			</td>
+				      			<td>
+				      				<?= number_format($majorationFerie, 2); ?>
+				      				<input type="hidden" name="majorationHeureFerie" value="<?= $majorationFerie ?>">
+				      			</td>
+				      			<td></td>
+				      		</tr>
+				      	<?php endif ?>
+				      	<?php foreach ($avantageNonImposables as $avantageNonImposable) : ?>
+				      		<tr>
+				      			<td>
+				      				<span class="titre"><?= $avantages[$avantageNonImposable->getIdAvantageEmploye()] ?></span>
+				      			</td>
+				      			<td></td>
+				      			<td>
+				      				<?= number_format($avantageNonImposable->getMontant(), 2); ?>
+				      			</td>
+				      			<td></td>
+				      		</tr>
+				      	<?php endforeach ?>
+				      	<?php foreach ($deductions as $deduction) : ?>
+				      		<tr>
+				      			<td>
+				      				<span class="titre"><?= $deduction->getLibelle() ?></span>
+				      			</td>
+				      			<td></td>
+				      			<td></td>
+				      			<td>
+				      				<?= number_format($deduction->getMontant(), 2); ?>
+				      			</td>
+				      		</tr>
+				      	<?php endforeach ?>
+				      	<tr>
+				      		<td>
+				      			<span class="titre font-italic text-success">Ajouter une Déduction</span>
+				      		</td>
+				      		<td></td>
+				      		<td></td>
+				      		<td class="text-right">
+				      			<button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalDeduction">
+				      				<i class="fa fa-plus fa-15x text-white"></i>
+				      			</button>
+				      		</td>
+				      	</tr>
+			      		<tr style="background: #eeeeee;">
+			      			<td>
+			      				<span class="text-important">Salaire Net</span>
+			      			</td>
+			      			<td></td>
+			      			<td>
+			      				<span class="text-important"><?= number_format($salaireNet, 2); ?></span>
+			      				<input type="hidden" name="salaireNet" value="<?= $salaireNet ?>">
+			      			</td>
+			      			<td></td>
+			      		</tr>
+	      			</tbody>
+	      			<tfoot>
+	      				<tr>
+	      					<td colspan="4">
+	      						Arrêtée à la somme de <span class="text-important"><?= $salaireNetEnLettre ?></span>
+	      					</td>
+	      				</tr>
+	      			</tfoot>
+				</table>
+			</form>
+		</div>
+	</div>
+</section>
+<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<div class="text-center" style="width: 100%;">
+		      		<h5 class="modal-title" id="exampleModalLabel">Ajouter un avantage</h5>
+		      	</div>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="card p-3" style="background: #efefff;">
+					<p class="text-important text-center" style="width: 100%; text-decoration: underline;">Avantages et primes</p>
+	      				<div class="card m-1 p-3">
+	      					<div class="row">
+      							<div class="col-md-5">
+      								<span class="text-important">Avantage</span>
+      							</div>
+      							<div class="col-md-3">
+      								<span class="text-important">Montant</span>
+      							</div>
+      							<div class="col-md-1">
+      								<span class="text-important">NI</span>
+      							</div>
+      							<div class="col-md-3">
+      								<span class="text-important">Action</span>
+      							</div>
+      						</div>
+      						<br>
+	      					<?php foreach ($listeAvantageEmployes as $avantageEmploye) : ?>
+	      						<div class="row">
+	      							<div class="col-md-5">
+	      								<?= $tableauAvantages[$avantageEmploye->getIdAvantage()]->getLibelle(); ?>
+	      							</div>
+	      							<div class="col-md-3">
+	      								<?= $avantageEmploye->getMontant() ?>
+	      							</div>
+	      							<div class="col-md-1" style="padding-left: 18px!important;">
+	      								<?php if ($avantageEmploye->getImposable() == ManagerModulePaie::YES) : ?>
+	      									<i class="fa fa-times i-reponse text-danger"></i>
+	      								<?php else : ?>
+	      									<i class="fa fa-check ni-reponse text-success"></i>
+	      								<?php endif ?>
+	      							</div>
+	      							<div class="col-md-3">
+	      								<button class="btn btn-sm btn-warning" style="margin-top: -5px!important;" id="edit-<?= $avantageEmploye->getIdAvantageEmploye() ?>">
+	      									<i class="fa fa-edit text-white tippy-act"></i>
+	      								</button>
+	      								<button class="btn btn-sm btn-danger" style="margin-top: -5px!important;" data-toggle="modal" data-target="#delete-<?=$avantageEmploye->getIdAvantageEmploye()?>">
+	      									<i class="fa fa-trash fa-impo text-white tippy-act"></i>
+	      								</button>
+	      							</div>
+	      						</div>
+	      						<br>
+	      						<div class="modal fade" id="delete-<?= $avantageEmploye->getIdAvantageEmploye() ?>" tabindex="-1" role="dialog" aria-hidden="true">
+								  	<div class="modal-dialog modal-dialog-centered" role="document">
+									    <div class="modal-content">
+									      	<div class="modal-header">
+									        	<h5 class="modal-title text-center">Confirmation</h5>
+									        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									          		<span aria-hidden="true">&times;</span>
+									        	</button>
+									      	</div>
+									      	<div class="modal-body">
+									        	<p id="text-confirmation"> Voulez-vous vraiment supprimer ces données ?</p>
+									      	</div>
+									      	<div class="modal-footer">
+									      		<a href="" type="button" class="btn btn-sm btn-danger">Annuler</a>
+									        	<a href="<?= HOST . 'manage/delete-avantageEmploye?idAvantageEmploye=' . $avantageEmploye->getIdAvantageEmploye() . '&idEmploye=' . $avantageEmploye->getIdEmploye() . '&mois=' . $mois . '&annee=' . $annee ?>" class="btn btn-sm btn-success">Confirmer</a>
+									      	</div>
+									    </div>
+									</div>
+								</div>
+								<script>
+									$('#edit-<?= $avantageEmploye->getIdAvantageEmploye() ?>').click(function(){
+										$('#btn-action').html("Modifier");
+										$('#btn-action').removeClass("btn-success");
+										$('#btn-action').addClass("btn-info");
+										$('#btn-annuler').removeClass("hidden");
+										$('#idAvantageEmploye').val("<?= $avantageEmploye->getIdAvantageEmploye() ?>");
+										$('#montant').val("<?= $avantageEmploye->getMontant() ?>");
+										$('#idAvantage option[value="<?= $avantageEmploye->getIdAvantage() ?>"]').prop('selected', true);
+										$.ajax({
+											url : "<?= HOST . 'manage/get-avantage' ?>",
+											data : "idAvantage=<?= $avantageEmploye->getIdAvantage() ?>",
+											dataType : "json",
+											success : function(data)
+											{
+												if (data['imposable'] == IMPOSABLE_POUR_TOUS) {
+													$('#imposable').attr("checked", false);
+													$('#imposable').addClass("i-reponse");
+													$('#imposable').attr("disabled", true);
+												} else if (data['imposable'] == NON_IMPOSABLE_POUR_TOUS) {
+													$('#imposable').attr("checked", true);
+													$('#imposable').addClass("ni-reponse");
+													$('#imposable').attr("disabled", true);
+												} else {
+													<?php if ($avantageEmploye->getImposable() == ManagerModulePaie::NO) : ?>
+														$('#imposable').attr("checked", true);
+													<?php else : ?>
+														$('#imposable').attr("checked", false);
+													<?php endif ?>
+												}
+											}
+										});
+									});
+								</script>
+	      					<?php endforeach ?>
+	      					<form method="POST" id="form" action="<?= HOST . 'manage/save-avantageEmploye'?>" enctype="multipart/form-data" novalidate="novalidate">
+	      						<input type="hidden" name="idEmploye" id="idEmploye" value="<?= $employe->getIdEmploye() ?>">
+	      						<input type="hidden" name="idAvantageEmploye" id="idAvantageEmploye" value="">
+	      						<input type="hidden" name="mois" value="<?= $mois ?>">
+	      						<input type="hidden" name="annee" value="<?= $annee ?>">
+	      						<input type="hidden" name="page" value="edit">
+		      					<div class="row">
+		      						<div class="col-md-5 form-group">
+		      							<select class="input-form-group" name="idAvantage" id="idAvantage" required="required" data-validation-required-message="Obligatoire">
+		      								<option value="">Sélectionnez un avantage</option>
+		      								<?php foreach ($listeAvantages as $avantage) : ?>
+		      									<option value="<?= $avantage->getIdAvantage() ?>"> <?= $avantage->getLibelle() ?> </option>
+		      								<?php endforeach ?>
+		      							</select>
+		      							<p class="text-danger help-block"></p>
+		      						</div>
+		      						<div class="col-md-3 form-group">
+		      							<input class="input-form-group" type="number" min="0" name="montant" id="montant" required="required" data-validation-required-message="Obligatoire" placeholder="montant">
+		      							<p class="text-danger help-block"></p>
+		      						</div>
+		      						<div class="col-md-1 form-group">
+										<div class="custom-control custom-checkbox my-1 mr-sm-2" id="div-imposable">
+											<input type="checkbox" class="form-check-input i-reponse" id="imposable" name="imposable" style="width: 20px; height: 20px; margin-left: -25px!important;">
+									  	</div>
+		      						</div>
+		      						<div class="col-md-3">
+		      							<button class="btn btn-md btn-success" id="btn-action" type="submit">
+		      								Ajouter
+		      							</button>
+		      							<a class="btn btn-md btn-danger mt-2 hidden" id="btn-annuler" href="<?= HOST . 'manage/entreprise/parametreFichePaie?idEmploye=' . $employe->getIdEmploye() ?>">
+		      								Annuler
+		      							</a>
+		      						</div>
+		      					</div>
+		      				</form>
+	      				</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="row" style="width: 105%!important;">
+		      	</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="modalDeduction" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<div class="text-center" style="width: 100%;">
+		      		<h5 class="modal-title" id="exampleModalLabel">Ajouter une déduction</h5>
+		      	</div>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="card p-3" style="background: #efefff;">
+					<p class="text-important text-center" style="width: 100%; text-decoration: underline;">Déductions</p>
+	      				<div class="card m-1 p-3">
+	      					<div class="row">
+      							<div class="col-md-5">
+      								<span class="text-important">Libellé</span>
+      							</div>
+      							<div class="col-md-3">
+      								<span class="text-important">Montant</span>
+      							</div>
+      							<div class="col-md-1">
+      							</div>
+      							<div class="col-md-3">
+      								<span class="text-important">Action</span>
+      							</div>
+      						</div>
+      						<br>
+      						<?php foreach ($deductions as $deduction) : ?>
+	      						<div class="row">
+	      							<div class="col-md-5">
+	      								<?= $deduction->getLibelle() ?>
+	      							</div>
+	      							<div class="col-md-3">
+	      								<?= $deduction->getMontant() ?>
+	      							</div>
+	      							<div class="col-md-1">
+	      							</div>
+	      							<div class="col-md-3">
+	      								<button class="btn btn-sm btn-warning" style="margin-top: -5px!important;" id="edit-deduction-<?= $deduction->getIdDeduction() ?>">
+	      									<i class="fa fa-edit text-white tippy-act"></i>
+	      								</button>
+	      								<button class="btn btn-sm btn-danger" style="margin-top: -5px!important;" data-toggle="modal" data-target="#delete-deduction-<?=$deduction->getIdDeduction()?>">
+	      									<i class="fa fa-trash text-white tippy-act"></i>
+	      								</button>
+	      							</div>
+	      						</div>
+	      						<br>
+	      						<div class="modal fade" id="delete-deduction-<?= $deduction->getIdDeduction() ?>" tabindex="-1" role="dialog" aria-hidden="true">
+								  	<div class="modal-dialog modal-dialog-centered" role="document">
+									    <div class="modal-content">
+									      	<div class="modal-header">
+									        	<h5 class="modal-title text-center">Confirmation</h5>
+									        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									          		<span aria-hidden="true">&times;</span>
+									        	</button>
+									      	</div>
+									      	<div class="modal-body">
+									        	<p id="text-confirmation"> Voulez-vous vraiment supprimer ces données ?</p>
+									      	</div>
+									      	<div class="modal-footer">
+									      		<a href="" type="button" class="btn btn-sm btn-danger">Annuler</a>
+									        	<a href="<?= HOST . 'manage/delete-deduction?idDeduction=' . $deduction->getIdDeduction() . '&idEmploye=' . $deduction->getIdEmploye() . '&mois=' . $mois . '&annee=' . $annee ?>" class="btn btn-sm btn-success">Confirmer</a>
+									      	</div>
+									    </div>
+									</div>
+								</div>
+								<script>
+									$('#edit-deduction-<?= $deduction->getIdDeduction() ?>').click(function() {
+										$('#btn-action-deduction').html("Modifier");
+										$('#btn-action-deduction').removeClass("btn-success");
+										$('#btn-action-deduction').addClass("btn-info");
+										$('#btn-annuler-deduction').removeClass("hidden");
+										$('#idDeduction').val("<?= $deduction->getIdDeduction() ?>");
+										$('#montant-deduction').val("<?= $deduction->getMontant() ?>");
+										$('#libelle').val("<?= $deduction->getLibelle() ?>");
+									});
+								</script>
+	      					<?php endforeach ?>
+	      					<form method="POST" id="form" action="<?= HOST . 'manage/save-deduction'?>" enctype="multipart/form-data" novalidate="novalidate">
+	      						<input type="hidden" name="idEmploye" id="idEmploye" value="<?= $employe->getIdEmploye() ?>">
+	      						<input type="hidden" name="idDeduction" id="idDeduction" value="">
+	      						<input type="hidden" name="mois" value="<?= $mois ?>">
+	      						<input type="hidden" name="annee" value="<?= $annee ?>">
+	      						<input type="hidden" name="page" value="edit">
+		      					<div class="row">
+		      						<div class="col-md-5 form-group">
+		      							<input class="input-form-group" type="text" name="libelle" id="libelle" required="required" data-validation-required-message="Obligatoire" placeholder="libellé">
+		      							<p class="text-danger help-block"></p>
+		      						</div>
+		      						<div class="col-md-3 form-group">
+		      							<input class="input-form-group" type="number" min="0" name="montant" id="montant-deduction" required="required" data-validation-required-message="Obligatoire" placeholder="montant">
+		      							<p class="text-danger help-block"></p>
+		      						</div>
+		      						<div class="col-md-1 form-group">
+		      						</div>
+		      						<div class="col-md-3">
+		      							<button class="btn btn-md btn-success" id="btn-action-deduction" type="submit">
+		      								Ajouter
+		      							</button>
+		      							<a class="btn btn-md btn-danger mt-2 hidden" id="btn-annuler-deduction" href="<?= HOST . 'manage/entreprise/parametreFichePaie?idEmploye=' . $employe->getIdEmploye() ?>">
+		      								Annuler
+		      							</a>
+		      						</div>
+		      					</div>
+		      				</form>
+	      				</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="row" style="width: 105%!important;">
+		      	</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	$('#imposable').change(function(){
+		if ($('#imposable').is(":checked")) {
+			$('#imposable').removeClass('i-reponse');
+			$('#imposable').addClass('ni-reponse');
+			tippy('.ni-reponse', {
+					content: "Non Imposable"
+				});
+		} else {
+			$('#imposable').removeClass('ni-reponse');
+			$('#imposable').addClass('i-reponse');
+			tippy('.i-reponse', {
+					content: "Imposable"
+				});
+		}
+	});
+	$('#idAvantage').change(function(){
+		$.ajax({
+			url : "<?= HOST . 'manage/get-avantage'?>",
+			data : "idAvantage=" + $('#idAvantage').val(),
+			dataType : "json",
+			success : function(data)
+			{
+				if (data['imposable'] == <?= ManagerModulePaie::IMPOSABLE_POUR_TOUS ?>) {
+					$('#imposable').attr('checked', false);
+					$('#imposable').attr('disabled', true);
+				} else if (data['imposable'] == <?= ManagerModulePaie::NON_IMPOSABLE_POUR_TOUS ?>) {
+					$('#imposable').attr('checked', true);
+					$('#imposable').attr('disabled', true);
+				} else if (data['imposable'] == <?= ManagerModulePaie::IMPOSABLE_PAR_DEFAUT ?>) {
+					$('#imposable').attr('checked', false);
+				} else if (data['imposable'] == <?= ManagerModulePaie::NON_IMPOSABLE_PAR_DEFAUT ?>) {
+					$('#imposable').attr('checked', true);
+				}
+			}
+		});
+	});
+	tippy('.fa-undo',{
+		content : "Actualiser pour voir les modifications"
+	});
+	tippy('.fa-save',{
+		content : "Enregistrer la fiche de paie"
+	});
+	tippy('.fa-impo',{
+		content : "Imposable"
+	});
+</script>

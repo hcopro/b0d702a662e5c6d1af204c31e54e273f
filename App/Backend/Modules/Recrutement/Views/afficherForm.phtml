@@ -1,0 +1,1437 @@
+<?php
+	$url = explode('-', $_GET['page']);
+?>
+<section class="page-section" id="back-section">
+    <div class="container">
+      	<div class="row">
+        	<div class="col-lg-12">
+          		<form id="form" method="POST" action="<?= HOST. "manage/save-" . $url[1];?>" enctype="multipart/form-data" novalidate="novalidate">
+		            <?php if ($url[1] == "formation" && !empty($data)): $pageTitle = "Enregistrement d'une formation"; extract($data); ?>
+				    	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-2"></div>
+		            		<div class="col-md-4 block-div">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control focus_activated" id="idFormation" name="idFormation" type="number" value="<?= $formation->getIdFormation();?>">
+				                </div>
+				                <div class="form-group hidden">
+				                  	<input class="form-control focus_activated" id="idCandidat" name="idCandidat" type="number" value="<?= $candidat->getIdCandidat();?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Sous domaine</label>
+									<select  class="form-control focus_activated span3" name="idSousDomaine" id="idSousDomaine" required="required" data-validation-required-message="Veuillez choisir un sous domaine.">
+										<option class="text-center" value="">-- Choisir --</option>
+									<?php foreach($sousDomaines as $sousDomaine): ?>
+						                <option 
+						                	<?php if ($sousDomaine->getIdSousDomaine() == $formation->getIdSousDomaine()) { echo "selected"; } ?> value="<?= $sousDomaine->getIdSousDomaine(); ?>">
+						                	<?= $sousDomaine->getNomSousDomaine(); ?>
+						                </option>
+						            <?php endforeach; ?>
+						            	<option class="text-center" value="autre">Autre</option>
+						            </select>
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+
+				                <div class="form-group" id="block-sousDomaine">
+				                  	<div class="form-group">
+					                	<label class="label-input">Domaine</label>
+										<select  class="form-control focus_activated span3" name="idDomaine" id="idDomaine">
+											<option class="text-center" value="">-- Choisir --</option>
+										<?php foreach($domaines as $domaine): ?>
+							                <option value="<?= $domaine->getIdDomaine(); ?>">
+							                	<?= $domaine->getNomdomaine(); ?>
+							                </option>
+							            <?php endforeach; ?>
+							            	<option class="text-center" value="autre">Autre</option>
+							            </select>
+					                  	<p class="help-block text-danger" id="idDomaine-message"></p>
+					                </div>
+					                <div class="form-group" id="block-domaine">
+					                	<label class="label-input">Nom de domaine</label>
+					                  	<input class="form-control focus_activated" id="nomDomaine" name="nomDomaine" type="text" value="" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+					                  	<p class="help-block text-danger" id="nomDomaine-message"></p>
+					                </div>
+					                <div class="form-group">
+					                	<label class="label-input">Nom de sous domaine</label>
+					                  	<input class="form-control focus_activated" id="nomSousDomaine" name="nomSousDomaine" type="text" value="" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+					                  	<p class="help-block text-danger" id="nomSousDomaine-message"></p>
+					                </div>
+				                </div>				                
+			            	</div>
+			              	<div class="col-md-4 block-div">
+			              		<div class="form-group">
+				                	<label class="label-input">Date début de formation</label>
+				                	<label for="datepicker">
+						                <input class="form-control datepicker focus_activated" id="datepickerDebut" type="text" value="<?php if($formation->getDateDebut() != "") { $date = explode('-', $formation->getDateDebut()); echo $date[2] . "/" . $date[1] . "/" . $date[0];}  ?>" autocomplete="off">
+					              	</label>
+				                  	<input class="form-control hidden" id="dateDebut" name="dateDebut" type="date" required="required" data-validation-required-message="Veuillez entrer la date de début">
+				                  	<p class="help-block text-danger" id="dateDebut-message"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Date fin de formation</label>
+				                	<label for="datepicker">
+						                <input class="form-control datepicker focus_activated" id="datepickerFin" type="text" value="<?php if($formation->getDateFin() != "") { $date = explode('-', $formation->getDateFin()); echo $date[2] . "/" . $date[1] . "/" . $date[0];}  ?>" autocomplete="off">
+					              	</label>
+				                  	<input class="form-control hidden" id="dateFin" name="dateFin" type="date" required="required" data-validation-required-message="Veuillez entrer la date du fin">
+				                  	<p class="help-block text-danger" id="dateFin-message"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Thème</label>
+				                  	<input class="form-control focus_activated" id="theme" name="theme" type="text" value="<?= $formation->getTheme();?>" required="required" data-validation-required-message="Veuillez entrer le thème *"  data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+								<div class="form-group">
+				                	<label class="label-input">Description de la formation</label>
+									<textarea class="form-control focus_activated" id="description" name="description" required="required" data-validation-required-message="Veuillez entrer la description *"  data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *"><?= $formation->getDescription();?></textarea>
+			                  		<p class="help-block text-danger"></p>
+								</div>
+			              	</div>
+		            	</div>
+		            <?php elseif ($url[1] == "diplome" && !empty($data)): $pageTitle = "Enregistrement d'un diplôme"; extract($data); ?>
+				      	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-2"></div>
+		            		<div class="col-md-4 block-div">
+		            			<div class="form-group hidden">
+				                  	<input class="form-control focus_activated" id="idDiplome" name="idDiplome" type="number" value="<?= $diplome->getIdDiplome();?>" >
+				                </div>
+				                <div class="form-group hidden">
+				                  	<input class="form-control focus_activated" id="idCandidat" name="idCandidat" type="number" value="<?= $candidat->getIdCandidat();?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Domaine</label>
+									<select  class="form-control focus_activated span3" name="idDomaine" id="idDomaine" required="required" data-validation-required-message="Veuillez choisir un domaine.">
+										<option class="text-center" value="">-- Choisir --</option>
+									<?php foreach($domaines as $domaine): ?>
+						                <option 
+						                	<?php if ($domaine->getIdDomaine() == $diplome->getIdDomaine()) { echo "selected"; } ?> value="<?= $domaine->getIdDomaine(); ?>">
+						                	<?= $domaine->getNomdomaine(); ?>
+						                </option>
+						            <?php endforeach; ?>
+						            	<option class="text-center" value="autre">Autre</option>
+						            </select>
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group" id="block-domaine">
+				                	<label class="label-input">Nom de domaine</label>
+				                  	<input class="form-control focus_activated" id="nomDomaine" name="nomDomaine" type="text" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger" id="nomDomaine-message"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Niveau d'étude</label>
+									<select  class="form-control focus_activated span3" name="idNiveauEtude" id="idNiveauEtude" required="required" data-validation-required-message="Veuillez choisir un niveau d'étude.">
+										<option class="text-center" value="">-- Choisir --</option>
+									<?php foreach($niveauxEtudes as $niveauEtude): ?>
+						                <option 
+						                	<?php if ($niveauEtude->getIdNiveauEtude() == $diplome->getIdNiveauEtude()) { echo "selected"; } ?> value="<?= $niveauEtude->getIdNiveauEtude(); ?>">
+						                	<?= $niveauEtude->getNiveau(); ?>
+						                </option>
+						            <?php endforeach; ?>
+						            	<option class="text-center" value="autre">Autre</option>
+						            </select>
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group" id="block-niveauEtude">
+				                	<label class="label-input">Niveau d'étude</label>
+				                  	<input class="form-control focus_activated" id="niveauEtude" name="niveau" type="text" value="" data-validation-regex-regex="^[0-9a-zA-Z-+éèêëôöîïàç ]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger" id="niveauEtude-message"></p>
+				                </div>
+		            		</div>
+		            		<div class="col-md-4 block-div">
+		            			<div class="form-group">
+				                	<label class="label-input">Date d'obtention</label>
+				                	<label for="datepicker">
+						                <input class="form-control datepicker focus_activated" id="datepickerObtention" type="text" value="<?php if($diplome->getDateObtention() != "") { $date = explode('-', $diplome->getDateObtention()); echo $date[2] . "/" . $date[1] . "/" . $date[0];}  ?>" autocomplete="off">
+					              	</label>
+				                  	<input class="form-control hidden" id="dateObtention" name="dateObtention" type="date" required="required" data-validation-required-message="Veuillez entrer la date">
+				                  	<p class="help-block text-danger" id="dateObtention-message"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Diplôme</label>
+				                  	<input class="form-control focus_activated" id="designation" name="designation" type="text" value="<?= $diplome->getDesignation();?>" required="required" data-validation-required-message="Veuillez renseigner le diplôme *"  data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Ecole</label>
+				                  	<input class="form-control focus_activated" id="ecole" name="ecole" type="text" value="<?= $diplome->getEcole();?>" required="required" data-validation-required-message="Veuillez entrer le nom de l'école *"  data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                
+			            	</div>
+		            	</div>
+		            <?php elseif ($url[1] == "experience" && !empty($data)): $pageTitle = "Enregistrement d'une expérience"; extract($data); ?>
+				      	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-3 block-div">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control focus_activated" id="idExperience" name="idExperience" type="number" value="<?= $experience->getIdExperience();?>">
+				                </div>
+				                <div class="form-group hidden">
+				                  	<input class="form-control focus_activated" id="idCandidat" name="idCandidat" type="number" value="<?= $candidat->getIdCandidat();?>">
+				                </div>		            			
+				                <div class="form-group">
+				                	<label class="label-input">Date début</label>
+				                	<label for="datepicker">
+						                <input class="form-control datepicker focus_activated" id="datepickerDebut" type="text" value="<?php if($experience->getDateDebut() != "") { $date = explode('-', $experience->getDateDebut()); echo $date[2] . "/" . $date[1] . "/" . $date[0];}  ?>" autocomplete="off">
+					              	</label>
+				                  	<input class="form-control hidden" id="dateDebut" name="dateDebut" type="date" required="required" data-validation-required-message="Veuillez entrer la date de début de votre expérience *">
+				                  	<p class="help-block text-danger" id="dateDebut-message"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Date fin</label>
+				                	<label for="datepicker">
+						                <input class="form-control datepicker focus_activated" id="datepickerFin" type="text" value="<?php if($experience->getDateFin() != "") { $date = explode('-', $experience->getDateFin()); echo $date[2] . "/" . $date[1] . "/" . $date[0];}  ?>" autocomplete="off">
+					              	</label>
+				                  	<input class="form-control hidden" id="dateFin" name="dateFin" type="date" required="required" data-validation-required-message="Veuillez entrer la date du fin de votre expérience *">
+				                  	<p class="help-block text-danger" id="dateFin-message"></p>
+				                </div>
+		            		</div>
+		            		<div class="col-md-4 block-div">
+				                <div class="form-group">
+				                	<label class="label-input">Sous domaine</label>
+									<select  class="form-control focus_activated span3" name="idSousDomaine" id="idSousDomaine" required="required" data-validation-required-message="Veuillez choisir un sous domaine.">
+										<option class="text-center" value="">-- Choisir --</option>
+									<?php foreach($sousDomaines as $sousDomaine): ?>
+						                <option 
+						                	<?php if ($sousDomaine->getIdSousDomaine() == $experience->getIdSousDomaine()) { echo "selected"; } ?> value="<?= $sousDomaine->getIdSousDomaine(); ?>">
+						                	<?= $sousDomaine->getNomSousDomaine(); ?>
+						                </option>
+						            <?php endforeach; ?>
+						            	<option class="text-center" value="autre">Autre</option>
+						            </select>
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+
+				                <div class="form-group" id="block-sousDomaine">
+				                  	<div class="form-group">
+					                	<label class="label-input">Domaine</label>
+										<select  class="form-control focus_activated span3" name="idDomaine" id="idDomaine">
+											<option class="text-center" value="">-- Choisir --</option>
+										<?php foreach($domaines as $domaine): ?>
+							                <option value="<?= $domaine->getIdDomaine(); ?>">
+							                	<?= $domaine->getNomdomaine(); ?>
+							                </option>
+							            <?php endforeach; ?>	
+							            	<option class="text-center" value="autre">Autre</option>
+							            </select>
+					                  	<p class="help-block text-danger" id="idDomaine-message"></p>
+					                </div>
+					                <div class="form-group" id="block-domaine">
+					                	<label class="label-input">Nom de domaine</label>
+					                  	<input class="form-control focus_activated" id="nomDomaine" name="nomDomaine" type="text" value="" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+					                  	<p class="help-block text-danger" id="nomDomaine-message"></p>
+					                </div>
+					                <div class="form-group">
+					                	<label class="label-input">Nom de sous domaine</label>
+					                  	<input class="form-control focus_activated" id="nomSousDomaine" name="nomSousDomaine" type="text" value="" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+					                  	<p class="help-block text-danger" id="nomSousDomaine-message"></p>
+					                </div>
+				                </div>
+			            	</div>
+			              	<div class="col-md-4 block-div">
+				                <div class="form-group">
+				                	<label class="label-input">Votre poste</label>
+				                  	<input class="form-control focus_activated" id="poste" name="poste" type="text" value="<?= $experience->getPoste();?>" required="required" data-validation-required-message="Veuillez entrer le poste *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Nom de l'entreprise</label>
+				                  	<input class="form-control focus_activated" id="entreprise" name="entreprise" type="text" value="<?= $experience->getEntreprise();?>" required="required" data-validation-required-message="Veuillez entrer le non d'entreprise *"  data-validation-regex-regex="^[0-9a-zA-Z'_-éèêëôöîïàç ]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+								<div class="form-group">
+									<label class="label-input">Description  de votre expérience</label>
+									<textarea class="form-control focus_activated" id="description" name="description" required="required" data-validation-required-message="Veuillez décrire votre expérience *"  data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *"><?= $experience->getDescription();?></textarea>
+			                  		<p class="help-block text-danger"></p>
+								</div>
+			              	</div>
+		            	</div>
+		            <?php elseif ($url[1] == "offre" && !empty($data)): $pageTitle = (strstr($_SERVER['REQUEST_URI'],'create') ? "Enregistrement d'" : (strstr($_SERVER['REQUEST_URI'],'update') ? "Modification d'" : '')) . "un offre"; extract($data); ?>
+		                <div class="row">
+		                  	<div class="col-lg-12 text-center">
+		                      	<h5><?= $pageTitle; ?></h5>
+		                  	</div>
+		                </div>
+		                <div class="row">
+		                	<div class="col-md-4 block-div">
+		                      	<div class="form-group hidden">
+		                        	<input class="form-control" id="idOffre" name="idOffre" type="number" value="<?= $offre->getIdOffre();?>">
+		                      	</div>
+		                      	<div class="form-group hidden">
+		                          	<input class="form-control" id="idEntreprise" name="idEntreprise" type="number" value="<?= $entreprise->getIdEntreprise();?>">
+		                      	</div>
+		                      	<div class="form-group form-inline hidden">
+		                        	<label class="">Date d'émission</label>
+		                        	<input class="form-control" id="dateEmission" name="dateEmission" type="date" value="<?php if($offre->getDateEmission() == "") { echo date("Y-m-d"); } else { echo $offre->getDateEmission(); } ?>">
+		                      	</div>
+		                     	<div class="form-group">
+		                        	<label class="label-input">Poste</label>
+			                        <select  class="form-control span3 focus_activated" name="idEntreprisePoste" id="idEntreprisePoste" required="required" data-validation-required-message="Veuillez choisir un poste">
+			                          <option class="text-center" value="">__Choisir__</option>
+			                          <?php foreach($postes as $poste): ?>
+			                            <option 
+			                              <?php if ($poste->getIdEntreprisePoste() == $offre->getIdEntreprisePoste()) { echo "selected"; } ?> value="<?= $poste->getIdEntreprisePoste(); ?>">
+			                              <?= ucfirst($poste->getPoste()); ?>
+			                            </option>
+			                          <?php endforeach; ?>
+			                        </select>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group">
+			                        <label class="label-input">Condition Numéraire</label>
+			                        <textarea class="form-control focus_activated" id="typeCompensation" name="conditionNumeraire" type="text" value="<?= $offre->getConditionNumeraire();?>" required="required" data-validation-required-message="Veuillez entrer le type de compensation *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç \n|'-]*" data-validation-regex-message="Caractères non valide *"><?= $offre->getConditionNumeraire();?></textarea>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group image-offre">
+		                      		<img class="img-fluid couverture-offre img-responsive" id="image-couverture" name="photoCouvertureOffre" src="<?= ($offre->getCouvertureOffre() != "") ? HOST . "../Web/Ressources/images/offre/" . $offre->getCouvertureOffre() : HOST ."../Web/Ressources/images/offre/Sans titre (17).png";?>">
+		                      		<input type="hidden" id="valPhotoOffre" value="<?= ($offre->getCouvertureOffre() != "") ? HOST . "../Web/Ressources/images/offre/create-offres/" . $offre->getCouvertureOffre() : HOST ."../Web/Ressources/images/offre/Sans titre (17).png";?>">
+		                      		<input type="hidden" id="valuePhoto" value="<?=$offre->getCouvertureOffre();?>">
+					                <button type="button" class="btn-sm btn-success" onclick="$('#PhotoOffre').click(); return false;" style="margin-left: 165px;">Importer une photo</button>
+					                <input class="form-control hidden" id="PhotoOffre" name="couvertureOffre" type="file" accept="image/*" value="<?=$offre->getCouvertureOffre();?>">
+		                      	</div>
+		                      	<div class="form-group">
+			                        <label class="label-input">Langue requise</label>
+					             	<input class="form-control focus_activated" id="langue" name="langue" data required="required" data-validation-required-message="Veuillez entrer la langue requise" value="<?= $offre->getLangue();?>" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |',]*" data-validation-regex-message="Caractères non valide *" placeholder="anglais , français">
+					             	<p class="help-block text-danger" id="langue-message"></p>
+		                      	</div>
+		                    </div>
+		                    <div class="col-md-4 block-div">                        
+		                      	<div class="form-group">
+			                        <label class="label-input">Sous domaine</label>
+			                        <select  class="form-control span3 focus_activated" name="idSousDomaine" id="idSousDomaine" required="required" data-validation-required-message="Veuillez choisir un sous domaine">
+			                          <option class="text-center" value="">__Choisir__</option>
+			                          <option class="text-center" value="autre">Autre</option>
+			                          <?php foreach($sousDomaines as $sousDomaine): ?>
+			                            <option 
+			                              <?php if ($sousDomaine->getIdSousDomaine() == $offre->getIdSousDomaine()) { echo "selected"; } ?> value="<?= $sousDomaine->getIdSousDomaine(); ?>">
+			                              <?= $sousDomaine->getNomSousDomaine(); ?>
+			                            </option>
+			                          <?php endforeach; ?>
+			                        </select>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group" id="block-sousDomaine">
+			                        <div class="form-group">
+				                        <label class="label-input">Domaine</label>
+			                          	<select  class="form-control span3 focus_activated" name="idDomaine" id="idDomaine">
+			                            	<option class="text-center" value="">-- Choisir --</option>
+			                            	<option class="text-center" value="autre">Autre</option>
+			                            		<?php foreach($domaines as $domaine): ?>
+			                              			<option value="<?= $domaine->getIdDomaine(); ?>">
+			                                			<?= $domaine->getNomdomaine(); ?>
+			                              			</option>
+			                            		<?php endforeach; ?>
+			                            </select>
+			                            <p class="help-block text-danger" id="idDomaine-message"></p>
+		                        	</div>
+			                        <div class="form-group" id="block-domaine">
+			                            <input class="form-control focus_activated" id="nomDomaine" name="nomDomaine" type="text" value="" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *" placeholder="Saisir le domaine">
+			                            <p class="help-block text-danger" id="nomDomaine-message"></p>
+			                        </div>
+			                        <div class="form-group">
+			                            <input class="form-control focus_activated" id="nomSousDomaine" name="nomSousDomaine" type="text" value="" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *" placeholder="Saisir le sous domaine">
+			                            <p class="help-block text-danger" id="nomSousDomaine-message"></p>
+			                        </div>
+		                      	</div>
+		                      	<div class="form-group">
+			                        <label class="label-input">Contrat</label>
+			                        <select  class="form-control span3 focus_activated" name="idContrat" id="idContrat" required="required" data-validation-required-message="Veuillez choisir un contrat *">
+			                          	<option class="text-center" value="">-- Choisir --</option>
+			                          	<option class="text-center" value="autre">Autre</option>
+				                          	<?php foreach($contrats as $contrat): ?>
+				                          		<option 
+				                            		<?php if ($contrat->getIdContrat() == $offre->getIdContrat()) { echo "selected"; } ?> value="<?= $contrat->getIdContrat(); ?>">
+				                            			<?= $contrat->getDesignation(); ?>
+				                           		</option>
+				                          	<?php endforeach; ?>
+			                        </select>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group" id="block-contrat">
+			                        <input class="form-control focus_activated" id="designation" name="designation" type="text" value="" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *" placeholder="Saisir le contrat">
+			                        <p class="help-block text-danger" id="designation-message"></p>
+		                      	</div>
+		                      	<!-- <div class="form-group">
+			                        <label class="label-input">Niveau d'expérience</label>
+			                        <select  class="form-control span3 focus_activated" name="idNiveauExperience" id="idNiveauExperience" required="required" data-validation-required-message="Veuillez choisir un niveau d'expérience *">
+			                          	<option class="text-center" value="">-- Choisir --</option>
+			                          	<?php foreach($niveauxExperiences as $niveauExperience): ?>
+			                          	<option 
+			                          	<?php if ($niveauExperience->getIdNiveauExperience() == $offre->getIdNiveauExperience()) { echo "selected"; } ?> value="<?= $niveauExperience->getIdNiveauExperience(); ?>">
+			                          	<?= $niveauExperience->getNiveau(); ?>
+			                          	</option>
+			                          	<?php endforeach; ?>
+			                          	<option class="text-center" value="autre">Autre</option>
+			                        </select>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group" id="block-niveauExperience">
+		                          	<input class="form-control focus_activated" id="niveauExperience" name="niveauExperience" type="text" value="" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *" placeholder="Saisir le niveau d'expérience">
+		                          	<p class="help-block text-danger" id="niveauExperience-message"></p>
+		                      	</div>
+		                      	<div class="form-group">
+		                          	<label class="label-input">Niveau d'étude</label>
+		                          	<select  class="form-control span3 focus_activated" name="idNiveauEtude" id="idNiveauEtude" required="required" data-validation-required-message="Veuillez choisir un niveau d'étude *">
+		                            	<option class="text-center" value="">-- Choisir --</option>
+		                            	<?php foreach($niveauxEtudes as $niveauEtude): ?>
+		                            	<option 
+		                              	<?php if ($niveauEtude->getIdNiveauEtude() == $offre->getIdNiveauEtude()) { echo "selected"; } ?> value="<?= $niveauEtude->getIdNiveauEtude(); ?>">
+		                              	<?= $niveauEtude->getNiveau(); ?>
+		                            	</option>
+		                            	<?php endforeach; ?>                        
+		                            	<option class="text-center" value="autre">Autre</option>
+		                          	</select>
+		                          	<p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group" id="block-niveauEtude">
+		                          	<input class="form-control focus_activated" id="niveauEtude" name="niveau" type="text" value="" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |+]*" data-validation-regex-message="Caractères non valide *">
+		                          	<p class="help-block text-danger" id="niveauEtude-message"></p>
+		                      	</div> -->
+		                      	<div class="form-group">
+			                        <label class="label-input">Date limite de candidature</label>
+			                        <label for="datepicker">
+						                <input class="form-control datepicker focus_activated" id="datepickerLimite" type="text" value="<?php if($offre->getDateLimite() != "") { $date = explode('-', $offre->getDateLimite()); echo $date[2] . "/" . $date[1] . "/" . $date[0];}  ?>" autocomplete="off">
+					              	</label>
+					             	<input class="form-control hidden" id="dateLimite" name="dateLimite" type="date" required="required" data-validation-required-message="Veuillez entrer la date limite">
+					             	<p class="help-block text-danger" id="dateLimite-message"></p>
+		                      	</div>
+		                    </div>
+		                    <div class="col-md-3 block-div">
+		                      	<strong>Trait de personnalité</strong><br>
+		                      	<div class="form-group trait-personnalite">
+		                        	<?php foreach($personnalites as $personnalite):?>
+		                        	<label class="text-left">
+		                        	<input type="checkbox" name="qualite" value="<?= $personnalite->getQualite(); ?>"
+			                        <?php
+			                          $persos = explode('_', $offre->getPersonnalite());
+			                                foreach ($persos as $perso) {
+			                                  if ($personnalite->getQualite() == ucfirst($perso)) {
+			                                    echo "checked";
+			                                  }
+			                                }
+			                        ?>
+			                        >
+			                        <?= ucfirst($personnalite->getQualite()); ?>
+			                        </label><br>
+			                        <?php endforeach; ?>
+		                      	</div>                  
+		                      	<div class="form-group">
+			                        <input class="btn-warning" type="button" value="Autre personnalité" id="autre" >
+			                        <input class="form-control hidden" id="autrePersonnalite" name="autrePersonnalite" type="text">
+		                      	</div>
+		                      	<div class="form-group" id="block-personnalite"></div>
+		                      	<div class="form-group">
+			                        <input class="form-control hidden" id="personnalite" name="personnalite" type="text" required="required" data-validation-required-message="Veuillez séléctionner au moins un trait de personnalité *" >
+			                        <p class="help-block text-warning"></p>
+		                      	</div>
+		                    </div>
+		                 </div>
+						<!-- 
+			            	<hr>
+			            	<div class="row block-div">	
+			            		<div class="col-md-5">
+			            			<div class="form-group">									
+										<input class="btn btn-warning" type="button" value="Ajouter mission" id="btn_mission">
+									</div>
+									<div id="block-mission"> 
+										<div class="form-group hidden">
+											<input class="form-control focus_activated" id="id_mission" type="number">
+										</div>
+										<div class="form-group">
+											<label class="label-input">Description :</label>
+											<textarea class="form-control focus_activated" id="description_mission"></textarea>
+											<p class="help-block text-danger" id="description-message"></p>
+										</div>
+										<div class="form-group">	
+											<label class="label-input">Niveau :</label>
+						                  	<input class="form-control focus_activated" id="niveau_mission" type="text">
+						                  	<p class="help-block text-danger" id="niveau-message"></p>
+										</div>
+										<div class="form-group">	
+											<input class="btn btn-success" type="button" value="Valider dans la liste" id="btn_validate">
+											<p class="help-block text-danger" id="validate-message"></p>
+										</div>
+										<div class="form-group hidden">
+						                  	<input class="form-control" name="input_mission" type="text">
+										</div>
+									</div>
+			            		</div>
+			            		<div class="col-md-6">
+					            	<div class="form-group">
+										<label class="label-input">Les missions :</label>
+										<table class="table table-bordered" id="table-mission">
+											<thead>											
+												<tr class="active">
+													<th class="hidden">ID</th>
+													<th>Description</th>
+													<th>Niveau</th>
+												</tr>
+											</thead>
+											<tbody>
+												<?php if (!empty($missions)): ?>
+													<?php foreach ($missions as $mission): ?>
+														<tr>														
+															<td class="hidden"><?= $mission->getIdMission(); ?></td>
+															<td><?= $mission->getDescription(); ?></td>
+															<td><?= $mission->getNiveau(); ?></td>
+															<td><i class="fas fa-edit" onclick="editRow(this)"></i></td>
+															<td><i class="fas fa-times" id="times_close" onclick="removeRow(this)"></i></td>
+														</tr>
+													<?php endforeach ?>
+												<?php endif ?>
+											</tbody>
+										</table>
+									</div>
+			            		</div>
+			            	</div>
+			            	<script type="text/javascript">
+			            		$('#back-section').css('overflow-y','initial');
+			            	</script> 
+		            	-->
+		            <?php elseif ($url[1] == "newOffre" && !empty($data)): $pageTitle = (strstr($_SERVER['REQUEST_URI'],'create') ? "Enregistrement d'" : (strstr($_SERVER['REQUEST_URI'],'update') ? "Modification d'" : '')) . "un offre"; extract($data); ?>
+		            	<h3 class="text-center">Ajout d'un poste</h3>
+		            	<div class="row">
+		            		<div class="col-md-5 block-div">
+		            			<div class="form-group">
+					            	<label>Poste : </label>
+					            	<input class="form-control focus_activated" name="poste" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç \n|'-]*" data-validation-regex-message="Caractères non valide *" required="required" data-validation-required-message="Veuillez entrer le poste *">
+					            	<p class="help-block text-danger"></p>
+				            	</div>
+				            	<div class="form-group">
+				            		<label class="label-input">Formation requise :</label>
+		                          	<select  class="form-control span3 focus_activated" name="idNiveauEtude" id="idNiveauEtude" required="required" data-validation-required-message="Veuillez choisir un niveau d'étude ">
+		                            	<option class="text-center" value="">Niveau d'étude</option>
+		                            	<option class="text-center" value="autre">Autre</option>
+		                            	<?php foreach($niveauxEtudes as $niveauEtude): ?>
+		                            	<option value="<?= $niveauEtude->getIdNiveauEtude(); ?>">
+		                              	<?= $niveauEtude->getNiveau(); ?>
+		                            	</option>
+		                            	<?php endforeach; ?>                        
+		                          	</select>
+		                          	<p class="help-block text-danger"></p>
+				            	</div>
+				            	<div class="form-group" id="block-niveauEtude">
+		                          	<input class="form-control focus_activated" id="niveauEtude" name="niveau" type="text" value="">
+		                          	<p class="help-block text-danger" id="niveauEtude-message"></p>
+		                      	</div>
+				            	<div class="form-group">
+		                      		<label class="label-input">Année d'expérience interne :</label>
+		                          	<select  class="form-control span3 focus_activated" name="anneeExperienceInterne" id="anneeExperienceInterne" required="required" data-validation-required-message="Veuillez choisir un niveau d'expérience">
+		                            	<option class="text-center" value="">Niveau d'expérience</option>
+		                            	<option class="text-center" value="autre">Autre</option>
+		                            	<?php foreach($niveauxExperiences as $niveauExperience): ?>
+		                            	<option value="<?= $niveauExperience->getIdNiveauExperience(); ?>">
+		                              	<?= $niveauExperience->getNiveau(); ?>
+		                            	</option>
+		                            	<?php endforeach; ?>                        
+		                          	</select>
+		                          	<p class="help-block text-danger"></p>
+				            	</div>
+				            	<div class="form-group hidden">
+				            		<input type="hidden" name="dateEmission" value="<?= date('Y-m-d'); ?>">
+				            	</div>
+				            	<div class="form-group" id="block-anneeExperienceInterne">
+		                          	<input class="form-control focus_activated" id="niveauExperienceInterne" name="niveauExperienceInterne" type="text" value="" placeholder="Saisir le niveau d'expérience">
+		                          	<p class="help-block text-danger" id="niveauExperienceInterne-message"></p>
+		                      	</div>
+		            		</div>
+		            		<div class="col-md-6 block-div">
+		            			<div class="form-group form-inline hidden">
+		                        	<label class="">Date d'émission</label>
+		                        	<input class="form-control focus_activated" id="dateEmission" name="dateEmission" type="date" value="<?php if($offre->getDateEmission() == "") { echo date("Y-m-d"); } else { echo $offre->getDateEmission(); } ?>">
+		                      	</div>
+		                      	<div class="form-group">
+			                        <label class="label-input">Condition Numéraire</label>
+			                        <textarea class="form-control focus_activated" id="typeCompensation" name="conditionNumeraire" type="text" value="<?= $offre->getConditionNumeraire();?>" required="required" data-validation-required-message="Veuillez entrer le type de compensation *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç \n|'-]*" data-validation-regex-message="Caractères non valide *"><?= $offre->getConditionNumeraire();?></textarea>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group image-offre">
+		                      		<img class="img-fluid couverture-offre img-responsive" id="image-couverture" name="photoCouvertureOffre" src="<?= ($offre->getCouvertureOffre() != "") ? HOST . "../Web/Ressources/images/offre/" . $offre->getCouvertureOffre() : HOST ."../Web/Ressources/images/offre/Sans titre (17).png";?>">
+		                      		<input type="hidden" id="valPhotoOffre" value="<?= ($offre->getCouvertureOffre() != "") ? HOST . "../Web/Ressources/images/offre/create-offres/" . $offre->getCouvertureOffre() : HOST ."../Web/Ressources/images/offre/Sans titre (17).png";?>">
+		                      		<input type="hidden" id="valuePhoto" value="<?=$offre->getCouvertureOffre();?>">
+					                <button type="button" class="btn-sm btn-success" onclick="$('#PhotoOffre').click(); return false;" style="margin-left: 165px;">Importer une photo</button>
+					                <input class="form-control hidden" id="PhotoOffre" name="couvertureOffre" type="file" accept="image/*" value="<?=$offre->getCouvertureOffre();?>">
+		                      	</div>
+		                      	<div class="form-group">
+			                        <label class="label-input">Langue requise</label>
+					             	<input class="form-control focus_activated" id="langue" name="langue" data required="required" data-validation-required-message="Veuillez entrer la langue requise" value="<?= $offre->getLangue();?>" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç|',]*" data-validation-regex-message="Caractères non valide *" placeholder="anglais,français">
+					             	<p class="help-block text-danger" id="langue-message"></p>
+		                      	</div>
+		            		</div> 
+		            	</div>
+		            	<div class="row">
+		            		<div class="col-md-5 block-div">
+		            			<div class="form-group">
+			                        <label class="label-input">Sous domaine</label>
+			                        <select  class="form-control span3 focus_activated" name="idSousDomaine" id="idSousDomaine" required="required" data-validation-required-message="Veuillez choisir un sous domaine">
+			                          <option class="text-center" value="">__Choisir__</option>
+			                          <option class="text-center" value="autre">Autre</option>
+			                          <?php foreach($sousDomaines as $sousDomaine): ?>
+			                            <option 
+			                              <?php if ($sousDomaine->getIdSousDomaine() == $offre->getIdSousDomaine()) { echo "selected"; } ?> value="<?= $sousDomaine->getIdSousDomaine(); ?>">
+			                              <?= $sousDomaine->getNomSousDomaine(); ?>
+			                            </option>
+			                          <?php endforeach; ?>
+			                        </select>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group" id="block-sousDomaine">
+			                        <div class="form-group">
+				                        <label class="label-input">Domaine</label>
+			                          	<select  class="form-control span3 focus_activated" name="idDomaine" id="idDomaine">
+			                            	<option class="text-center" value="">-- Choisir --</option>
+			                            	<option class="text-center" value="autre">Autre</option>
+			                            		<?php foreach($domaines as $domaine): ?>
+			                              			<option value="<?= $domaine->getIdDomaine(); ?>">
+			                                			<?= $domaine->getNomdomaine(); ?>
+			                              			</option>
+			                            		<?php endforeach; ?>
+			                            </select>
+			                            <p class="help-block text-danger" id="idDomaine-message"></p>
+		                        	</div>
+			                        <div class="form-group" id="block-domaine">
+			                            <input class="form-control focus_activated" id="nomDomaine" name="nomDomaine" type="text" value="" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *" placeholder="Saisir le domaine">
+			                            <p class="help-block text-danger" id="nomDomaine-message"></p>
+			                        </div>
+			                        <div class="form-group">
+			                            <input class="form-control focus_activated" id="nomSousDomaine" name="nomSousDomaine" type="text" value="" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïâàùç |'-]*" data-validation-regex-message="Caractères non valide *" placeholder="Saisir le sous domaine">
+			                            <p class="help-block text-danger" id="nomSousDomaine-message"></p>
+			                        </div>
+		                      	</div>
+		                      	<div class="form-group">
+			                        <label class="label-input">Contrat</label>
+			                        <select  class="form-control span3 focus_activated" name="idContrat" id="idContrat" required="required" data-validation-required-message="Veuillez choisir un contrat *">
+			                          	<option class="text-center" value="">-- Choisir --</option>
+			                          	<option class="text-center" value="autre">Autre</option>
+				                          	<?php foreach($contrats as $contrat): ?>
+				                          		<option 
+				                            		<?php if ($contrat->getIdContrat() == $offre->getIdContrat()) { echo "selected"; } ?> value="<?= $contrat->getIdContrat(); ?>">
+				                            			<?= $contrat->getDesignation(); ?>
+				                           		</option>
+				                          	<?php endforeach; ?>
+			                        </select>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group" id="block-contrat">
+			                        <input class="form-control focus_activated" id="designation" name="designation" type="text" value="" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *" placeholder="Saisir le contrat">
+			                        <p class="help-block text-danger" id="designation-message"></p>
+		                      	</div>
+								<div class="form-group" id="block-niveauEtude">
+		                          	<input class="form-control focus_activated" id="niveauEtude" name="niveau" type="text" value="" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |+]*" data-validation-regex-message="Caractères non valide *">
+		                          	<p class="help-block text-danger" id="niveauEtude-message"></p>
+		                      	</div>
+		                      	<div class="form-group">
+			                        <label class="label-input">Date limite de candidature</label>
+			                        <label for="datepicker">
+						                <input class="form-control datepicker focus_activated" id="datepickerLimite" type="text" value="<?php if($offre->getDateLimite() != "") { $date = explode('-', $offre->getDateLimite()); echo $date[2] . "/" . $date[1] . "/" . $date[0];}  ?>" autocomplete="off">
+					              	</label>
+					             	<input class="form-control hidden" id="dateLimite" name="dateLimite" type="date" required="required" data-validation-required-message="Veuillez entrer la date limite">
+					             	<p class="help-block text-danger" id="dateLimite-message"></p>
+		                      	</div>
+		            		</div>
+		            		<div class="col-md-6 block-div">
+		            			<strong>Trait de personnalité</strong><br>
+		                      	<div class="form-group trait-personnalite">
+		                        	<?php foreach($personnalites as $personnalite):?>
+		                        	<label class="text-left">
+		                        	<input type="checkbox" name="qualite" value="<?= $personnalite->getQualite(); ?>" >
+			                        	<?= ucfirst($personnalite->getQualite()); ?>
+			                        </label><br>
+			                        <?php endforeach; ?>
+		                      	</div>                  
+		                      	<div class="form-group">
+			                        <input class="btn-warning" type="button" value="Autre personnalité" id="autre" >
+			                        <input class="form-control hidden" id="autrePersonnalite" name="autrePersonnalite" type="text">
+		                      	</div>
+		                      	<div class="form-group" id="block-personnalite"></div>
+		                      	<div class="form-group">
+			                        <input class="form-control hidden" id="personnalite" name="personnalite" type="text" required="required" data-validation-required-message="Veuillez séléctionner au moins un trait de personnalité *" >
+			                        <p class="help-block text-warning"></p>
+		                      	</div>
+		            		</div>
+		            	</div>
+		            	<hr>
+		            	<div class="row block-div">	
+		            		<div class="col-md-5">
+		            			<div class="form-group">									
+									<input class="btn btn-warning" type="button" value="Ajouter mission" id="btn_mission">
+								</div>
+								<div id="block-mission"> 
+									<div class="form-group hidden">
+										<input class="form-control focus_activated" id="id_mission" type="number">
+									</div>
+									<div class="form-group">
+										<label class="label-input">Description :</label>
+										<textarea class="form-control focus_activated" id="description_mission"></textarea>
+										<p class="help-block text-danger" id="description-message"></p>
+									</div>
+									<div class="form-group">	
+										<label class="label-input">Niveau :</label>
+					                  	<input class="form-control focus_activated" id="niveau_mission" type="text">
+					                  	<p class="help-block text-danger" id="niveau-message"></p>
+									</div>
+									<div class="form-group">	
+										<input class="btn btn-success" type="button" value="Valider dans la liste" id="btn_validate">
+										<p class="help-block text-danger" id="validate-message"></p>
+									</div>
+									<div class="form-group hidden">
+					                  	<input class="form-control" name="input_mission" type="text">
+									</div>
+								</div>
+		            		</div>
+		            		<div class="col-md-6">
+				            	<div class="form-group">
+									<label class="label-input">Les missions :</label>
+									<table class="table table-bordered" id="table-mission">
+										<thead>											
+											<tr class="active">
+												<th class="hidden">ID</th>
+												<th>Description</th>
+												<th>Niveau</th>
+											</tr>
+										</thead>
+										<tbody>
+											<?php if (!empty($missions)): ?>
+												<?php foreach ($missions as $mission): ?>
+													<tr>														
+														<td class="hidden"><?= $mission->getIdMission(); ?></td>
+														<td><?= $mission->getDescription(); ?></td>
+														<td><?= $mission->getNiveau(); ?></td>
+														<td><i class="fas fa-edit" onclick="editRow(this)"></i></td>
+														<td><i class="fas fa-times" id="times_close" onclick="removeRow(this)"></i></td>
+													</tr>
+												<?php endforeach ?>
+											<?php endif ?>
+										</tbody>
+									</table>
+								</div>
+		            		</div>
+		            	</div>
+		            	<script type="text/javascript">
+		            		$('#back-section').css('overflow-y','initial');
+		            	</script>
+		            <?php elseif ($url[1] == "entretien" && !empty($data)): extract($data); $pageTitle = "Enregistrement d'un entretien";?>
+	                    <?php 
+	                      if ($entretien->getIdCandidature() == "") {
+	                        $idCandidature = $_SESSION['variable']['idCandidature'];
+	                      } else {
+	                        $idCandidature = $entretien->getIdCandidature();
+	                      }
+	                      if ($entretien->getIdNiveauEntretien() == "") {
+	                        $idNiveauEntretien = $_SESSION['variable']['idNiveauEntretien'];
+	                      } else {
+	                        $idNiveauEntretien = $entretien->getIdNiveauEntretien();
+	                      }
+	                    ?>
+	                    <div class="row">
+	                      <div class="col-lg-12 text-center">
+	                          <h5><?= $pageTitle; ?></h5>
+	                      </div>
+	                    </div>
+	                    <div class="row">
+	                      <div class="col-md-4 "> </div>
+	                      <div class="col-md-4 block-div">                        
+	                        <div class="form-group hidden">
+	                            <input class="form-control" id="idEntretien" name="idEntretien" type="number" value="<?= $entretien->getIdEntretien();?>" >
+	                        </div>
+	                        <div class="form-group hidden">
+	                            <input class="form-control" id="idCandidature" name="idCandidature" type="number" value="<?= $idCandidature?>">
+	                        </div>
+	                        <div class="form-group hidden">
+	                            <input class="form-control" id="idNiveauEntretien" name="idNiveauEntretien" type="number" value="<?= $idNiveauEntretien; ?>">
+	                        </div>
+	                        <div class="form-group <?php 
+	                            if ($url[0] == 'manage/edit') {
+	                              echo 'hidden';
+	                            }
+	                          ?> ">
+	                          <label class="label-input">Niveau d'entretien</label>
+	                          <select  class="form-control span3 focus_activated" name="idNiveauEntretien" id="idNiveauEntretien" required="required" data-validation-required-message="Veuillez choisir un niveau d'entretien *">
+	                            <option class="text-center" value="">-- Choisir --</option>
+	                            <?php foreach($niveauxEntretiens as $niveauEntretien): ?>
+	                            <option  <?php if ($niveauEntretien->getIdNiveauEntretien() == $entretien->getIdNiveauEntretien()) { echo "selected"; } ?> value="<?= $niveauEntretien->getIdNiveauEntretien(); ?>">
+	                              <?= $niveauEntretien->getService(); ?>
+	                            </option>
+	                            <?php endforeach; ?>
+	                          </select>
+	                            <p class="help-block text-danger"></p>
+	                        </div>
+	                        <div class="form-group">
+	                          <label class="label-input">Lieu :</label>
+	                          <input class="form-control  text-capitalize focus_activated" id="lieu" name="lieu" type="text" value="<?php if ($url[0] == 'manage/edit') { echo $entretien->getLieu(); } else { echo ""; }?>" required="required" data-validation-required-message="Veuillez entrer le lieu d'entretien *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+	                          <p class="help-block text-danger"></p>
+	                        </div>
+	                        <div class="form-group">
+	                          <label class="label-input">Date :</label>
+	                          	<label for="datepicker">
+					                <input class="form-control datepicker focus_activated" id="datepickerDate" type="text" value="<?php if ($url[0] == 'manage/edit') {if($entretien->getDate() != "") { $date = explode('-', $entretien->getDate()); echo $date[2] . "/" . $date[1] . "/" . $date[0];} } else { echo ""; }?>" autocomplete="off">
+				              	</label>
+	                            <input class="form-control hidden" id="date" name="date" type="date"  required="required" data-validation-required-message="Veuillez entrer la date d'entretien">
+	                            <p class="help-block text-danger" id="date-message"></p>
+	                        </div>
+	                        <div class="form-group">
+	                          <label class="label-input">Heure :</label>
+	                          <input class="form-control focus_activated" id="heure" name="heure" type="time" value="<?php if ($url[0] == 'manage/edit') { echo $entretien->getHeure(); } else { echo ""; }?>" required="required" data-validation-required-message="Veuillez entrer l'heure d'entretien *">
+	                          <p class="help-block text-danger"></p>
+	                        </div>
+	                        <div class="form-group hidden">
+	                            <input class="form-control" id="statut" name="statut" type="text" value="<?php if($entretien->getStatut() != "") { echo $entretien->getStatut(); } else { echo 'en attente';} ?>" >
+	                        </div>                        
+	                        <div class="form-group hidden">
+	                            <input class="form-control" id="nbFois" name="nbFois" type="text" value="<?php if($entretien->getNbFois() != "") { echo $entretien->getNbFois(); } else { echo '1';} ?>" >
+	                        </div>
+	                      </div>
+	                    </div>
+	                <?php elseif ($url[1] == "niveau_entretien"): $pageTitle = "Enregistrement d'un niveau d'entretien"; ?>
+		                <?php 
+		                  if (!empty($data)) { extract($data); }
+		                ?>
+		                <div class="row">
+		                  <div class="col-lg-12 text-center">
+		                      <h5><?= $pageTitle; ?></h5>
+		                  </div>
+		                </div>
+		                  <div class="row">
+		                    <div class="col-md-4"></div>
+		                    <div class="col-md-4 block-div">
+		                      <div class="form-group hidden">
+		                          <input class="form-control" id="idNiveauEntretien" name="idNiveauEntretien" type="number" value="<?= $niveauEntretien->getIdNiveauEntretien();?>">
+		                      </div>
+		                        <div class="form-group">
+		                          <label class="label-input">Ordre :</label>
+		                          <input class="form-control focus_activated" type="number" name="ordre" id="ordre" list="ordres"  value="<?= $niveauEntretien->getOrdre();?>" required="required" data-validation-required-message="Veuillez entrer l'ordre de niveau d'entretien *"  data-validation-regex-regex="[0-9]{1,2}" data-validation-regex-message="1 chiffre min et 2 max *">
+		                          <datalist id="ordres">
+		                          <?php
+		                            for ($i = 1; $i <= 5; $i ++) {
+		                              $option = "<option type='number' value='" . $i . "' ";
+		                              if ($niveauEntretien->getOrdre() == $i) {
+		                                $option .= "selected";
+		                              }
+		                              $option .= ">" . $i . "</option>";
+		                              echo $option;
+		                            }
+		                          ?>
+		                          </datalist>
+		                          <p class="help-block text-danger"></p>
+		                        </div>
+		                        <div class="form-group">
+		                          <label class="label-input">Service :</label>
+		                            <input class="form-control focus_activated" id="service" name="service" type="text" value="<?= $niveauEntretien->getService();?>" required="required" data-validation-required-message="Veuillez entrer un service *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |+-]*" data-validation-regex-message="Caractères non valide *">
+		                            <p class="help-block text-danger"></p>
+		                        </div>                        
+		                        <div class="form-group hidden">
+		                            <input class="form-control" id="idEntreprise" name="idEntreprise" type="number" value="<?= $entreprise->getIdEntreprise();?>">
+		                        </div>
+		                    </div>
+		                </div>
+		            <?php elseif ($url[1] == "interlocuteur" && !empty($data)): $pageTitle = "Enregistrement d'un interlocuteur"; $interlocuteur = $data;?>
+	                    <div class="row">
+	                      <div class="col-lg-12 text-center">
+	                          <h5><?= $pageTitle; ?></h5>
+	                      </div>
+	                    </div>
+	                    <div class="row">
+	                        <div class="col-md-4"></div>
+	                        <div class="col-md-4 block-div">
+	                          <div class="form-group hidden">
+	                            <input class="form-control" id="idInterlocuteur" name="idInterlocuteur" type="number" value="<?= $interlocuteur->getIdInterlocuteur();?>">
+	                          </div>
+	                          <div class="form-group hidden">
+	                                <input class="form-control" id="idEntreprise" name="idEntreprise" type="number" value="<?= $_SESSION['user']['idEntreprise'];?>">
+	                            </div>
+	                            <div class="form-group">
+	                              <label class="label-input">Civilité :</label>
+	                              <select  class="form-control span3 focus_activated" name="civilite" id="civilite" required="required" data-validation-required-message="Veuillez séléctionner un civilite.">
+	                                <option value="">__Choisir__</option>
+	                                <option <?php if ($interlocuteur->getCivilite()== "Mr") { echo "selected"; } ?> value="Mr">Monsieur</option>
+	                                <option <?php if ($interlocuteur->getCivilite()== "Mme") { echo "selected"; } ?> value="Mme">Madame</option>
+	                                <option <?php if ($interlocuteur->getCivilite()== "Mlle") { echo "selected"; } ?> value="Mlle">Mademoiselle</option>
+	                            </select>
+	                                <p class="help-block text-danger"></p>
+	                            </div>
+	                            <div class="form-group">
+	                              <label class="label-input">Nom :</label>
+	                                <input class="form-control focus_activated" id="nom" name="nom" type="text" value="<?= $interlocuteur->getNom();?>" required="required" data-validation-required-message="Veuillez entrer le nom de votre interlocuteur *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùç |']*" data-validation-regex-message="Caractères non valide *">
+	                                <p class="help-block text-danger"></p>
+	                            </div>
+	                            <div class="form-group">
+	                            	<label class="label-input">Email : </label>
+	                                <input class="form-control text-lowercase focus_activated" id="email" name="email" type="email" value="<?= $interlocuteur->getEmail(); ?>" required="required" data-validation-required-message="Veuillez entrer votre l'email de votre interlocuteur*">
+	                                <p class="help-block text-danger" id="email-message"></p>
+	                            </div>
+	                        </div>
+	                    </div>
+	                <?php elseif ($url[1] == "domaine" && !empty($data)): $pageTitle = "Enregistrement d'un domaine"; $domaine = $data; ?>
+				    	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-4"></div>
+		            		<div class="col-md-4 block-div">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idDomaine" name="idDomaine" type="number" value="<?= $domaine->getIdDomaine();?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Nom de domaine :</label>
+				                  	<input class="form-control focus_activated" id="nomDomaine" name="nomDomaine" type="text" value="<?= $domaine->getNomDomaine();?>" required="required" data-validation-required-message="Veuillez entrer le domaine *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>				                			                
+			            	</div>
+		            	</div>
+		            <?php elseif ($url[1] == "sousdomaine" && !empty($data)): $pageTitle = "Enregistrement d'un sous domaine"; $sousDomaine = $data;?>
+				    	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-4"></div>
+		            		<div class="col-md-4 block-div">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idSousDomaine" name="idSousDomaine" type="number" value="<?= $sousDomaine->getIdSousDomaine();?>">
+				                </div>
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idDomaine" name="idDomaine" type="number" value="<?= $_SESSION['variable']['idDomaine'];?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Nom de sous domaine</label>
+				                  	<input class="form-control focus_activated" id="nomSousDomaine" name="nomSousDomaine" type="text" value="<?= $sousDomaine->getNomSousDomaine();?>" required="required" data-validation-required-message="Veuillez entrer le nom de sous domaine *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>			                			                
+			            	</div>
+		            	</div>
+		            <?php elseif ($url[1] == "personnalite"): $pageTitle = "Enregistrement d'une personnalité"; $personnalite = $data; $url[1] = $url[1] . "s";?> 
+				    	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-4"></div>
+		            		<div class="col-md-4 block-div">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idPersonnalite" name="idPersonnalite" type="number" value="<?= $personnalite->getIdPersonnalite();?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Trait de personnalité :</label>
+				                  	<input class="form-control focus_activated" id="qualite" name="qualite" type="text" value="<?= $personnalite->getQualite();?>" required="required" data-validation-required-message="Veuillez entrer le trait de personnalité *" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùçâ |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>			                			                
+			            	</div>
+		            	</div>
+		            <?php elseif ($url[1] == "service"): $pageTitle = "Enregistrement d'un service"; $service = $data; $url[1] = $url[1] . "s";?>        
+				    	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-4"></div>
+		            		<div class="col-md-4 block-div">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idService" name="idService" type="number" value="<?= $service->getIdService();?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Nom du service :</label>
+				                  	<input class="form-control focus_activated" id="nomService" name="nomService" type="text" value="<?= $service->getNomService();?>" required="required" data-validation-required-message="Veuillez entrer le nom du service" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùçâ |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>			                			                
+			            	</div>
+		            	</div>
+		            <?php elseif ($url[1] == "entreprise_service"): $pageTitle = "Enregistrement d'un service"; extract($data) ; $url[1] = $url[1] . "s";?> 	
+				    	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-4"></div>
+		            		<div class="col-md-4 block-div">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idEntrepriseService" name="idEntrepriseService" type="number" value="<?= $entrepriseService->getIdEntrepriseService();?>">
+				                </div>
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idEntreprise" name="idEntreprise" type="number" value="<?= $entreprise->getIdEntreprise();?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Nom du service :</label>
+				                  	<select  class="form-control span3 focus_activated" name="nomService" id="nomService">
+			                          	<option class="text-center" value="">__Choisir un service __</option>
+			                          	<?php foreach($allServices as $oneService): ?>
+			                            	<option 
+			                              	value="<?= $oneService->getNomService(); ?>">
+			                              	<?= ucfirst($oneService->getNomService()); ?>
+			                            	</option>
+			                          	<?php endforeach; ?>
+			                        </select><br>
+				                  	<input class="form-control focus_activated text-capitalize" id="service" name="service" type="text" value="<?= ucfirst($entrepriseService->getService());?>" required="required" data-validation-required-message="Veuillez entrer le nom du service" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùçâ |'-]*" data-validation-regex-message="Caractères non valide" placeholder="Saisir un service">
+				                  	<p class="help-block text-danger"></p>
+				                </div>			                			                
+			            	</div>
+		            	</div>
+		            <?php elseif ($url[1] == "entreprise_poste"): $pageTitle = "Enregistrement d'un poste"; extract($data) ; $url[1] = $url[1] . "s";?>  	
+				    	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-4">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idEntreprisePoste" name="idEntreprisePoste" type="number" value="<?= $entreprisePoste->getIdEntreprisePoste();?>">
+				                </div>
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idEntreprise" name="idEntreprise" type="number" value="<?= $entreprise->getIdEntreprise();?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Intitulé du poste :</label>
+				                  	<select  class="form-control span3 focus_activated" name="nomPoste" id="nomPoste">
+			                          	<option class="text-center" value="">__Poste suggéré__</option>
+			                          	<?php foreach($allPostes as $onePoste): ?>
+			                            	<option 
+			                              	value="<?= $onePoste->getNomPoste(); ?>">
+			                              	<?= ucfirst($onePoste->getNomPoste()); ?>
+			                            	</option>
+			                          	<?php endforeach; ?>
+			                        </select><br>
+				                  	<input class="form-control focus_activated" id="poste" name="poste" type="text" value="<?= ucfirst($entreprisePoste->getPoste());?>" required="required" data-validation-required-message="Veuillez entrer le nom du poste" placeholder="Saisir un poste">
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Poste pour :</label>
+				                	<select  class="form-control span3 focus_activated" name="statut" id="statut" required="required" data-validation-required-message="Veuillez choisir un niveau d'étude ">
+				                		<option value="0">Recrutement et interne</option>
+				                		<option value="1">Recrutement seulement</option>
+				                	</select>
+				                	<script>
+				                		var statut = "<?= $entreprisePoste->getStatut() ?>";
+				                		$('#statut option[value="' + statut + '"]').prop("selected", true);
+				                	</script>
+				                </div>
+		                      	<div class="form-group">
+		                      		<label class="label-input">Formation requise :</label>
+		                          	<select  class="form-control span3 focus_activated" name="idNiveauEtude" id="idNiveauEtude" required="required" data-validation-required-message="Veuillez choisir un niveau d'étude ">
+		                            	<option class="text-center" value="">Niveau d'étude</option>
+		                            	<?php foreach($niveauxEtudes as $niveauEtude): ?>
+		                            	<option 
+		                              	<?php if ($niveauEtude->getIdNiveauEtude() == $entreprisePoste->getIdNiveauEtude()) { echo "selected"; } ?> value="<?= $niveauEtude->getIdNiveauEtude(); ?>">
+		                              	<?= $niveauEtude->getNiveau(); ?>
+		                            	</option>
+		                            	<?php endforeach; ?>                        
+		                            	<option class="text-center" value="autre">Autre</option>
+		                          	</select>
+		                          	<p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group" id="block-niveauEtude">
+		                          	<input class="form-control focus_activated" id="niveauEtude" name="niveau" type="text" value="">
+		                          	<p class="help-block text-danger" id="niveauEtude-message"></p>
+		                      	</div> 
+		                      	<div class="form-group">
+						            <label class="container"><span style="margin-left: 35px">Max</span> 
+							          <input type="radio" class="form-control" name="capaciteNiveauEtude" id="capaciteNiveauEtude" value="max" 
+							          <?php if ($entreprisePoste->getCapaciteNiveauEtude()== "max") { echo "checked"; } ?> >
+							          <span class="checkmark"></span>
+							        </label>
+						            <label class="container"><span style="margin-left: 35px">Min</span>
+							          <input type="radio" class="form-control" name="capaciteNiveauEtude" id="capaciteNiveauEtude" value="min" 
+							          <?php if ($entreprisePoste->getCapaciteNiveauEtude()== "min") { echo "checked"; } ?>>
+							          <span class="checkmark"></span>
+							        </label> 
+							        <label class="container"><span style="margin-left: 35px">Aucun des deux</span>
+							          <input type="radio" class="form-control" name="capaciteNiveauEtude" id="capaciteNiveauEtude" value="">
+							          <span class="checkmark"></span>
+							        </label> 
+				                  	<p class="help-block text-danger"></p>
+				                </div>  				                
+		                      	<div class="form-group">
+		                      		<label class="label-input">Description de la formation requise : </label>
+		                      		<textarea class="form-control focus_activated" id="formationRequise" name="formationRequise" required="required" data-validation-required-message="Veuillez entrer la formation requise"><?= htmlentities($entreprisePoste->getFormationRequise());?></textarea>
+			                        <p class="help-block text-danger"></p>
+		                      	</div> 
+		                      	<div class="form-group">
+		                      		<label class="label-input">Evolution du poste :</label>
+		                          	<select  class="form-control span3 focus_activated" name="evolution" id="evolution" required="required" data-validation-required-message="Veuillez choisir un poste">
+		                            	<option class="text-center" value="">Choisir</option>
+		                            	<?php if ($entreprisePoste->getEvolution() == 0) : ?>
+		                            		<option class="text-center" value="0" selected="selected">N/A</option>
+		                            	<?php else : ?>
+		                            		<option class="text-center" value="0">N/A</option>
+		                            	<?php endif ?>
+		                            	<?php foreach($postes as $poste): ?>
+		                            		<?php if ($entreprisePoste->getIdEntreprisePoste() != $poste->getIdEntreprisePoste()): ?>
+		                            			<option 
+				                              	<?php if ($poste->getIdEntreprisePoste() == $entreprisePoste->getEvolution()) { echo "selected"; } ?> value="<?= $poste->getIdEntreprisePoste(); ?>">
+				                              	<?= ucfirst($poste->getPoste()); ?>
+				                            	</option>
+		                            		<?php endif ?>
+		                            	<?php endforeach; ?> 
+		                          	</select>
+		                          	<p class="help-block text-danger"></p>
+		                      	</div> 
+		                      	<div class="form-group">
+		                      		<label class="label-input">Continuité du poste :</label>
+		                          	<select  class="form-control span3 focus_activated" name="continuite" id="continuite" required="required" data-validation-required-message="Veuillez choisir un poste">
+		                            	<option class="text-center" value="0">Choisir</option>
+		                            	<?php if ($entreprisePoste->getContinuite() == 0) : ?>
+		                            		<option class="text-center" value="0" selected="selected">N/A</option>
+		                            	<?php else : ?>
+		                            		<option class="text-center" value="0">N/A</option>
+		                            	<?php endif ?>
+		                            	<?php foreach($postes as $poste): ?>
+		                            		<?php if ($entreprisePoste->getIdEntreprisePoste() != $poste->getIdEntreprisePoste()): ?>
+		                            			<option 
+				                              	<?php if ($poste->getIdEntreprisePoste() == $entreprisePoste->getContinuite()) { echo "selected"; } ?> value="<?= $poste->getIdEntreprisePoste(); ?>">
+				                              	<?= ucfirst($poste->getPoste()); ?>
+				                            	</option>
+		                            		<?php endif ?>
+		                            	<?php endforeach; ?> 
+		                          	</select>
+		                          	<p class="help-block text-danger"></p>
+		                      	</div>   
+		                      	<div class="form-group">
+		                      		<label class="label-input">Niveau dans la hiérarchie :</label>
+		                          	<input type="number" min="1" max="10"  class="form-control span3 focus_activated" name="niveau" id="niveau" value="<?= $entreprisePoste->getNiveau() ?>" required="required" data-validation-required-message="Veuillez indiquer le niveau">
+		                          	<p class="help-block text-danger"></p>
+		                      	</div>        			                
+			            	</div>
+		            		<div class="col-md-4">
+				                <div class="form-group">
+				                	<label class="label-input">Relation interne :</label>
+		                      		<textarea class="form-control focus_activated" id="relationInterne" name="relationInterne" required="required" data-validation-required-message="Veuillez remplir ce champ"><?= htmlentities($entreprisePoste->getRelationInterne());?></textarea>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group">
+				                	<label class="label-input">Relation externe :</label>
+		                      		<textarea class="form-control focus_activated" id="relationExterne" name="relationExterne" required="required" data-validation-required-message="Veuillez remplir ce champ"><?= htmlentities($entreprisePoste->getRelationExterne());?></textarea>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group">
+				                	<label class="label-input">Savoirs :</label>
+		                      		<textarea class="form-control focus_activated" id="savoirs" name="savoirs" required="required" data-validation-required-message="Veuillez remplir ce champ"><?= htmlentities($entreprisePoste->getSavoirs());?></textarea>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group">
+		                      		<label class="label-input">Savoir faire :</label>
+		                      		<textarea class="form-control focus_activated" id="savoirFaire" name="savoirFaire" required="required" data-validation-required-message="Veuillez remplir ce champ"><?= htmlentities($entreprisePoste->getSavoirFaire());?></textarea>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group">
+		                      		<label class="label-input">Savoir être :</label>
+		                      		<textarea class="form-control focus_activated" id="savoirEtre" name="savoirEtre" required="required" data-validation-required-message="Veuillez remplir ce champ"><?= htmlentities($entreprisePoste->getSavoirEtre());?></textarea>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		            		</div>
+		            		<div class="col-md-4">
+		            			<div class="form-group">
+		                      		<label class="label-input">Année d'expérience interne :</label>
+		                          	<select  class="form-control span3 focus_activated" name="anneeExperienceInterne" id="anneeExperienceInterne" required="required" data-validation-required-message="Veuillez choisir un niveau d'expérience">
+		                            	<option class="text-center" value="">Niveau d'expérience</option>
+		                            	<?php foreach($niveauxExperiences as $niveauExperience): ?>
+		                            	<option 
+		                              	<?php if ($niveauExperience->getIdNiveauExperience() == $entreprisePoste->getAnneeExperienceInterne()) { echo "selected"; } ?> value="<?= $niveauExperience->getIdNiveauExperience(); ?>">
+		                              	<?= $niveauExperience->getNiveau(); ?>
+		                            	</option>
+		                            	<?php endforeach; ?>                        
+		                            	<option class="text-center" value="autre">Autre</option>
+		                          	</select>
+		                          	<p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group" id="block-anneeExperienceInterne">
+		                          	<input class="form-control focus_activated" id="niveauExperienceInterne" name="niveauExperienceInterne" type="text" value="" placeholder="Saisir le niveau d'expérience">
+		                          	<p class="help-block text-danger" id="niveauExperienceInterne-message"></p>
+		                      	</div>
+		                      	<div class="form-group">
+						            <label class="container"><span style="margin-left: 35px">Max </span>
+							          <input type="radio" class="form-control" name="capaciteExperienceInterne" id="capaciteExperienceInterne" value="max" 
+							          <?php if ($entreprisePoste->getCapaciteExperienceInterne()== "max") { echo "checked"; } ?> >
+							          <span class="checkmark"></span>
+							        </label>
+						            <label class="container"><span style="margin-left: 35px">Min</span>
+							          <input type="radio" class="form-control" name="capaciteExperienceInterne" id="capaciteExperienceInterne" value="min" 
+							          <?php if ($entreprisePoste->getCapaciteExperienceInterne()== "min") { echo "checked"; } ?>>
+							          <span class="checkmark"></span>
+							        </label> 
+							        <label class="container"><span style="margin-left: 35px">Aucun des deux</span>
+							          <input type="radio" class="form-control" name="capaciteExperienceInterne" id="capaciteExperienceInterne" value="">
+							          <span class="checkmark"></span>
+							        </label> 
+				                  	<p class="help-block text-danger"></p>
+				                </div>  				                
+		                      	<div class="form-group">
+		                      		<label class="label-input">Description de l'expérience interne : </label>
+		                      		<textarea class="form-control focus_activated" id="experienceInterne" name="experienceInterne" required="required" data-validation-required-message="Veuillez remplir ce champ"><?= htmlentities($entreprisePoste->getExperienceInterne());?></textarea>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group">
+		                      		<label class="label-input">Année d'expérience externe :</label>
+		                          	<select  class="form-control span3 focus_activated" name="anneeExperienceExterne" id="anneeExperienceExterne" required="required" data-validation-required-message="Veuillez choisir un niveau d'expérience">
+		                            	<option class="text-center" value="">Niveau d'expérience</option>
+		                            	<?php foreach($niveauxExperiences as $niveauExperience): ?>
+		                            	<option 
+		                              	<?php if ($niveauExperience->getIdNiveauExperience() == $entreprisePoste->getAnneeExperienceExterne()) { echo "selected"; } ?> value="<?= $niveauExperience->getIdNiveauExperience(); ?>">
+		                              	<?= $niveauExperience->getNiveau(); ?>
+		                            	</option>
+		                            	<?php endforeach; ?>                        
+		                            	<option class="text-center" value="autre">Autre</option>
+		                          	</select>
+		                          	<p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group" id="block-anneeExperienceExterne">
+		                          	<input class="form-control focus_activated" id="niveauExperienceExterne" name="niveauExperienceExterne" type="text" value="">
+		                          	<p class="help-block text-danger" id="niveauExperienceExterne-message"></p>
+		                      	</div>
+		                      	<div class="form-group">
+						            <label class="container"><span style="margin-left: 35px">Max</span> 
+							          <input type="radio" class="form-control" name="capaciteExperienceExterne" id="capaciteExperienceExterne" value="max" 
+							          <?php if ($entreprisePoste->getCapaciteExperienceExterne()== "max") { echo "checked"; } ?> >
+							          <span class="checkmark"></span>
+							        </label>
+						            <label class="container"><span style="margin-left: 35px">Min</span>
+							          <input type="radio" class="form-control" name="capaciteExperienceExterne" id="capaciteExperienceExterne" value="min" 
+							          <?php if ($entreprisePoste->getCapaciteExperienceExterne()== "min") { echo "checked"; } ?>>
+							          <span class="checkmark"></span>
+							        </label> 
+						            <label class="container"><span style="margin-left: 35px">Aucun des deux</span>
+							          <input type="radio" class="form-control" name="capaciteExperienceExterne" id="capaciteExperienceExterne" value="">
+							          <span class="checkmark"></span>
+							        </label>
+				                  	<p class="help-block text-danger"></p>
+				                </div>  				                
+		                      	<div class="form-group">
+		                      		<label class="label-input">Description de l'expérience externe :</label>
+		                      		<textarea class="form-control focus_activated" id="experienceExterne" name="experienceExterne" required="required" data-validation-required-message="Veuillez remplir ce champ"><?= htmlentities($entreprisePoste->getExperienceExterne());?></textarea>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		                      	<div class="form-group">
+		                      		<label class="label-input">Raison :</label>
+		                      		<textarea class="form-control focus_activated" id="raison" name="raison" required="required" data-validation-required-message="Veuillez remplir ce champ"><?= htmlentities($entreprisePoste->getRaison());?></textarea>
+			                        <p class="help-block text-danger"></p>
+		                      	</div>
+		            		</div>
+		            	</div><hr>
+		            	<div class="row block-div">	
+		            		<div class="col-md-5">
+		            			<div class="form-group">									
+									<input class="btn btn-warning" type="button" value="Ajouter mission" id="btn_mission">
+								</div>
+								<div id="block-mission"> 
+									<div class="form-group hidden">
+										<input class="form-control focus_activated" id="id_mission" type="number">
+									</div>
+									<div class="form-group">
+										<label class="label-input">Description :</label>
+										<textarea class="form-control focus_activated" id="description_mission"></textarea>
+										<p class="help-block text-danger" id="description-message"></p>
+									</div>
+									<div class="form-group">	
+										<label class="label-input">Niveau :</label>
+					                  	<input class="form-control focus_activated" id="niveau_mission" type="text">
+					                  	<p class="help-block text-danger" id="niveau-message"></p>
+									</div>
+									<div class="form-group">	
+										<input class="btn btn-success" type="button" value="Valider dans la liste" id="btn_validate">
+										<p class="help-block text-danger" id="validate-message"></p>
+									</div>
+									<div class="form-group hidden">
+					                  	<input class="form-control" name="input_mission" type="text">
+									</div>
+								</div>
+		            		</div>
+		            		<div class="col-md-6">
+				            	<div class="form-group">
+									<label class="label-input">Les missions :</label>
+									<table class="table table-bordered" id="table-mission">
+										<thead>											
+											<tr class="active">
+												<th class="hidden">ID</th>
+												<th>Description</th>
+												<th>Niveau</th>
+											</tr>
+										</thead>
+										<tbody>
+											<?php if (!empty($missions)): ?>
+												<?php foreach ($missions as $mission): ?>
+													<tr>														
+														<td class="hidden"><?= $mission->getIdMission(); ?></td>
+														<td><?= $mission->getDescription(); ?></td>
+														<td><?= $mission->getNiveau(); ?></td>
+														<td><i class="fas fa-edit" onclick="editRow(this)"></i></td>
+														<td><i class="fas fa-times" id="times_close" onclick="removeRow(this)"></i></td>
+													</tr>
+												<?php endforeach ?>
+											<?php endif ?>
+										</tbody>
+									</table>
+								</div>
+		            		</div>
+		            	</div>
+		            	<script type="text/javascript">
+				          	$('#back-section').css('overflow-y','initial');
+		            	</script>
+		            <?php elseif ($url[1] == "service_poste"): $pageTitle = "Enregistrement d'un poste dans une service"; extract($data) ; $url[1] = $url[1] . "s";?> 	
+				    	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-4"></div>
+		            		<div class="col-md-4 block-div">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idServicePoste" name="idServicePoste" type="number" value="<?= $servicePoste->getIdServicePoste();?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Nom du poste :</label>
+				                	<select  class="form-control span3 focus_activated" name="idEntreprisePoste" id="idEntreprisePoste" required="required" data-validation-required-message="Veuillez séléctionner un poste" >
+			                          	<option class="text-center" value="">__Choisir un poste__</option>
+			                          	<?php foreach($allPostes as $onePoste): ?>
+			                            	<option 
+			                              	<?php if ($servicePoste->getIdEntreprisePoste() == $onePoste->getIdEntreprisePoste()) { echo "selected"; } ?>  value="<?= $onePoste->getIdEntreprisePoste(); ?>">
+			                              	<?= ucfirst($onePoste->getPoste()); ?>
+			                            	</option>
+			                          	<?php endforeach; ?>
+			                        </select>			                        
+		                            <p class="help-block text-danger"></p>
+				                </div>			                			                
+			            	</div>
+		            	</div>
+		            <?php elseif ($url[1] == "poste"): $pageTitle = "Enregistrement d'un poste"; $poste = $data; $url[1] = $url[1] . "s";?>  
+				    	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-4"></div>
+		            		<div class="col-md-4 block-div">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idPoste" name="idPoste" type="number" value="<?= $poste->getIdPoste();?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Nom du poste :</label>
+				                  	<input class="form-control focus_activated" id="nomPoste" name="nomPoste" type="text" value="<?= $poste->getNomPoste();?>" required="required" data-validation-required-message="Veuillez entrer le nom du poste" data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùçâ |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>			                			                
+			            	</div>
+		            	</div>
+		            <?php elseif ($url[1] == "contrat"): $pageTitle = "Enregistrement d'un contrat"; $contrat = $data; $url[1]  = $url[1] . "s";?> 
+				    	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-4"></div>
+		            		<div class="col-md-4 block-div">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idContrat" name="idContrat" type="number" value="<?= $contrat->getIdcontrat();?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Contrat</label>
+				                  	<input class="form-control focus_activated" id="designation" name="designation" type="text" value="<?= $contrat->getDesignation();?>" required="required" data-validation-required-message="Veuillez entre un contrat *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |'-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>		                			                
+			            	</div>
+		            	</div>
+		            <?php elseif ($url[1] == "niveau_experience"): $pageTitle = "Enregistrement d'un niveau d'expérience"; $niveauExperience = $data; ?>
+				    	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-4"></div>
+		            		<div class="col-md-4 block-div">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idNiveauExperience" name="idNiveauExperience" type="number" value="<?= $niveauExperience->getIdNiveauExperience();?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Ordre :</label>
+				                  	<input class="form-control focus_activated" type="number" name="ordre" id="ordre" list="ordres"  value="<?= $niveauExperience->getOrdre();?>" required="required" data-validation-required-message="Veuillez entrer l'ordre de niveau d'expérience *" data-validation-regex-regex="[0-9]{1,2}" data-validation-regex-message="1 chiffre min et 2 max *">
+									<datalist id="ordres">
+									<?php
+										for ($i = 0; $i <= 99; $i += 10) {
+											$option = "<option type='number' value='" . $i . "' ";
+											if ($niveauExperience->getOrdre() == $i) {
+											 	$option .= "selected";
+											}
+											$option .= ">" . $i . "</option>";
+											echo $option;
+										}
+									?>
+									</datalist>
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Niveau d'expérience :</label>
+				                  	<input class="form-control focus_activated" id="niveau" name="niveau" type="text" value="<?= $niveauExperience->getNiveau();?>" required="required" data-validation-required-message="Veuillez entrer un niveau d'expérience *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>		                			                
+			            	</div>
+		            	</div>
+		            <?php elseif ($url[1] == "niveau_etude"): $pageTitle = "Enregistrement d'un niveau d'étude"; $niveauEtude = $data;?>
+				    	<div class="row">
+					        <div class="col-lg-12 text-center">
+					          	<h5><?= $pageTitle; ?></h5>
+					        </div>
+				      	</div>
+		            	<div class="row">
+		            		<div class="col-md-4"></div>
+		            		<div class="col-md-4 block-div">
+			            		<div class="form-group hidden">
+				                  	<input class="form-control" id="idNiveauEtude" name="idNiveauEtude" type="number" value="<?= $niveauEtude->getIdNiveauEtude();?>">
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Ordre :</label>
+				                  	<input class="form-control focus_activated" type="number" name="ordre" id="ordre" list="ordres"  value="<?= $niveauEtude->getOrdre();?>" required="required" data-validation-required-message="Veuillez entrer l'ordre de niveau d'étude *"  data-validation-regex-regex="[0-9]{1,2}" data-validation-regex-message="1 chiffre min et 2 max *">
+									<datalist id="ordres">
+									<?php
+										for ($i = 0; $i <= 100; $i += 10) {
+											$option = "<option type='number' value='" . $i . "' ";
+											if ($niveauEtude->getOrdre() == $i) {
+											 	$option .= "selected";
+											}
+											$option .= ">" . $i . "</option>";
+											echo $option;
+										}
+									?>
+									</datalist>
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+				                <div class="form-group">
+				                	<label class="label-input">Niveau d'étude :</label>
+				                  	<input class="form-control focus_activated" id="niveau" name="niveau" type="text" value="<?= $niveauEtude->getNiveau();?>" required="required" data-validation-required-message="Veuillez entrer un niveau d'étude *" data-validation-regex-regex="^[0-9a-zA-Z|éèêëôöîïàùç |+-]*" data-validation-regex-message="Caractères non valide *">
+				                  	<p class="help-block text-danger"></p>
+				                </div>		                			                
+			            	</div>
+		            	</div>
+		            <?php endif; ?>
+		            <div class="col-lg-12 text-center">
+	                	<div id="success"></div>
+	                	<a class="btn btn-danger" id="cancelBoutton" href="<?= $_SERVER['HTTP_REFERER']; ?>">Annuler</a>
+	                	<button id="submit" class="btn btn-info" type="submit">
+	                		Enregistrer
+	                	</button>
+	              	</div>
+          		</form>
+        	</div>
+      	</div>
+    </div>
+</section>
+
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormRecrutement.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/missionForm.js"></script>

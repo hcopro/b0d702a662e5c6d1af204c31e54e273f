@@ -1,0 +1,103 @@
+<?php
+	extract($data);
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row" style="margin-top: -15px;">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h4 class="text-center list-title section-heading">Organigramme de l'entreprise</h4>
+			</div>
+			<div class="col-md-2 text-right">
+				<a class="btn btn-transparent btn-circle-sm text-primary" href="<?= HOST . "manage/entreprise/dashboard" ?>">
+					<i class="fa fa-user fa-15x tippy-act" aria-hidden="true"></i>
+				</a>
+			</div>
+		</div>
+		<div class="block-section" style="overflow-x: auto; padding-right: 25px!important; ">
+			<div class="row">
+				<div class="col-lg-12 text-center">
+      				<div class="tete-list-section row" style="background: #fff;">
+      					<div class="col-md-5" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+      						<div class="row">
+								<div class="col-md-8">
+									<select class="select-time" id='filter-element'  style="font-size: 0.8em!important; width: 200px!important;">
+										<option class="option-tout" id="o-t" value="0">Tous les services</option>
+										<?php foreach ($services as $service) : ?>
+											<option class="option-service" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+										<?php endforeach ?>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		   	<div id="chart_div" style="font-size: 0.9em!important; min-height: 62vh!important; margin-right: 25px!important;"></div>
+		</div>
+	</div>
+</section>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/organigramme.js"></script>
+<script>
+	$('document').ready(function(){
+		$.ajax({
+			url : "<?= HOST . 'manage/get-dataOrganigramme'?>",
+			data : "id=" + $("#filter-element").val(),
+			dataType : "json",
+			success : function(data)
+			{
+				loadOrganigramme(data);
+			}
+		});
+	});
+	$('#filter-element').change(function(){
+		$.ajax({
+			url : "<?= HOST . 'manage/get-dataOrganigramme'?>",
+			data : "id=" + $("#filter-element").val(),
+			dataType : "json",
+			success : function(data)
+			{
+				loadOrganigramme(data);
+			}
+		});
+	});
+	function loadOrganigramme(data) {
+		var employes = new Array();
+		<?php if ($entreprise->getLogo() != "") : ?>
+			var logo  = "<?= HOST . '../Web/Ressources/images/entreprises/' . $entreprise->getLogo() ?>";
+		<?php else : ?>
+			var logo = "<?= HOST . '../Web/Ressources/images/defaultLogo.png' ?>";
+		<?php endif ?>
+		var tmp = {
+			'id'  : "0",
+		  	'nom' : "<?= ucwords($entreprise->getNom()); ?>",
+		  	'prenom' : "",
+		  	'poste' : "",
+		  	'niveau' : "",
+		  	'photo' : logo
+		};
+		employes.push(tmp);
+		$.each(data, function(indice, employe) {
+			if (employe['photo'] != "") {
+				var photo  = "<?= HOST . '../Web/Ressources/images/employes/' ?>" + employe['photo'];
+			} else {
+				var photo = "<?= HOST . '../Web/Ressources/images/profilCandidat.png' ?>";
+			}
+			tmp = {
+				'id'     : employe['idEmploye'],
+			  	'nom'    : employe['nom'],
+			  	'prenom' : employe['prenom'],
+			  	'chef'   : employe['chefHierarchique'],
+			  	'poste'  : employe['poste'],
+			  	'niveau' : 'niveau ' + employe['niveau'],
+			  	'photo'  : photo
+			};
+			employes.push(tmp);
+		});
+		voirOrganigramme(employes);
+	}
+	tippy(".fa-user", {
+		content : "voir le profil de l'entreprise"
+	});
+</script>

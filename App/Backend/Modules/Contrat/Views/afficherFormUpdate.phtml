@@ -1,0 +1,931 @@
+<?php
+	$url = explode('-', $_GET['page']);
+	if (!isset($_SESSION['employe']) && $url[1] != "contratEmploye" && $url[1] != "historiqueContrat") {
+		header("Location :" . HOST . "manage/employes");
+	}
+?>
+<section class="page-section" id="back-section">
+    <div class="container">
+      	<div class="">
+	      	<div class="row">
+	        	<div class="col-lg-12">		  
+			        <?php if (($url[1] == "contratEmploye" || $url[1] == "historiqueContrat" ) && !empty($data)) : extract($data);?>
+			        	<?php if ($page == 'gestion') :?>
+			        		<div class="row">
+			        			<div class="col-md-2"></div>
+						        <div class="col-md-8 text-center">
+						          	<h5 class="text-center list-title section-heading">Gestion de contrat</h5>
+						        </div>
+						        <div class="col-md-2 text-right">
+						        	<a href="<?= HOST . 'manage/entreprise/contrat' ?>" class="btn btn-sm btn-transparent text-primary btn-circle-sm">
+										<i class="fa fa-list fa-15x tippy-act" aria-hidden="true"></i>
+									</a>
+						        </div>
+					      	</div>
+					      	<div class="row block-section p-0">
+	          					<div class="col-md-4 m-0">
+	          						<br>
+	          						<table class="table">	
+	          							<thead style="background: #c8d0e4;">
+	          								<tr><th colspan="2" class="text-center">Dernier contrat</th></tr>
+	          							</thead>
+	          							<tbody>
+			          						<tr>
+			          							<td class="label">Employé </td>
+			          							<td><?=$employe->getCivilite()?> <?=$employe->getNom()?> <?=$employe->getPrenom()?></td>
+			          						</tr>
+			          						<tr>
+			          							<td class="label">Service</td>
+			          							<td>
+			          								<?php 
+			          									if ($service != null) {
+			          										echo $service->getService();
+			          									}
+			          								?>
+			          							</td>
+			          						</tr>
+			          						<tr>
+			          							<td class="label">Poste</td>
+			          							<td>
+				          							<?php
+				          								if ($poste != null) {
+				          									echo $poste->getPoste();
+				          								}
+				          							?>
+				          						</td>
+			          						</tr>
+			          						<tr>
+			          							<td class="label">Catégorie</td>
+			          							<td>
+				          							<?php
+				          								if ($categorie != null) {
+				          									echo $categorie->getDesignation();
+				          								}
+				          							?>
+				          						</td>
+			          						</tr>
+			          						<tr>
+			          							<td class="label">Salaire</td>
+			          							<td><?=$employe->getSalaire()?></td>
+			          						</tr>
+			          						<tr>
+			          							<td class="label">Type</td>
+			          							<td>
+				          							<?php foreach($contrats as $contrat): ?>
+											            <?php
+											            	if ($contrat->getIdContrat() == $contratEmploye->getType()) { 
+											                 	echo $contrat->getDesignation(); 
+											                } 
+											            ?>
+											        <?php endforeach; ?>
+											    </td>
+			          						</tr>
+			          						<tr>
+			          							<td class="label">Début</td>
+			          							<td>
+				          							<?php
+				          								if ($contratEmploye->getDateDebut() != null) {
+				          									$date = explode('-', $contratEmploye->getDateDebut()); 
+				          									echo $date[2] . "/" . $date[1] . "/" . $date[0];
+				          								} else {
+				          									echo "";
+				          								}
+				          							?>
+				          						</td>
+			          						</tr>
+			          						<tr>
+			          							<td class="label">Fin</td>
+			          							<td>
+				          							<?php
+				          								if ($contratEmploye->getDateFin() != null) {
+				          									if ($contratEmploye->getDateFin() != "0000-00-00") {
+				          										$date = explode('-', $contratEmploye->getDateFin()); 
+				          										echo $date[2] . "/" . $date[1] . "/" . $date[0];
+				          									} else {
+				          										echo "indéterminée";
+				          									}
+				          								} else {
+				          									echo "";
+				          								}		
+				          							?>
+				          						</td>
+			          						</tr>
+			          						<tr>
+			          							<td class="label">signature</td>
+			          							<td>
+				          							<?php
+				          								if ($contratEmploye->getStatut() == ManagerModuleContrat::EMPTY){
+				          									echo "";
+				          								} elseif ($contratEmploye->getStatut() == ManagerModuleContrat::PROPOSED) {
+				          									echo "pas encore";
+				          								} elseif ($contratEmploye->getStatut() == ManagerModuleContrat::VALIDATED || $contratEmploye->getStatut() == ManagerModuleContrat::EXPIRED) {
+				          									echo "<i class='fa fa-check fa-2x' style='color : #00c853'></i>";
+				          								}
+				          							?>
+				          						</td>
+			          						</tr>
+			          						<tr>
+			          							<td class="label">statut</td>
+			          							<td>
+				          							<?php
+				          								$today = date("Y-m-d");
+				          								if ($contratEmploye->getDateDebut() != null && $contratEmploye->getDateFin() != null) { 
+					          								if ($today < $contratEmploye->getDateDebut()) {
+					          									echo "A venir";
+					          								} elseif ($contratEmploye->getStatut() == ManagerModuleContrat::EXPIRED) {
+					          									echo "expiré";
+					          								} else {
+					          									if ($contratEmploye->getStatut() == ManagerModuleContrat::PROPOSED) {
+					          										echo "en attente de signature";
+					          									}
+					          									else {
+					          										echo 'en cours';
+					          									}
+					          								}
+					          							} else {
+					          								echo '';
+					          							}
+				          							?>
+				          						</td>
+			          						</tr>
+			          					</tbody>
+	          						</table>
+			          				<div class="row">
+				          				<?php if ($contratEmploye->getStatut() == ManagerModuleContrat::EMPTY) : ?>
+											<div class="col-md-3">
+						       					<button class="btn btn-warning btn-md" style="color:#ffffff; width:100%;" data-toggle="modal" data-target="#modalChangement"
+						       						<?php 
+					          							if ($contratEmploye->getPrincipal() != ManagerModuleContrat::NO) {
+					          								echo "disabled";
+					          							}
+					          						?>
+						       					>
+						       						<i class="fa fa-briefcase fa-2x"></i>
+						       					</button>
+		                     				</div>
+	          							<?php elseif ($contratEmploye->getStatut() == ManagerModuleContrat::PROPOSED): ?>
+					          				<div class="col-md-3">
+						          				<button class="btn btn-warning btn-md" style="color:#ffffff; width:100%;" data-toggle="modal" data-target="#modalChangement"
+						       						<?php 
+					          							if ($contratEmploye->getPrincipal() != ManagerModuleContrat::NO) {
+					          								echo "disabled";
+					          							}
+					          						?>
+						       					>
+						       						<i class="fa fa-briefcase fa-2x"></i>
+						       					</button>
+							                </div>
+						                	<div class="col-md-3">
+				          						<a id="" href="<?=HOST.'/manage/save-contratEmploye?idEmploye='.$employe->getIdEmploye().'&idContratEmploye='.$contratEmploye->getIdContratEmploye().'&statut=2'?>" class="btn btn-success btn-md" style="color:#ffffff; width:100%;">
+					                				<i class="fa fa-check-circle fa-2x"></i>
+					                			</a>
+					                		</div>
+					      					<div class="col-md-3">
+						                		<form method="POST" action="<?= HOST. "manage/imprimerContrat"?>" >
+							          				<input type="hidden" name="idEmploye" value="<?=$employe->getIdEmploye()?>">
+							          				<input type="hidden" name="type" value="contrat">
+							          				<input type="hidden" name="idContratEmploye" value="<?=$contratEmploye->getIdContratEmploye()?>">
+							          				<button type="submit" class="btn btn-dark btn-md" style="width:100%">
+							          					<i class="fas fa-print fa-2x"></i>
+							   						</button>
+							          			</form>
+						          			</div>
+					                	<?php elseif ($contratEmploye->getStatut() == ManagerModuleContrat::VALIDATED || $contratEmploye->getStatut() == ManagerModuleContrat::EXPIRED) : ?>
+					                		<?php if ($contratEmploye->getPrincipal() == ManagerModuleContrat::NO) : ?>
+					                			<div class="col-md-3">
+					          					<button class="btn btn-warning btn-md" style="color:#ffffff; width:100%;" data-toggle="modal" data-target="#modalChangement">
+						       						<i class="fa fa-briefcase fa-2x"></i>
+						       					</button>
+		                     				</div>
+						                		<div class="col-md-3">
+							           				<form id="form" method="POST" action="<?= HOST. "manage/save-" . $url[1];?>" enctype="multipart/form-data" novalidate="novalidate">
+							      						<input type="hidden" name="idContratEmploye" value=<?=$contratEmploye->getIdContratEmploye()?> >
+							          					<input type="hidden" name="idEmploye" value=<?=$employe->getIdEmploye()?> >
+							          					<input type="hidden" name="type" value="nouveau-contrat">
+							                			<button id="submitNouveauContrat" class="btn btn-success btn-md" style="width:100%;" type="submit">
+							                				<i class="fas fa-plus fa-2x"></i>
+							                			</button>
+							                		</form>
+							               		</div>
+							               	<?php endif ?>
+					                		<div class="col-md-3">
+						          				<form method="POST" action="<?= HOST. "manage/imprimerContrat"?>" >
+							          				<input type="hidden" name="idEmploye" value="<?=$employe->getIdEmploye()?>">
+							          				<input type="hidden" name="type" value="contrat">
+							          				<input type="hidden" name="idContratEmploye" value="<?=$contratEmploye->getIdContratEmploye()?>">
+							          				<button type="submit" class="btn btn-dark btn-md" style="width:100%">
+							          					<i class="fas fa-print fa-2x"></i>
+							          				</button>
+							          			</form>
+							          		</div>
+				          				<?php endif ?>
+				          					<div class="col-md-3">
+					          				<form id="form" method="POST" action="<?= HOST. 'manage/show-historiqueContrat?idEmploye=' . $employe->getIdEmploye()?>">
+					          					<input type="hidden" name="page" value="historique">
+					          					<button type ="submit" class="btn btn-info btn-md" style="color:#ffffff; width:100%">
+					      							<i class="fas fa-history fa-2x"></i>
+					          					</button>
+					          				</form>
+					          			</div>
+				          			</div>	 
+				          			<br>         		
+	          					</div>
+	          					<div class="col-md-3 card m-0 mt-2 p-3" style="height: 100vh;">
+									<form id="form" method="POST" action="<?= HOST. "manage/save-" . $url[1];?>" enctype="multipart/form-data" novalidate="novalidate">
+										<div class="form-group">
+											<input type="hidden" name="idContratEmploye" value=<?=$contratEmploye->getIdContratEmploye()?> >
+											<input type="hidden" id="statutContratEmploye" value=<?=$contratEmploye->getStatut()?> >
+											<input type="hidden" name="idEmploye" value=<?=$employe->getIdEmploye()?> >
+											<input type="hidden" id="page" value="contrat" >	
+										</div>	
+										<?php if ($contratEmploye->getStatut() == ManagerModuleContrat::VALIDATED && $typeContrat->getDesignation() == ManagerModuleContrat::CDD) : ?>
+											<div class="text-center">
+												<?php if ($situation['renouvellement_possible'] > ManagerModuleContrat::ZERO_TIME) : ?>
+													<div style="background: #c8d0e4; padding: 10px; margin-top: -18px; margin-bottom: 20px;">
+														<strong>Renouvellement</strong>
+													</div>
+													<?php if (count($renouvellements) == 0) : ?>
+														<input type="hidden" name="type" id="type" value="renouvellement">
+													<?php else :?>
+														<?php if ($renouvellements[0]->getStatut() == ManagerModuleContrat::PROPOSED): ?>
+															<input type="hidden" name="type" id="type" value="edit-renouvellement">
+														<?php else :?>
+															<input type="hidden" name="type" id="type" value="renouvellement">
+														<?php endif ?>
+													<?php endif ?>
+												<?php else :?>
+													<input type="hidden" name="type" id="type" value="contrat">
+												<?php endif ?>			
+											</div>
+										<?php elseif ($contratEmploye->getStatut() == ManagerModuleContrat::VALIDATED && $typeContrat->getDesignation() == ManagerModuleContrat::CDE) : ?>
+											<div class="text-center">
+												<?php if ($situation['renouvellement_possible'] > 0) : ?>
+													<div style="background: #c8d0e4; padding: 10px; margin-top: -18px; margin-bottom: 20px;">
+														<strong>Prolongement</strong>
+													</div>
+													<?php if (count($renouvellements) == 0) : ?>
+														<input type="hidden" name="type" id="type" value="prolongement">
+													<?php else :?>
+														<?php if ($renouvellements[0]->getStatut() == ManagerModuleContrat::PROPOSED) : ?>
+															<input type="hidden" name="type" id="type" value="edit-prolongement">
+														<?php else :?>
+															<input type="hidden" name="type" id="type" value="contrat">
+														<?php endif ?>
+													<?php endif ?>
+												<?php else :?>
+													<input type="hidden" name="type" id="type" value="contrat">
+												<?php endif ?>
+											</div>
+										<?php else : ?>
+											<div class="text-center">
+												<input type="hidden" name="type" id="type" value="contrat">
+											</div>
+										<?php endif?>
+										<div class="form-group">
+									    	<label class="label-input">Type de contrat :</label>
+									    	<?php if ($contratEmploye->getPrincipal() == 0) :?>
+									    		<select class="form-control span3 focus_activated" style="width: 100%" name="typeContrat" id="typeContrat" required="required" data-validation-required-message="Veuillez choisir un type de contrat">
+									    	<?php else : ?>
+									    		<input type="hidden" name="typeContrat" value="<?= $typeContrat->getDesignation(); ?>">
+									    		<select class="form-control span3 focus_activated" style="width: 100%" name="typeContrat" id="typeContrat" required="required" data-validation-required-message="Veuillez choisir un type de contrat" disabled>
+									    	<?php endif ?>
+										    	<option value="">-- Choisir --</option>
+										      	<?php 
+										      		foreach($contrats as $contrat): ?>
+									                <option 
+									                	<?php if ($contrat->getIdContrat() == $contratEmploye->getType()) { echo "selected"; } ?> value="<?= $contrat->getDesignation(); ?>">
+									                	<?= $contrat->getDesignation(); ?>
+									                </option>
+									            <?php endforeach; ?>
+										    </select>
+										    <?php if (!empty($typeContrat)) :?>
+										    	<input type="hidden" id="typeContratHidden" value="<?= $typeContrat->getDesignation() ?>">
+										    <?php endif ?>	
+											<p class="help-block text-danger"></p>		    
+										</div>
+										<div class="form-group">
+									    	<label class="label-input" style="width: 100%;">Date de début : </label>
+									    	<label for="datepicker">
+									        	<input class="form-control datepicker" id="datepicker_dateDebut" type="text" value=
+									            	<?php $date1 = isset($date1) ? $date1 : null;
+									            		if ($date1 != null) {
+									            			$date = explode('-', $date1); 
+									            			echo $date[2] . '/' . $date[1] . '/' . $date[0];
+									            		} else {
+									            			echo '""';
+									            		}
+									            	?>
+									            	autocomplete="off" 
+									            	placeholder="Date de début" <?php if ($contratEmploye->getPrincipal() != 0) { echo "disabled"; }?>>
+									      	</label>
+									      	<input class="form-control hidden" id="dateDebut" name="dateDebut" type="date"  required="required" data-validation-required-message="Veuillez entrer une date de début">
+									      	<p class="help-block text-danger"></p>
+									    </div>
+									    <div class="form-group" id="form-group-dateFin">
+									    	<label class="label-input" style="width: 100%;">Date de fin : </label>
+									    	<label for="datepicker">
+									            <input class="form-control datepicker" id="datepicker_dateFin" type="text" value=
+									            	<?php $date2 = isset($date2) ? $date2 : null;
+									            		if ($date2 != null) {
+									            			$date = explode('-', $date2); 
+									            			echo $date[2] . '/' . $date[1] . '/' . $date[0];
+									            		}  else {
+									            			echo '""';
+									            		}
+									            	?>
+									            	autocomplete="off" 
+									            	placeholder="Date de fin">
+									      	</label>
+									      	<input class="form-control hidden" id="dateFin" name="dateFin" type="date" required="required" data-validation-required-message="Veuillez entrer une date de fin">
+									      	<p class="help-block text-danger"></p>
+										</div>
+										<div class="form-group" id="form-essai">
+											<div class="custom-control custom-checkbox my-1 mr-sm-2">
+											    <input type="checkbox" class="custom-control-input" id="customControlInline" name="avecEssai" 
+											    	<?php if ($contratEmploye->getEssai() != 0) { echo "checked"; }?>
+											    >
+											    <label class="custom-control-label" for="customControlInline">
+											    	<strong>Avec essai</strong>
+											    </label>
+										  	</div>
+										</div>
+									    <div class="row">
+									    	<div class="col-md-5">
+									        	<?php if ($contratEmploye->getStatut() == ManagerModuleContrat::VALIDATED ) :?>
+									            	<?php if ($situation['nouvelle_duree_possible'] > ManagerModuleContrat::ZERO_DAY && $situation['renouvellement_possible'] > ManagerModuleContrat::ZERO_TIME) :?>
+									            		<button id="submitContrat" class="btn btn-info btn-xl" type="submit"> Enregistrer </button>
+									            	<?php endif?>
+									            <?php elseif ($contratEmploye->getStatut() == ManagerModuleContrat::EMPTY || $contratEmploye->getStatut() == ManagerModuleContrat::PROPOSED) : ?>
+									            	<button id="submitContrat" name="save" value="save" class="btn btn-info btn-sm" type="submit"> Enregistrer </button>
+									            <?php endif?>
+									        </div>
+									        <div class="col-md-1"></div>
+									        <div class="col-md-5">
+									        	<?php if (($contratEmploye->getStatut() == ManagerModuleContrat::EMPTY || $contratEmploye->getStatut() == ManagerModuleContrat::PROPOSED) && $contratEmploye->getPrecedent() != ManagerModuleContrat::NO) : ?>
+									        		<a href="<?=HOST . 'manage/delete-contratEmploye?idContratEmploye=' . $contratEmploye->getIdContratEmploye()?>" style="width: 120%" class="btn btn-danger btn-sm"> Annuler </a>
+									        	<?php endif ?>
+									        </div>
+									    </div>
+									    <br>
+									    <div class="row">
+									    	<?php if ($contratEmploye->getPrincipal() != 0) : ?>
+									    		<a href="<?=HOST . 'manage/update-contratEmploye?idEmploye=' . $contratEmploye->getIdEmploye() . '&idContratEmploye=' . $contratEmploye->getPrincipal()?>" class="btn btn-sm btn-success" style="width: 100%;" >Voir contrat principal</a>
+									   		<?php endif ?>
+									    	<?php if ($contratEmploye->getEssai() != 0) : ?>
+									    		<a href="<?=HOST . 'manage/update-contratEmploye?idEmploye=' . $contratEmploye->getIdEmploye() . '&idContratEmploye=' . $contratEmploye->getEssai()?>" class="btn btn-sm btn-success" style="width: 100%;">Voir contrat d'essai</a>
+									    	<?php endif ?>
+									    </div>
+									</form>
+								</div>
+	          					<div class="col-md-5 m-0" style="padding: 10px; padding-top: 25px;">
+	          							<table class="table">
+	          								<thead style="background: #c8d0e4;">
+	          									<tr><th colspan="2" class="text-center">Situation actuelle</th></tr>
+	          								</thead>
+			          						<tbody>
+			          							<tr>
+			          								<td class="label">durée totale</td>
+			          								<td>
+			          									<?php
+			          										if ($contratEmploye->getStatut() != ManagerModuleContrat::EMPTY) {
+			          											echo $situation['duree_totale'] . " mois";
+			          										}
+			          									?>	
+			          								</td>
+			          							</tr>
+			          							<tr>
+				          							<td class="label">durée restante</td>
+				          							<td>
+				          								<?php
+			          										if ($contratEmploye->getStatut() != ManagerModuleContrat::EMPTY) {
+			          											echo $situation['duree_restante'] . " mois";
+			          										}
+			          									?>
+				          							</td>
+			          							</tr>
+			          							<input type="hidden" id="nouvelle_duree" value="<?= isset($situation) ? $situation['nouvelle_duree_possible'] : 'N/A'?>">
+			          							<tr>
+			          								<td class="label">durée possible de renouvellement</td>
+			          								<td>
+			          									<?php
+			          										if ($contratEmploye->getStatut() != ManagerModuleContrat::EMPTY) {
+			          											echo $situation['nouvelle_duree_possible'] . " mois";
+			          										}
+			          									?>
+			          								</td>
+			          							</tr>
+			          							<tr>
+			          								<td class="label">nombre possible de renouvellements</td>
+			          								<td>
+			          									<?php
+			          										if ($contratEmploye->getStatut() != ManagerModuleContrat::EMPTY) {
+			          											echo $situation['renouvellement_possible'] . " fois";
+			          										}
+			          									?>
+			          								</td>
+			          							</tr>
+			          						</tbody>
+			          					</table>
+			          				<?php if ($contratEmploye->getStatut() != ManagerModuleContrat::EMPTY): ?>	
+			          					<div>
+			          						<?php $renouvellements = array_reverse($renouvellements); $i=1;?>
+			          						<?php foreach ($renouvellements as $renouvellement): ?>
+			          							<div style="background: #e0f2f1; border-radius: 15px; padding: 15px; margin: 10px;">
+				          							<div class="text-center" style="color: #37474f">
+					          							<?php if ($typeContrat->getDesignation() == ManagerModuleContrat::CDD): ?>
+					          								<?php if ($i == 1) : ?>
+					         									<h6> Premier renouvellement</h6>
+					          								<?php elseif ($i == 2) : ?>
+					          									<h6> Deuxième renouvellement</h6>
+					          								<?php endif ?>
+					          							<?php elseif ($typeContrat->getDesignation() == ManagerModuleContrat::CDE): ?>
+					          								<h6>Prolongement</h6>
+					          							<?php endif ?>
+				          							</div>
+				          							<div class="row" style="padding: 5px;">
+				          								<div class="col-md-1"></div>
+				          								<div class="col-md-6"><strong> Date de début </strong> </div>
+				           								<div class="col-md-3"><?php $date = explode('-', $renouvellement->getDateDebut()); echo $date[2] . "/" . $date[1] . "/" . $date[0]; ?></div>
+				         							</div>
+				          							<div class="row" style="padding: 5px;">
+				          								<div class="col-md-1"></div>
+				          								<div class="col-md-6"><strong> Date de fin</strong> </div>
+				          								<div class="col-md-3"><?php $date = explode('-', $renouvellement->getDateFin()); echo $date[2] . "/" . $date[1] . "/" . $date[0]; $i++; ?></div>
+				          							</div>
+				          							<div class="row">
+				          								<div class="col-md-1"></div>
+				          								<div class="col-md-4">
+						          							<?php if ($renouvellement->getStatut() == ManagerModuleContrat::PROPOSED):?>
+						          								<a class="btn btn-success btn-sm" href="<?=HOST.'manage/save-renouvellement?idRenouvellement='.$renouvellement->getIdRenouvellement().'&'.'statut=2&idEmploye='.$employe->getIdEmploye()?>" style="color:#ffffff;">valider</a>
+						          							<?php endif?>
+				          								</div>
+				          								<div class="col-md-2"></div>
+				          								<div class="col-md-4">
+					          								<form method="POST" action="<?= HOST. "manage/imprimerContrat"?>" >
+					          									<input type="hidden" name="idEmploye" value="<?=$employe->getIdEmploye()?>">
+					          									<input type="hidden" name="type" value="renouvellement">
+					          									<input type="hidden" name="idRenouvellement" value="<?=$renouvellement->getIdRenouvellement()?>">
+					          									<button type="submit" class="btn btn-dark btn-sm" >imprimer</button>
+					          								</form>
+					          							</div>
+					          						</div>
+				          						</div>
+			          						<?php endforeach?>
+			          					</div>
+		          					<?php endif?>
+	          					</div>
+	          				</div>
+	          				<div class="modal fade" id="modalChangement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+				  				<div class="modal-dialog modal-dialog-centered" role="document">
+				    				<div class="modal-content">
+				    					<form method="POST" id="form" action="<?= HOST . 'manage/save-employe'?>" enctype="multipart/form-data" novalidate="novalidate">
+					      					<div class="modal-header">
+					        					<div class="text-center" style="width: 100%;">
+										      		<h5 class="modal-title" id="exampleModalLabel">Changer le poste</h5>
+										      	</div>
+					        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          						<span aria-hidden="true">&times;</span>
+					        					</button>
+					      					</div>
+					      					<div class="modal-body">
+					        					<div class="card p-3" style="background: #efefff;">
+					        						<div class="form-group hidden">
+									                  	<input class="form-control" id="idEmploye" name="idEmploye" type="number" value="<?= $employe->getIdEmploye()?>" >
+									                </div>
+					        						<div class="row">
+					        							<div class="col-md-4">
+					        								<span class="titre">Service : </span>
+					        							</div>
+					        							<div class="col-md-8">
+					        								<div class="form-group">
+					        									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+											                  	<select  class="form-control focus_activated modal-input" name="idEntrepriseService" id="idEntrepriseService" required="required" data-validation-required-message="Veuillez choisir un service">
+																	<option class="text-center" value="">-- Choisir --</option>
+																	<?php foreach($services as $oneService): ?>
+														                <option 
+														                	<?php if ($oneService->getIdEntrepriseService() == $service->getIdEntrepriseService()) { echo "selected"; } ?> value="<?= $oneService->getIdEntrepriseService(); ?>">
+														                	<?= $oneService->getService(); ?>
+														                </option>
+												            		<?php endforeach; ?>
+												            	</select>
+										                  		<p class="help-block text-danger"></p>
+											                </div>
+					        							</div>
+					        						</div>
+					        						<hr>
+					        						<div class="row">
+					        							<div class="col-md-4">
+					        								<span class="titre">Poste : </span>
+					        							</div>
+					        							<div class="col-md-8">
+					        								<div class="form-group">
+					        									<i class="fa fa-briefcase icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+											                  	<select  class="form-control focus_activated modal-input" name="idEntreprisePoste" id="idEntreprisePoste" required="required" data-validation-required-message="Veuillez choisir un poste">
+																	<option class="text-center" value="">-- Choisir --</option>
+												            	</select>
+										                  		<p class="help-block text-danger"></p>
+						        							</div>
+					        							</div>
+					        						</div>
+					        						<hr>
+					        						<div class="row">
+					        							<div class="col-md-4">
+					        								<span class="titre">Catégorie : </span>
+					        							</div>
+					        							<div class="col-md-8">
+					        								<div class="form-group">
+						        								<i class="fa fa-sort-amount-up icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+											                  	<select  class="form-control focus_activated modal-input" name="idCategorieProfessionnelle" id="idCategorieProfessionnelle" required="required" data-validation-required-message="Veuillez choisir un service">
+																	<option class="text-center" value="">-- Choisir --</option>
+																	<?php foreach($categories as $oneCategorie): ?>
+														                <option 
+														                	<?php if ($oneCategorie->getIdCategorieProfessionnelle() == $categorie->getIdCategorieProfessionnelle()) { echo "selected"; } ?> value="<?= $oneCategorie->getIdCategorieProfessionnelle(); ?>">
+														                	<?= $oneCategorie->getDesignation(); ?>
+														                </option>
+												            		<?php endforeach; ?>
+												            	</select>
+										                  		<p class="help-block text-danger"></p>
+											        		</div>
+					        							</div>
+					        						</div>
+					        					</div>
+					      					</div>
+					      					<div class="modal-footer">
+					        					<div class="row" style="width: 105%!important;">
+										      		<div class="col-md-3">
+										      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+										      		</div>
+										      		<div class="col-md-5"></div>
+										      		<div class="col-md-4">
+										      			<div class="form-group"> 
+										      				<button type="submit" id="submit" class="btn btn-md btn-success">
+										      					<i class="fa fa-check mr-2" aria-hidden="true"></i>
+										      					Valider
+										      				</button>
+										      			</div>
+										      		</div>
+										      	</div>
+					      					</div>
+					      				</form>
+				    				</div>
+				  				</div>
+							</div>			
+	          				<script>
+	          					$('document').ready(function(){
+	          						$("#submitContrat").click(function(){
+					          			var date = $("#datepicker_dateDebut").val().split('/');
+										$("#dateDebut").val(date[2] + '-' + date[1] + '-' + date[0]);
+										var date = $("#datepicker_dateFin").val().split('/');
+										$("#dateFin").val(date[2] + '-' + date[1] + '-' + date[0]);
+					          		});
+					          		$.ajax({
+			 							url : "<?= HOST . 'manage/getPostes'?>",
+			 							data : "idEntrepriseService=" + $("#idEntrepriseService").val(),
+										dataType : "json",
+										success : function(data)
+										{
+											$('#idEntreprisePoste').empty();
+											$('#idEntreprisePoste').append('<option value="" selected>Selectionnez un poste</option>');
+											$.each(data, function(i,donnees) {
+												$.each(donnees, function(key,value) {
+												    if (key == "idEntreprisePoste") {
+												    	optionValue = value;
+												    } else if (key == "poste") {
+												    	optionText = value;
+												    }
+												});
+												$('#idEntreprisePoste').append('<option value="' + optionValue + '">' + optionText + '</option>');
+											});
+											$('#idEntreprisePoste').val("<?=$poste->getIdEntreprisePoste();?>"); 
+										}
+									});
+								});
+								$('#idEntrepriseService').change(function() {
+									$.ajax({
+			 							url : "<?= HOST . 'manage/getPostes'?>",
+			 							data : "idEntrepriseService=" + $("#idEntrepriseService").val(),
+										dataType : "json",
+										success : function(data)
+										{
+											$('#idEntreprisePoste').empty();
+											$('#idEntreprisePoste').append('<option value="" selected>Selectionnez un poste</option>');
+											$.each(data, function(i,donnees) {
+												$.each(donnees, function(key,value) {
+												    if (key == "idEntreprisePoste") {
+												    	optionValue = value;
+												    } else if (key == "poste") {
+												    	optionText = value;
+												    }
+												});
+												$('#idEntreprisePoste').append('<option value="' + optionValue + '">' + optionText + '</option>');
+											}); 
+										}
+									});
+								});
+								$(function() {
+							        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+							    });
+							</script>
+	          			<?php elseif ($page == 'historique') :?>
+	          				<div class="row">
+						        <div class="col-lg-12 text-center">
+						          	<h5 class="text-center list-title section-heading">Historique des contrats</h5>
+						        </div>
+					      	</div>
+					      	<div class="row">
+					      		<div class="col-md-12 block-section" style="background: #ffffff; border-radius: 5px;">
+					      			<div class="row">
+						      			<div class="col-md-3">
+		          							<img class="img-fluid userDetail " style="width:150px; height: 140px;margin-top: 10px; " src="
+							                    <?php
+							                      if ($employe->getPhoto() != "") {
+							                        echo HOST."../Web/Ressources/images/employes/" . $employe->getPhoto();
+							                      } else {
+							                        echo HOST."../Web/Ressources/images/profilCandidat.png";
+							                      }
+							                    ?>
+							                ">
+		          						</div>
+						      			<div class="col-md-5">
+						      				<div class="row">
+						      					<div class="col-md-12" style="font-weight: bolder; font-style: italic; color: #37474f; font-size: 1.2em;">
+						      						<?=$employe->getCivilite() . ' '. strtoupper($employe->getNom()) . ' ' . ucwords($employe->getPrenom())?>
+						      					</div>
+						      				</div>
+						      				<br>
+						      				<div class="row">
+						      					<div class="col-md-5">
+						      						<label class="label-input">MATRICULE</label>
+						      					</div>
+						      					<div class="col-md-6">
+						      						<?=$employe->getMatricule()?>
+						      					</div>
+						      				</div>
+						      				<div class="row">
+						      					<div class="col-md-5">
+						      						<label class="label-input">CIN</label>
+						      					</div>
+						      					<div class="col-md-6">
+						      						<?=$employe->getNumeroCin()?>
+						      					</div>
+						      				</div>
+						      				<div class="row">
+						      					<div class="col-md-5">
+						      						<label class="label-input">Cnaps</label>
+						      					</div>
+						      					<div class="col-md-6">
+						      						<?=$employe->getNumeroCnaps()?>
+						      					</div>
+						      				</div>
+						      			</div>
+						      		</div>
+						      		<hr>
+						      		<table class="table">
+						      			<?php foreach ($informations as $information) : ?>
+						      				<thead style="background: #c8d0e4; text-align: center;">
+						      					<tr >
+						      						<th colspan="2" style="font-weight: 600; color: #37474f">
+						      							<div class="row">
+						      								<div class="col-md-11">
+																du 
+						      									<?php 
+						      										$date = explode('-', $information['contratEmploye']->getDateDebut()); 
+						      										echo "<strong>" . $date[2] . "/" . $date[1] . "/" . $date[0] . "</strong>"; 
+						      									?>
+						      									<?php if ($information['contratEmploye']->getDateFin() != date("0000-00-00")) :?>
+						      									au
+				          											<?php 
+				          												$date = explode('-', $information['contratEmploye']->getDateFin()); 
+				          												echo "<strong>" . $date[2] . "/" . $date[1] . "/" . $date[0] . "</strong>"; 
+				          											?>
+				          										<?php else : ?>
+				          											à ce jour
+				          										<?php endif ?>
+				          									</div>
+				          									<div class="col-md-1">
+		          												<form method="POST" action="<?= HOST. "manage/imprimerContrat"?>" >
+											          				<input type="hidden" name="idEmploye" value="<?=$employe->getIdEmploye()?>">
+											          				<input type="hidden" name="type" value="contrat">
+											          				<input type="hidden" name="idContratEmploye" value="<?=$information['contratEmploye']->getIdContratEmploye()?>">
+											          				<button type="submit" class="btn btn-dark btn-sm">
+											          					<i class="fas fa-print"></i>
+											   						</button>
+											          			</form>
+											          		</div>
+											          	</div>
+						      						</th>
+						      					</tr>
+						      				</thead>
+						      				<tbody style="background: #ffffff">
+						      					<tr>
+						      						<td><strong>Type de contrat</strong></td>
+						      						<td><?=$information['typeContrat']->getDesignation()?></td>
+						      					</tr>
+						      					<tr>
+						      						<td><strong>Service</strong></td>
+						      						<td><?=$information['serviceEmploye']->getService(); ?></td>
+						      					</tr>
+						      					<tr>
+						      						<td><strong>Poste</strong></td>
+						      						<td><?=$information['posteEmploye']->getPoste() ?></td>
+						      					</tr>
+						      				</tbody>
+						      			<?php endforeach ?>
+						      		</table>
+						      		<br>
+						      		<div class="row">
+						      			<div class="col-md-9"></div>
+						      			<div class="col-md-2">
+						      				<a href='<?= HOST . "manage/update-contratEmploye?idEmploye=" . $employe->getIdEmploye() ?>' class="btn btn-info btn-sm" style="width: 100%;">retour</a>
+						      			</div>
+						      		</div>
+					      		</div>
+					      	</div>
+	          			<?php endif ?>
+	          			<script>
+							$('document').ready(function() {
+								const VALIDATED = 2;
+								const EXPIRED   = 3;
+								const TWO_YEAR  = 24;
+								const CDI       = 'CDI';
+								const CDE       = 'CDE';
+								const CDD       = 'CDD';
+						    	if ($('#page').val() == 'contrat') {
+						    		$('#validation').attr('style', 'display:none');
+						    	}
+						    	if ($('#typeContrat').val() == "") {
+						    		$('#datepicker_dateDebut').val(null);
+						    		$('#datepicker_dateFin').val(null);
+						    		$('#datepicker_dateDebut').attr('disabled', true);
+						    		$('#datepicker_dateFin').attr('disabled', true);
+						    		$('#form-essai').addClass('invisible');
+						    	} else {
+							    	if ($('#typeContrat').val() == CDI) {
+							    		$('#datepicker_dateFin').val("01/01/0001");
+							    		$('#datepicker_dateFin').attr('disabled', true);
+							    		$('#form-group-dateFin').addClass('invisible');
+							    		$('#form-essai').removeClass('invisible');
+							    	} else {
+							    		$('#datepicker_dateFin').attr('disabled', false);
+							    		$('#form-essai').addClass('invisible');
+							    	}
+							    }
+						    	if ($('#statutContratEmploye').val() == VALIDATED || $('#statutContratEmploye').val() == EXPIRED) {
+						    		if ($('#type').val() == 'contrat') {
+										$('#datepicker_dateDebut').attr('disabled', true);
+										$('#datepicker_dateFin').attr('disabled', true);
+										if ($('#typeContrat').val() == CDI) {
+											$('#customControlInline').attr('disabled', true);
+										}
+						    		}
+						    		$('#typeContrat').attr('disabled', true);		
+								}
+						    	$('#typeContrat').change(function(){
+						    		$('#datepicker_dateDebut').val(null);
+						    		if ($('#typeContrat').val() == "") {
+							    		$('#datepicker_dateDebut').attr('disabled', true);
+							    		$('#datepicker_dateFin').attr('disabled', true);
+							    		$('#form-essai').addClass('invisible');
+							    	} else {
+							    		$('#datepicker_dateDebut').attr('disabled', false);
+								    	if ($('#typeContrat').val() == CDI) {
+								    		$('#datepicker_dateFin').val("01/01/0001");
+								    		$('#datepicker_dateFin').attr('disabled', true);
+								    		$('#form-group-dateFin').addClass('invisible');
+								    		$('#form-essai').removeClass('invisible');
+								    	} else {
+								    		$('#datepicker_dateFin').val(null);
+								    		$('#datepicker_dateFin').attr('disabled', false);
+								    		$('#form-group-dateFin').removeClass('invisible');
+								    		$('#form-essai').addClass('invisible');
+								    	}
+								    }
+						    	});
+						    	$('#datepicker_dateDebut').change(function(){
+						    		if ($('#type').val() == "contrat") {
+						    			if ($('#typeContrat').val() != CDI) {
+							    			$('#datepicker_dateFin').val(null);
+							    		}
+							    		if ($('#typeContrat').val() == CDD) {						    	
+							    			var stringDate = $('#datepicker_dateDebut').datepicker('getDate');
+							    			var date = new Date(stringDate.getFullYear(), stringDate.getMonth() + TWO_YEAR, stringDate.getDate());
+							    			$('#datepicker_dateFin').datepicker('option', 'maxDate', date);
+							    		}
+							    		$('#datepicker_dateFin').datepicker('option', 'minDate', $('#datepicker_dateDebut').val());
+						    		} else {
+						    			if ($('#typeContratHidden').val() != CDI) {
+							    			$('#datepicker_dateFin').val(null);
+							    		}
+						    			if ($('#typeContratHidden').val() == CDD || $('#typeContratHidden').val() == CDE) {
+							    			var stringDate = $('#datepicker_dateDebut').datepicker('getDate');
+							    			var date = new Date(stringDate.getFullYear(), stringDate.getMonth() +  parseInt($('#nouvelle_duree').val(), 10), stringDate.getDate());
+							    			$('#datepicker_dateFin').datepicker('option', 'maxDate', date);
+							    		}
+							    		$('#datepicker_dateFin').datepicker('option', 'minDate', $('#datepicker_dateDebut').val());
+						    		}
+						    	});
+						    	tippy('.fa-print', {
+						    		content: "Imprimer le contrat"
+						  		});
+						  		tippy('.fa-briefcase', {
+						    		content: "Modifier le poste"
+						  		});
+						  		tippy('.fa-history', {
+						  			content: "Voir l'historique des contrats"
+						  		});
+						  		tippy('.fa-check-circle', {
+						  			content: "Valider le contrat"
+						  		});
+						  		tippy('.fa-plus', {
+						  			content: "Proposer nouveau contrat"
+						  		});
+						  		tippy('.fa-check', {
+								    content: "faite"
+								 });
+						  		tippy('.fa-spinner', {
+								    content: "en attente"
+								  }); 
+						  		tippy('.fa-list', {
+						  			content: "voir la liste des contrats des employés"
+						  		});
+						  		$('.label').attr('style','font-weight:bolder');
+						    });
+						    $('[data-toggle="tooltip"]').tooltip();
+						</script>
+			        <?php endif;?>   
+			    </div>   
+        	</div>
+      	</div>
+    </div>
+</section>
+
+<!-- Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="text-confirmation"></p>
+      </div>
+      <div class="modal-footer">
+        <a id="action-cancel" class="btn btn-success">Oui</a>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Non</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<?php if (!empty($_SESSION['notification']) && $_SESSION['notification']['message'] != "") :?>
+	<div class="toast" id="notification" data-delay="10000" >
+		<?php if ($_SESSION['notification']['type'] == "erreur") :?>
+			<div class="toast-header" style="background: #b71c1c; color: #ffffff;">
+			<i class="fas fa-exclamation-circle fa-lg" style="margin-right: 10px; color: #ffffff;"></i>
+		<?php else : ?>
+			<div class="toast-header">
+		<?php endif ?>
+			<strong class="mr-auto"><?=$_SESSION['notification']['titre']?></strong>
+			    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+			        <span aria-hidden="true">&times;</span>
+			    </button>
+		</div>
+		<div class="toast-body">
+			<?=$_SESSION['notification']['message']?>
+		</div>
+	</div>
+	<script>
+		$('#notification').toast('show');
+	</script>
+	<?php
+		unset($_SESSION['notification']);
+	?>
+<?php endif?>
+
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabEmploye.js"></script>
+
+<script> 
+	var pathname = new URL(window.location.href).pathname; 
+	var cleave = new Cleave('#input-phone', {
+      phone:true,
+      phoneRegionCode: $('#select-country').children("option:selected").val()
+    });
+	if ($('#select-country').children("option:selected").val() == "") {
+    	$('#input-phone').addClass('hidden');
+    }
+	$('#select-country').change(function(){
+		if ($('#select-country').children("option:selected").val() == "") {
+	    	$('#input-phone').addClass('hidden');
+	    } else {
+			$('#input-phone').removeClass('hidden');
+	      	cleave.setPhoneRegionCode(this.value);
+	      	cleave.setRawValue('');
+	    }
+    });
+</script>

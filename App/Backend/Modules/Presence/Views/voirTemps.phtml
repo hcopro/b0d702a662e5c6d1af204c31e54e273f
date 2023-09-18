@@ -1,0 +1,3056 @@
+<?php
+	use \Core\PublicFonctions;
+
+	$user 			= null;
+	$url 			= explode('/', $_GET['page']);
+	$missionArray 	= array();
+	if (!empty($_SESSION['compte']['identifiant'])) {
+		$user = $_SESSION['compte']['identifiant'];
+		if ($user == "employe") {
+			if (array_key_exists(2, $url)) {
+				$pageTitle = ucfirst($url[2]);
+			} else {
+				$pageTitle = ucfirst($url[1]);
+			}
+		} elseif ($user == "entreprise") {
+			/* @changelog 06/12/2021 [EVOL] (Lansky) Préciser le titre de la page et séparer l'onglet permission dans la page du congé */
+			if ($url[2] == 'jourFerie') {
+				$pageTitle = 'Jours fériés';
+			} elseif ($url[2] == 'parametre') {
+				$pageTitle = 'Paramètres de la permission';
+			} elseif ($url[2] == 'tacheRealisee') {
+				$pageTitle = 'Tâches réalisées journalière';
+			} else {
+				$pageTitle = ucfirst($url[2]);
+			}
+		}
+	} else {
+		header("Location : " . HOST);
+	}
+	$factory = new PublicFonctions();
+	extract($data);
+	if (isset($filtres)) {
+	 	extract($filtres);
+	}
+?>
+<script type="text/javascript">
+	const FILTER_GROUP_ALL     	= 1;
+	const FILTER_GROUP_SERVICE 	= 2;
+	const FILTER_GROUP_POSTE   	= 3;
+	const FILTER_GROUP_EMPLOYE 	= 4;
+	const TODAY      			= 1;
+	const TOMORROW   			= 2;
+	const YESTERDAY  			= 3;
+	const THIS_WEEK  			= 4;
+	const NEXT_WEEK  			= 5;
+	const LAST_WEEK  			= 6;
+	const THIS_MONTH 			= 7;
+	const NEXT_MONTH 			= 8;
+	const LAST_MONTH 			= 9;
+	const BASE_TEN   			= 10;
+	const MAX_INTERVAL     		= 3;
+	const SECOND_MAX 			= 60;
+	const MINUTE_MAX 			= 60;
+</script>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row" style="margin-top: -15px;">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h4 class="text-center list-title section-heading"><?= $pageTitle ?></h4>
+			</div>
+			<div class="col-md-2 text-right">
+				<?php if ($user == "employe") : ?>
+					<button class="btn btn-transparent btn-circle-sm text-primary attribute-task" data-toggle="modal" data-target="#modalAttributeTask">
+						<img src="<?= HOST; ?>../Web/Ressources/images/icon/icons-Blue-Folder.png">
+					</button>
+					<button class="btn btn-transparent btn-circle-sm text-primary" data-toggle="modal" data-target="#modalDemande">
+						<i class="fa fa-paper-plane fa-15x tippy-act" aria-hidden="true"></i>
+					</button>
+				<?php elseif ($user == "entreprise") : ?>
+					<?php if ($url[2] == "parametre") : ?>
+						<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalParametre">
+							<i class="fa fa-plus nouveau" aria-hidden="true"></i>
+							<span class="ml-2">ajouter</span>
+						</button>
+					<?php elseif ($url[2] == "permission") : ?>
+						<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalEnregistrement">
+							<i class="fa fa-plus" aria-hidden="true"></i>
+							<span class="ml-2">ajouter</span>
+						</button>
+					<?php elseif ($url[2] == "repos") : ?>
+						<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalEnregistrementRepos">
+							<i class="fa fa-plus" aria-hidden="true"></i>
+							<span class="ml-2">ajouter</span>
+						</button>
+					<?php elseif ($url[2] == "pointage") : ?>
+						<button class="btn btn-sm btn-transparent text-primary btn-circle-sm" data-toggle="modal" data-target="#modalConfigPointage">
+							<i class="fa fa-cog fa-15x tippy-act" aria-hidden="true"></i>
+						</button>
+					<?php elseif ($url[2] == "jourFerie") : ?>
+						<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalAjout">
+							<i class="fa fa-plus" aria-hidden="true"></i>
+							<span class="ml-2">ajouter</span>
+						</button>
+					<?php endif ?> 
+				<?php endif ?>
+			</div>
+		</div>
+		<?php if ($user == "employe") :
+			$listSendJs = [];
+			if (!isset($url[2])) {
+				if (strstr($_SERVER['HTTP_REFERER'],'pointage') || strstr($_SERVER['HTTP_REFERER'],'update-tache')) {
+					$isActive = 'pointage';
+				} else {
+					$isActive = 'retard';
+				}
+			} else {
+				$isActive = $url[2];
+			}
+		?>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="block-section">
+						<div class="row">
+						    <ul id="new-tab-button">
+								<li id="tab1" <?=$isActive == 'pointage' ? 'class="is-active"' : '';?>>
+									<a href="<?= HOST. 'manage/employe/pointage/dashboard'?>">Pointages</a>
+								</li>
+								<?php if ($hasSubordinate) : ?>
+									<li id="tab2" <?=$isActive == 'retard' ? 'class="is-active"' : '';?>>
+										<a href="<?= HOST. 'manage/employe/retard/dashboard'?>">Retards</a>
+									</li>
+									<li id="tab3" <?=$isActive == 'permission' ? 'class="is-active"' : '';?>>
+										<a href="<?= HOST. 'manage/employe/permission/dashboard'?>">Permission</a>
+									</li>
+								<?php endif; ?>
+						    </ul>
+						</div>
+						<?php if ($isActive == 'pointage') : ?>
+							<div class="row">
+								<?php $cardColor = ($tacheCourante != null) ? 'card-green' : 'card-red';?>
+								<div class="col-md-2 card card-time <?=$cardColor;?> text-center" <?= !is_null($retard) ? 'style="max-width: 14.66666667%"':'';?>>
+							        <label style="font-weight: bold;"><?= $dateLettre ?></label>
+								</div>
+								<div class="col-md-3 card card-time <?=$cardColor;?> text-center" <?= !is_null($retard) ? 'style="max-width: 18%"':'';?>>
+							        <label>aujourd'hui : <span class="text-important"><?=$dureeDay['hour'] . 'h ' . $dureeDay['minute'] . 'min' ?></span></label>
+								</div>
+								<div class="col-md-3 card card-time <?=$cardColor;?> text-center" <?= !is_null($retard) ? 'style="max-width: 26.66666667%"':'';?>>
+									<label class=""> <?= $tacheCourante != null ? "Vous travaillez sur<span class='text-important'>" . $tacheCourante->getTitre() . "</span>" : "Vous êtes actuellement en pause";?></label>
+								</div>	
+								<div class="col-md-2 card card-time <?=$cardColor;?> text-center"<?= !is_null($retard) ? 'style="max-width: 14.66666667%"':'';?>>
+							        <label>
+							        	<?= $tacheCourante != null ? 'depuis ' : '';?><input type="text" value="<?=$tacheCourante != null ? $dureeCourante : '00:00:00'?>" readonly="readonly" class="input-time text-important" <?=$tacheCourante != null ? "id='duree-courante'" : "id='' style='width: 100px;'"?>>
+									</label>
+								</div>
+								<div class="col-md-<?= !is_null($retard) ? '3 card-red' : '2 card-green' ;?> card card-time text-center"<?= !is_null($retard) ? "style='max-width: 258px'" : " style='max-width: 12%; padding-left: 0px!important; padding-right: 0px!important;'"?> style="max-width: 12%; padding-left: 0px!important; padding-right: 0px!important;">
+							        <label>
+									    <?=!is_null($retard) ? "Vous êtes en retard " : "";?><input type="text" value="<?=!is_null($retard) ? $retard->getDuring() : '00:00:00';?>" style="<?=!is_null($retard) ? 'width: 100px;' : '';?>" readonly="readonly" id="" class="input-time text-important">
+									</label>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-md-4">
+									<form id="form" method="POST" action="<?= HOST. "manage/save-tache";?>" enctype="multipart/form-data" novalidate="novalidate">
+										<input type="hidden" name="idEmploye" value="<?=$employe->getIdEmploye()?>">
+										<input type="hidden" name="date"      value="<?=$date?>">
+										<input type="hidden" name="idTache"   value="<?=$tacheSelectionnee->getIdTache()?>">
+										<?php if ($tacheSelectionnee->getIdTache() == null) :?>
+											<label class="titre">Nouvelle tâche : </label>
+										<?php else :?>
+											<label class="titre">Modification d'une tâche : </label>
+										<?php endif?>
+										<div class="form-group">
+											<select id="groupe-task" name="taskGroup" style="font-size: 0.8em!important; height: 38px!important; text-align: left!important; border-radius: 5px!important;font-weight: bold!important;width: 202px!important;">
+												<?php foreach($userMissions as $mission) : $missionArray[] = $mission->toArray(); ?>
+													<option value="<?=$mission->getIdMission();?>" <?=$tacheSelectionnee->getIdTache() != null && $tacheSelectionnee->getIdMission() == $mission->getIdMission() ? 'selected' : '';?>><?=$mission->getDescription();?></option>
+												<?php endforeach; ?>
+											</select>
+											<p class="help-block text-danger"></p>
+										</div>
+										<div class="form-group">
+											<input type="text" class="form-control input-temps" name="titre" id="titre" placeholder="Titre" value="<?=$tacheSelectionnee->getTitre()?>" required="required" data-validation-required-message="Veuillez renseigner le titre" list="listTasks<?=array_key_first($taskList)?>">
+									      	<?php foreach ($taskList as $k => $tasks) : ?>
+											    <datalist id="listTasks<?=$k?>">
+											      	<?php foreach ($tasks as $task) : $listSendJs[] = $task->toArray(); ?>
+											      		<option value="<?=$task->getTitre()?>">
+											      	<?php endforeach; ?>
+											    </datalist>
+									      	<?php endforeach; ?>
+											<p class="help-block text-danger"></p>
+										</div>
+										<div class="form-group">
+											<textarea class="form-control textarea-temps" placeholder="Description" name="description" id="description" required="required" data-validation-required-message="Veuillez décrire la tâche"><?=$tacheSelectionnee->getDescription()?></textarea>
+											<p class="help-block text-danger"></p>
+										</div>
+										<div class="form-group text-right">
+											<button type="submit" class="btn-sm btn-info">Enregistrer</button>
+										</div>
+									</form>
+								</div>
+								<div class="col-md-8" style="color: #3b4e61; max-height: 320px; overflow: auto;">
+									<?php if (count($taches) == 0) :?>
+										<div class="card p-3 m-3" >
+											<div class="text-center"><h6>Bonjour !</h6></div>
+											<div>
+												<p class="text-justify">
+													Nous vous invitons à indiquer les tâches que vous allez effectuer aujourd'hui
+													pour que nous puissions faire un suivi de votre temps.
+												</p>
+												<ol>
+													<li>indiquez le groupe de la tâche</li>
+													<li>créez une tâche ou reprennez-en une</li>
+													<li>cliquez sur <i class="fa fa-play"></i> pour démarrer une tâche.</li>
+													<li>cliquez sur <i class="fa fa-stop"></i> quand vous avez fini ou quand vous faites  une pause.</li>
+												</ol>
+											</div>
+										</div>
+									<?php endif; $Suppredoublon = array(); ?>
+									<div class="card p-3 m-3" >
+										<div class="text-center"><h6>Votre planning du shift :</h6></div>
+										<?php if ($shiftsUser && $parametrePointage->getIsFixedTime() == 'NO') : ?>
+											<?php foreach ($shiftsUser as $keyShift => $shift) : $cardColor = $factory::randomColor(); ?>
+												<?= $keyShift % 3 == 0 ? '<div class="row">' : '';?>
+													<div class="col-md-4">
+														<div class="card border-danger mb-3" style="max-width: 12rem;">
+														  	<div class="card-header text-center" style="background-color: #<?=$cardColor?>; color: #ffffff; font-weight: bold; opacity: 0.6;" ><?=ucfirst($shift->getIdCampaign()->getLibelle())?></div>
+														  	<div class="card-body">
+																<?= (date('Y-m-d') >= $shift->getStartTime() && date('Y-m-d') <= $shift->getEndTime()) ? '<div class="circle-current" style="width: 50px; height: 50px; border-radius: 50%; color: white; font-size: 12px; text-align: center; line-height: 50px; position: absolute; top: 0px; right: -38px;">Current</div>' : '';?>
+														    	<span class="badge">Entrer :</span> <p class="card-text" style="font-size: smaller;"><?=$factory->writeDate($shift->getStartTime(), true)?></p>
+														    	<span class="badge">Sortir :</span><p class="card-text" style="font-size: smaller;"><?=$factory->writeDate($shift->getEndTime(), true)?></p>
+														  	</div>
+														</div>
+													</div>
+												<?= ($keyShift % 3 == 2) ? '</div>' : '';?>
+											<?php endforeach; ?>  
+										<?php else : ?>
+											<div class="row">
+												<div class="col-md-4">
+													<div class="card border-danger mb-3" style="max-width: 12rem;">
+													  	<div class="card-header text-center" style="background-color: #<?=$factory::randomColor()?>; color: #ffffff; font-weight: bold; opacity: 0.6;" >Heure normale</div>
+													  	<div class="card-body">
+															<div class="circle-current" style="width: 50px; height: 50px; border-radius: 50%; color: white; font-size: 12px; text-align: center; line-height: 50px; position: absolute; top: 0px; right: -38px;">Current</div>
+													    	<span class="badge">Entrer :</span> <p class="card-text" style="font-size: smaller;"><?=$factory->writeDate(date('Y-01-01') . ' ' . $parametrePointage->getHeureDebut(), true)?></p>
+													    	<span class="badge">Sortir :</span><p class="card-text" style="font-size: smaller;"><?=$factory->writeDate(date('Y-12-31') . ' ' . $parametrePointage->getHeureArret(), true)?></p>
+													  	</div>
+													</div>
+												</div>
+												<div class="col-md-4"></div>
+												<div class="col-md-4"></div>
+											</div>
+										<?php endif; ?>
+									</div>
+									<?foreach ($taches as $tache) :
+										if (!in_array($tache->getIdTache(), $Suppredoublon)) :
+											$Suppredoublon[] = $tache->getIdTache();
+										?>
+											<div class="tete-collapse" style="height: auto!important;">
+												<div class="row" style="width: 103%;">
+													<div class="col-md-1">
+														<form method="POST" action="<?= HOST . 'manage/save-pointage'?>">
+															<input type="hidden" name="idTache" value="<?=$tache->getIdTache()?>">
+															<?php if ($tache->getStatut() == ManagerModulePresence::CURRENT_TASK) : ?>
+																<button type="submit" name="action" value="stop" class="btn btn-red btn-circle">
+																	<i class="fa fa-stop"></i>
+																</button>
+															<?php else:?>
+																<button type="submit" name="action" value="start" class="btn btn-green btn-circle"
+																	<?=$tacheCourante != null ? 'disabled' : '';?>>
+																	<i class="fa fa-play"></i>
+																</button>
+															<?php endif?>
+														</form>
+													</div>
+													<?php if ($tache->getAttributor() == 0 /*$_SESSION['user']['idEmploye']*/): ?>
+														<div class="col-md-1">
+															<a href="<?= HOST . 'manage/update-tache?idTache=' . $tache->getIdTache()?>" class="btn btn-yellow btn-circle">
+																<i class="fa fa-edit"  aria-hidden="true"></i>
+															</a>
+														</div>
+														<div class="col-md-1">
+															<form method="POST" action="<?= HOST . 'manage/delete-tache' ?>">
+																<input type="hidden" name="idTache" value="<?=$tache->getIdTache()?>">
+																<button href="#" class="btn btn-red btn-circle" <?=$tache->getStatut() != ManagerModulePresence::FREE_TASK ?'disabled' : '';?>>
+																	<i class="fa fa-trash"  aria-hidden="true"></i>
+																</button>
+															</form>
+														</div>
+													<?php endif; ?>
+													<?php if ($tache->getEstimated() > 0) : ?>
+														<div class="col-md-2 text-center" id="<?=$tache->getIdTache()?>">
+															<?php if ($tache->getStatut() == ManagerModulePresence::CURRENT_TASK) : ?>
+																<input type="text" value="00:00:00" readonly="readonly" class="input-time text-important" id="pastTime" style="width:97%; color: #000000;">
+															<?php else : ?>
+																<p class="titre">
+																	<?= 'Durée:' . $tache->getEstimated() . 'H';?>
+																</p>
+															<?php endif;?>
+														</div>
+													<?php endif;?>
+													<div class="col-md-4 text-center">
+														<p class="titre" style="font-weight: 100!important;"><?= $tache->getDateDebut() != '0000-00-00 00:00:00' ? $factory->writeDate($tache->getDateDebut(), true) : '';?>
+											  			</p>
+													</div>
+													<div class="col-md-4 text-center">
+														<p class="titre"><?=$tache->getTitre();?></p>
+													</div>
+													<div class="col-md-1">
+														<a data-toggle="collapse" href="#collapse<?=$tache->getIdTache()?>" role="button" aria-expanded="false" aria-controls="collapse<?=$tache->getIdTache()?>">
+												    		<i class="fa fa-sort-down fa-2x " id="down<?=$tache->getIdTache()?>" style="color : #4a5d71;margin-top: -5px; "></i>
+												    		<i class="fa fa-sort-up fa-2x invisible" id="up<?=$tache->getIdTache()?>" style="color : #4a5d71;margin-top: 5px; "></i>
+												  		</a>
+												  	</div>		
+												</div>
+											</div>
+											<div class="collapse" id="collapse<?=$tache->getIdTache()?>">
+											  <div class="card card-body" style="background: #f4f7f9">
+											  	<p class="titre" style="font-weight: 100!important;"><?= $tache->getIdMission() > 0 ?  $missionArray[array_search($tache->getIdMission(), array_column($missionArray, 'idMission'))]['description']   : 'Aucun';?>
+											  	</p>
+											    <?=$tache->getDescription();?>
+											  </div>
+											</div>
+											<script>
+												$("#up<?=$tache->getIdTache()?>").click(function(){
+													$("#up<?=$tache->getIdTache()?>").addClass("invisible");
+													$("#down<?=$tache->getIdTache()?>").removeClass("invisible");
+												});
+												$("#down<?=$tache->getIdTache()?>").click(function(){
+													$("#down<?=$tache->getIdTache()?>").addClass("invisible");
+													$("#up<?=$tache->getIdTache()?>").removeClass("invisible");
+												});
+											</script>
+										<?php endif;?>
+									<?php endforeach ?>
+								</div>
+							</div>
+							<br>
+							<div class="tete-list-section row">
+								<div class="col-md-4">
+									<label class="titre">période : </label>
+									<select id="periode" class="select-time" style="font-size: 0.8em!important;">
+										<option value=""> -- période -- </option>
+										<option value=1>aujourd'hui</option>
+										<option value=3>hier</option>
+										<option value=4>cette semaine</option>
+										<option value=6>la semaine passée</option>
+										<option value=7>ce mois</option>
+										<option value=9>le mois dernier</option>
+									</select>
+								</div>
+								<div class="col-md-5">
+									<label class="titre">Intervalle :</label>
+									<label for="datepicker">
+								        <input class="form-control datepicker date-time" id="debut" type="text" autocomplete="off" placeholder="Début">
+							        </label>
+									 - 
+									<label for="datepicker">
+								        <input class="form-control datepicker date-time" id="fin" type="text" autocomplete="off" placeholder="Fin">
+							        </label>
+							    </div>
+							    <div class="col-md-3">
+							    	<label class="titre">temps total : </label>
+							    	<input type="text" class="text-important input-time-readonly" id="temps-total" readonly="readonly">
+							    </div>
+							</div>
+							<div class="container-list-section" id="show-list" style="height: 450px; max-height: 450px; overflow: auto;"></div>
+							<script type="text/javascript">
+								
+							</script>
+						<?php elseif ($isActive == 'retard') : ?>
+							<div class="row">
+				      			<div class="col-lg-12">
+				      				<div class="tete-list-section row" style="background: #647994;">
+				      					<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+				      						<div class="row">
+				      							<div class="col-md-6">
+													<select class="select-time" id='filter-group' style="font-size: 0.8em!important;">
+														<option value=""> -- groupe --</option>
+														<option value="1" selected="selected">tout</option>
+														<option value="2">par service</option>
+														<option value="3">par poste</option>
+														<option value="4">par employé</option>
+													</select>
+												</div>
+												<div class="col-md-6">
+													<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;">
+														<option class="option-tout" id="o-t" value="">-- selectionnez --</option>
+														<?php foreach ($services as $service) : ?>
+															<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+														<?php endforeach ?>
+														<?php foreach ($postes as $poste) : ?>
+															<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+														<?php endforeach ?>
+														<?php foreach ($employes as $employe) : ?>
+															<option class="option-employe invisible" value="<?=$employe->getIdEmploye();?>"><?=$employe->getNom() . ' ' . $employe->getPrenom()?></option>
+														<?php endforeach ?>
+													</select>
+												</div>
+											</div>
+										</div>
+				      					<div class="col-md-5 text-center" id="filtre-droite">
+				      						<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+											  	<div class="carousel-inner">
+											    	<div class="carousel-item active">
+											      		<select id="periode" class="select-time"  style="font-size: 0.8em!important;">
+															<option value=""> -- période -- </option>
+															<option value=1 selected="seconds">aujourd'hui</option>
+															<option value=3>hier</option>
+															<option value=4>cette semaine</option>
+															<option value=6>la semaine passée</option>
+															<option value=7>ce mois</option>
+															<option value=9>le mois dernier</option>
+														</select>
+											    	</div>
+											    	<div class="carousel-item">
+											      		<label for="datepicker">
+												        	<input class="form-control datepicker date-time" id="debut" type="text" autocomplete="off" placeholder="Début">
+											        	</label>
+													 	- 
+														<label for="datepicker">
+												        	<input class="form-control datepicker date-time" id="fin" type="text" autocomplete="off" placeholder="Fin">
+											        	</label>
+											    	</div>
+											    	<div class="carousel-item">
+											    		<?php $date = date('Y') ?>
+											      		<select class="select-time" style="width: 200px; font-size: 0.8em!important;" id="selection-month">
+											      			<option value="">par mois</option>
+											      			<option value="1">Janvier <?=$date?></option>
+											      			<option value="2">Février <?=$date?></option>
+											      			<option value="3">Mars <?=$date?></option>
+											      			<option value="4">Avril <?=$date?></option>
+											      			<option value="5">Mai <?=$date?></option>
+											      			<option value="6">Juin <?=$date?></option>
+											      			<option value="7">Juillet <?=$date?></option>
+											      			<option value="8">Août <?=$date?></option>
+											      			<option value="9">Septembre <?=$date?></option>
+											      			<option value="10">Octobre <?=$date?></option>
+											      			<option value="11">Novembre <?=$date?></option>
+											      			<option value="12">Décembre <?=$date?></option>
+											      		</select>
+											    	</div>
+											 	</div>
+											  	<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+											    	<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+											    	<span class="sr-only">Previous</span>
+											  	</a>
+											  	<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+											    	<span class="carousel-control-next-icon" aria-hidden="true"></span>
+											    	<span class="sr-only">Next</span>
+											  	</a>
+											</div>
+				      					</div>
+				      					<div class="col-md-3"></div>
+									</div>
+									<div class="container-list-section" id="liste-pointage" style="background: #f7fbfc;"></div>
+				      			</div>
+				      		</div>
+				      		<script type="text/javascript">
+				      			$('document').ready(function(){
+				      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+				      					$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+											groupe    : $('#filter-group').val(),
+											id        : $('#filter-element').val(),
+											periode   : $('#periode').val(),
+											debut     : $('#debut').val(),
+											fin       : $('#fin').val(),
+											type      : $('#selection-type').val()
+										}, function() {
+											$('.option-tout').removeClass('invisible');
+					      					$('.option-service').addClass('invisible');
+					      					$('.option-poste').addClass('invisible');
+					      					$('.option-employe').addClass('invisible');
+					      					$('#filter-element').val("");
+					      					$('#filter-element').attr("disabled", true);
+										});
+				      				}
+				      				$('.carousel').carousel({
+			  							interval: false
+									});
+									$('.carousel').carousel('pause');
+				      			});
+				      			$('#filter-group').change(function(){
+				      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+				      					$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+											groupe    : $('#filter-group').val(),
+											id        : $('#filter-element').val(),
+											periode   : $('#periode').val(),
+											debut     : $('#debut').val(),
+											fin       : $('#fin').val(),
+											type      : $('#selection-type').val()
+										}, function() {
+											$('.option-tout').removeClass('invisible');
+					      					$('.option-service').addClass('invisible');
+					      					$('.option-poste').addClass('invisible');
+					      					$('.option-employe').addClass('invisible');
+					      					$('#filter-element').val("");
+					      					$('#filter-element').attr("disabled", true);
+										});
+				      				} else if ($('#filter-group').val() == FILTER_GROUP_SERVICE) {
+				      					$('.option-tout').addClass('invisible');
+				      					$('.option-service').removeClass('invisible');
+				      					$('.option-poste').addClass('invisible');
+				      					$('.option-employe').addClass('invisible');
+				      					$('#filter-element').attr("disabled", false);
+				      					$('#filter-element').val("");
+				      				} else if ($('#filter-group').val() == FILTER_GROUP_POSTE) {
+				      					$('.option-tout').addClass('invisible');
+				      					$('.option-service').addClass('invisible');
+				      					$('.option-poste').removeClass('invisible');
+				      					$('.option-employe').addClass('invisible');
+				      					$('#filter-element').attr("disabled", false);
+				      					$('#filter-element').val("");
+				      				} else if ($('#filter-group').val() == FILTER_GROUP_EMPLOYE) {
+				      					$('.option-tout').addClass('invisible');
+				      					$('.option-service').addClass('invisible');
+				      					$('.option-poste').addClass('invisible');
+				      					$('.option-employe').removeClass('invisible');
+				      					$('#filter-element').attr("disabled", false);
+				      					$('#filter-element').val("");
+				      				}
+				      			});
+				      			$('#filter-element').change(function() {
+				      				$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+										groupe    : $('#filter-group').val(),
+										id        : $('#filter-element').val(),
+										periode   : $('#periode').val(),
+										debut     : $('#debut').val(),
+										fin       : $('#fin').val(),
+										type      : $('#selection-type').val()
+									});
+				      			});
+				      			$('#periode').change(function() {
+									$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+										groupe    : $('#filter-group').val(),
+										id        : $('#filter-element').val(),
+										periode   : $('#periode').val(),
+										type      : $('#selection-type').val()
+									}, function() {
+										$("#debut").val(null);
+										$("#fin").val(null);
+										$('#selection-month').val("");
+									});
+								});
+								$('#debut').change(function() {
+									$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+										groupe    : $('#filter-group').val(),
+										id        : $('#filter-element').val(),
+										debut     : $('#debut').val(),
+										fin       : $('#fin').val(),
+										type      : $('#selection-type').val()
+									}, function() {
+										$("#periode").val("");
+										$('#selection-month').val("");
+										$('#fin').val("");
+										var stringDate = $('#debut').datepicker('getDate');
+										var date       = new Date(stringDate.getFullYear(), stringDate.getMonth() + MAX_INTERVAL, stringDate.getDate());
+									    $('#fin').datepicker('option', 'maxDate', date);
+									});
+								});
+								$('#fin').change(function() {
+									$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+										groupe    : $('#filter-group').val(),
+										id        : $('#filter-element').val(),
+										debut     : $('#debut').val(),
+										fin       : $('#fin').val(),
+										type      : $('#selection-type').val()
+									}, function() {
+										$("#periode").val("");
+										$('#selection-month').val("");
+										$('#fin').val("");
+									});
+								});
+								$('#selection-month').change(function() {
+									$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+										groupe    : $('#filter-group').val(),
+										id        : $('#filter-element').val(),
+										mois      : $('#selection-month').val(),
+										type      : $('#selection-type').val()
+									}, function() {
+										$("#periode").val("");
+										$('#debut').val(null);
+										$('#fin').val(null);
+									});
+								});
+								$('#selection-type').change(function() {
+									$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+										groupe    : $('#filter-group').val(),
+										id        : $('#filter-element').val(),
+										debut     : $('#debut').val(),
+										fin       : $('#fin').val(),
+										periode   : $('#periode').val(),
+										mois      : $('#selection-month').val(),
+										type      : $('#selection-type').val()
+									});
+								});
+				      		</script>
+						<?php endif; ?>
+		<?php elseif ($user == "entreprise") : ?>
+		<div class="block-section">
+			<div class="row">
+		        <ul id="new-tab-button">
+		        	<?php if ($url[2] == 'tacheRealisee') : ?>     		
+		        		<li id="tab9">
+		        			<a href="<?= HOST. 'manage/' . $user . '/suivi/dashboard'?>">
+		        				Temps passé sur les tâches
+		        			</a>
+		        		</li>
+		        		<li id="tab8" <?=end($url)== 'tracking' ? 'class="is-active"' : '';?>>
+		        			<a href="<?= HOST. 'manage/tracking'?>">
+		        				Tâches réalisée
+		        			</a>
+		        		</li>
+		        		<li id="tab7" <?=end($url)== 'currentTask' ? 'class="is-active"' : '';?>>
+		        			<a href="<?= HOST. 'manage/tracking/currentTask'?>">
+		        				Tâches en cours
+		        			</a>
+		        		</li>
+		        		<li id="tab6" class="is-active">
+		        			<a href="<?= HOST. 'manage/entreprise/tacheRealisee'?>" >
+		        				Tâches réalisées par employés
+		        			</a>
+		        		</li>
+	        		<?php elseif ($url[2] == 'pointage' || $url[2] == 'retard') : ?>     		
+		        		<li id="tab2">
+		        			<a href="<?= HOST. 'manage/entreprise/pointage/dashboard'?>" >
+		        				Pointages
+		        			</a>
+		        		</li>
+	        			<li id="tab10">
+		        			<a href="<?= HOST. 'manage/entreprise/retard/dashboard'?>" >
+		        				Retards
+		        			</a>
+		        		</li>
+	        		<?php else : ?>
+		        		<li id="tab1">
+		        			<a href="<?= HOST. 'manage/entreprise/permission/dashboard'?>">
+		        				Permissions
+		        			</a>
+		        		</li>
+		        		<li id="tab5">
+		        			<a href="<?= HOST. 'manage/entreprise/repos/dashboard'?>">
+		        				Repos
+		        			</a>
+		        		</li>
+		        		<li id="tab4">
+		        			<a href="<?= HOST. 'manage/entreprise/jourFerie'?>" >
+		        				Jours fériés
+		        			</a>
+		        		</li>    
+		        		<li id="tab3">
+		        			<a href="<?= HOST. 'manage/entreprise/parametre/permission'?>" >
+		        				Paramètres
+		        			</a>
+		        		</li>  		    
+		        	<?php endif; ?>
+		        </ul>
+	      	</div>
+	      	<?php if ($url[2] == 'tacheRealisee') : ?>
+	      		<div class="row">
+	      			<div class="col-lg-12">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+	      						<div class="row">
+	      							<div class="col-md-6">
+										<select class="select-time" id='filter-group' style="font-size: 0.8em!important;">
+											<option value=""> -- groupe --</option>
+											<option value="1" selected="selected">tout</option>
+											<option value="2">par service</option>
+											<option value="3">par poste</option>
+											<option value="4">par employé</option>
+										</select>
+									</div>
+									<div class="col-md-6">
+										<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;">
+											<option class="option-tout" id="o-t" value="">-- selectionnez --</option>
+											<?php foreach ($filtres['services'] as $service) : ?>
+												<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['postes'] as $poste) : ?>
+												<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['employes'] as $employe) : ?>
+												<option class="option-employe invisible" value="<?=$employe->getIdEmploye();?>"><?=$employe->getNom() . ' ' . $employe->getPrenom()?></option>
+											<?php endforeach ?>
+										</select>
+									</div>
+								</div>
+							</div>
+	      					<div class="col-md-5 text-center" id="filtre-droite">
+	      						<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+								  	<div class="carousel-inner">
+								    	<div class="carousel-item active">
+								      		<select id="periode" class="select-time"  style="font-size: 0.8em!important;">
+												<option value=""> -- période -- </option>
+												<option value=1 selected="seconds">aujourd'hui</option>
+												<option value=3>hier</option>
+												<option value=4>cette semaine</option>
+												<option value=6>la semaine passée</option>
+												<option value=7>ce mois</option>
+												<option value=9>le mois dernier</option>
+											</select>
+								    	</div>
+								    	<div class="carousel-item">
+								      		<label for="datepicker">
+									        	<input class="form-control datepicker date-time" id="debut" type="text" autocomplete="off" placeholder="Début">
+								        	</label>
+										 	- 
+											<label for="datepicker">
+									        	<input class="form-control datepicker date-time" id="fin" type="text" autocomplete="off" placeholder="Fin">
+								        	</label>
+								    	</div>
+								    	<div class="carousel-item">
+								    		<?php $date = date('Y') ?>
+								      		<select class="select-time" style="width: 200px; font-size: 0.8em!important;" id="selection-month">
+								      			<option value="">par mois</option>
+								      			<option value="1">Janvier <?=$date?></option>
+								      			<option value="2">Février <?=$date?></option>
+								      			<option value="3">Mars <?=$date?></option>
+								      			<option value="4">Avril <?=$date?></option>
+								      			<option value="5">Mai <?=$date?></option>
+								      			<option value="6">Juin <?=$date?></option>
+								      			<option value="7">Juillet <?=$date?></option>
+								      			<option value="8">Août <?=$date?></option>
+								      			<option value="9">Septembre <?=$date?></option>
+								      			<option value="10">Octobre <?=$date?></option>
+								      			<option value="11">Novembre <?=$date?></option>
+								      			<option value="12">Décembre <?=$date?></option>
+								      		</select>
+								    	</div>
+								 	</div>
+								  	<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+								    	<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+								    	<span class="sr-only">Previous</span>
+								  	</a>
+								  	<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+								    	<span class="carousel-control-next-icon" aria-hidden="true"></span>
+								    	<span class="sr-only">Next</span>
+								  	</a>
+								</div>
+	      					</div>
+      					</div>
+      					<div class="container-list-section" id="liste-taches" style="background: #f7fbfc;"></div>
+	      			</div>
+	      		</div>
+	      		<div class="modal fade" id="modalConfigPointage" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	    					<form method="POST" id="form" action="<?= HOST . 'manage/save-parametrePointage'?>" enctype="multipart/form-data" novalidate="novalidate">
+	    						<input type="hidden" name="idParametrePointage" value="<?= $parametre->getIdParametrePointage() ?>">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title" id="exampleModalLabel">Configuration du système de pointage</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3" style="background: #efefff;">
+		        						<div class="row">
+		        							<div class="col-md-5">
+		        								<span class="titre">Arrêt automatique</span>
+		        							</div>
+		        							<div class="col-md-7">
+		        								<div class="form-group">
+			      									<div class="custom-control custom-switch">
+													  	<?php $textInner = $parametre->getArretActive() ? 'Désactivez': 'Activez';?>
+													  	<?php $checked 	 = $parametre->getArretActive() ? 'checked="checked"': '';?>
+													  	<input type="checkbox" name="arretActive" class="custom-control-input" id="switchArret" <?= $checked;?>>
+													  	<label class="custom-control-label" for="switchArret"><?= $textInner;?></label>
+													</div>
+												</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-5">
+		        								<span class="titre">Recevoir un e-mail en connectant hors secteur</span>
+		        							</div>
+		        							<div class="col-md-7">
+				        						<div class="form-group">
+			      									<div class="custom-control custom-switch notif">
+			      										<?php $textNotif 	= $parametre->getReceiveNotif() ? 'Ne pas notifier': 'Notifier';?>
+													  	<?php $checkedNotif	= $parametre->getReceiveNotif() ? 'checked="checked"': '';?>
+													  	<input type="checkbox" name="arretActiveNotification" class="custom-control-input" id="switchNotif" <?= $checkedNotif;?>>
+													  	<label class="custom-control-label notif" for="switchNotif"><?= $textNotif;?></label>
+													</div>
+												</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-5">
+		        								<span class="titre">Heure d'arrêt</span>
+		        							</div>
+		        							<div class="col-md-7">
+			        							<div class="form-group">
+		        									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+								        			<input type="text" class="form-control" name="heureArret" id="heureArret" value="<?= $parametre->getHeureArret() ?>" required="required" data-validation-required-message="Veuillez renseigner l'heure" placeholder="HH:MM" style="width: 100%; max-width: 100%; font-size: 1.0em!important; font-weight: bold; height: 38px;">
+								        			<p class="help-block text-danger"></p>
+								        		</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-7">
+		        								<span class="titre">Heure fixé pour tout le monde</span>
+		        							</div>
+		        							<div class="col-md-3" style="background:#ffffff;">
+			        							<div class="form-group" style="margin:0!important;">
+		        									<input type="radio" id="fixedTime1"
+												     name="isFixedTime" value="YES"<?=$parametre->getIsFixedTime()=='YES' ? 'checked' : '';?>>
+												    <label for="fixedTime1">Oui</label>
+												    <br>
+												    <input type="radio" id="fixedTime2"
+												     name="isFixedTime" value="NO"<?=$parametre->getIsFixedTime()=='NO' ? 'checked' : '';?>>
+												    <label for="fixedTime2">Non</label>
+								        		</div>
+		        							</div>
+		        							<div class="col-md-2"></div>
+		        						</div>
+        								<div class="row">
+		        							<div class="col-md-5">
+		        								<span class="titre">Heure debut</span>
+		        							</div>
+		        							<div class="col-md-7">
+		        								<div class="form-group">
+		        									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<input type="text" class="form-control" name="heureDebut" id="heureDebut" value="<?= $parametre->getHeureDebut(); ?>" required="required" data-validation-required-message="Veuillez renseigner l'heure" placeholder="HH:MM" style="width: 100%; max-width: 100%; font-size: 1.0em!important; font-weight: bold; height: 38px;">
+								        			<p class="help-block text-danger"></p>
+								        		</div>
+		        							</div>
+		        						</div>
+		        					</div>
+		      					</div>
+		      					<div class="modal-footer">
+		        					<div class="row" style="width: 105%!important;">
+							      		<div class="col-md-3">
+							      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submit" class="btn btn-md btn-info">
+							      					Enregistrer
+							      				</button>
+							      			</div>
+							      		</div>
+							      	</div>
+		      					</div>
+		      				</form>
+	    				</div>
+	  				</div>
+				</div>
+	      		<script>
+	      			$('document').ready(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste-taches").load("<?= HOST . 'manage/tacheRealisee'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								periode   : $('#periode').val(),
+								debut     : $('#debut').val(),
+								fin       : $('#fin').val(),
+								type      : $('#selection-type').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				}
+	      				$('.carousel').carousel({
+  							interval: false,
+						});
+						$('.carousel').carousel('pause');
+	      			});
+	      			$('#filter-group').change(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste-taches").load("<?= HOST . 'manage/tacheRealisee'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								periode   : $('#periode').val(),
+								debut     : $('#debut').val(),
+								fin       : $('#fin').val(),
+								type      : $('#selection-type').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_SERVICE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').removeClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_POSTE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').removeClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_EMPLOYE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').removeClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				}
+	      			});
+	      			$('#filter-element').change(function() {
+	      				$("#liste-taches").load("<?= HOST . 'manage/tacheRealisee'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							periode   : $('#periode').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							type      : $('#selection-type').val()
+						});
+	      			});
+	      			$('#periode').change(function() {
+						$("#liste-taches").load("<?= HOST . 'manage/tacheRealisee'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							periode   : $('#periode').val(),
+							type      : $('#selection-type').val()
+						}, function() {
+							$("#debut").val(null);
+							$("#fin").val(null);
+							$('#selection-month').val("");
+						});
+					});
+					$('#debut').change(function() {
+						$("#liste-taches").load("<?= HOST . 'manage/tacheRealisee'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							type      : $('#selection-type').val()
+						}, function() {
+							$("#periode").val("");
+							$('#selection-month').val("");
+							$('#fin').val("");
+							var stringDate = $('#debut').datepicker('getDate');
+							var date       = new Date(stringDate.getFullYear(), stringDate.getMonth() + MAX_INTERVAL, stringDate.getDate());
+						    $('#fin').datepicker('option', 'maxDate', date);
+						});
+					});
+					$('#fin').change(function() {
+						$("#liste-taches").load("<?= HOST . 'manage/tacheRealisee'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							type      : $('#selection-type').val()
+						}, function() {
+							$("#periode").val("");
+							$('#selection-month').val("");
+						});
+					});
+					$('#selection-month').change(function() {
+						$("#liste-taches").load("<?= HOST . 'manage/tacheRealisee'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							mois      : $('#selection-month').val(),
+							type      : $('#selection-type').val()
+						}, function() {
+							$("#periode").val("");
+							$('#debut').val(null);
+							$('#fin').val(null);
+						});
+					});
+					$('#selection-type').change(function() {
+						$("#liste-taches").load("<?= HOST . 'manage/tacheRealisee'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							periode   : $('#periode').val(),
+							mois      : $('#selection-month').val(),
+							type      : $('#selection-type').val()
+						});
+					});
+	      		</script>
+	      	<?php elseif ($url[2] == 'pointage' || $url[2] == 'retard') : ?>
+	      		<div class="row">
+	      			<div class="col-lg-12">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+	      						<div class="row">
+	      							<div class="col-md-6">
+										<select class="select-time" id='filter-group' style="font-size: 0.8em!important;">
+											<option value=""> -- groupe --</option>
+											<option value="1" selected="selected">tout</option>
+											<option value="2">par service</option>
+											<option value="3">par poste</option>
+											<option value="4">par employé</option>
+										</select>
+									</div>
+									<div class="col-md-6">
+										<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;">
+											<option class="option-tout" id="o-t" value="">-- selectionnez --</option>
+											<?php foreach ($filtres['services'] as $service) : ?>
+												<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['postes'] as $poste) : ?>
+												<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['employes'] as $employe) : ?>
+												<option class="option-employe invisible" value="<?=$employe->getIdEmploye();?>"><?=$employe->getNom() . ' ' . $employe->getPrenom()?></option>
+											<?php endforeach ?>
+										</select>
+									</div>
+								</div>
+							</div>
+	      					<div class="col-md-5 text-center" id="filtre-droite">
+	      						<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+								  	<div class="carousel-inner">
+								    	<div class="carousel-item active">
+								      		<select id="periode" class="select-time"  style="font-size: 0.8em!important;">
+												<option value=""> -- période -- </option>
+												<option value=1 selected="seconds">aujourd'hui</option>
+												<option value=3>hier</option>
+												<option value=4>cette semaine</option>
+												<option value=6>la semaine passée</option>
+												<option value=7>ce mois</option>
+												<option value=9>le mois dernier</option>
+											</select>
+								    	</div>
+								    	<div class="carousel-item">
+								      		<label for="datepicker">
+									        	<input class="form-control datepicker date-time" id="debut" type="text" autocomplete="off" placeholder="Début">
+								        	</label>
+										 	- 
+											<label for="datepicker">
+									        	<input class="form-control datepicker date-time" id="fin" type="text" autocomplete="off" placeholder="Fin">
+								        	</label>
+								    	</div>
+								    	<div class="carousel-item">
+								    		<?php $date = date('Y') ?>
+								      		<select class="select-time" style="width: 200px; font-size: 0.8em!important;" id="selection-month">
+								      			<option value="">par mois</option>
+								      			<option value="1">Janvier <?=$date?></option>
+								      			<option value="2">Février <?=$date?></option>
+								      			<option value="3">Mars <?=$date?></option>
+								      			<option value="4">Avril <?=$date?></option>
+								      			<option value="5">Mai <?=$date?></option>
+								      			<option value="6">Juin <?=$date?></option>
+								      			<option value="7">Juillet <?=$date?></option>
+								      			<option value="8">Août <?=$date?></option>
+								      			<option value="9">Septembre <?=$date?></option>
+								      			<option value="10">Octobre <?=$date?></option>
+								      			<option value="11">Novembre <?=$date?></option>
+								      			<option value="12">Décembre <?=$date?></option>
+								      		</select>
+								    	</div>
+								 	</div>
+								  	<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+								    	<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+								    	<span class="sr-only">Previous</span>
+								  	</a>
+								  	<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+								    	<span class="carousel-control-next-icon" aria-hidden="true"></span>
+								    	<span class="sr-only">Next</span>
+								  	</a>
+								</div>
+	      					</div>
+	      					<div class="col-md-3">
+		      					<?php if ($url[2] != 'retard') : ?>
+		      						<label class="titre" style="color: #ffffff;">lister : </label>
+		      						<select class="select-time"  style="font-size: 0.8em!important;" id="selection-type">
+		      							<option value="2" selected="selected">tout</option>
+		      							<option value="1">les présents</option>
+		      							<option value="6">les retardataires</option>
+		      							<option value="0">les absents</option>
+		      							<option value="3">permission</option>
+		      							<option value="4">repos médical</option>
+		      							<option value="5">en congé</option>
+		      						</select>
+		      					<?php endif; ?>
+	      					</div>
+						</div>
+						<div class="container-list-section" id="liste-pointage" style="background: #f7fbfc;"></div>
+	      			</div>
+	      		</div>
+				<div class="modal fade" id="modalConfigPointage" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	    					<form method="POST" id="form" action="<?= HOST . 'manage/save-parametrePointage'?>" enctype="multipart/form-data" novalidate="novalidate">
+		      					<input type="hidden" name="idParametrePointage" value="<?= $parametre->getIdParametrePointage() ?>">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title" id="exampleModalLabel">Configuration du système de pointage</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3 params" style="background: #efefff;">
+		        						<div class="row">
+		        							<div class="col-md-5">
+		        								<span class="titre">Arrêt automatique</span>
+		        							</div>
+		        							<div class="col-md-7">
+				        						<div class="form-group">
+			      									<div class="custom-control custom-switch">
+			      										<?php $textInner = $parametre->getArretActive() ? 'Désactivez': 'Activez';?>
+													  	<?php $checked 	 = $parametre->getArretActive() ? 'checked="checked"': '';?>
+													  	<input type="checkbox" name="arretActive" class="custom-control-input" id="switchArret" <?= $checked;?>>
+													  	<label class="custom-control-label" for="switchArret"><?= $textInner;?></label>
+													</div>
+												</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-5">
+		        								<span class="titre">Recevoir un e-mail en connectant hors secteur</span>
+		        							</div>
+		        							<div class="col-md-7">
+				        						<div class="form-group">
+			      									<div class="custom-control custom-switch notif">
+			      										<?php $textNotif 	= $parametre->getReceiveNotif() ? 'Ne pas notifier': 'Notifier';?>
+													  	<?php $checkedNotif	= $parametre->getReceiveNotif() ? 'checked="checked"': '';?>
+													  	<input type="checkbox" name="arretActiveNotification" class="custom-control-input" id="switchNotif" <?= $checkedNotif;?>>
+													  	<label class="custom-control-label notif" for="switchNotif"><?= $textNotif;?></label>
+													</div>
+												</div>
+		        							</div>
+		        						</div>
+        								<div class="row">
+		        							<div class="col-md-5">
+		        								<span class="titre">Heure d'arrêt</span>
+		        							</div>
+		        							<div class="col-md-7">
+		        								<div class="form-group">
+		        									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<input type="text" class="form-control" name="heureArret" id="heureArret" value="<?= $parametre->getHeureArret(); ?>" required="required" data-validation-required-message="Veuillez renseigner l'heure" placeholder="HH:MM" style="width: 100%; max-width: 100%; font-size: 1.0em!important; font-weight: bold; height: 38px;">
+								        			<p class="help-block text-danger"></p>
+								        		</div>
+		        							</div>
+		        						</div>
+        								<div class="row">
+		        							<div class="col-md-5">
+		        								<span class="titre">Heure debut</span>
+		        							</div>
+		        							<div class="col-md-7">
+		        								<div class="form-group">
+		        									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<input type="text" class="form-control" name="heureDebut" id="heureDebut" value="<?= $parametre->getHeureDebut(); ?>" required="required" data-validation-required-message="Veuillez renseigner l'heure" placeholder="HH:MM" style="width: 100%; max-width: 100%; font-size: 1.0em!important; font-weight: bold; height: 38px;">
+								        			<p class="help-block text-danger"></p>
+								        		</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-7">
+		        								<span class="titre">Heure fixé pour tout le monde</span>
+		        							</div>
+		        							<div class="col-md-3" style="background:#ffffff;">
+			        							<div class="form-group" style="margin:0!important;">
+		        									<input type="radio" id="fixedTime1"
+												     name="isFixedTime" value="YES"<?=$parametre->getIsFixedTime()=='YES' ? 'checked' : '';?>>
+												    <label for="fixedTime1">Oui</label>
+												    <br>
+												    <input type="radio" id="fixedTime2"
+												     name="isFixedTime" value="NO"<?=$parametre->getIsFixedTime()=='NO' ? 'checked' : '';?>>
+												    <label for="fixedTime2">Non</label>
+								        		</div>
+		        							</div>
+		        							<div class="col-md-2"></div>
+		        						</div>
+		        						<br>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-10">
+		        								<span class="titre">Liste d'IPv4 de l'entreprise : </span>
+		        							</div>
+	        							</div>
+	        							<?php if (is_array($parametre->getListIp()) && !empty($parametre->getListIp())) : ?>
+	        								<?php foreach ($parametre->getListIp() as $key => $value) : extract($value); ?>
+			        							<?php if (count($parametre->getListIp()) == $key +1) : $hidden = '';  $hiddenDel = 'hidden' ;
+			        								else : $hidden = 'hidden'; $hiddenDel = '' ;
+			        							endif;?>
+			        							<div class="row ip">
+				        							<div class="col-md-5" style="padding-left: 3px;">
+				        								<div class="form-group">
+				        									<i class="fa fa-pencil-alt icon-input" style="position: absolute; margin-top: 12px; margin-left: 8px;"></i>
+										        			<input type="text" class="form-control ip-name"placeholder="Nom du réseaux" style="width: 100%; max-width: 100%; font-size: 1.0em!important; font-weight: bold; height: 38px; padding-left: 26px!important;" value="<?=$ipName; ?>" name="ipName<?=$key?>">
+										        		</div>
+				        							</div>
+				        							<div class="col-md-6">
+				        								<div class="form-group">
+				        									<i class="fas fa-network-wired" style="position: absolute; margin-top: 12px; margin-left: 8px;"></i>
+										        			<input type="text" class="form-control ip-addr" placeholder="Addresse IP" style="width: 100%; max-width: 100%; font-size: 1.0em!important; font-weight: bold; height: 38px;" data-validation-regex-regex="^(?=\d+\.\d+\.\d+\.\d+$)(?:(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\.?){4}$" data-validation-regex-message="IP non valide" value="<?= $ipv4?>"name="ipAddr<?=$key?>">
+				        									<i class="fas fa-wifi" aria-hidden="true" style="color: #3a434f; position: absolute; margin-top: -26px; margin-left: 74%;"></i>
+										        			<p class="help-block text-danger"></p>
+										        		</div>
+				        							</div>
+				        							<div class="col-md-1">
+				        								<button type="button" class="btn btn-add-row-ip <?=$hidden?>" onclick="addIpAddress('ajout', this)" style="background: #6e9e89;width: 33px; height: 33px; margin-top: 2px;margin-left: -18px;">
+															<i class="fa fa-plus" aria-hidden="false" style="margin: -4px"></i>
+														</button>
+														<button type="button" class="btn btn-delete-row-ip <?=$hiddenDel?>" onclick="removeRowIp(this)" style="background: #d62037; width: 33px; height: 33px; margin-left: -18px; margin-top: 2px;">
+															<i class="fas fa-times" style="margin: -2px"></i>
+										  				</button>
+				        							</div>
+				        						</div>
+	        								<?php endforeach; ?>
+	        							<?php else : ?>
+	        								<div class="row ip">
+			        							<div class="col-md-5" style="padding-left: 3px;">
+			        								<div class="form-group">
+			        									<i class="fa fa-pencil-alt icon-input" style="position: absolute; margin-top: 12px; margin-left: 8px;"></i>
+									        			<input type="text" class="form-control ip-name" required="required"data-validation-required-message="Veuillez indiquer le nom du réseaux" placeholder="Nom du réseaux" style="width: 100%; max-width: 100%; font-size: 1.0em!important; font-weight: bold; height: 38px; padding-left: 26px!important;">
+									        		</div>
+			        							</div>
+			        							<div class="col-md-6">
+			        								<div class="form-group">
+			        									<i class="fas fa-network-wired" style="position: absolute; margin-top: 12px; margin-left: 8px;"></i>
+									        			<input type="text" class="form-control ip-addr" required="required"data-validation-required-message="Veuillez insérer l'addresse IP" placeholder="Addresse IP" style="width: 100%; max-width: 100%; font-size: 1.0em!important; font-weight: bold; height: 38px;" data-validation-regex-regex="^(?=\d+\.\d+\.\d+\.\d+$)(?:(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\.?){4}$" data-validation-regex-message="IP non valide">
+			        									<i class="fas fa-wifi" aria-hidden="true" style="color: #3a434f; position: absolute; margin-top: -26px; margin-left: 74%;"></i>
+									        			<p class="help-block text-danger"></p>
+									        		</div>
+			        							</div>
+			        							<div class="col-md-1">
+			        								<button type="button" class="btn btn-add-row-ip" onclick="addIpAddress('ajout', this)" style="background: #6e9e89;width: 33px; height: 33px; margin-top: 2px;margin-left: -18px;">
+														<i class="fa fa-plus" aria-hidden="false" style="margin: -4px"></i>
+													</button>
+													<button type="button" class="btn btn-delete-row-ip hidden" onclick="removeRowIp(this)" style="background: #d62037; width: 33px; height: 33px; margin-left: -18px; margin-top: 2px;">
+														<i class="fas fa-times" style="margin: -2px"></i>
+									  				</button>
+			        							</div>
+			        						</div>
+	        							<?php endif; ?>
+		        					</div>
+		      					</div>
+		      					<div class="modal-footer">
+		        					<div class="row" style="width: 105%!important;">
+							      		<div class="col-md-3">
+							      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submit" class="btn btn-md btn-info">
+							      					Enregistrer
+							      				</button>
+							      			</div>
+							      		</div>
+							      	</div>
+		      					</div>
+		      				</form>
+	    				</div>
+	  				</div>
+				</div>
+	      		<script>
+	      			$('document').ready(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								periode   : $('#periode').val(),
+								debut     : $('#debut').val(),
+								fin       : $('#fin').val(),
+								type      : $('#selection-type').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				}
+	      				$('.carousel').carousel({
+  							interval: false
+						});
+						$('.carousel').carousel('pause');
+	      			});
+	      			$('#filter-group').change(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								periode   : $('#periode').val(),
+								debut     : $('#debut').val(),
+								fin       : $('#fin').val(),
+								type      : $('#selection-type').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_SERVICE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').removeClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_POSTE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').removeClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_EMPLOYE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').removeClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				}
+	      			});
+	      			$('#filter-element').change(function() {
+	      				$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							periode   : $('#periode').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							type      : $('#selection-type').val()
+						});
+	      			});
+	      			$('#periode').change(function() {
+						$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							periode   : $('#periode').val(),
+							type      : $('#selection-type').val()
+						}, function() {
+							$("#debut").val(null);
+							$("#fin").val(null);
+							$('#selection-month').val("");
+						});
+					});
+					$('#debut').change(function() {
+						$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							type      : $('#selection-type').val()
+						}, function() {
+							$("#periode").val("");
+							$('#selection-month').val("");
+							$('#fin').val("");
+							var stringDate = $('#debut').datepicker('getDate');
+							var date       = new Date(stringDate.getFullYear(), stringDate.getMonth() + MAX_INTERVAL, stringDate.getDate());
+						    $('#fin').datepicker('option', 'maxDate', date);
+						});
+					});
+					$('#fin').change(function() {
+						$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							type      : $('#selection-type').val()
+						}, function() {
+							$("#periode").val("");
+							$('#selection-month').val("");
+							$('#fin').val("");
+						});
+					});
+					$('#selection-month').change(function() {
+						$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							mois      : $('#selection-month').val(),
+							type      : $('#selection-type').val()
+						}, function() {
+							$("#periode").val("");
+							$('#debut').val(null);
+							$('#fin').val(null);
+						});
+					});
+					$('#selection-type').change(function() {
+						$("#liste-pointage").load("<?= HOST . 'manage/' . $url[2] . 's'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							periode   : $('#periode').val(),
+							mois      : $('#selection-month').val(),
+							type      : $('#selection-type').val()
+						});
+					});
+					$('#switchArret').change(function(){
+						if ($('#switchArret').is(':checked')) {
+ 							$(this).parent().find('label.custom-control-label').html("Désactivez");
+					    } else {
+					    	$(this).parent().find('label.custom-control-label').html("Activez");
+					    }
+					});
+					tippy('.fa-cog', {
+						content: "configurer votre système de pointage"
+					});
+					$('#switchNotif').change(function(){
+						if ($('#switchNotif').is(':checked')) {
+ 							$(this).parent().find('label.custom-control-label').html("Ne pas notifier");
+					    } else {
+					    	$(this).parent().find('label.custom-control-label').html("Notifier");
+					    }
+					});
+					tippy('.custom-control-label-notif', {
+						content: "Notifier si le salarié tenté de se connecter hors de votre entreprise"
+					});
+					$('.ip-addr').change(function(){
+						getEachFieldIp();
+					});
+					$('#annuler').click(function(){
+						window.location.reload();
+					});
+					/**
+					 * Récupère chaque champ de l'addresse IP 
+					 * 
+					 */
+					function getEachFieldIp () {
+						$.each($('.ip-addr'), function(index, val) {
+							$(val).closest('.row.ip').children().find('.ip-name').attr('name','ipName' + index);
+							$(val).attr('name','ipAddr' + index);
+						});
+					}
+					/**
+					 * Ajout nouvelle ligne du réseau 
+					 * 
+					 */
+					function addIpAddress(ajout, self) {
+						$('.card.p-3.params').append($(self).closest('.row.ip').clone());
+						$(self).addClass('hidden');
+						$(self).closest('.row.ip').find('.btn-delete-row-ip').removeClass('hidden');
+						$('.ip-name').last().val('');
+						$('.ip-addr').last().val('');
+						getEachFieldIp();
+					}
+					/**
+					 * Supprime la ligne du réseau 
+					 * 
+					 */
+					function removeRowIp(self) {
+						$(self).closest('.row.ip').remove();
+						$('.row.ip').last().find('.btn.btn-add-row-ip').removeClass('hidden');
+						$('.row.ip').last().find('.btn.btn-delete-row-ip').addClass('hidden');
+						getEachFieldIp();
+					}
+	      		</script>
+	      	<?php elseif ($url[2] == 'parametre') : ?>
+	      		<div class="tete-list-section text-center" style="background: #647994; color: #ffffff;">
+	      			<p class="">paramétrez les durées (en jour) de vos permissions</p>
+	      		</div>
+	      		<div class="container-list-section" style="background: #edf0f4; height: 53vh; max-height: 53vh; overflow-y: auto;">
+		      		<div class="card m-2 p-2 card-border-grey">
+		      			<div class="row">
+		      				<div class="col-md-9">
+		      					<span class="text-important">durée maximale de repos médical</span>
+		      				</div>
+		      				<div class="col-md-3">
+		      					<div class="row">
+			      					<div class="col-md-6">
+				      					<span class="titre"><?=$parametre->getDureeMaxRepos() . ' jours';?></span>
+				      				</div>
+				      				<div class="col-md-6 text-right">
+				      					<a href="<?= HOST . 'manage/increment-dureeMaxRepos?idParametrePermission=' . $parametre->getIdParametrePermission() ?>" class="btn btn-sm btn-success">
+			      							<i class="fa fa-plus plus icon-action" aria-hidden="true"></i>
+			      						</a>
+			      						<a href="<?= HOST . 'manage/decrement-dureeMaxRepos?idParametrePermission=' . $parametre->getIdParametrePermission() ?>" class="btn btn-sm btn-danger">
+				      						<i class="fa fa-minus icon-action" aria-hidden="true"></i>
+				      					</a>
+				      				</div>
+				      			</div>
+			      			</div>
+		      			</div>
+		      		</div>
+		      		<div class="card m-2 p-2 card-border-grey">
+		      			<div class="row">
+		      				<div class="col-md-9">
+		      					<span class="text-important">durée maximale de permission dans l'année</span>
+		      				</div>
+		      				<div class="col-md-3">
+		      					<div class="row">
+		      						<div class="col-md-6">
+				      					<span class="titre" ><?=$parametre->getDureeMaxPermission() . ' jours';?></span>
+				      				</div>
+				      				<div class="col-md-6 text-right">
+				      					<a href="<?= HOST . 'manage/increment-dureeMaxPermission?idParametrePermission=' . $parametre->getIdParametrePermission() ?>" class="btn btn-sm btn-success">
+			      							<i class="fa fa-plus plus icon-action" aria-hidden="true"></i>
+			      						</a>
+			      						<a href="<?= HOST . 'manage/decrement-dureeMaxPermission?idParametrePermission=' . $parametre->getIdParametrePermission() ?>" class="btn btn-sm btn-danger">
+				      						<i class="fa fa-minus icon-action" aria-hidden="true"></i>
+				      					</a>
+				      				</div>
+		      					</div>
+		      				</div>
+		      			</div>
+		      		</div>
+      				<?php foreach ($donnees as $donnee) : extract($donnee);?>
+      					<div class="card m-2 p-2 card-border-grey">
+	      					<div class="row">
+			      				<div class="col-md-9">
+			      					<span class="text-important"><?=$permission->getDesignation();?></span>
+			      				</div>
+			      				<div class="col-md-3">
+			      					<div class="row">
+				      					<div class="col-md-6">
+					      					<span class="titre" id="duree-<?=$entreprisePermission->getIdEntreprisePermission()?>"><?=$entreprisePermission->getDuree() .' jour(s)';?></span>
+					      				</div>
+					      				<div class="col-md-6 text-right">
+				      						<button class="btn btn-sm btn-success" id="plus-<?=$entreprisePermission->getIdEntreprisePermission()?>">
+				      							<i class="fa fa-plus plus icon-action" aria-hidden="true"></i>
+				      						</button>
+				      						<button class="btn btn-sm btn-danger" id="moins-<?=$entreprisePermission->getIdEntreprisePermission()?>">
+				      							<i class="fa fa-minus moins icon-action" aria-hidden="true"></i>
+				      						</button>
+					      				</div>
+					      			</div>
+				      			</div>
+			      			</div>
+			      		</div>
+			      		<script>
+			      			$('#plus-<?=$entreprisePermission->getIdEntreprisePermission()?>').click(function(){
+			      				$.ajax({
+									url : '<?= HOST . "manage/increment-permission" ?>',
+									data : 'idEntreprisePermission=<?= $entreprisePermission->getIdEntreprisePermission() ?>',
+									dataType : 'text',
+									success : function(data) {
+										if (data >= 0) {
+											$('#duree-<?=$entreprisePermission->getIdEntreprisePermission()?>').html(data + " jour(s)");
+											notifier("success", "succès !");
+										} else {
+											notifier("danger", "erreur !");
+										}
+									}
+								});
+		      				});
+			      			$('#moins-<?=$entreprisePermission->getIdEntreprisePermission()?>').click(function(){
+			      				$.ajax({
+		 							url : '<?= HOST . "manage/decrement-permission" ?>',
+									data : 'idEntreprisePermission=<?= $entreprisePermission->getIdEntreprisePermission() ?>',
+									dataType : 'text',
+									success : function(data) {
+										if (data >= 0) {
+													$('#duree-<?=$entreprisePermission->getIdEntreprisePermission()?>').html(data + " jour(s)");
+													notifier("success", "succès !");
+												} else {
+													notifier("danger", "erreur !");
+											    }
+
+									}
+								});
+							});
+						</script>
+      				<?php endforeach ?>
+		      	</div>
+				<div class="modal fade" id="modalParametre" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	    					<form method="POST" id="form" action="<?= HOST . 'manage/save-entreprisePermission'?>" enctype="multipart/form-data" novalidate="novalidate">
+	    						<input type="hidden" name="idEntreprise" value="<?=$_SESSION['user']['idEntreprise']?>">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title" id="exampleModalLabel">Enregistrer un jour férié</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3" style="background: #efefff;">
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="titre">Designation</span>
+		        							</div>
+		        							<div class="col-md-9">
+			        							<div class="form-group">
+		        									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+								        			<input type="text" class="form-control" name="typePermission" id="typePermission" required="required" data-validation-required-message="Veuillez renseigner la raison" placeholder="raison de la permission" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+								        			<p class="help-block text-danger"></p>
+								        		</div>
+		        							</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="titre">Durée</span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-hourglass-end icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+								        			<input type="number" class="form-control" name="duree" id="duree" required="required" data-validation-required-message="Veuillez renseigner la durée" placeholder="durée en jour" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+								        			<p class="help-block text-danger"></p>
+								        		</div>
+		        							</div>
+		        						</div>
+		        					</div>
+		      					</div>
+		      					<div class="modal-footer">
+		        					<div class="row" style="width: 105%!important;">
+							      		<div class="col-md-3">
+							      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submit" class="btn btn-md btn-info">
+							      					Enregistrer
+							      				</button>
+							      			</div>
+							      		</div>
+							      	</div>
+		      					</div>
+		      				</form>
+	    				</div>
+	  				</div>
+				</div>
+		      	<script>
+			      	tippy('.plus', {
+						content: "Etendre la durée"
+			  		});
+			  		tippy('.fa-minus', {
+						content: "Réduire la durée"
+			  		});
+			  		tippy('.nouveau', {
+						content: "Ajouter une nouvelle permission"
+			  		});
+					$("#annuler").click(function(){
+						window.location.reload();
+					});
+	      		</script>
+	      	<?php elseif ($url[2] == 'repos') : ?>
+	      		<div class="row">
+	      			<div class="col-lg-12">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+	      						<div class="row">
+	      							<div class="col-md-6">
+										<select class="select-time" id='filter-group' style="font-size: 0.8em!important;;">
+											<option value=""> -- groupe --</option>
+											<option value="1" selected="selected">tout</option>
+											<option value="2">par service</option>
+											<option value="3">par poste</option>
+											<option value="4">par employé</option>
+										</select>
+									</div>
+									<div class="col-md-6">
+										<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;;">
+											<option class="option-tout" id="o-t" value="">-- selectionnez --</option>
+											<?php foreach ($filtres['services'] as $service) : ?>
+												<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['postes'] as $poste) : ?>
+												<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['employes'] as $employe) : ?>
+												<option class="option-employe invisible" value="<?=$employe->getIdEmploye();?>"><?=$employe->getNom() . ' ' . $employe->getPrenom()?></option>
+											<?php endforeach ?>
+										</select>
+									</div>
+								</div>
+							</div>
+	      					<div class="col-md-5 text-center" id="filtre-droite">
+	      						<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+								  	<div class="carousel-inner">
+								    	<div class="carousel-item active">
+								      		<select id="periode" class="select-time"  style="font-size: 0.8em!important;">
+												<option value=""> -- période -- </option>
+												<option value="1">aujourd'hui</option>
+												<option value="2">demain</option>
+												<option value="3">hier</option>
+												<option value="4">cette semaine</option>
+												<option value="5">la semaine prochaine</option>
+												<option value="6">la semaine passée</option>
+												<option value="7" selected>ce mois</option>
+												<option value="8">le mois prochain</option>
+												<option value="9">le mois dernier</option>
+											</select>
+								    	</div>
+								    	<div class="carousel-item">
+								      		<label for="datepicker">
+									        	<input class="form-control datepicker date-time" id="debut" type="text" autocomplete="off" placeholder="Début">
+								        	</label>
+										 	- 
+											<label for="datepicker">
+									        	<input class="form-control datepicker date-time" id="fin" type="text" autocomplete="off" placeholder="Fin">
+								        	</label>
+								    	</div>
+								    	<div class="carousel-item">
+								    		<?php $date = date('Y') ?>
+								      		<select class="select-time" style="width: 200px; font-size: 0.8em!important;" id="selection-month">
+								      			<option value="">par mois</option>
+								      			<option value="1">Janvier <?=$date?></option>
+								      			<option value="2">Février <?=$date?></option>
+								      			<option value="3">Mars <?=$date?></option>
+								      			<option value="4">Avril <?=$date?></option>
+								      			<option value="5">Mai <?=$date?></option>
+								      			<option value="6">Juin <?=$date?></option>
+								      			<option value="7">Juillet <?=$date?></option>
+								      			<option value="8">Août <?=$date?></option>
+								      			<option value="9">Septembre <?=$date?></option>
+								      			<option value="10">Octobre <?=$date?></option>
+								      			<option value="11">Novembre <?=$date?></option>
+								      			<option value="12">Décembre <?=$date?></option>
+								      		</select>
+								    	</div>
+								 	</div>
+								  	<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+								    	<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+								    	<span class="sr-only">Previous</span>
+								  	</a>
+								  	<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+								    	<span class="carousel-control-next-icon" aria-hidden="true"></span>
+								    	<span class="sr-only">Next</span>
+								  	</a>
+								</div>
+	      					</div>
+	      					<div class="col-md-3">
+	      						<label class="titre" style="color: #ffffff;">lister : </label>
+	      						<select class="select-time"  style="font-size: 0.8em!important;" id="selection-type">
+	      							<option value="3" selected>tout</option>
+	      							<option value="1">en attente</option>
+	      							<option value="2">validées</option>
+	      							<option value="0">refusées</option>
+	      						</select>
+	      					</div>
+						</div>
+						<div class="container-list-section" id="liste-repos" style="height: 53vh; max-height: 53vh; overflow-y: auto;"></div>
+	      			</div>
+	      		</div>
+				<div class="modal fade" id="modalEnregistrementRepos" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	    					<form method="POST" id="form" action="<?= HOST . 'manage/save-employeRepos'?>" enctype="multipart/form-data" novalidate="novalidate">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title" id="exampleModalLabel">Repos Médical</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3" style="background: #efefff;">
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="titre">Employé : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+													<i class="fa fa-search fa-fw icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+												  	<input class="form-control" type="text" id="recherche" placeholder="Recherche" style="height: 38px; font-size: 0.9em;">
+												</div>
+		        								<div class="form-group">
+		        									<i class="fa fa-user icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<select class="form-control font-weight-bold" name="idEmploye" id="idEmploye" required="required" data-validation-required-message="Veuillez selectionner un employé" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+			        									<option value="">Selectionnnez l'employé</option>
+			        									<?php foreach ($employes as $employe) : ?>
+			        										<option value="<?=$employe->getIdEmploye()?>"><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></option>
+			        									<?php endforeach ?>
+			        								</select>
+			        								<p class="help-block text-danger"></p>
+			        							</div>
+		        							</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="titre">Raison : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-medkit icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<input type="text" class="form-control font-weight-bold" name="raison" id="raison" required="required" data-validation-required-message="Veuillez renseigner la raison" style="width: 100%; max-width: 100%; font-size: 0.8em!important;" placeholder="renseigner la maladie">
+			        								<p class="help-block text-danger"></p>
+			        							</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="titre">Durée<span id="label-duree" style="font-size: 0.8em; color: red;"></span></span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-hourglass-end icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+								        			<input type="number" class="form-control" name="duree" id="duree" required="required" data-validation-required-message="Veuillez renseigner la durée" placeholder="durée en jour" style="height: 38px; font-size: 0.9em; font-weight: bold;">
+								        			<p class="help-block text-danger"></p>
+								        		</div>
+		        							</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="titre">Date : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<label for="datepicker">
+									        			<input class="form-control datepicker" id="date-permission" value="" type="text" autocomplete="off" placeholder="date" style="width: 110%; height: 38px; font-size: 0.9em; font-weight: bold;">
+								        			</label>
+								        			<input type="text" class="form-control hidden" name="date" id="date" required="required" data-validation-required-message="Veuillez renseigner la date" >
+								        			<p class="help-block text-danger"></p>
+								        		</div>
+		        							</div>
+		        						</div>
+		        					</div>
+		      					</div>
+		      					<div class="modal-footer">
+		        					<div class="row" style="width: 105%!important;">
+							      		<div class="col-md-3">
+							      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submit" class="btn btn-md btn-info">
+							      					Enregistrer
+							      				</button>
+							      			</div>
+							      		</div>
+							      	</div>
+		      					</div>
+		      				</form>
+	    				</div>
+	  				</div>
+				</div>
+	      		<script>
+	      			$('document').ready(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste-repos").load("<?= HOST . 'manage/demandeRepos'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								periode   : $('#periode').val(),
+								debut     : $('#debut').val(),
+								fin       : $('#fin').val(),
+								type      : $('#selection-type').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				}
+	      				$('.carousel').carousel({
+  							interval: false
+						});
+						$('.carousel').carousel('pause');
+	      			});
+	      			$('#filter-group').change(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste-repos").load("<?= HOST . 'manage/demandeRepos'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								periode   : $('#periode').val(),
+								debut     : $('#debut').val(),
+								fin       : $('#fin').val(),
+								type      : $('#selection-type').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_SERVICE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').removeClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_POSTE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').removeClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_EMPLOYE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').removeClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				}
+	      			});
+	      			$('#filter-element').change(function() {
+	      				$("#liste-repos").load("<?= HOST . 'manage/demandeRepos'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							periode   : $('#periode').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							type      : $('#selection-type').val()
+						});
+	      			});
+	      			$('#periode').change(function() {
+						$("#liste-repos").load("<?= HOST . 'manage/demandeRepos'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							periode   : $('#periode').val(),
+							type      : $('#selection-type').val()
+						}, function() {
+							$("#debut").val(null);
+							$("#fin").val(null);
+							$('#selection-month').val("");
+						});
+					});
+					$('#debut').change(function() {
+						$("#liste-repos").load("<?= HOST . 'manage/demandeRepos'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							type      : $('#selection-type').val()
+						}, function() {
+							$("#periode").val("");
+							$('#selection-month').val("");
+							$('#fin').val("");
+							var stringDate = $('#debut').datepicker('getDate');
+							var date       = new Date(stringDate.getFullYear(), stringDate.getMonth() + MAX_INTERVAL, stringDate.getDate());
+						    $('#fin').datepicker('option', 'maxDate', date);
+						});
+					});
+					$('#fin').change(function() {
+						$("#liste-repos").load("<?= HOST . 'manage/demandeRepos'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							type      : $('#selection-type').val()
+						}, function() {
+							$("#periode").val("");
+							$('#selection-month').val("");
+						});
+					});
+					$('#selection-month').change(function() {
+						$("#liste-repos").load("<?= HOST . 'manage/demandeRepos'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							mois      : $('#selection-month').val(),
+							type      : $('#selection-type').val()
+						}, function() {
+							$("#periode").val("");
+							$('#debut').val(null);
+							$('#fin').val(null);
+						});
+					});
+					$('#selection-type').change(function() {
+						$("#liste-repos").load("<?= HOST . 'manage/demandeRepos'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							periode   : $('#periode').val(),
+							mois      : $('#selection-month').val(),
+							type      : $('#selection-type').val()
+						});
+					});
+					$("#submit").click(function(){
+			          	var date = $("#date-permission").val().split('/');
+			          	if (date != "") {
+			          		$("#date").val(date[2] + '-' + date[1] + '-' + date[0]);
+			          	}
+					});
+					$("#recherche").change(function() {
+						if ($("#recherche").val() != "") {
+							$('#idEmploye option').each(function(){
+							    if ($(this).text().toLowerCase().includes($("#recherche").val().toLowerCase())) {
+							    	$(this).removeClass('invisible');
+							    	$(this).attr('selected', true);
+							    } else {
+							    	$(this).attr('selected', false);
+							    	$(this).addClass('invisible');
+							    }
+							});
+							$("#idEmploye").trigger('change');
+						} else {
+							$('#idEmploye option').each(function(){
+								$(this).removeClass('invisible');
+								$(this).attr('selected', false);
+							});
+						}
+						$("#idEmploye").trigger('mousedown');
+					});
+					$("#idEmploye").change(function(){
+						$.ajax({
+ 							url : "<?= HOST . 'manage/permissionPossibles'?>",
+ 							data : "idEmploye=" + $("#idEmploye").val(),
+							dataType : "json",
+							success : function(data)
+							{
+								$('#idTypePermission').empty();
+								$('#idTypePermission').append('<option value="" selected>Selectionnez la raison de l\'absence</option>');
+								data : JSON.stringify(data);
+								$.each(data, function(i,donnees) {
+									$.each(donnees, function(key,value) {
+									    if (key == "idTypePermission") {
+									    	optionValue = value;
+									    } else if (key == "designation") {
+									    	optionText = value;
+									    }
+									});
+									$('#idTypePermission').append('<option value="' + optionValue + '">' + optionText + '</option>');
+								}); 
+							}
+						});
+					});
+					$("#idEmploye").change(function() {
+						$("#duree").val(null);
+						$('#label-duree').empty();
+						$.ajax({
+ 							url : "<?= HOST . 'manage/reposPossibles'?>",
+ 							data : "idEmploye=" + $("#idEmploye").val(),
+							dataType : "json",
+							success : function(data)
+							{
+								data : JSON.stringify(data);
+								$.each(data, function(key, value) {
+									$('#duree').attr('max', value);
+									$('#label-duree').html("(<" + (value + 1) + "j)");
+								}); 
+							}
+						});
+					});
+					$("#duree").change(function() {
+						$.ajax({
+ 							url : "<?= HOST . 'manage/reposPossibles'?>",
+ 							data : "idEmploye=" + $("#idEmploye").val(),
+							dataType : "json",
+							success : function(data)
+							{
+								data : JSON.stringify(data);
+								$.each(data, function(key, value) {
+									if ($("#duree").val() > value) {
+										$("#duree").val(value);
+									}
+								}); 
+							}
+						});
+					});
+					$("#annuler").click(function(){
+						window.location.reload();
+					});
+	      		</script>
+	      	<?php elseif ($url[2] == 'jourFerie') : ?>
+	      		<div class="tete-list-section text-center" style="background: #647994; color: #ffffff;">
+	      			<label class="text-important">Les jours fériés de l'année : </label>
+	      			<input type="number" min="2020" value="<?=$annee?>" id="annee" class="text-center select-time">
+	      		</div>
+	      		<div class="container-list-section" id="liste-ferie" style="background: #edf0f4; height: 53vh; max-height: 53vh; overflow-y:auto;">
+	      		</div>
+				<div class="modal fade" id="modalAjout" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	    					<form method="POST" id="form" action="<?= HOST . 'manage/save-entrepriseFerie'?>" enctype="multipart/form-data" novalidate="novalidate">
+	    						<input type="hidden" name="idEntreprise" value="<?=$_SESSION['user']['idEntreprise']?>">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title" id="exampleModalLabel">Enregistrer un jour férié</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3" style="background: #efefff;">
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="titre">Designation</span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<select class="form-control font-weight-bold" name="idJourFerie" id="idJourFerie" required="required" data-validation-required-message="Veuillez selectionner la raison" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+			        									<option value="">Selectionnez la raison du jour férié</option>
+			        									<?php foreach ($jourFeries as $jourFerie) : ?>
+			        										<option value="<?= $jourFerie->getIdJourFerie(); ?>"> <?= $jourFerie->getDesignation(); ?> </option>
+			        									<?php endforeach ?>
+			        								</select>
+			        								<p class="help-block text-danger"></p>
+			        							</div>
+		        							</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="titre">Date</span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<label for="datepicker">
+									        			<input class="form-control datepicker" id="date-ferie" value="" type="text" autocomplete="off" placeholder="date" style="width: 110%; height: 38px; font-size: 0.9em; font-weight: bold;">
+								        			</label>
+								        			<input type="text" class="form-control hidden" name="date" id="date" required="required" data-validation-required-message="Veuillez renseigner la date" >
+								        			<p class="help-block text-danger"></p>
+								        		</div>
+		        							</div>
+		        						</div>
+		        					</div>
+		      					</div>
+		      					<div class="modal-footer">
+		        					<div class="row" style="width: 105%!important;">
+							      		<div class="col-md-3">
+							      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submit" class="btn btn-md btn-info">
+							      					Enregistrer
+							      				</button>
+							      			</div>
+							      		</div>
+							      	</div>
+		      					</div>
+		      				</form>
+	    				</div>
+	  				</div>
+				</div>
+	      		<script>
+	      			$("document").ready(function(){
+	      				$("#liste-ferie").load("<?= HOST . 'manage/entrepriseFeries'?>", {
+	      					idEntreprise : <?= $_SESSION['user']['idEntreprise']?>,
+	      					annee        : $('#annee').val()
+	      				}, 
+	      				function() {
+
+	      				});
+	      				tippy('.fa-plus', {
+							content: "Ajouter un jour férié"
+				  		});
+	      			});
+	      			$("#annee").change(function(){
+	      				$("#liste-ferie").load("<?= HOST . 'manage/entrepriseFeries'?>", {
+	      					idEntreprise : <?= $_SESSION['user']['idEntreprise']?>,
+	      					annee        : $('#annee').val()
+	      				}, 
+	      				function() {
+
+	      				});
+	      			});
+	      			$("#submit").click(function(){
+			          	var date = $("#date-ferie").val().split('/');
+			          	if (date != "") {
+			          		$("#date").val(date[2] + '-' + date[1] + '-' + date[0]);
+			          	}
+					});
+	      			$("#annuler").click(function(){
+						window.location.reload();
+					});
+	      		</script>
+	      	<?php endif ?>
+		<?php endif ?>
+		<?php if ($url[2] == 'permission') : ?>
+      				<div class="tete-list-section row" style="background: #647994;">
+      					<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+      						<div class="row">
+      							<div class="col-md-6">
+									<select class="select-time" id='filter-group' style="font-size: 0.8em!important;;">
+										<option value=""> -- groupe --</option>
+										<option value="1" selected="selected">tout</option>
+										<option value="2">par service</option>
+										<option value="3">par poste</option>
+										<option value="4">par employé</option>
+									</select>
+								</div>
+								<div class="col-md-6">
+									<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;;">
+										<option class="option-tout" id="o-t" value="">-- selectionnez --</option>
+										<?php foreach ($filtres['services'] as $service) : ?>
+											<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+										<?php endforeach ?>
+										<?php foreach ($filtres['postes'] as $poste) : ?>
+											<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+										<?php endforeach ?>
+										<?php foreach ($filtres['employes'] as $employe) : ?>
+											<option class="option-employe invisible" value="<?=$employe->getIdEmploye();?>"><?=$employe->getNom() . ' ' . $employe->getPrenom()?></option>
+										<?php endforeach ?>
+									</select>
+								</div>
+							</div>
+						</div>
+      					<div class="col-md-1 text-center" >
+  							<label class="titre" style="color: #ffffff;">Date : </label>
+  						</div>
+      					<div class="col-md-4 text-center" id="filtre-droite">
+      						<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+							  	<div class="carousel-inner">
+							    	<div class="carousel-item active">
+							      		<select id="periode" class="select-time"  style="font-size: 0.8em!important;">
+											<option value=""> cette année </option>
+											<option value="1">aujourd'hui</option>
+											<option value="2">demain</option>
+											<option value="3">hier</option>
+											<option value="4">cette semaine</option>
+											<option value="5">la semaine prochaine</option>
+											<option value="6">la semaine passée</option>
+											<option value="7" selected>ce mois</option>
+											<option value="8">le mois prochain</option>
+											<option value="9">le mois dernier</option>
+										</select>
+							    	</div>
+							    	<div class="carousel-item">
+							      		<label for="datepicker">
+								        	<input class="form-control datepicker date-time" id="debut" type="text" autocomplete="off" placeholder="Début">
+							        	</label>
+									 	- 
+										<label for="datepicker">
+								        	<input class="form-control datepicker date-time" id="fin" type="text" autocomplete="off" placeholder="Fin">
+							        	</label>
+							    	</div>
+							    	<div class="carousel-item">
+							    		<?php $date = date('Y'); ?>
+							      		<select class="select-time" style="width: 200px; font-size: 0.8em!important;" id="selection-month">
+							      			<option value="">par mois</option>
+							      			<option value="1">Janvier <?=$date?></option>
+							      			<option value="2">Février <?=$date?></option>
+							      			<option value="3">Mars <?=$date?></option>
+							      			<option value="4">Avril <?=$date?></option>
+							      			<option value="5">Mai <?=$date?></option>
+							      			<option value="6">Juin <?=$date?></option>
+							      			<option value="7">Juillet <?=$date?></option>
+							      			<option value="8">Août <?=$date?></option>
+							      			<option value="9">Septembre <?=$date?></option>
+							      			<option value="10">Octobre <?=$date?></option>
+							      			<option value="11">Novembre <?=$date?></option>
+							      			<option value="12">Décembre <?=$date?></option>
+							      		</select>
+							    	</div>
+							 	</div>
+							  	<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+							    	<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+							    	<span class="sr-only">Previous</span>
+							  	</a>
+							  	<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+							    	<span class="carousel-control-next-icon" aria-hidden="true"></span>
+							    	<span class="sr-only">Next</span>
+							  	</a>
+							</div>
+      					</div>
+  						<div class="col-md-3">
+      						<label class="titre" style="color: #ffffff;">lister : </label>
+      						<select class="select-time"  style="font-size: 0.8em!important;" id="selection-type">
+      							<option value="3" selected>tout</option>
+      							<option value="1">en attente</option>
+      							<option value="2">validées</option>
+      							<option value="0">refusées</option>
+      						</select>
+      					</div>
+					</div>
+					<div class="container-list-section" id="liste-permission" style="height: 53vh; max-height: 53vh; overflow-y: auto;"></div>
+      			</div>
+      		</div>
+			<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  				<div class="modal-dialog modal-dialog-centered" role="document">
+    				<div class="modal-content">
+    					<form method="POST" id="form" action="<?= HOST . 'manage/save-employePermission'?>" enctype="multipart/form-data" novalidate="novalidate">
+    						<input type="hidden" name="idEntreprise" value="<?=$_SESSION['user']['idEntreprise']?>">
+	      					<div class="modal-header">
+	        					<div class="text-center" style="width: 100%;">
+						      		<h5 class="modal-title" id="exampleModalLabel">Demande de permission</h5>
+						      	</div>
+	        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          						<span aria-hidden="true">&times;</span>
+	        					</button>
+	      					</div>
+	      					<div class="modal-body">
+	        					<div class="card p-3" style="background: #efefff;">
+	        						<div class="row">
+	        							<div class="col-md-3">
+	        								<span class="titre">Employé : </span>
+	        							</div>
+	        							<div class="col-md-9">
+	        								<div class="form-group">
+												<i class="fa fa-search fa-fw icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+											  	<input class="form-control" type="text" id="recherche" placeholder="Recherche" style="height: 38px; font-size: 0.9em;">
+											</div>
+	        								<div class="form-group">
+	        									<i class="fa fa-user icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        								<select class="form-control font-weight-bold" name="idEmploye" id="idEmploye" required="required" data-validation-required-message="Veuillez selectionner un employé" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+		        									<option value="">Selectionnnez l'employé</option>
+		        									<?php foreach ($employes as $employe) : ?>
+		        										<option value="<?=$employe->getIdEmploye()?>"><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></option>
+		        									<?php endforeach ?>
+		        								</select>
+		        								<p class="help-block text-danger"></p>
+		        							</div>
+	        							</div>
+	        						</div>
+	        						<hr>
+	        						<div class="row">
+	        							<div class="col-md-3">
+	        								<span class="titre">Raison : </span>
+	        							</div>
+	        							<div class="col-md-9">
+	        								<div class="form-group">
+	        									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        								<select class="form-control font-weight-bold" name="idTypePermission" id="idTypePermission" required="required" data-validation-required-message="Veuillez selectionner la raison" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+		        									<option value="">Selectionnez la raison de l'absence</option>
+		        								</select>
+							        			<p class="help-block text-danger"></p>
+							        		</div>
+	        							</div>
+	        						</div>
+	        						<hr>
+	        						<div class="row">
+	        							<div class="col-md-3">
+	        								<span class="titre">Date : </span>
+	        							</div>
+	        							<div class="col-md-9">
+	        								<div class="form-group">
+	        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        								<label for="datepicker">
+								        			<input class="form-control datepicker" id="date-permission" value="" type="text" autocomplete="off" placeholder="date" style="width: 110%; height: 38px; font-size: 0.9em; font-weight: bold;">
+							        			</label>
+							        			<input type="text" class="form-control hidden" name="date" id="date" required="required" data-validation-required-message="Veuillez renseigner la date" >
+							        			<p class="help-block text-danger"></p>
+							        		</div>
+	        							</div>
+	        						</div>
+	        					</div>
+	      					</div>
+	      					<div class="modal-footer">
+	        					<div class="row" style="width: 105%!important;">
+						      		<div class="col-md-3">
+						      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+						      		</div>
+						      		<div class="col-md-5"></div>
+						      		<div class="col-md-4">
+						      			<div class="form-group"> 
+						      				<button type="submit" id="submit" class="btn btn-md btn-info">
+						      					Enregistrer
+						      				</button>
+						      			</div>
+						      		</div>
+						      	</div>
+	      					</div>
+	      				</form>
+    				</div>
+  				</div>
+			</div>
+      		<script>
+      			$('document').ready(function(){
+      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+      					$("#liste-permission").load("<?= HOST . 'manage/demandePermissions'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							periode   : $('#periode').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							type      : $('#selection-type').val()
+						}, function() {
+							$('.option-tout').removeClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').val("");
+	      					$('#filter-element').attr("disabled", true);
+						});
+      				}
+      				$('.carousel').carousel({
+							interval: false
+					});
+					$('.carousel').carousel('pause');
+      			});
+      			$('#filter-group').change(function(){
+      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+      					$("#liste-permission").load("<?= HOST . 'manage/demandePermissions'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							periode   : $('#periode').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							type      : $('#selection-type').val()
+						}, function() {
+							$('.option-tout').removeClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').val("");
+	      					$('#filter-element').attr("disabled", true);
+						});
+      				} else if ($('#filter-group').val() == FILTER_GROUP_SERVICE) {
+      					$('.option-tout').addClass('invisible');
+      					$('.option-service').removeClass('invisible');
+      					$('.option-poste').addClass('invisible');
+      					$('.option-employe').addClass('invisible');
+      					$('#filter-element').attr("disabled", false);
+      					$('#filter-element').val("");
+      				} else if ($('#filter-group').val() == FILTER_GROUP_POSTE) {
+      					$('.option-tout').addClass('invisible');
+      					$('.option-service').addClass('invisible');
+      					$('.option-poste').removeClass('invisible');
+      					$('.option-employe').addClass('invisible');
+      					$('#filter-element').attr("disabled", false);
+      					$('#filter-element').val("");
+      				} else if ($('#filter-group').val() == FILTER_GROUP_EMPLOYE) {
+      					$('.option-tout').addClass('invisible');
+      					$('.option-service').addClass('invisible');
+      					$('.option-poste').addClass('invisible');
+      					$('.option-employe').removeClass('invisible');
+      					$('#filter-element').attr("disabled", false);
+      					$('#filter-element').val("");
+      				}
+      			});
+      			$('#filter-element').change(function() {
+      				$("#liste-permission").load("<?= HOST . 'manage/demandePermissions'?>", {
+						groupe    : $('#filter-group').val(),
+						id        : $('#filter-element').val(),
+						periode   : $('#periode').val(),
+						debut     : $('#debut').val(),
+						fin       : $('#fin').val(),
+						type      : $('#selection-type').val()
+					});
+      			});
+      			$('#periode').change(function() {
+					$("#liste-permission").load("<?= HOST . 'manage/demandePermissions'?>", {
+						groupe    : $('#filter-group').val(),
+						id        : $('#filter-element').val(),
+						periode   : $('#periode').val(),
+						type      : $('#selection-type').val()
+					}, function() {
+						$("#debut").val(null);
+						$("#fin").val(null);
+						$('#selection-month').val("");
+					});
+				});
+				$('#debut').change(function() {
+					$("#liste-permission").load("<?= HOST . 'manage/demandePermissions'?>", {
+						groupe    : $('#filter-group').val(),
+						id        : $('#filter-element').val(),
+						debut     : $('#debut').val(),
+						fin       : $('#fin').val(),
+						type      : $('#selection-type').val()
+					}, function() {
+						$("#periode").val("");
+						$('#selection-month').val("");
+						$('#fin').val("");
+						var stringDate = $('#debut').datepicker('getDate');
+						var date       = new Date(stringDate.getFullYear(), stringDate.getMonth() + MAX_INTERVAL, stringDate.getDate());
+					    $('#fin').datepicker('option', 'maxDate', date);
+					});
+				});
+				$('#fin').change(function() {
+					$("#liste-permission").load("<?= HOST . 'manage/demandePermissions'?>", {
+						groupe    : $('#filter-group').val(),
+						id        : $('#filter-element').val(),
+						debut     : $('#debut').val(),
+						fin       : $('#fin').val(),
+						type      : $('#selection-type').val()
+					}, function() {
+						$("#periode").val("");
+						$('#selection-month').val("");
+						$('#fin').val("");
+					});
+				});
+				$('#selection-month').change(function() {
+					$("#liste-permission").load("<?= HOST . 'manage/demandePermissions'?>", {
+						groupe    : $('#filter-group').val(),
+						id        : $('#filter-element').val(),
+						mois      : $('#selection-month').val(),
+						type      : $('#selection-type').val()
+					}, function() {
+						$("#periode").val("");
+						$('#debut').val(null);
+						$('#fin').val(null);
+					});
+				});
+				$('#selection-type').change(function() {
+					$("#liste-permission").load("<?= HOST . 'manage/demandePermissions'?>", {
+						groupe    : $('#filter-group').val(),
+						id        : $('#filter-element').val(),
+						debut     : $('#debut').val(),
+						fin       : $('#fin').val(),
+						periode   : $('#periode').val(),
+						mois      : $('#selection-month').val(),
+						type      : $('#selection-type').val()
+					});
+				});
+				$("#submit").click(function(){
+		          	var date = $("#date-permission").val().split('/');
+		          	if (date != "") {
+		          		$("#date").val(date[2] + '-' + date[1] + '-' + date[0]);
+		          	}
+				});
+				$("#recherche").change(function() {
+					if ($("#recherche").val() != "") {
+						$('#idEmploye option').each(function(){
+						    if ($(this).text().toLowerCase().includes($("#recherche").val().toLowerCase())) {
+						    	$(this).removeClass('invisible');
+						    	$(this).attr('selected', true);
+						    } else {
+						    	$(this).attr('selected', false);
+						    	$(this).addClass('invisible');
+						    }
+						});
+						$("#idEmploye").trigger('change');
+					} else {
+						$('#idEmploye option').each(function(){
+							$(this).removeClass('invisible');
+							$(this).attr('selected', false);
+						});
+					}
+					$("#idEmploye").trigger('mousedown');
+				});
+				$("#idEmploye").change(function(){
+					$.ajax({
+							url : "<?= HOST . 'manage/permissionPossibles'?>",
+							data : "idEmploye=" + $("#idEmploye").val(),
+						dataType : "json",
+						success : function(data)
+						{
+							$('#idTypePermission').empty();
+							$('#idTypePermission').append('<option value="" selected>Selectionnez la raison de l\'absence</option>');
+							$.each(data, function(i,donnees) {
+								$.each(donnees, function(key,value) {
+								    if (key == "idTypePermission") {
+								    	optionValue = value;
+								    } else if (key == "designation") {
+								    	optionText = value;
+								    }
+								});
+								$('#idTypePermission').append('<option value="' + optionValue + '">' + optionText + '</option>');
+							}); 
+						}
+					});
+				});
+				$("#annuler").click(function(){
+					window.location.reload();
+				});
+      		</script>
+			<?php endif ?>
+	    <?php if ($user == 'employe') : ?>
+	    			</div>
+				</div>
+			</div>
+			<div class="modal fade" id="modalDemande" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  				<div class="modal-dialog modal-dialog-centered" role="document">
+    				<div class="modal-content">
+    					<form method="POST" id="form" action="<?= HOST . 'manage/save-employePermission'?>" enctype="multipart/form-data" novalidate="novalidate">
+    						<input type="hidden" name="idEmploye" value="<?=$employe->getIdEmploye();?>">
+    						<input type="hidden" name="idEntreprise" value="<?=$employe->getIdEntreprise();?>">
+	      					<div class="modal-header">
+	        					<div class="text-center" style="width: 100%;">
+						      		<h5 class="modal-title" id="exampleModalLabel">Demande de permission</h5>
+						      	</div>
+	        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          						<span aria-hidden="true">&times;</span>
+	        					</button>
+	      					</div>
+	      					<div class="modal-body">
+	        					<div class="card p-3" style="background: #fbfbfb;">
+	        						<div class="row">
+	        							<div class="col-md-3">
+	        								<span class="titre">Raison : </span>
+	        							</div>
+	        							<div class="col-md-9">
+	        								<div class="form-group">
+	        									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        								<select class="form-control font-weight-bold" name="idTypePermission" id="idTypePermission" required="required" data-validation-required-message="Veuillez selectionner la raison" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+		        									<option value="">Selectionnez la raison de votre absence</option>
+		        									<?php if($permissions) :?>
+			        									<?php foreach ($permissions as $permission) :?>
+			        										<option value="<?= $permission->getIdTypePermission(); ?>"><?= $permission->getDesignation(); ?></option>
+			        									<?php endforeach?>
+		        									<?php endif;?>
+		        								</select>
+		        								<p class="help-block text-danger"></p>
+		        							</div>
+	        							</div>
+	        						</div>
+	        						<hr>
+	        						<div class="row">
+	        							<div class="col-md-3">
+	        								<span class="titre">Date : </span>
+	        							</div>
+	        							<div class="col-md-9">
+	        								<div class="form-group">
+	        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        								<label for="datepicker">
+								        			<input class="form-control datepicker" id="date-permission" value="" type="text" autocomplete="off" placeholder="date" style="height: 38px; font-size: 0.9em; font-weight: bold;">
+							        			</label>
+							        			<input type="text" class="form-control hidden" name="date" id="date" required="required" data-validation-required-message="Veuillez renseigner la date">
+							        			<p class="help-block text-danger"></p>
+							        		</div>
+	        							</div>
+	        						</div>
+	        					</div>
+	      					</div>
+	      					<div class="modal-footer">
+	        					<div class="row" style="width: 105%!important;">
+						      		<div class="col-md-3">
+						      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+						      		</div>
+						      		<div class="col-md-6"></div>
+						      		<div class="col-md-3">
+						      			<div class="form-group"> 
+						      				<button type="submit" id="submit" class="btn btn-md btn-info">
+						      					Envoyer
+						      				</button>
+						      			</div>
+						      		</div>
+						      	</div>
+	      					</div>
+	      				</form>
+    				</div>
+  				</div>
+			</div>
+			<div class="modal fade" id="modalAttributeTask" tabindex="-1" role="dialog" aria-hidden="true">
+  				<div class="modal-dialog modal-dialog-centered" role="document">
+    				<div class="modal-content">
+    					<div class="modal-header">
+							<?php $tittleTask = isset($tacheSelectionnee) ? is_null($tacheSelectionnee->getIdTache()) ? "Nouvelle tâche à attribuer": "Modification d'une tâche" : '';?>
+					        <h5 class="modal-title text-center"><?= $tittleTask;?></h5>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          <span aria-hidden="true">&times;</span>
+					        </button>
+				      	</div>
+    					<form id="form" method="POST" action="<?= HOST. "manage/save-tache";?>" enctype="multipart/form-data" novalidate="novalidate">
+				      		<div class="modal-body">
+								<input type="hidden" name="shareTask" value="yes">
+	    						<input type="hidden" name="attributor" value="<?=$employe->getIdEmploye();?>">
+								<input type="hidden" name="date" value="<?=$date?>">
+								<input type="hidden" name="idTache" value="<?= isset($tacheSelectionnee)? $tacheSelectionnee->getIdTache() : '';?>">
+								<div class="form-group">
+									<label>Filtrer par :</label>
+									<select id="filter-group" class="select-time" style="font-size: 0.8em!important; height: 35px!important; width: 99px!important; padding-left: 0;">
+										<option value="1" selected>tout</option>
+										<option value="2">service</option>
+										<option value="3">poste</option>
+									</select>
+									<select class="select-time hidden" id='filter-element'  style="font-size: 0.8em!important; height: 35px!important; width: 223px!important; padding-left: 0;">
+										<option class="option-tout" id="o-t" value="">-- choisissez --</option>
+										<?php foreach ($filtres['services'] as $service) : ?>
+											<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+										<?php endforeach ?>
+										<?php foreach ($filtres['postes'] as $poste) : ?>
+											<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+										<?php endforeach ?>
+									</select>
+									<br>
+									<select id="multipleSelect" class="assigned" name="idEmploye" placeholder="Assignez salarié" data-search="true" data-silent-initial-value-set="false" style="margin-top: 12px;">
+									</select>
+									<input type="text" class="form-control hidden" id="choise" required="required" data-validation-required-message="Veuillez choisir au moins un salarié">
+				        			<p class="help-block text-danger"></p>
+								</div>
+								<div class="form-group">
+									<select id="groupe-task-attribute" name="taskGroup" style="font-size: 0.8em!important; height: 38px!important; text-align: left!important; border-radius: 5px!important;font-weight: bold!important;width: 202px!important;">
+										<option value="">-- sélectionnez --</option>
+									</select>
+									<p class="help-block text-danger"></p>
+								</div>
+								<div class="form-group">
+									<input type="text" class="form-control input-temps" name="titre" id="titre" placeholder="Titre" value="<?=isset($tacheSelectionnee) ? $tacheSelectionnee->getTitre() : '';?>" required="required" data-validation-required-message="Veuillez renseigner le titre" list="listTasks">
+									<p class="help-block text-danger"></p>
+								</div>
+								<div class="form-group">
+									<textarea class="form-control textarea-temps" placeholder="Description" name="description" id="description" required="required" data-validation-required-message="Veuillez décrire la tâche"><?=isset($tacheSelectionnee) ? $tacheSelectionnee->getDescription() : '';?></textarea>
+									<p class="help-block text-danger"></p>
+								</div>
+								<div class="form-group">
+									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f; margin-top: 2%;"></i>
+    								<label for="datepicker">
+					        			<input class="form-control datepicker" id="beginDate" value="" type="text" autocomplete="off" placeholder="Date debut" style="height: 35px; width: 57%; font-size: 0.9em; font-weight: bold;">
+				        			</label>
+				        			<input type="text" class="form-control hidden" name="dateDebut" id="dateDebut" required="required" data-validation-required-message="Veuillez renseigner la date">
+				        			<p class="help-block text-danger"></p>
+								</div>
+								<div class="form-group" style="margin-top: -13%; margin-left: 48%;">
+									<input type="number" name="heure" id="heure"placeholder="00 H" max="23" min="0" style=" height: 30px; width: 78px; padding-left: 5px;">
+									<input type="number" name="minute" id="minute"placeholder="00 M" max="59" min="0" style=" height: 30px; width: 80px; padding-left: 5px;">
+									<input type="number" name="second" id="second"placeholder="00 S" max="59" min="0" style=" height: 30px; width: 74px; padding-left: 5px;">
+								</div>
+								<div class="form-group">
+									<input type="number" required="required" data-validation-required-message="obligatoire" name="during" id="during"placeholder="0 durée" max="200" min="0" style=" height: 30px; width: 110px; padding-left: 5px;">
+				                  	 <p class="help-block text-danger"></p>
+								</div>
+								<!-- <div class="form-group">
+									<textarea class="form-control textarea-temps" placeholder="Définir activité" name="activities" id="activities" required="required" data-validation-required-message="*"></textarea>
+								</div> -->
+					      	</div>
+					      	<div class="modal-footer">
+								<div class="form-group text-right">
+									<button type="submit" class="btn-sm btn-info">Attribuer</button>
+								</div>
+								<div class="form-group text-left">
+					        		<button type="button" class="btn btn-danger" data-dismiss="modal">Annuler</button>
+								</div>
+					      	</div>
+						</form>
+
+    				</div>
+  				</div>
+			</div>
+			<script>
+				var listSendJs = <?= json_encode($listSendJs)?>;
+				$(window).on('load', function() {
+					startTimer('#duree-courante');
+					let identifiant = 0;
+					if ($('#pastTime').length > 0) {
+						identifiant = $('#pastTime').parent().attr('id');
+						// startTimer('#pastTime');
+					}
+					if ($('.tete-collapse').find('.fa.fa-stop').length > 0 && $('.tete-collapse').find('input[type="text"]#pastTime').length > 0) {
+						getTimer(<?=$_SESSION['user']['idCompte']?>, identifiant);
+					}
+					/* @changelog 05/09/2022 [EVOL] (Lansky) Sélestion multiple */
+					$.ajax({
+			            url : "<?= HOST . 'manage/hasSubordonne' ?>",
+			            data : "idEmploye=<?= $_SESSION['user']['idEmploye'] ?>",
+			            dataType : "text",
+			            success : function(data)
+			            {
+			                if (data == 1) {
+			                    /* @changelog 04/10/2022 [EVOL] (Lansky) Récpérer tous les collaborateurs */
+			                    $.ajax({
+			                        url : "<?= HOST . 'manage/collaborater/employePlanning'?>",
+			                        data : "groupe=1&id=",
+			                        dataType : "json",
+			                        success : function(data)
+			                        {
+			                            var myCollaborators = data;
+			                            // Arranger la liste de l'objet en ordre alphabetique 
+										function SortByName(a, b)
+										{
+										  var aName = a.nom.toLowerCase();
+										  var bName = b.nom.toLowerCase(); 
+										  return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+										}
+										myCollaborators.sort(SortByName);
+										if (myCollaborators) {
+											$.each(myCollaborators, function(index, employe) {
+												let userName = employe.nom + ' ' + employe.prenom;
+												$("#multipleSelect").append('<option value="' + employe.idEmploye + '">' + userName + '</option>');
+											});
+										}
+										VirtualSelect.init({
+										  	ele: '#multipleSelect' 
+										});
+			                        }
+			                    });
+			                } else {
+			                	$('.attribute-task').remove();
+			                }
+			            }
+			        });
+					<?php if (!empty($_SESSION['journee']['periode'])) : ?>
+						var option = "<?= $_SESSION['journee']['periode'] ?>";
+						$('#periode option[value="' + option + '"]').prop("selected", true);
+					<?php elseif (!empty($_SESSION['journee']['debut'])) : ?>
+						var date = "<?= $_SESSION['journee']['debut'] ?>";
+						$('#debut').val(date);
+						<?php if (!empty($_SESSION['journee']['fin'])) : ?>
+							var date = "<?= $_SESSION['journee']['fin'] ?>";
+							$('#fin').val(date);
+						<?php endif ?>
+					<?php endif ?>
+					$("#show-list").load("<?= HOST . 'manage/journees'?>", {
+						idEmploye : <?=$employe->getIdEmploye()?>,
+						periode   : $('#periode').val(),
+						debut     : $('#debut').val(),
+						fin       : $('#fin').val()
+					}, function() {
+						$("#temps-total").val($('#info-temps-total').val());
+					});
+					$('.attribute-task').click(function(){
+						getMissionOfUser();
+						$('#multipleSelect').on('change', function(event) {
+							event.preventDefault();
+							getMissionOfUser();
+						});
+					});
+				});
+
+				$('#periode').change(function() {
+					$("#show-list").load("<?= HOST . 'manage/journees'?>", {
+						idEmploye : <?=$employe->getIdEmploye()?>,
+						periode   : $('#periode').val()
+					}, function() {
+						$("#debut").val(null);
+						$("#fin").val(null);
+						$("#temps-total").val($('#info-temps-total').val());
+					});
+				});
+				$('#debut').change(function() {
+					$("#show-list").load("<?= HOST . 'manage/journees'?>", {
+						idEmploye : <?=$employe->getIdEmploye()?>,
+						debut   : $('#debut').val(),
+						fin     : $('#fin').val()
+					}, function() {
+						$("#periode").val("");
+						$("#temps-total").val($('#info-temps-total').val());
+						$('#fin').val("");
+						var stringDate = $('#debut').datepicker('getDate');
+						var date       = new Date(stringDate.getFullYear(), stringDate.getMonth() + MAX_INTERVAL, stringDate.getDate());
+					    $('#fin').datepicker('option', 'maxDate', date);
+					});
+				});
+				$('#fin').change(function() {
+					$("#show-list").load("<?= HOST . 'manage/journees'?>", {
+						idEmploye : <?=$employe->getIdEmploye()?>,
+						debut   : $('#debut').val(),
+						fin     : $('#fin').val()
+					}, function() {
+						$("#periode").val("");
+						$("#temps-total").val($('#info-temps-total').val());
+					});
+				});
+				$("#submit").click(function(){
+		          	var date = $("#date-permission").val().split('/');
+		          	if (date != "") {
+		          		$("#date").val(date[2] + '-' + date[1] + '-' + date[0]);
+		          	}
+				});
+				$("#btn-notification").click(function(){
+					$("#container-notification").load("<?= HOST . 'manage/notifications'?>", {
+						idEmploye : <?=$employe->getIdEmploye()?>
+					}, function() {
+						$('#icon-notification').removeClass('fa-envelope');
+						$('#icon-notification').removeClass('faa-shake');
+						$('#icon-notification').removeClass('animated');
+						$('#icon-notification').addClass('fa-envelope-open');
+					});
+				});
+				$("#annuler").click(function(){
+					window.location.reload();
+				});
+
+				function secondsToHms(d) {
+				    let negative 	= '';
+				    	d 			= Number(d);
+				    if (d < 0) {
+				    	d 			= Math.abs(d);
+				    	negative 	= '-';
+				    }
+				    var h = Math.floor(d / 3600);
+				    var m = Math.floor((d % 3600) / 60);
+				    var s = Math.floor((d % 3600) % 60);
+
+				    var hDisplay = h > 0 ? (h < 10 ? "0" + h : h) + ":": "00:";
+				    var mDisplay = m > 0 ? (m < 10 ? "0" + m : m) + ":": "00:";
+				    var sDisplay = s > 0 ? (s < 10 ? "0" + s : s) : "00";
+				    return negative + hDisplay + mDisplay + sDisplay; 
+				}
+
+				function getTimer(idUser, idTask = 0)
+				{
+					var x = setInterval(function() {
+						$.post(
+						    "<?= HOST . 'manage/setTimeWorked'?>",
+						    {
+						        idCompte 	: idUser,
+						        idTask 		: idTask
+						    },
+						    function(data) {
+						    	var estimated 		= data.estimated * 120; // Convertir heure en seconde
+						    	var workedTime 		= data.workedTime;
+						    	var reste 			= estimated - workedTime;
+						    	var cumulativeTime 	= secondsToHms(reste);
+						    	if ($('#pastTime').length > 0) {
+							    	$('#pastTime').val(cumulativeTime);
+							    	if($('#pastTime').val().indexOf('-') > -1) {
+							    		$('#pastTime').css('color', '#d32f2f');
+							    	}
+							    }
+						    },
+						    'json'
+						);
+					}, 1000);
+				}
+				tippy('.fa-file-text', {
+					content: "démarrer cette tâche"
+		  		});
+		  		tippy('.fa-stop', {
+					content: "arrêter cette tâche"
+		  		});
+		  		tippy('.fa-envelope-open', {
+					content: "voir les notifications"
+		  		});
+		  		tippy('.fa-paper-plane', {
+					content: "envoyer une demande de permission"
+		  		});
+
+		  		function startTimer(selector)
+		  		{
+		  			var start = $(selector).val();
+					/* @changelog 21/04/2022 [FIX] (Lansky) Sécuriser le code pour éviter l'apparition le message d'erreur */
+					if (start) {
+						var duration 	= start.split(":");
+						var hours 		= parseInt(duration[0], BASE_TEN);
+						var minutes 	= parseInt(duration[1], BASE_TEN);
+						var seconds 	= parseInt(duration[2], BASE_TEN);
+						var x = setInterval(function() {
+							if (seconds + 1 < SECOND_MAX) {
+								seconds++;
+							} else {
+								seconds = 0;
+								if (minutes +1 < MINUTE_MAX) {
+									minutes++;
+								} else {
+									minutes = 0;
+									hours++;
+								}
+							}
+		  					$(selector).val(('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2));
+						}, 1000);
+					}
+		  		}
+		  		$('#filter-group').change(function(){
+      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+      					$('.option-tout').removeClass('invisible');
+      					$('.option-service').addClass('invisible');
+      					$('.option-poste').addClass('invisible');
+      					$('.option-employe').addClass('invisible');
+      					$('#filter-element').val("");
+      					$('#filter-element').addClass("hidden");
+      				}
+      				else if ($('#filter-group').val() == FILTER_GROUP_SERVICE) {
+      					$('.option-tout').addClass('invisible');
+      					$('.option-service').removeClass('invisible');
+      					$('.option-poste').addClass('invisible');
+      					$('#filter-element').removeClass("hidden");
+      					$('#filter-element').val("");
+      				} else if ($('#filter-group').val() == FILTER_GROUP_POSTE) {
+      					$('.option-tout').addClass('invisible');
+      					$('.option-service').addClass('invisible');
+      					$('.option-poste').removeClass('invisible');
+      					$('#filter-element').removeClass("hidden");
+      					$('#filter-element').val("");
+      				}
+      				getMissionsUsersAjax();
+      			});
+      			$('#filter-element').change(function() {
+      				getMissionsUsersAjax();
+      			});
+      			$('#groupe-task').change(function() {
+      				$('input[type="text"]#titre').attr('list','listTasks' + $('#groupe-task').val());
+      				$(this).closest('form').find('input[name="titre"]').val('');
+      				$(this).closest('form').attr('action', new URL(window.location).origin + '/manage/save-tache');
+					$('textarea', $(this).closest('form')).val('');
+
+      			});
+      			$('#groupe-task-attribute').change(function() {
+      				$('input[type="text"]#titre').attr('list','listTasks' + $('#groupe-task-attribute').val());
+      				$(this).closest('form').find('input[name="titre"]').val('');
+      				$(this).closest('form').attr('action', new URL(window.location).origin + '/manage/save-tache');
+					$('textarea', $(this).closest('form')).val('');
+      			});
+      			$('input[name="titre"]').change(function() {
+      				let idTacheHtml = $(this).closest('form').find('input[name="idTache"]');
+  					let titre 		= $(this).val();
+  					let formHtml 	= $(this).closest('form');
+  					$(idTacheHtml).val('');
+      				$.each(listSendJs, function() {
+      					if (titre.trim().toLowerCase() === this.titre.toLowerCase()) {
+	      					$(idTacheHtml).val(this.idTache);
+	      					if ($('input[name="shareTask"]', formHtml).length <= 0) {
+      							$(formHtml).attr('action', new URL(window.location).origin + '/manage/update-tache?idTache=' + this.idTache + '&action=resume');
+	      					}
+      						$('textarea', formHtml).val(this.description);
+	      					return false;
+      					}
+      				});
+      			});
+      			function getMissionsUsersAjax()
+      			{
+      				$.ajax({
+						url : '<?= HOST . "manage/getMySubordinates" ?>',
+						data : $('#filter-group option:selected').text() + '=' + $('#filter-element').val(),
+						dataType : 'json',
+						success : function(data) {
+							$('#groupe-task-attribute').children().remove(); // Effacer toutes les missions, il faut grouper par rapport au filtre pour éviter la différentiation du poste ou du service
+							$('#multipleSelect.assigned').remove();
+							$('input#choise').attr('value',''); // Supprimer les salarié sélectionnés s'il y en a.
+							if ($('#groupe-task-attribute').children().length == 0){
+								$('#groupe-task-attribute').append('<option value="">-- sélectionnez --</option>');
+							}
+							if (data.missions.length > 0) {
+								$.each(data.missions, function() {
+									$('#groupe-task-attribute').append("<option value='" + this.idMission + "'>" + this.description + "</option>");
+								});
+							}
+							let multiple =  $('#filter-group option:selected').val() != FILTER_GROUP_ALL ? 'multiple' : '';
+							$('#choise').before('<select ' + multiple + ' id="multipleSelect" class="assigned" name="idEmploye" placeholder="Assigner salarié" data-search="true" data-silent-initial-value-set="false" style="margin-top: 12px;"></select>');
+							$.each(data.employes, function() {
+								$('#multipleSelect.assigned').append("<option value='" + this.idEmploye + "'>" + this.nom + " " + this.prenom + "</option>");
+							});
+							VirtualSelect.init({
+							  ele: '#multipleSelect.assigned' 
+							});
+						}
+					});
+      			}
+				function getMissionOfUser()
+				{
+					$.ajax({
+						url : '<?= HOST . "manage/getMySubordinates" ?>',
+						data : 'idEmploye=' + $('#multipleSelect').val(),
+						dataType : 'json',
+						success : function(data) {
+							listSendJs = [];
+							$('#groupe-task-attribute').children().remove(); // Effacer toutes les missions, il faut grouper par rapport au filtre pour éviter la différentiation du poste ou du service
+							if ($('#groupe-task-attribute').children().length == 0){
+								$('#groupe-task-attribute').append('<option value="">-- sélectionnez --</option>');
+							}
+							if (data.missions.length > 0) {
+								$.each(data.missions, function() {
+									$('#groupe-task-attribute').append("<option value='" + this.idMission + "'>" + this.description + "</option>");
+								});
+								let modalBody = $('#groupe-task-attribute').closest('.modal-body');
+								$.each(data.taskList, function(index, valTasks) {
+									$('input[name="titre"]', modalBody).after('<datalist id="listTasks' + index + '"></datalist>');
+									$.each(valTasks, function() {
+										listSendJs.push(this);
+										$('#listTasks' + index).append('<option value="' + this.titre + '">');
+									});
+								});
+							}
+						}
+					});
+				}
+			</script>
+			<script src="<?= HOST; ?>../Web/Ressources/js/plugin/virtual-select.min.js"></script>
+	    <?php elseif ($user == 'entreprise') : ?>
+	    <?php endif;?>
+	</div>
+</section>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabPointage.js"></script>
+<script>
+	$(function() {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+    });
+    $(window).on('load',function(event) {
+    	if ($('.circle-current').length > 0) {
+			// La couleur de fond change automatiquement toutes les 1 seconde
+		    function getRandomColor() {
+		      return "#" + Math.floor(Math.random() * 16777215).toString(16);
+		    }
+		    setInterval(function () {
+		      var randomColor = getRandomColor();
+		      $('.circle-current').css('background-color', randomColor);
+		    }, 1000);
+    	}
+    });
+</script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>

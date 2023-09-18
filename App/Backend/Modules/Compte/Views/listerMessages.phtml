@@ -1,0 +1,332 @@
+<?php
+	extract($data);
+?>
+<div class="">
+	<?php if (count($messages) > 0) : $getIdsArchived = ''; $getIdsRead = ''; $getIdsRestaure = ''; ?>
+		<div class="card m-2 p-2 card-border-bleu" id="objectsGrid" style="background: #c4c9cd; z-index: 1; top: 0em; position: sticky;">
+  			<label class="control checkbox" for="multi-select__select-all">
+              <input id="multi-select__select-all" type="checkbox">
+              <span class="control-indicator"></span>
+              <a href="<?= HOST . 'manage/archiver-message?idMessage='?>" class="btn btn-sm btn-danger archive disabled">Archiver</a>
+              <a href="<?= HOST . 'manage/marquer-message?idMessage=' ?>" class="btn btn-sm btn-info read disabled">Comme Lu</a>
+			  <a class="btn btn-sm btn-success restaure disabled" href="<?= HOST . 'manage/restaurer-message?idMessage='?>" >restaurer</a>
+            </label>
+		</div>
+		<?php foreach ($messages as $message) : ?>
+			<?php if ($message->getStatut() == ManagerModuleCompte::NEW_MESSAGE) : $mesStatus = 'mess-read';?>
+				<div class="card m-2 p-2 card-border-green">
+			<?php elseif ($message->getStatut() == managerModuleCompte::SEEN_MESSAGE) : $mesStatus = 'mess-archive';?>
+				<div class="card m-2 p-2 card-border-blue">
+			<?php elseif ($message->getStatut() == ManagerModuleCompte::ARCHIVED_MESSAGE) : $mesStatus = 'mess-restaure';?>
+				<div class="card m-2 p-2 card-border-red">
+			<?php endif?>
+				<div class="row">
+					<div class="col-md-1 text-center">
+						<label class="control checkbox <?=$mesStatus?>" for="<?=$message->getIdMessage()?>">
+							<?php if ($message->getStatut() == ManagerModuleCompte::NEW_MESSAGE) :
+								$getIdsRead .= ',' . $message->getIdMessage();
+							?>
+				              	<input id="<?=$message->getIdMessage()?>" type="checkbox" value="<?=$message->getIdMessage()?>" onclick="checkboxChange(<?=$message->getIdMessage()?>, true)">
+			              		<span class="control-indicator"></span>
+								<i class="fa fa-envelope faa-shake animated" style="color: #00c853;" aria-hidden="true"></i>
+							<?php elseif ($message->getStatut() == managerModuleCompte::SEEN_MESSAGE) :
+								$getIdsArchived.= ',' . $message->getIdMessage();
+							?>
+				              	<input id="<?=$message->getIdMessage()?>" type="checkbox" value="<?=$message->getIdMessage()?>" onclick="checkboxChange(<?=$message->getIdMessage()?>, true)">
+			              		<span class="control-indicator"></span>
+								<i class="fa fa-envelope-open" style="color: #1976d2;" aria-hidden="true"></i>
+							<?php elseif ($message->getStatut() == ManagerModuleCompte::ARCHIVED_MESSAGE) :
+								$getIdsRestaure .= ',' . $message->getIdMessage();
+							?>
+				              	<input id="<?=$message->getIdMessage()?>" type="checkbox" value="<?=$message->getIdMessage()?>" onclick="checkboxChange(<?=$message->getIdMessage()?>, true)">
+			              		<span class="control-indicator"></span>
+								<i class="fa fa-archive" style="color: #d32f2f;" aria-hidden="true"></i>
+							<?php endif; ?>
+			            </label>
+					</div>
+					<div class="col-md-2">
+						<?php $date = explode("-", $message->getDate()) ?>
+						<span class="titre"><?=$date[2] . '/' . $date[1] . '/' . $date[0]?></span>
+					</div>
+					<div class="col-md-6">
+						<?php if ($message->getStatut() == ManagerModuleCompte::NEW_MESSAGE) :?>
+							<span class="text-important"><?=$message->getObjet()?></span><span class="text-success titre"> (Nouveau)</span>
+						<?php else :?>
+							<span class="text-important"><?=$message->getObjet()?></span>
+						<?php endif; ?>
+					</div>
+					<div class="col-md-3 text-right">
+						<?php if ($message->getStatut() == managerModuleCompte::SEEN_MESSAGE) : ?>
+							<a class="btn btn-sm btn-danger" href="<?= HOST . 'manage/archiver-message?idMessage=' . $message->getIdMessage() ?>" >archiver</a>
+						<?php elseif ($message->getStatut() == managerModuleCompte::ARCHIVED_MESSAGE) : ?>
+							<a class="btn btn-sm btn-success" href="<?= HOST . 'manage/restaurer-message?idMessage=' . $message->getIdMessage() ?>" >restaurer</a>
+						<?php elseif ($message->getStatut() == managerModuleCompte::NEW_MESSAGE) : ?>
+							<a class="btn btn-sm btn-danger disabled" >archiver</a>
+						<?php endif; ?>
+						<button class="btn btn-sm btn-info" id="voir-<?= $message->getIdMessage() ?>" data-toggle="modal" data-target="#modalMessage<?=$message->getIdMessage()?>">voir</button>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="modalMessage<?=$message->getIdMessage()?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  				<div class="modal-dialog modal-dialog-centered" role="document">
+    				<div class="modal-content">
+      					<div class="modal-header">
+        					<div class="text-center" style="width: 100%;">
+					      		<h5 class="modal-title" id="exampleModalLabel">Les détails du message</h5>
+					      	</div>
+        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          						<span aria-hidden="true">&times;</span>
+        					</button>
+      					</div>
+      					<div class="modal-body">
+        					<div class="card p-3" style="background: #efefff;">
+        						<div class="card m-1 p-2 titre text-center">
+        							<?= $message->getObjet(); ?>
+        						</div>
+        						<div class="card m-1 p-2 text-justify">
+        							<?= $message->getContenu(); ?>
+        						</div>
+        					</div>
+      					</div>
+      					<div class="modal-footer">
+        					<div class="text-right" style="width: 105%!important;">
+        						<?php if ($message->getStatut() != managerModuleCompte::ARCHIVED_MESSAGE) : ?>
+					      			<a href="<?= HOST . 'manage/archiver-message?idMessage=' . $message->getIdMessage()?>" class="btn btn-sm btn-danger">Archiver</a>
+					      		<?php else : ?>
+					      			<a href="<?= HOST . 'manage/restaurer-message?idMessage=' . $message->getIdMessage()?>" class="btn btn-sm btn-success">Restaurer</a>
+					      		<?php endif ?>
+					      		<?php if ($message->getStatut() == managerModuleCompte::NEW_MESSAGE) : ?>
+					      			<a href="<?= HOST . 'manage/marquer-message?idMessage=' . $message->getIdMessage()?>" class="btn btn-sm btn-success">Marquer comme lu</a>
+					      		<?php else : ?>
+					      			<a class="btn btn-sm btn-success disabled">Marquer comme lu</a>
+					      		<?php endif ?>
+					      	</div>
+      					</div>
+    				</div>
+  				</div>
+  			</div>
+  			<?php if ($message->getAFaire() == ManagerModuleCompte::NO) : ?>
+	  			<script>
+	  				$('#voir-<?= $message->getIdMessage() ?>').click(function(){
+	  					$.ajax({
+	  						url : "<?= HOST . 'manage/marquer-message' ?>",
+	  						data : "idMessage=<?= $message->getIdMessage() ?>",
+	  					});
+	  				});
+	  				$("#modalMessage<?=$message->getIdMessage()?>").on('hidden.bs.modal', function(){
+					    $("#liste-message").load("<?= HOST . 'manage/messages'?>", {
+	  						periode   : $('#periode').val(),
+	  						mois      : $('#mois').val(),
+							debut     : $('#debut').val(),
+							fin       : $('#fin').val(),
+							type      : $('#selection-type').val()
+						});
+					});
+	  			</script>
+	  		<?php endif ?>
+		<?php endforeach ?>
+		<script type="text/javascript">
+			var hrefAttribute 	=  $('#multi-select__select-all').parent().find('a').attr('href') + '<?php if (isset($getIdsArchived)): echo $getIdsArchived; endif; ?>';
+			var idModules 		= "idMessage=";
+			var getIdsRead 		= '<?= $getIdsRead?>';
+			var getIdsArchived 	= '<?= $getIdsArchived?>';
+			var getIdsRestaure 	= '<?= $getIdsRestaure?>';
+		</script>
+		<script src="<?= HOST; ?>../Web/Ressources/js/findListSelected.js"></script>
+		<style type="text/css">
+			/* self-check: Have I used https://codeguide.co/#css-declaration-order ? */
+			:root {
+			  /* greys */
+			  --color-White: hsl(0, 0%, 100%); /* #ffffff */
+			  --color-Alabaster: hsl(0, 0%, 99%); /* #fcfcfc */
+			  --color-Concrete: hsl(0, 0%, 95%); /* #f2f2f2 */
+			  --color-Mercury: hsl(0, 0%, 90%); /* #E6E6E6 */
+			  --color-Alto: hsl(0, 0%, 85%); /* D9D9D9 */
+			  --color-DoveGray: hsl(0, 0%, 40%); /* #666666 */
+			  --color-CodGray: hsl(0, 0%, 5%); /* #0D0D0D */
+			  --color-Black: hsl(0, 0%, 0%); /* #000000 */
+			  /* background colours for default table row striping */
+			  --color-rows-odd: var(--color-Alabaster);
+			  --color-rows-even: var(--color-Concrete);
+			  --color-rows-odd-selected: var(--color-Mercury);
+			  --color-rows-even-selected: var(--color-Alto);
+			  /* UI state background-color adoptions from Windows Explorer from the tree pane */
+			  --color-hover: #e5f3ff;
+			  --color-selected: #cde8ff;
+			  /* functional colours */
+			  --color-success: #00703c;
+			  --color-danger: #b00020;
+			  --color-warning: #ffdd00;
+			  --color-info: #18a2b8;
+			  /* Note that Windows Explorer also has an additional style for hovering a select item, adding an internal 1px solid border of #99D1FF; */
+			  --border-selected-hover: solid #99d1ff;
+			  --border-thin: 1px;
+			  --border-medium: 2px;
+			}
+			*,
+			*:before,
+			*:after {
+			  box-sizing: inherit;
+			  margin: 0;
+			  padding: 0;
+			}
+			body {
+			  text-rendering: optimizelegibility;
+			  -webkit-font-smoothing: subpixel-antialiased;
+			  background-color: var(--color-White);
+			  color: var(--color-Black);
+			  line-height: 1.4;
+			  padding: 0 0 0 0vw;
+			}
+			/* Use smooth scrolling where supported
+			   https://caniuse.com/css-scroll-behavior
+			*/
+			html {
+			  scroll-behavior: smooth;
+			}
+			/* Typography */
+			html {
+			  box-sizing: border-box;
+			  font-family: "Inter", sans-serif;
+			}
+			@supports (font-variation-settings: normal) {
+			  html {
+			    font-family: "Inter var", sans-serif;
+			  }
+			}
+			#detailedViewContextualTabs {
+			  border-bottom: 1px solid var(--color-Mercury, currentcolor);
+			}
+			#appBar {
+			  color: var(--color-White);
+			  background-color: var(--color-brand-blue);
+			  padding: 1em 0.5em;
+			  display: flex;
+			  justify-content: space-between;
+			}
+			.iconButtonGroup {
+			  padding: 0.75rem 0;
+			}
+			[class*="svg-inline"] {
+			  margin-right: 0.3em;
+			}
+			h3 {
+			  font-size: 1.75rem;
+			}
+			/* Form controls */
+			select[id] {
+			  font-size: calc(1 * (1em + 0.5vw));
+			}
+			/* http://wtfforms.com/ */
+			.select {
+			  position: relative;
+			  display: inline-block;
+			  color: #555;
+			}
+			.select select {
+			  display: inline-block;
+			  width: 100%;
+			  margin: 0;
+			  padding: 0.5rem 2.25rem 0.5rem 1rem;
+			  line-height: 1.5;
+			  color: #555;
+			  background-color: #eee;
+			  border: 0;
+			  border-radius: 0.25rem;
+			  cursor: pointer;
+			  outline: 0;
+			  -webkit-appearance: none;
+			  -moz-appearance: none;
+			  appearance: none;
+			}
+			.select:after {
+			  position: absolute;
+			  top: 50%;
+			  right: 1rem;
+			  display: inline-block;
+			  content: "";
+			  width: 0;
+			  height: 0;
+			  margin-top: -0.15rem;
+			  pointer-events: none;
+			  border-top: 0.35rem solid;
+			  border-right: 0.35rem solid transparent;
+			  border-bottom: 0.35rem solid transparent;
+			  border-left: 0.35rem solid transparent;
+			}
+			.select select:focus {
+			  box-shadow: 0 0 0 0.075rem #fff, 0 0 0 0.2rem #0074d9;
+			}
+			.select select:active {
+			  color: #fff;
+			  background-color: #0074d9;
+			}
+			/* checkboxes / radios */
+			.control {
+			  position: relative;
+			  padding-left: calc(2rem + 0.5vw);
+			  display: inline-block;
+			  cursor: pointer;
+			}
+			.control input {
+			  position: absolute;
+			  opacity: 0;
+			  z-index: -1;
+			}
+			.control-indicator {
+			  position: absolute;
+			  top: 0.25rem;
+			  left: 0;
+			  display: block;
+			  width: 1.5rem;
+			  height: 1.5rem;
+			  line-height: 1rem;
+			  font-size: 65%;
+			  color: #eee;
+			  text-align: center;
+			  background-color: #eee;
+			  background-size: 50% 50%;
+			  background-position: center center;
+			  background-repeat: no-repeat;
+			  pointer-events: none;
+			  -webkit-user-select: none;
+			  -moz-user-select: none;
+			  -ms-user-select: none;
+			  user-select: none;
+			  /* give a default state box-shadow to indicate the edges */
+			  box-shadow: 0 0 0 0.075rem #fff, 0 0 0 0.2rem hsla(0, 0%, 55%, 0.25);
+			}
+			.control input:checked ~ .control-indicator {
+			  color: #fff;
+			  background-color: #0074d9;
+			}
+			.control input:active ~ .control-indicator {
+			  color: #fff;
+			  background-color: #84c6ff;
+			}
+			.control input:focus ~ .control-indicator {
+			  box-shadow: 0 0 0 0.075rem #fff, 0 0 0 0.2rem #0074d9;
+			}
+			.checkbox .control-indicator {
+			  border-radius: 0.25rem;
+			}
+			.checkbox input:checked ~ .control-indicator {
+			  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNy4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgOCA4IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA4IDgiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTYuNCwxTDUuNywxLjdMMi45LDQuNUwyLjEsMy43TDEuNCwzTDAsNC40bDAuNywwLjdsMS41LDEuNWwwLjcsMC43bDAuNy0wLjdsMy41LTMuNWwwLjctMC43TDYuNCwxTDYuNCwxeiINCgkvPg0KPC9zdmc+DQo=);
+			}
+			.visually-hidden {
+			  position: absolute !important;
+			  clip: rect(1px, 1px, 1px, 1px) !important;
+			  padding: 0 !important;
+			  border: 0 !important;
+			  height: 1px !important;
+			  width: 1px !important;
+			  overflow: hidden !important;
+			}
+		</style>
+	<?php else : ?>
+		<div class="card m-2 p-2 text-center">
+			<span>Vous n'avez aucun message à afficher</span>
+		</div>
+	<?php endif?>
+</div>
+

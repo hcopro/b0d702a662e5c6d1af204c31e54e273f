@@ -1,0 +1,503 @@
+<?php
+	$user = null;
+	if (!empty($_SESSION['compte']['identifiant'])) {
+		$user = $_SESSION['compte']['identifiant'];
+		extract($data);
+	}
+?>
+<div>
+	<?php if ($user != null) :?>
+		<input type="hidden" id="info-temps-total" value="<?=$infoTempsTotal['hour'] . 'h ' . $infoTempsTotal['minute'] . 'min' ?>">
+		<?php foreach ($data as $dataJournee) : ?>
+			<?php if ($dataJournee['info']['isFerie'] == true) : ?>
+				<div class="card card-journee card-blue">
+			<?php elseif ($dataJournee['info']['isWeekend'] == true) : ?>
+				<div class="card card-journee card-grey">
+			<?php elseif ($dataJournee['info']['enPermission'] == true) :?>
+				<div class="card card-journee card-yellow">
+			<?php elseif ($dataJournee['info']['auRepos'] == true) :?>
+				<div class="card card-journee card-pink">
+			<?php elseif ($dataJournee['info']['enConge'] == true) :?>
+				<?php if ($dataJournee['info']['enConge']->getBeginto() > 0) :
+					$class = '';
+					$direction = $dataJournee['info']['enConge']->getBeginto() > 12 ? 'right' : 'left';
+					$style = 'style="background: linear-gradient(to ' . $direction . ', #00c853, #1976d2);"';
+				else :
+					$class = 'card-cyan';
+					$style = '';
+				endif; 
+				?>
+				<div class="card card-journee <?= $class?>" <?= $style?>>
+			<?php else : ?>
+				<?php if($dataJournee['presence'] != null) : $presence = $dataJournee['presence']; ?>
+					<?php if ($presence['statut'] == ManagerModulePresence::PRESENT_YES) :?>
+						<div class="card card-journee card-green">
+					<?php elseif ($presence['statut'] == ManagerModulePresence::PRESENT_NO) : ?>
+						<div class="card card-journee card-red">
+					<?php endif ?>
+				<?php else : 
+					$cardJournee = $dataJournee['info']['id'] <= date('Y-m-d') ? "card-journee card-red" : "card-light-grey card-journee";
+				?>
+					<div class="card <?= $cardJournee?>">
+				<?php endif ?>
+			<?php endif ?>
+				<div class="row my-auto">
+					<div class="col-md-4 my-auto">
+						<?= $dataJournee['info']['jour'] . " " . $dataJournee['info']['date'] ; ?>
+					</div>
+					<div class="col-md-3 my-auto">
+						<?php if ($dataJournee['info']['isFerie'] == true) : ?>
+							<p class="m-0"> <?= $dataJournee['jourFerie']->getDesignation(); ?> </p>
+						<?php elseif ($dataJournee['info']['isWeekend'] == true) : ?>
+							<p class="m-0">Weekend</p>
+						<?php elseif ($dataJournee['info']['enPermission'] == true) :?>
+							<p class="m-0">Permis(e) de s'absenter</p>
+						<?php elseif ($dataJournee['info']['auRepos'] == true) :?>
+							<p class="m-0">Repos médical</p>
+						<?php elseif ($dataJournee['info']['enConge'] == true) : ?>
+							<p class="m-0">
+								congé <?= $dataJournee['info']['enConge']->getBeginto() > 0 ? 'en mi-temps [À partir de '
+								. $dataJournee['info']['enConge']->getBeginto().'H ]' : '' ; ?>
+							</p>
+						<?php else : ?>
+							<?php if($dataJournee['presence'] != null) : $presence = $dataJournee['presence']; ?>
+								<?php if ($presence['statut'] == ManagerModulePresence::PRESENT_YES) :?>
+									<p class="m-0">Présent</p>
+								<?php elseif ($presence['statut'] == ManagerModulePresence::PRESENT_NO) : ?>
+									<p class="m-0">Absent</p>
+								<?php endif ?>
+							<?php else :
+								$txt = $dataJournee['info']['id'] <= date('Y-m-d') ? "Absent" : "Jour ouvrable ";
+							?>
+								<p class="m-0"> <?= $txt ?> </p>
+							<?php endif ?>
+						<?php endif ?>
+					</div>
+					<div class="col-md-4 my-auto">
+						<p class="m-0"> temps effectué : 
+							<?php if($dataJournee['presence'] != null) : $presence = $dataJournee['presence']; ?>
+								<?php if ($presence['statut'] == ManagerModulePresence::PRESENT_YES) :?>
+									<?php $temps = $dataJournee['info']['temps']; ?>
+									<span class="text-important"> <?=$temps['hour'] . 'h ' . $temps['minute'] . 'min' ;?></span>
+								<?php elseif ($presence['statut'] == ManagerModulePresence::PRESENT_NO) : ?>
+									<?php if ($dataJournee['info']['isFerie'] == true) : ?>
+										N/A
+									<?php elseif ($dataJournee['info']['isWeekend'] == true) : ?>
+										N/A
+									<?php elseif ($dataJournee['info']['enPermission'] == true) :?>
+										N/A
+									<?php elseif ($dataJournee['info']['auRepos'] == true) :?>
+										N/A
+									<?php elseif ($dataJournee['info']['enConge'] == true) :?>
+										N/A
+									<?php else : ?>
+										<?php $temps = $dataJournee['info']['temps']; ?>
+										<span class="text-important"> <?=$temps['hour'] . 'h ' . $temps['minute'] . 'min' ;?></span>
+									<?php endif ?>
+								<?php endif ?>
+							<?php else : echo $dataJournee['info']['id'] <= date('Y-m-d') ? "0h 0min" : "N/A"; ?>
+							<?php endif ?>
+						</p>
+					</div>
+					<div class="col-md-1 my-auto">
+						<a data-toggle="collapse" href="#collapse<?=$dataJournee['info']['id']?>" role="button" aria-expanded="false" aria-controls="collapse<?=$dataJournee['info']['id']?>">
+							<i class="fa fa-sort-down fa-2x " id="down<?=$dataJournee['info']['id']?>" style="color : #ffffff; margin-top: -5px;"></i>
+							<i class="fa fa-sort-up fa-2x invisible" id="up<?=$dataJournee['info']['id']?>" style="color : #ffffff; margin-top: 5px;"></i>
+						</a>
+						<script>
+							$("#up<?=$dataJournee['info']['id']?>").click(function(){
+								$("#up<?=$dataJournee['info']['id']?>").addClass("invisible");
+								$("#down<?=$dataJournee['info']['id']?>").removeClass("invisible");
+							});
+							$("#down<?=$dataJournee['info']['id']?>").click(function(){
+								$("#down<?=$dataJournee['info']['id']?>").addClass("invisible");
+								$("#up<?=$dataJournee['info']['id']?>").removeClass("invisible");
+							});
+						</script>
+					</div>	
+				</div>
+				<div class="collapse" id="collapse<?=$dataJournee['info']['id']?>">
+					<div class="card card-body" style="color: #3b4e61;">
+						<?php if($dataJournee['presence'] != null || $dataJournee['info']['id'] <= date('Y-m-d')) :
+							$presence = $dataJournee['presence']; 
+							if (is_null($presence)) :
+								$presence['idEmploye'] = $dataJournee['info']['employe']->getIdEmploye();
+								$presence['date'] = $dataJournee['info']['id'];
+								$presence['pointages'] = array();
+								$presence['statut'] = ManagerModulePresence::PRESENT_NO;
+							endif;?>
+							<?php if ($presence['statut'] == ManagerModulePresence::PRESENT_YES) : ?>
+			  					<div style="overflow: auto; white-space: nowrap; margin: -20px!important;">
+			  						<?php foreach ($presence['pointages'] as $pointage) :?>
+			  							<div class="card p-3 m-1 container-pointage">
+			  								<div class="row">
+			  									<div class="col-md-3 text-center">
+			  										<a href="<?= HOST . 'manage/update-tache?idTache=' . $pointage['tache']['idTache']?>" class="btn btn-yellow btn-circle" style="margin-top: -15px!important;">
+														<i class="fa fa-edit"  aria-hidden="true"></i>
+													</a>
+			  									</div>
+			  									<div class="col-md-6 text-center" style="margin-top: -8px;">
+			  										<div class="row">
+			  											<div class="col-md-5 text-left">
+			  												<span class="text-important"><?= date("H:i", strtotime($pointage['debut']))?></span>
+			  											</div>
+			  											<div class="col-md-2 text-center">
+			  												à
+			  											</div>
+			  											<div class="col-md-5 text-right">
+		 													<span class="text-important"><?= date("H:i", strtotime($pointage['fin']))?></span>
+		 												</div>
+		  											</div>
+			  									</div>
+												<div class="col-md-3 text-center">
+		  											<?php if ($_SESSION['tacheCourante'] == null) :?> 
+			  											<a href="<?= HOST . 'manage/update-tache?idTache=' . $pointage['tache']['idTache'] . '&action=resume'?>" class="btn btn-green btn-circle" style="margin-top: -15px!important;">
+															<i class="fa fa-play"  aria-hidden="true"></i>
+														</a>
+													<?php else:?>
+														<a class="btn btn-green btn-circle disabled" style="margin-top: -15px!important;">
+															<i class="fa fa-play"  aria-hidden="true"></i>
+														</a>
+													<?php endif?>
+		  										</div>
+			  								</div>
+			  								<div class="text-center card m-1 p-1">
+			  									<span class="titre"><?= $pointage['tache']['titre']?></span>
+			  								</div>
+			  								<div class="card m-1 p-1" style="overflow: visible; white-space: normal; min-height: 100px;">
+			  									<p><?= $pointage['tache']['description']?></p>
+			  								</div>
+			  							</div>
+			  						<?php endforeach ?>
+								</div>
+		    				<?php elseif ($presence['statut'] == ManagerModulePresence::PRESENT_NO) : $employe = $dataJournee['info']['employe']; ?>
+								<?php if(!$dataJournee['info']['enPermission'] && !$dataJournee['info']['isWeekend'] && !$dataJournee['info']['isFerie'] && !$dataJournee['info']['auRepos'] && !$dataJournee['info']['enConge']) :?>
+									<div style="overflow: auto; white-space: nowrap; margin: -20px!important;">
+										<div class="card p-3 m-1 container-absence">
+											<div class="text-center card m-1 p-1">
+			  									<span class="titre">Règler par permission</span>
+			  								</div>
+			  								<div class="card m-1 p-1" style="overflow: visible; white-space: normal; min-height: 180px;">
+			  									<?php if (!$dataJournee['info']['demandePermission']) : ?>
+				  									<form method="POST" id="form" action="<?= HOST . 'manage/save-employePermission'?>" enctype="multipart/form-data" novalidate="novalidate">
+				  										<input type="hidden" name="idEmploye" value="<?=$employe->getIdEmploye();?>">
+	    												<input type="hidden" name="idEntreprise" value="<?=$employe->getIdEntreprise();?>">
+	    												<input type="hidden" name="date" value="<?=$presence['date']?>">
+	    												<input type="hidden" name="settled" value="YES">
+	    												<div class="row">
+					        								<div class="col-md-2">
+					        									<label class="titre">raison</label>
+					        								</div>
+					        								<div class="col-md-10">
+							  									<div class="form-group">
+						        									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+							        								<select class="form-control font-weight-bold" name="idTypePermission" id="idTypePermission" required="required" data-validation-required-message="Veuillez selectionner la raison" style="width: 100%; max-width: 100%; font-size: 0.8em!important; background: #f7f8fb;">
+							        									<option value="">Selectionnez la raison de votre absence</option>
+							        									<?php $permissions = $dataJournee['info']['permissions']; foreach ($permissions as $permission) :?>
+							        										<option value="<?= $permission->getIdTypePermission(); ?>"><?= $permission->getDesignation(); ?></option>
+							        									<?php endforeach?>
+							        								</select>
+							        								<p class="help-block text-danger"></p>
+							        							</div>
+							        						</div>
+							        					</div>
+							        					<div class="row" style="height: 55px;"></div>
+										        		<div class="form-group text-right" style="width: 98%;">
+										        			<button type="submit" id="submit" class="btn btn-info btn-sm">Envoyer</button>
+										        		</div>
+										        	</form>
+										        <?php else : ?>
+										        	<p>Vous avez déjà envoyé une demande.</p>
+										        	<p>Veuillez attendre le retour des responsables ou vous pouvez également annuler la demande si cela est nécessaire.</p>
+										        	<a class="btn btn-sm btn-danger" href="<?= HOST . 'manage/delete-demandePermission?idEmployePermission=' . $dataJournee['info']['demandePermission']->getIdEmployePermission() ?>">Annuler la demande</a>
+										    	<?php endif ?>
+			  								</div>
+										</div>
+										<div class="card p-3 m-1 container-absence">
+											<div class="text-center card m-1 p-1">
+			  									<span class="titre">Règler par repos médical</span>
+			  								</div>
+			  								<div class="card m-1 p-1" style="overflow: visible; white-space: normal; min-height: 180px;">
+			  									<?php if (!$dataJournee['info']['demandeRepos']) : ?>
+				  									<form method="POST" id="form" action="<?= HOST . 'manage/save-employeRepos'?>" enctype="multipart/form-data" novalidate="novalidate">
+				  										<input type="hidden" name="idEmploye" value="<?=$employe->getIdEmploye();?>">
+	    												<input type="hidden" name="date" value="<?=$presence['date']?>">
+	    												<input type="hidden" name="settled" value="YES">
+					  									<div class="row">
+						        							<div class="col-md-2">
+						        								<label class="titre">raison</label>
+						        							</div>
+						        							<div class="col-md-10">
+						        								<div class="form-group">
+						        									<i class="fa fa-medkit icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+							        								<input type="text" class="form-control font-weight-bold" name="raison" id="raison" required="required" data-validation-required-message="Veuillez renseigner la raison" style="width: 100%; max-width: 100%; font-size: 0.8em!important; background: #f7f8fb;" placeholder="renseigner la maladie">
+							        								<p class="help-block text-danger"></p>
+							        							</div>
+						        							</div>
+						        						</div>
+						        						<div class="row">
+						        							<div class="col-md-2">
+						        								<label class="titre">durée</label>
+						        							</div>
+						        							<div class="col-md-10">
+						        								<div class="form-group">
+						        									<i class="fa fa-hourglass-end icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+												        			<input type="number" class="form-control" name="duree" id="duree" required="required" data-validation-required-message="Veuillez renseigner la durée" placeholder="durée en jour" style="height: 38px; font-size: 0.9em; font-weight: bold; background: #f7f8fb;" max="<?=$dataJournee['info']['nombreRepos']?>" >
+												        			<p class="help-block text-danger"></p>
+												        		</div>
+						        							</div>
+						        						</div>
+						        						<div class="row row-image" style="margin-bottom: -10px; padding-left: 2px; position: relative;">
+													        <div class="form-group" style="padding-left: 6px; position: absolute; margin-left: 6px;">
+													        	<button class="btn btn-primary" onclick="$('#justify<?=$dataJournee['info']['id']?>').click(); return false;" style="font-size: 14px;">Télécharger l'ordonance</button>
+													      		<input class="form-control hidden" id="justify<?=$dataJournee['info']['id']?>" name="justify" type="file" accept="image/*" value="">
+													        </div>
+															<img class="img-fluid rounded-circle" id="image" style="height: 80px!important; width: 80px!important;margin-left: 267px; margin-top: -13px;" src="<?= HOST ."../Web/Ressources/images/ordonances/ordonance.jpg"?>
+															">
+														</div>
+						        						<div class="form-group text-right" style="width: 98%; margin-top: 20px;">
+										        			<button type="submit" id="submit-repos" class="btn btn-info btn-sm">Envoyer</button>
+										        		</div>
+					        						</form>
+					        					<?php else : ?>
+										        	<p>Vous avez déjà envoyé une demande.</p>
+										        	<p>Veuillez attendre le retour des responsables ou vous pouvez également annuler la demande si cela est nécessaire.</p>
+										        	<a class="btn btn-sm btn-danger" href="<?= HOST . 'manage/delete-demandeRepos?idEmployeRepos=' . $dataJournee['info']['demandeRepos']->getIdEmployeRepos() ?>">Annuler la demande</a>
+										    	<?php endif ?>
+			  								</div>
+										</div>
+										<div class="card p-3 m-1 container-absence">
+											<div class="text-center card m-1 p-1">
+			  									<span class="titre">Règler par congé</span>
+			  								</div>
+			  								<div class="card m-1 p-1" style="overflow: visible; white-space: normal; min-height: 180px;">
+			  									<?php if (!$dataJournee['info']['demandeRepos']) : ?>
+				  									<form method="POST" id="form" action="<?= HOST . 'manage/save-employeConge'?>" enctype="multipart/form-data" novalidate="novalidate">
+				  										<input type="hidden" name="idEmploye" value="<?=$employe->getIdEmploye();?>">
+	    												<input type="hidden" name="date" value="<?= implode("/", array_reverse(explode('-', $presence['date']), true))?>" class="form-control datepicker" id="datepicker-debut" type="text" autocomplete="off">
+						        						<div class="row">
+						        							<div class="col-md-3">
+						        								<label class="titre">Debut</label>
+						        							</div>
+						        							<div class="col-md-8">
+						        								<div class="form-group">
+						        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+												        			<input type="text" class="form-control datepicker-debut" id="datepicker-debut<?=$dataJournee['info']['id']?>" placeholder="<?= implode("/", array_reverse(explode('-', $presence['date']), true))?>" style="height: 38px; font-size: 0.9em; font-weight: bold; background: #f7f8fb;" readonly>
+												        		</div>
+						        							</div>
+						        						</div>
+						        						<div class="row" id="choise-mode" style="margin-left: 27px;">
+							        						<div class="form-group" style="margin-left: 20%; margin-bottom: 1%;">
+															  	<input class="form-group-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+															  	<label class="form-group-label" for="flexRadioDefault1">
+															    	Congé mi-temps (en heure)
+															  	</label>
+															</div>
+															<div class="form-group" style="margin-left: 20%;">
+															  	<input class="form-group-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+															  	<label class="form-group-label" for="flexRadioDefault2">
+															    	Congé par jour
+															  	</label>
+															</div>
+							        					</div>
+						        						<div class="row hidden" id="full-time">
+						        							<div class="col-md-3">
+						        								<label class="titre">Jusqu'au</label>
+						        							</div>
+						        							<div class="col-md-8">
+						        								<div class="form-group">
+						        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+							        								<label for="datepicker">
+													        			<input class="form-control datepicker datepicker-fin" name="fin" id="datepicker-fin<?=$dataJournee['info']['id']?>" value="" type="text" autocomplete="off" placeholder="date de la fin du congé" style="width: 110%; height: 38px; font-size: 0.9em; font-weight: bold; background: #f7f8fb" required="required" data-validation-required-message="Veuillez renseigner la date de fin">
+												                  		<p class="help-block text-danger"></p>
+												        			</label>
+												                </div>
+						        							</div>
+						        						</div>
+						        						<div class="row hidden" id="partial-time" style="margin-left: 0px!important;">
+							        						<div class="row">
+							        							<div class="col-md-6">
+							        								<label class="titre">À partir de</label>
+							        							</div>
+							        							<div class="col-md-6" style="margin-left: -21px;">
+							        								<div class="form-group">
+							        									<input type="number" required="required" data-validation-required-message="obligatoire" name="beginto" id="beginto" placeholder="0 heure" max="24" min="0" style=" height: 40px; width: 113px; padding-left: 9px;">
+													                  	 <p class="help-block text-danger"></p>
+													                </div>
+							        							</div>
+							        						</div>
+							        						<div class="row">
+							        							<div class="col-md-6">
+							        								<label class="titre">Durée</label>
+							        							</div>
+						        								<div class="col-md-6" style="margin-left: -9px;">
+							        								<div class="form-group">
+							        									<input type="number" required="required" data-validation-required-message="obligatoire" name="during" id="during"placeholder="0 heure" max="8" min="0" style=" height: 40px; width: 113px; padding-left: 9px;">
+													                  	 <p class="help-block text-danger"></p>
+													                </div>
+							        							</div>
+							        						</div>
+						        						</div>
+						        						<div class="row">
+						        							<div class="form-group text-right hidden">
+											        			<button id="retour" class="btn btn-danger" style="height: 81%;/* width: 109%; */padding: 15%;padding-top: 2%;margin-left: 40%;">Retour</button>
+											        		</div>
+											        		<div class="form-group text-right">
+										        				<button type="submit" id="submit-repos" class="btn btn-info btn-sm" disabled style="margin-left: 277%;">Envoyer</button>
+											        		</div>
+										        		</div>
+					        						</form>
+					        					<?php endif ?>
+			  								</div>
+										</div>
+				  					</div>
+				  				<?php elseif ($dataJournee['info']['enPermission'] == true) :?>
+				  					<div style="margin: -20px!important;">
+				    					<div class="card p-3 m-1 container-enPermission">
+											<p>
+												La raison de votre permission est :
+												<span class="text-important">
+													<?= $dataJournee['permission']->getDesignation(); ?>
+												</span>
+											</p>
+										</div>
+				  					</div>
+				  				<?php elseif ($dataJournee['info']['auRepos'] == true) :?>
+				  					<div style="margin: -20px!important;">
+				    					<div class="card p-3 m-1 container-auRepos">
+											<p>
+												La raison de votre repos médical est :
+												<span class="text-important">
+													<?= $dataJournee['repos']->getRaison(); ?>
+												</span>
+											</p>
+										</div>
+				  					</div>
+				  				<?php endif;?>
+							<?php endif;?>
+						<?php endif;?>
+					</div>
+				</div>
+			</div>
+		<?php endforeach?>
+		<?php if (count($data) == ManagerModulePresence::NO) : ?>
+			<div class="card-light-grey card text-center m-2 p-2">
+				Aucune journée à afficher
+			</div>
+		<?php endif ?>
+	<?php endif ?>
+</div>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabPointage.js"></script>
+<script>
+	var idEmploye = <?=$_SESSION['user']['idEmploye']?>;
+	$(function() {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+    });
+    $("#submit").click(function(){
+      	var date = $("#date-permission").val().split('/');
+      	if (date != "") {
+      		$("#date").val(date[2] + '-' + date[1] + '-' + date[0]);
+      	}
+	});
+	/* @changelog [OPT] 21/04/2022 (Lansky) Ajouter option de régler par congé son absence en mi-temps */
+    $( "form" ).submit(function( event ) {
+		if (pathName == '/manage/employe/pointage/dashboard') {
+			let resAction = originPath + "/manage/save-tache";
+			if ($(this).attr('action') == resAction) {
+				if ($('#multipleSelect').val().toString().trim()) {
+					$('#choise').val($('#multipleSelect').val().toString().trim());
+					var date = $("#beginDate").val().split('/');
+			      	if (date != "") {
+			      		$("#dateDebut").val(date[2] + '-' + date[1] + '-' + date[0]);
+			      	}
+				}
+			} else {
+				if ($('#partial-time', this).attr('class').search('hidden') < 0) {
+			    	$('#full-time', this).remove();
+			    } else if ($('#full-time', this).attr('class').search('hidden') < 0) {
+			    	$('#partial-time', this).remove();
+			    }
+			}
+		}
+	});
+	$("#submit-repos").click(function(){
+      	var date = $("#datepicker-repos").val().split('/');
+      	if (date != "") {
+      		$("#date-repos").val(date[2] + '-' + date[1] + '-' + date[0]);
+      	}
+	});
+	/* @changelog [OPT] 21/04/2022 Lansky Ajouter option de régler par congé son absence en mi-temps */
+	var $chkboxes 		= $('input[type=radio]');
+	var pathName 		= new URL(window.location.href).pathname;
+	var originPath 		= new URL(window.location.href).origin;
+	var attenteRetour 	= '';
+	$chkboxes.click(function() {
+		var childreen = $(this).closest('form').children();
+		if (pathName == '/manage/employe/pointage/dashboard') {
+		   if ($(this).attr('id') == 'flexRadioDefault2') {
+				var selector = 'full-time';
+		    } else if ($(this).attr('id') == 'flexRadioDefault1') {
+		    	var selector = 'partial-time';
+		    }
+		    $.each(childreen, function(){
+		    	if ($(this).attr('id') == selector) {
+				    $(this).removeClass('hidden');
+		    	}
+		    	if ($(this).attr('id') == 'choise-mode') {
+				    $(this).addClass('hidden');
+		    	}
+		    });
+		    $(childreen).find('button[type=submit]').removeAttr('disabled');
+		    $(childreen).last().find('button#retour').parent().removeClass('hidden');
+		}
+	});
+	$('#retour').click(function () {
+		if (pathName == '/manage/employe/pointage/dashboard') {
+		    var selector = '';
+		    if ($('#partial-time').attr('class').search('hidden') < 0) {
+		    	selector = '#partial-time';
+		    } else if ($('#full-time').attr('class').search('hidden') < 0) {
+		    	selector = '#full-time';
+		    }
+		    $('#choise-mode').removeClass('hidden');
+		    $(this).parent().addClass('hidden');
+			$(selector).addClass('hidden');
+	    	$(selector).removeAttr('disabled');
+		}
+	});
+	
+	if (pathName == '/manage/employe/pointage/dashboard') {
+		$.ajax({
+			url : "<?= HOST . 'manage/congeDisponible'?>",
+			data : "idEmploye=" + idEmploye,
+			dataType : "text",
+			success : function(data)
+			{
+				$.each($('.datepicker-debut'), function(){
+					var dateDebutPick  	= $(this).closest('form').find('input[type=hidden].datepicker');
+					var datePickerEnd   = $(this).closest('form').find('.datepicker-fin');
+					var stringDate 		= $(dateDebutPick).datepicker('getDate');
+					var date   			= new Date(stringDate.getFullYear(), stringDate.getMonth(), stringDate.getDate() +  parseInt(data, 10) - 1);
+					    $(datePickerEnd).datepicker('option', 'maxDate', date);
+					    $(datePickerEnd).datepicker('option', 'minDate', $(dateDebutPick).val());
+					    $(datePickerEnd).val("");
+				});
+			}
+		});
+	}
+	$('input[type="file"]').change(function(){
+		var image = "#" + $(this).attr('id');
+		if (this.files && this.files[0]) {
+			var reader = new FileReader();
+			reader.onload = function(e)
+			{
+	            $(image).attr("src", e.target.result);
+				$(image).closest('.row.row-image').find('img').attr('src',e.target.result);
+			};
+			reader.readAsDataURL(this.files[0]);
+		}
+	});
+</script>

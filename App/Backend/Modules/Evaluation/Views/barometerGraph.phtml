@@ -1,0 +1,88 @@
+<?php 
+  extract($data);
+  if ($barometre->getContents()[0]['questions'][0]['answer'] == 'au top') {
+    $img = 'happySmiley.png';
+  } elseif ($barometre->getContents()[0]['questions'][0]['answer'] == 'bien') {
+    $img = 'pipeSmiley2.jpg';
+  } elseif ($barometre->getContents()[0]['questions'][0]['answer'] == 'pas bien') {
+    $img = 'sadSmiley.png';
+  }
+
+  
+  // echo "<pre>";
+  //           var_dump($barometre);
+  //           var_dump($barometre->getContents()[0]['questions'][0]['answer']);
+  //           exit();
+ ?>
+
+ <script type="text/javascript">
+  var responses = <?= json_encode($barometre->getContents()); ?>
+</script>
+<section class="page-section" id="back-section">
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+      <h4 class="text-center list-title section-heading">Graphique du baromètre</h4>
+    </div>
+  </div>
+  <div class="row">
+    <a href="<?= HOST. 'manage/barometre_list'?>" class="btn btn-primary rounded-circle">
+      <i class="fas fa-arrow-left"></i>
+    </a>
+    <!-- <i class="fas fa-search-minus"></i>
+    <i class="fas fa-search-plus"></i>  -->            
+  </div>
+</br>
+  <div class="row align-items-center">
+    <div class="col-md-12 infoEvaluation">
+      <h5>Le baromètre : <?= $barometreEnvoye->getLibelle(); ?></h5>
+      <h6><u>Nom</u> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <?= $employe->getNom(); ?></h6>
+      <h6><u>Prénom</u> : <?= $employe->getPrenom(); ?></h6>
+      <h6><u>Poste</u> &nbsp;&nbsp;&nbsp;&nbsp;: <?= $poste->getPoste(); ?></h6>
+      <h6><u>Service</u> &nbsp;: <?= ucfirst($service->getService()); ?></h6>
+      <h6><u>Date d'évaluation</u> : <?= $barometre->getDate(); ?></h6>
+      <br>
+    </div>
+  </div>
+       <!--   <img class="img-fluid user rounded-circle" id="image" src="
+    <?php
+          echo HOST ."../Web/Ressources/images/sadSmiley.png";
+      ?>
+    "> <img class="img-fluid user rounded-circle" id="image" src="
+    <?php
+          echo HOST ."../Web/Ressources/images/" . $img;
+      ?>
+    "> -->
+  
+  <div class="row offre-body">
+    <div class="row">
+      <div class="col-md-12" id="graph" style="font-size: 1.2em; margin-left: 20%">
+        <!-- Chart container -->
+        <div id="container">
+          <img class="img-fluid smiley rounded-circle" id="image" src="
+            <?php echo HOST ."../Web/Ressources/images/" . $img; ?>" style="position: absolute; width:100px;">
+        </div>
+      </div>
+    </div>
+    <div class="row offre-footer" style=" /*margin-left: -50%;*/ background-color: beige;">
+      <div class="container">
+        <!-- <p> <u>LÉGENDE</u>&nbsp;:&nbsp;</p>
+        <hr>
+        <div class="row align-items-center" id="legend"></div> -->
+        <div class="row">
+          <p><u>Suggestion ou demandes particulières</u>&nbsp;:&nbsp;</p>
+          <hr>
+          <div class="row align-items-center" id="suggest">
+            <label><?= $barometre->getContents()['suggestion'] ; ?></label>
+          </div>
+          <hr>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Adding ej2.min.js CDN link in script file -->
+<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/barometerGraph.css">
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/ej2CHART.min.js" type="text/javascript"></script>
+<!-- Adding barometerGraph.js script file -->
+<script src="<?= HOST; ?>../Web/Ressources/js/barometerGraph.js" type="text/javascript"></script>

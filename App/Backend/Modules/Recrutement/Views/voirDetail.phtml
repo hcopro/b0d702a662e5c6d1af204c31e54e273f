@@ -1,0 +1,1262 @@
+<style type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/dataTable.bootstrap.css"></style>
+<style type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/dataTable.responsive.css"></style>
+<?php 
+  $url = explode("/", $_GET['page']);
+  $url = $url[1];
+  $autorized = 'NO';
+  if (array_key_exists('addMenuUser',$_SESSION['compte'])) {
+    if ($_SESSION['compte']['addMenuUser'] === 'YES') {
+      $autorized = 'YES';
+    }
+  }
+?>
+<section class="page-section" id="back-section">
+    <div class="container">
+      <?php if($url == "offre" && !empty($data)): extract($data); $pageTitle = "Offre : " . $poste->getPoste(); ?>
+        <link rel="stylesheet" type="text/css" href="<?= HOST."../Web/Ressources/css/VoirDetailOffre.css" ?>">
+        <div class="row">
+          <?php if ($_SESSION['compte']['identifiant'] == "entreprise" || $autorized === 'YES'): ?>
+            <a href="<?= HOST . "manage/offres"; ?>" class="btn btn-primary rounded-circle">
+              <i class="fas fa-arrow-left"></i>
+            </a>
+          <?php elseif ($_SESSION['compte']['identifiant'] == "candidat"): ?>
+            <a href="<?= HOST . "manage/suggest_offres"; ?>" class="btn btn-primary rounded-circle">
+              <i class="fas fa-arrow-left"></i>
+            </a>
+          <?php endif; ?>
+            
+        </div>
+        <div class="row offre-body">
+          <div class="col-md-5">
+            <div class="container-fluid row">
+              <h3 style="color:#1f487c" class="font-weight-bold col-md-8">Détail de l'offre</h3>
+              <div class="col-md-4">
+              <?php if ($_SESSION['compte']['identifiant'] == "entreprise" || $autorized === 'YES') : ?>                
+                <a href="<?= HOST . "manage/update-offre?idOffre=" . $offre->getIdOffre(); ?>" class="btn btn-warning">
+                  <i class="far fa-edit"></i>  
+                </a>
+              <?php endif; ?>
+            </div>
+            </div>
+            <div class="container-fluid">
+              <h5 class="details-offre"><?= $poste->getPoste(); ?></h5>
+              <hr>
+            </div>
+            <div class="container-fluid">
+              <h6 class="paragraphe-detail-offre"><i class="fa fas fa-file-contract" style="color:#1f487c"></i><?= "  ".$contrat->getDesignation(); ?></h6>
+              <hr>
+            </div>
+            <div class="container-fluid">
+              <h6 class="paragraphe-detail-offre"><i class="fa fas fa-city" style="color:#1f487c"></i><?= " ".ucfirst($entreprise->getVille()); ?></h6>
+              <hr>
+            </div>
+            <div class="container-fluid">
+              <h6 class="paragraphe-detail-offre">
+                <i class="fa fas fa-calendar" style="color:#1f487c"></i></i>
+                <?php 
+                  $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                  $dateEmission = explode('-', $offre->getDateEmission());
+                         $index = (int)$dateEmission[1] - 1;
+                  echo "  ". $dateEmission[2] . " " . $months[$index] . " " . $dateEmission[0];
+                ?>
+              </h6>
+              <hr>
+            </div>
+            <div class="container-fluid">
+              <h6 class="paragraphe-detail-offre">
+                <i class="fa fas fa-calendar" style="color:red"></i>
+                <?php 
+                  $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                  $dateLimite = explode('-', $offre->getDateLimite());
+
+                  $index = (int)$dateLimite[1] - 1;
+                  echo "  ". $dateLimite[2] . " " . $months[$index] . " " . $dateLimite[0];
+                  ?>
+            </h6>
+            <hr>
+          </div>
+          <div class="container-fluid">
+            <h6 class="paragraphe-detail-offre">
+              <i class="fa fas fa-language" style="color:green; font-size:20px;"></i>
+              <?php 
+                echo $offre->getLangue();
+              ?>
+            </h6>
+            <hr>
+          </div>
+          </div>
+          <div class="col-md-7">
+            <div class="container-fluid">
+              <h3 style="color:#1f487c" class="font-weight-bold">Déscription de l'entreprise</h3>
+              <div>
+                <label class="paragraphe-mission"><?= $entreprise->getDescription(); ?></label>
+              </div>
+              <div>
+                <strong class="paragraphe-mission">Contact : </strong>
+                <label class="paragraphe-mission"><?= $entreprise->getContact(); ?></label>
+              </div> 
+              <div>
+                <strong class="paragraphe-mission">Email : </strong>
+                <label class="paragraphe-mission"><?= $entreprise->getEmail(); ?></label>
+              </div>
+            </div>
+            <br>
+            <div class="container-fluid">
+              <h3 style="color:#1f487c" class="font-weight-bold">Mission</h3>
+              <?php foreach ($missions as $mission): ?>
+                <div>
+                  <label class="paragraphe-mission">- <?=$mission->getDescription();?></label>
+                </div>
+              <?php endforeach ?>
+            </div>
+            <br>
+            <div class="container-fluid">
+              <h3 style="color:#1f487c" class="font-weight-bold">Profil</h3>
+              <div>
+                <h5 class="h5-style">Experience : </h5>
+                <?php if(!empty($niveauExperience)) :?>
+                  <label class="paragraphe-mission">-  
+                      <?php
+                        if ($niveauExperience->getOrdre() < 10) {
+                          echo $niveauExperience->getNiveau(). " en " . $sousDomaine->getNomSousDomaine();
+                        } else {
+                          echo $niveauExperience->getNiveau(). " d'expérience(s) en " . $sousDomaine->getNomSousDomaine();
+                        }
+                    ?>
+                  </label>
+                  <?php endif; ?>
+                  </div>
+              <div>
+                <h5 class="h5-style">Niveau : </h5>
+                  <?php if(!empty($niveauEtude)) :?>
+                  <label class="paragraphe-mission">- 
+                      <?php
+                        if ($niveauEtude->getOrdre() <= 10) {
+                        echo $niveauEtude->getNiveau();
+                      } else {
+                        echo $niveauEtude->getNiveau(). " en " . $domaine->getNomDomaine();
+                        } 
+                    ?>
+                  </label>
+                  <?php endif; ?>
+                  </div>
+              <div>
+                <h5 class="h5-style">Personnalités : </h5>
+                <div class="paragraphe-mission">
+                  <?php if($offre->getPersonnalite() != "") : $persos = explode('_', $offre->getPersonnalite()); foreach ($persos as $perso): if(!empty($perso)) :?>
+                    <label>- <?= ucfirst($perso) ?></label>
+                  <?php endif; endforeach; endif; ?>
+                  </div>
+              </div>
+              <div>
+                <h5 class="h5-style">Condition numéraire : </h5>
+                  <?php if($offre->getConditionNumeraire() != "") :?>
+                    <label class="paragraphe-mission">- <?= $offre->getConditionNumeraire() ?></label>
+                  <?php endif; ?>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row offre-footer">
+          <div class="col-lg-12 text-center">
+            <?php if ($_SESSION['compte']['identifiant'] == "candidat"): ?>
+              <?php if (!empty($candidature)): ?>
+                  <i class="alert-info">Candidature déjà envoyée</i>
+              <?php else : ?><i class="alert-info">
+                  <a href="<?= HOST . "manage/create-candidature?idOffre=" . $offre->getIdOffre(); ?>" class="btn btn-primary btn-xl js-scroll-trigger">
+                    Postuler  
+                  </a>
+              <?php endif ?>  
+            <?php elseif ($_SESSION['compte']['identifiant'] == "entreprise" || $autorized === 'YES'): ?>
+              <!-- <a href="<?= HOST . "manage/suggest_candidats?idOffre=" . $offre->getIdOffre(); ?>" class="btn btn-primary">
+                Les candidats suggérés   
+              </a> -->
+              <a href="<?= HOST . 'manage/candidatures_entreprise?idOffre=' . $offre->getIdOffre() . '&poste=' . $poste->getPoste();?>" class="btn btn-primary">
+                Les candidatures 
+              </a>                
+              <!-- <a href="<?= HOST . 'manage/entretiens?idOffre=' . $offre->getIdOffre(); ?>" class="btn btn-primary">
+                Les entretiens
+              </a> -->
+            <?php endif; ?>
+             </div>
+        </div>
+        <script type="text/javascript">
+          $('#back-section').css('overflow-y','initial');
+        </script>
+      <?php endif; ?>
+
+      <?php if($url == "offreCandidature" && !empty($data)): extract($data); $pageTitle = "Offre : " . $poste->getPoste(); ?>
+        <link rel="stylesheet" type="text/css" href="<?= HOST."../Web/Ressources/css/VoirDetailOffre.css" ?>">
+        <!-- <div class="row">
+          <?php if ($_SESSION['compte']['identifiant'] == "entreprise"): ?>
+            <a href="<?= HOST . "manage/offres"; ?>" class="btn btn-primary rounded-circle">
+              <i class="fas fa-arrow-left"></i>
+            </a>
+          <?php elseif ($_SESSION['compte']['identifiant'] == "candidat"): ?>
+            <a href="<?= HOST . "manage/suggest_offres"; ?>" class="btn btn-primary rounded-circle">
+              <i class="fas fa-arrow-left"></i>
+            </a>
+          <?php endif; ?>
+        </div> -->
+        <div class="row offre-body">
+          <div class="col-md-5">
+            <div class="container-fluid row">
+              <h3 style="color:#1f487c" class="font-weight-bold col-md-12">Détail de l'offre</h3>
+            </div>
+            <div class="container-fluid">
+              <h5 class="details-offre"><?= $poste->getPoste(); ?></h5>
+              <hr>
+            </div>
+            <div class="container-fluid">
+              <h6 class="paragraphe-detail-offre"><i class="fa fas fa-file-contract" style="color:#1f487c"></i><?= "  ".$contrat->getDesignation(); ?></h6>
+              <hr>
+            </div>
+            <div class="container-fluid">
+              <h6 class="paragraphe-detail-offre"><i class="fa fas fa-city" style="color:#1f487c"></i><?= " ".ucfirst($entreprise->getVille()); ?></h6>
+              <hr>
+            </div>
+            <div class="container-fluid">
+              <h6 class="paragraphe-detail-offre">
+                <i class="fa fas fa-calendar" style="color:#1f487c"></i></i>
+                <?php 
+                  $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                  $dateEmission = explode('-', $offre->getDateEmission());
+                  $index = (int)$dateEmission[1] - 1;
+                  echo "  ". $dateEmission[2] . " " . $months[$index] . " " . $dateEmission[0];
+                ?>
+              </h6>
+              <hr>
+            </div>
+            <div class="container-fluid">
+              <h6 class="paragraphe-detail-offre">
+                <i class="fa fas fa-calendar" style="color:red"></i>
+                <?php 
+                  $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                  $dateLimite = explode('-', $offre->getDateLimite());
+                  $index = (int)$dateLimite[1] - 1;
+                  echo "  ". $dateLimite[2] . " " . $months[$index] . " " . $dateLimite[0];
+                ?>
+              </h6>
+              <hr>
+            </div>
+            <div class="container-fluid">
+              <h6 class="paragraphe-detail-offre">
+                <i class="fa fas fa-language" style="color:green; font-size:20px;"></i>
+                <?php 
+                  echo $offre->getLangue();
+                ?>
+              </h6>
+              <hr>
+            </div>
+          </div>
+          <div class="col-md-7">
+            <div class="container-fluid">
+              <h3 style="color:#1f487c" class="font-weight-bold">Déscription de l'entreprise</h3>
+              <div>
+                <label class="paragraphe-mission"><?= $entreprise->getDescription(); ?></label>
+              </div>
+              <div>
+                <strong class="paragraphe-mission">Contact : </strong>
+                <label class="paragraphe-mission"><?= $entreprise->getContact(); ?></label>
+              </div>
+              <div>
+                <strong class="paragraphe-mission">Email : </strong>
+                <label class="paragraphe-mission"><?= $entreprise->getEmail(); ?></label>
+              </div>
+            </div>
+            <br>
+            <div class="container-fluid">
+              <h3 style="color:#1f487c" class="font-weight-bold">Mission</h3>
+              <?php foreach ($missions as $mission) : ?>
+                <div>
+                  <label class="paragraphe-mission">- <?=$mission->getDescription();?></label>
+                </div>
+              <?php endforeach ?>
+            </div>
+            <br>
+            <div class="container-fluid">
+              <h3 style="color:#1f487c" class="font-weight-bold">Profil</h3>
+              <div>
+                <h5 class="h5-style">Experience : </h5>
+                <?php if(!empty($niveauExperience)) :?>
+                  <label class="paragraphe-mission">-  
+                    <?php
+                      if ($niveauExperience->getOrdre() < 10) {
+                        echo $niveauExperience->getNiveau(). " en " . $sousDomaine->getNomSousDomaine();
+                      } else {
+                        echo $niveauExperience->getNiveau(). " d'expérience(s) en " . $sousDomaine->getNomSousDomaine();
+                      }
+                    ?>
+                  </label>
+                <?php endif; ?>
+              </div>
+              <div>
+                <h5 class="h5-style">Niveau : </h5>
+                <?php if(!empty($niveauEtude)) :?>
+                  <label class="paragraphe-mission">- 
+                    <?php
+                      if ($niveauEtude->getOrdre() <= 10) {
+                        echo $niveauEtude->getNiveau();
+                      } else {
+                        echo $niveauEtude->getNiveau(). " en " . $domaine->getNomDomaine();
+                      }
+                    ?>
+                  </label>
+                <?php endif; ?>
+              </div>
+              <div>
+                <h5 class="h5-style">Personnalités : </h5>
+                <div class="paragraphe-mission">  
+                  <?php if($offre->getPersonnalite() != "") : $persos = explode('_', $offre->getPersonnalite()); foreach ($persos as $perso): if(!empty($perso)) :?>
+                    <label>- <?= ucfirst($perso) ?></label>
+                  <?php endif; endforeach; endif; ?>
+                </div>
+              </div>
+              <div>
+                <h5 class="h5-style">Conditions numéraires : </h5>
+                <?php if($offre->getConditionNumeraire() != "") :?>
+                  <label class="paragraphe-mission">- <?= $offre->getConditionNumeraire() ?></label>
+                <?php endif; ?>
+              </div>
+            </div>
+          </div>
+        </div>
+        <style type="text/css">
+          #newNav {
+            display: none;
+          }
+        </style>
+        <script type="text/javascript">
+          $('#back-section').css('overflow-y','initial');
+        </script>
+      <?php endif; ?>
+
+      <?php if($url == "cv_candidature" && !empty($data)): extract($data); $pageTitle = "CV : " . strtoupper($candidat->getNom()) . " " . ucwords($candidat->getPrenom());?>
+        <link rel="stylesheet" type="text/css" href="<?= HOST;?>../Web/Ressources/css/creerCV.css">
+        <script src="https://kendo.cdn.telerik.com/2023.1.117/js/kendo.all.min.js"></script>
+        <script src="https://kendo.cdn.telerik.com/2017.3.913/js/pako_deflate.min.js"></script>
+        <div class="containers">
+          <div class="row">
+            <div class="col-md-10">
+              <div id="cv-template" class="size-a4" style="margin-top:-40px">
+                <div id="candidatCV" name="canidatCV" class="canidatCV format-cv">
+                  <div id="photo-nom" class="format-en-tete format-element-gauche">
+                    <div class="modele-2 format-nomPrenom center-text col-md-12">
+                      <h5 class="font-italic font-weight-bold"><?= ($candidat->getNom()); ?> <?= ($candidat->getPrenom()); ?></h5>
+                      <hr>
+                      <div class="row">
+                        <div class="col-md-4">
+                          <small><i class="fas fa-envelope"></i> &nbsp; _ <?= strtolower($candidat->getEmail()); ?></small>
+                        </div>
+                        <div class="col-md-4">
+                          <small>
+                            &nbsp;<i class="fas fa-phone"></i> &nbsp; _ <?php $contact = $candidat->getContact(); echo $contact;?>
+                          </small>
+                        </div>
+                        <div class="col-md-3">
+                          <small>&nbsp; 
+                            <i class="fas fa-home"></i>&nbsp; _ <?= $candidat->getAdresse(); ?>,<?= " ".($candidat->getVille());?>
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div id="elementGauche" class="col-md-2 format-element-gauche">
+                      <div class="modele-2 photoDuCandidat">
+                        <div class="container">
+                          <img class="img-fluid image-candidat"src="<?= ($candidat->getPhoto() != "") ? HOST . "../Web/Ressources/images/candidats/" . $candidat->getPhoto() : HOST ."../Web/Ressources/images/profilCandidat.png";?>">
+                        </div>
+                      </div>
+                      <div id="textGauche">
+                        <div id="langue-loisir-logiciel">
+                          <div class="langue">
+                            <h7 class="text-uppercase titre-element underline font-weight-bold">Langue</h7>
+                            <div class="row marge-element">
+                              <?php foreach($langues as $langue): ?>
+                                <small class="small"> <?= "&nbsp;" .ucfirst($langue->getNomLangue());?> - </small>
+                              <?php endforeach; ?>
+                            </div>
+                          </div>
+                          <div class="centreDinteret">
+                            <h7 class="text-uppercase underline titre-element font-weight-bold">Loisir</h7>
+                            <div class="row marge-element">
+                              <?php foreach($centreInterets as $centreInteret): ?>
+                                <small class="small"> <?= "&nbsp;" . $centreInteret->getCategorieCentreInteret();?> - </small>
+                              <?php endforeach; ?>
+                            </div>
+                          </div>
+                          <div class="logicelCV">
+                            <h7 class="text-uppercase underline titre-element font-weight-bold">Logiciel</h7>
+                            <div class="row marge-element">
+                              <?php foreach($logiciels as $logicel): ?>
+                                <small> <?= "&nbsp;" .$logicel->getNomLogiciel();?> - </small>
+                              <?php endforeach; ?>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="elementDroite" class="col-md-9 format-element-droite">
+                      <div id="textDroite">
+                        <div class="profil">
+                          <h7 class="text-uppercase underline titre-element font-weight-bold">Description</h7>
+                          <div class="row">
+                            <div class="col-md-11">
+                              <small class="p-margin small"><?= $candidat->getDescription(); ?></small>
+                            </div>
+                          </div>
+                        </div>
+                        <div id="experience-formation">
+                          <div id="experience-case" class="experience">
+                            <h7 class="text-uppercase underline titre-element font-weight-bold">experiences</h7>
+                            <?php foreach ($experiences as $experience):?>
+                              <div class="container-fluid experience-place">
+                                <p class="font-weight-bold sous-titre p-margin"><?= ucfirst($experience->getPoste()); ?></p>
+                                <small class="small">
+                                  <?php 
+                                    $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                                    $dateDebut = explode('-', $experience->getDateDebut());
+                                    $dateFin = explode('-', $experience->getDateFin());
+                                    $index = (int)$dateDebut[1] - 1;
+                                    $index2 = (int)$dateFin[1] - 1;
+                                    if ($dateFin[0] == 1970){
+                                      echo $dateDebut[0] ." - à ce jour "; 
+                                    } elseif ( $dateDebut[0] == $dateFin[0]){
+                                      echo $dateDebut[0] ." " ;
+                                    }
+                                    else {
+                                      echo $dateDebut[0] ." - ";
+                                      echo $dateFin[0] ." ";
+                                    }
+                                  ?> 
+                                  | <?= $experience->getEntreprise(); ?>
+                                </small>
+                                <small class="small col-md-10"><?= $experience->getDescription(); ?></small>
+                              </div>
+                            <?php endforeach;?>
+                          </div>
+                          <div id="formation-case" class="formation">
+                            <h7 class="text-uppercase underline titre-element font-weight-bold">Formation</h7>
+                            <?php foreach ($formations as $formation):?>
+                              <div class="container-fluid formation-place">
+                                <p class="text-capitalize p-margin sous-titre font-weight-bold"><?= ucfirst($formation['sousDomaine']->getNomSousDomaine());?></p>
+                                <small class="small">
+                                  <?php 
+                                    $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                                    $dateDebut = explode('-', $formation['formation']->getDateDebut());
+                                    $dateFin = explode('-', $formation['formation']->getDateFin());
+                                    $index = (int)$dateDebut[1] - 1;
+                                    $index2 = (int)$dateFin[1] - 1;
+                                    if ($dateDebut[0] == $dateFin[0]){
+                                      echo $dateDebut[0];
+                                    }
+                                    else{
+                                      echo $dateDebut[0] . " - " .$dateFin[0] ;
+                                    }
+                                  ?>
+                                  | <?= ucfirst($formation['formation']->getEtablissement()); ?> | <?= ucfirst($formation['niveauEtude']->getNiveau()); ?> 
+                                </small>
+                              </div>
+                            <?php endforeach;?>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <strong>Résolution</strong>
+              <select class="form-control select-resolution" id="resolutionCV">
+                <option value="portrait">Portrait</option>
+                <option value="paysage">Paysage</option>
+              </select>
+              <button type="button" id="create_pdf_portrait" class="btn btn-primary export-pdf-portrait">ExportPDF</button>
+              <button type="button" id="create_pdf_paysage" class="btn btn-primary hidden export-pdf-paysage">ExportPDF</button>
+            </div>
+          </div>
+        </div>
+        <hr>
+        
+        <script type="text/javascript">
+          kendo.pdf.defineFont({
+              "DejaVu Sans"             : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans.ttf",
+              "DejaVu Sans|Bold"        : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Bold.ttf",
+              "DejaVu Sans|Bold|Italic" : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+              "DejaVu Sans|Italic"      : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+              "WebComponentsIcons"      : "https://kendo.cdn.telerik.com/2017.1.223/styles/fonts/glyphs/WebComponentsIcons.ttf"
+          });
+        </script>
+        <script type="text/javascript">
+          $(document).ready(function(){
+            $('#back-section').css('overflow-y','initial');
+            $('#resolutionCV').click(function(){
+            if($('#resolutionCV').val() == "paysage"){
+              $('#place-element').removeClass('row');
+              $('#placeCV').removeClass('col-md-10');
+              $('#boutton-control').removeClass('col-md-2');
+              $('#control-boutton').addClass('row');
+              $('#experience-case').addClass('col-md-7');
+              $('#formation-case').addClass('col-md-5');
+              $('#experience-formation').addClass('row');
+              $('#cv-template').removeClass('size-a4');
+              $('#cv-template').addClass('size-a4-paysage rotate');
+              $('#adresse').addClass('hidden');
+              $('#idAdresse').removeClass('hidden');
+              $('#create_pdf_paysage').removeClass('hidden');
+              $('#create_pdf_portrait').addClass('hidden');
+              $('.small').addClass('police-small');
+              $('.sous-titre').addClass('sous-titre-size');
+            } else {
+              $('#place-element').addClass('row');
+              $('#placeCV').addClass('col-md-10');
+              $('#boutton-control').addClass('col-md-2');
+              $('#control-boutton').removeClass('row');
+              $('#experience-case').removeClass('col-md-7');
+              $('#formation-case').removeClass('col-md-5');
+              $('#experience-formation').removeClass('row');
+              $('#cv-template').addClass('size-a4');
+              $('#cv-template').removeClass('size-a4-paysage rotate');
+              $('#adresse').removeClass('hidden');
+              $('#idAdresse').addClass('hidden');
+              $('#create_pdf_paysage').addClass('hidden');
+              $('#create_pdf_portrait').removeClass('hidden');
+              $('.small').removeClass('police-small');
+              $('.sous-titre').removeClass('sous-titre-size');
+            }
+          });
+
+            $(".export-pdf-paysage").click(function() {
+              // Convert the DOM element to a drawing using kendo.drawing.drawDOM
+              kendo.drawing.drawDOM($(".canidatCV"))
+              .then(function(group) {
+                  // Render the result as a PDF file
+                  return kendo.drawing.exportPDF(group, {
+                      paperSize: "a4",
+                      landscape: true,
+                      margin: { left: "1cm", top: "1cm", right: "1cm", bottom: "1cm" }
+                  });
+              })
+              .done(function(data) {
+                  // Save the PDF file
+                  kendo.saveAs({
+                      dataURI: data,
+                      fileName: "CV-candidat.pdf",
+                      proxyURL: "https://demos.telerik.com/kendo-ui/service/export"
+                  });
+              });
+          });
+
+            $(".export-pdf-portrait").click(function() {
+              // Convert the DOM element to a drawing using kendo.drawing.drawDOM
+              kendo.drawing.drawDOM($(".canidatCV"))
+              .then(function(group) {
+                  // Render the result as a PDF file
+                  return kendo.drawing.exportPDF(group, {
+                      paperSize: "a4",
+                      margin: { left: "1cm", top: "1cm", right: "1cm", bottom: "1cm" }
+                  });
+              })
+              .done(function(data) {
+                  // Save the PDF file
+                  kendo.saveAs({
+                      dataURI: data,
+                      fileName: "CV-candidat.pdf",
+                      proxyURL: "https://demos.telerik.com/kendo-ui/service/export"
+                  });
+              });
+          });
+          });
+        </script>
+        <style type="text/css">
+          #newNav {
+            display: none;
+          }
+        </style>
+      <?php endif; ?>
+
+      <?php if($url == "cv_candidat" && !empty($data)): extract($data); $pageTitle = "CV : " . strtoupper($candidat->getNom()) . " " . ucwords($candidat->getPrenom());?>
+        <link rel="stylesheet" type="text/css" href="<?= HOST;?>../Web/Ressources/css/creerCV.css">
+        <script src="https://kendo.cdn.telerik.com/2023.1.117/js/kendo.all.min.js"></script>
+        <script src="https://kendo.cdn.telerik.com/2017.3.913/js/pako_deflate.min.js"></script>
+        <div class="containers">
+        <div class="row">
+            <div class="col-md-10">
+              <div id="cv-template" class="size-a4" style="margin-top:-30px">
+                <div id="candidatCV" name="canidatCV" class="canidatCV format-cv">
+                  <div id="photo-nom" class="format-en-tete format-element-gauche">
+                    <div class="modele-2 format-nomPrenom center-text col-md-12">
+                      <h5 class="font-italic font-weight-bold"><?= ($candidat->getNom()); ?> <?= ($candidat->getPrenom()); ?></h5>
+                      <hr>
+                      <div class="row">
+            <div class="col-md-4">
+              <small><i class="fas fa-envelope"></i> &nbsp; _ <?= strtolower($candidat->getEmail()); ?></small>
+                        </div>
+                        <div class="col-md-4">
+                          <small>
+                            &nbsp;<i class="fas fa-phone"></i> &nbsp; _ <?php $contact = $candidat->getContact(); echo $contact;?>
+                          </small>
+                        </div>
+                        <div class="col-md-3">
+                          <small>&nbsp; 
+                            <i class="fas fa-home"></i>&nbsp; _ <?= $candidat->getAdresse(); ?>,<?= " ".($candidat->getVille());?>
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div id="elementGauche" class="col-md-2 format-element-gauche">
+                      <div class="modele-2 photoDuCandidat">
+                        <div class="container">
+                          <img class="img-fluid image-candidat"src="<?= ($candidat->getPhoto() != "") ? HOST . "../Web/Ressources/images/candidats/" . $candidat->getPhoto() : HOST ."../Web/Ressources/images/profilCandidat.png";?>">
+                        </div>
+                      </div>
+                      <div id="textGauche">
+                        <div id="langue-loisir-logiciel">
+                          <div class="langue">
+                            <h7 class="text-uppercase titre-element underline font-weight-bold">Langue</h7>
+                            <div class="row marge-element">
+                              <?php foreach($langues as $langue): ?>
+                                <small class="small"> <?= "&nbsp;" .ucfirst($langue->getNomLangue());?> - </small>
+                              <?php endforeach; ?>
+                            </div>
+                          </div>
+                          <div class="centreDinteret">
+                            <h7 class="text-uppercase underline titre-element font-weight-bold">Loisir</h7>
+                            <div class="row marge-element">
+                              <?php foreach($centreInterets as $centreInteret): ?>
+                                <small class="small"> <?= "&nbsp;" . $centreInteret->getCategorieCentreInteret();?> - </small>
+                              <?php endforeach; ?>
+                            </div>
+                          </div>
+                          <div class="logicelCV">
+                            <h7 class="text-uppercase underline titre-element font-weight-bold">Logiciel</h7>
+                            <div class="row marge-element">
+                              <?php foreach($logiciels as $logicel): ?>
+                                <small> <?= "&nbsp;" .$logicel->getNomLogiciel();?> - </small>
+                              <?php endforeach; ?>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="elementDroite" class="col-md-9 format-element-droite">
+                      <div id="textDroite">
+                        <div class="profil">
+                          <h7 class="text-uppercase underline titre-element font-weight-bold">Description</h7>
+                          <div class="row">
+                            <div class="col-md-11">
+                              <small class="p-margin small"><?= $candidat->getDescription(); ?></small>
+                            </div>
+                          </div>
+                        </div>
+                        <div id="experience-formation">
+                          <div id="experience-case" class="experience">
+                            <h7 class="text-uppercase underline titre-element font-weight-bold">experiences</h7>
+                            <?php foreach ($experiences as $experience):?>
+                              <div class="container-fluid experience-place">
+                                <p class="font-weight-bold sous-titre p-margin"><?= ucfirst($experience->getPoste()); ?></p>
+                                <small class="small">
+                <?php
+                  $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                                    $dateDebut = explode('-', $experience->getDateDebut());
+                                    $dateFin = explode('-', $experience->getDateFin());
+                                    $index = (int)$dateDebut[1] - 1;
+                                    $index2 = (int)$dateFin[1] - 1;
+                                    if ($dateFin[0] == 1970){
+                                      echo $dateDebut[0] ." - à ce jour "; 
+                                    } elseif ( $dateDebut[0] == $dateFin[0]){
+                                      echo $dateDebut[0] ." " ;
+                                    }
+                                    else {
+                                      echo $dateDebut[0] ." - ";
+                                      echo $dateFin[0] ." ";
+                                    }
+                                  ?> 
+                                  | <?= $experience->getEntreprise(); ?>
+                                </small>
+                                <small class="small col-md-10"><?= $experience->getDescription(); ?></small>
+                              </div>
+                            <?php endforeach;?>
+                          </div>
+                          <div id="formation-case" class="formation">
+                            <h7 class="text-uppercase underline titre-element font-weight-bold">Formation</h7>
+                            <?php foreach ($formations as $formation):?>
+                              <div class="container-fluid formation-place">
+                                <p class="text-capitalize p-margin sous-titre font-weight-bold"><?= ucfirst($formation['sousDomaine']->getNomSousDomaine());?></p>
+                                <small class="small">
+                                  <?php 
+                                    $months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', '     Décembre'];
+                                    $dateDebut = explode('-', $formation['formation']->getDateDebut());
+                                    $dateFin = explode('-', $formation['formation']->getDateFin());
+                                    $index = (int)$dateDebut[1] - 1;
+                                    $index2 = (int)$dateFin[1] - 1;
+                                    if ($dateDebut[0] == $dateFin[0]){
+                                      echo $dateDebut[0];
+                                    }
+                                    else{
+                                      echo $dateDebut[0] . " - " .$dateFin[0] ;
+                                    }
+                                  ?>
+                                  | <?= ucfirst($formation['formation']->getEtablissement()); ?> | <?= ucfirst($formation['niveauEtude']->getNiveau()); ?> 
+                                </small>
+                              </div>
+                            <?php endforeach;?>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <strong>Résolution</strong>
+              <select class="form-control select-resolution" id="resolutionCV">
+                <option value="portrait">Portrait</option>
+                <option value="paysage">Paysage</option>
+              </select>
+              <button type="button" id="create_pdf_portrait" class="btn btn-primary export-pdf-portrait">ExportPDF</button>
+              <button type="button" id="create_pdf_paysage" class="btn btn-primary hidden export-pdf-paysage">ExportPDF</button>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="">
+          <div class="Competences size-a4 canidatCV format-cv">
+            <div class="">
+              <div class="langues">
+                <?php if(isset($langues)):?>
+                  <h5>Maitrise des langues</h5>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <h7>Langue</h7>
+                    </div>
+                    <div class="col-md-4">
+                      <h7>Communication écrite</h7>
+                    </div>
+                    <div class="col-md-4">
+                      <h7>Communication verbale</h7>
+                    </div>
+                  </div>
+                  <?php foreach($langues as $langue): ?>
+                    <div class="row">
+                      <p class="col-md-3 center-text"> <?= ucfirst($langue->getNomLangue());?></p>
+                      <div class="col-md-4">
+                        <div class="rate">
+                          <?php  for ($etoile = 5 ; $etoile >=1 ; $etoile--):?>
+                            <input value="<?=$etoile;?>" type="checkbox" id="star<?= $langue->getIdLangue() . '-' . $etoile?>" readonly <?= $langue->getNiveauEcrit() == $etoile ? 'checked' : ''; ?> disabled="disabled" />
+                            <label for="star<?= $langue->getIdLangue() . '-' . $etoile?>" title="Communication ecrite"></label>
+                          <?php endfor ; ?>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="rate">
+                          <?php  for ($etoile = 5 ; $etoile >=1 ; $etoile--):?>
+                            <input value="<?=$etoile;?>" type="checkbox" id="star<?= $langue->getIdLangue() . '-' . $etoile?>" readonly <?= $langue->getNiveauParle() == $etoile ? 'checked' : ''; ?> disabled="disabled"  />
+                            <label for="star<?= $langue->getIdLangue() . '-' . $etoile?>" title="Communication verbale"></label>
+                          <?php endfor ; ?>
+                        </div>
+                      </div>
+                    </div>
+                  <?php endforeach; ?>
+                <?php endif; ?>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript">
+          kendo.pdf.defineFont({
+              "DejaVu Sans"             : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans.ttf",
+              "DejaVu Sans|Bold"        : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Bold.ttf",
+              "DejaVu Sans|Bold|Italic" : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+              "DejaVu Sans|Italic"      : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+              "WebComponentsIcons"      : "https://kendo.cdn.telerik.com/2017.1.223/styles/fonts/glyphs/WebComponentsIcons.ttf"
+          });
+        </script>
+        <script type="text/javascript">
+          $(document).ready(function(){
+            var url = window.location.href;
+            console.log(url);
+            var HOST = window.location;
+            if (url == HOST+'/manage/candidatures_entreprise') {
+                $('#mainNav').hide();
+                  } else {
+                    $('#mainNav').show();
+                  }
+               $('#resolutionCV').click(function(){
+            if($('#resolutionCV').val() == "paysage"){
+              $('#place-element').removeClass('row');
+              $('#placeCV').removeClass('col-md-10');
+              $('#boutton-control').removeClass('col-md-2');
+              $('#control-boutton').addClass('row');
+              $('#experience-case').addClass('col-md-7');
+              $('#formation-case').addClass('col-md-5');
+              $('#experience-formation').addClass('row');
+              $('#cv-template').removeClass('size-a4');
+              $('#cv-template').addClass('size-a4-paysage rotate');
+              $('#adresse').addClass('hidden');
+              $('#idAdresse').removeClass('hidden');
+              $('#create_pdf_paysage').removeClass('hidden');
+              $('#create_pdf_portrait').addClass('hidden');
+              $('.small').addClass('police-small');
+              $('.sous-titre').addClass('sous-titre-size');
+            } else {
+              $('#place-element').addClass('row');
+              $('#placeCV').addClass('col-md-10');
+              $('#boutton-control').addClass('col-md-2');
+              $('#control-boutton').removeClass('row');
+              $('#experience-case').removeClass('col-md-7');
+              $('#formation-case').removeClass('col-md-5');
+              $('#experience-formation').removeClass('row');
+              $('#cv-template').addClass('size-a4');
+              $('#cv-template').removeClass('size-a4-paysage rotate');
+              $('#adresse').removeClass('hidden');
+              $('#idAdresse').addClass('hidden');
+              $('#create_pdf_paysage').addClass('hidden');
+              $('#create_pdf_portrait').removeClass('hidden');
+              $('.small').removeClass('police-small');
+              $('.sous-titre').removeClass('sous-titre-size');
+            }
+          });
+
+            $(".export-pdf-paysage").click(function() {
+              // Convert the DOM element to a drawing using kendo.drawing.drawDOM
+              kendo.drawing.drawDOM($(".canidatCV"))
+              .then(function(group) {
+                  // Render the result as a PDF file
+                  return kendo.drawing.exportPDF(group, {
+                      paperSize: "a4",
+                      landscape: true,
+                      margin: { left: "1cm", top: "1cm", right: "1cm", bottom: "1cm" }
+                  });
+              })
+              .done(function(data) {
+                  // Save the PDF file
+                  kendo.saveAs({
+                      dataURI: data,
+                      fileName: "CV-candidat.pdf",
+                      proxyURL: "https://demos.telerik.com/kendo-ui/service/export"
+                  });
+              });
+          });
+
+            $(".export-pdf-portrait").click(function() {
+              // Convert the DOM element to a drawing using kendo.drawing.drawDOM
+              kendo.drawing.drawDOM($(".canidatCV"))
+              .then(function(group) {
+                  // Render the result as a PDF file
+                  return kendo.drawing.exportPDF(group, {
+                      paperSize: "a4",
+                      margin: { left: "1cm", top: "1cm", right: "1cm", bottom: "1cm" }
+                  });
+              })
+              .done(function(data) {
+                  // Save the PDF file
+                  kendo.saveAs({
+                      dataURI: data,
+                      fileName: "CV-candidat.pdf",
+                      proxyURL: "https://demos.telerik.com/kendo-ui/service/export"
+                  });
+              });
+          });
+          });
+        </script>
+      <?php endif; ?>
+
+      <?php if($url == "niveau_entretien" && !empty($data)): extract($data); $pageTitle = "Niveau d'entretien : " . $niveauEntretien->getService(); ?>
+        <?php $_SESSION['variable']['idNiveauEntretien'] = $niveauEntretien->getIdNiveauEntretien(); ?>
+        <div class="row">
+          <div class="col-md-2">
+            <a href="<?= HOST . "manage/niveaux_entretiens"; ?>" class="btn btn-primary rounded-circle">
+              <i class="fas fa-arrow-left"></i>
+            </a>  
+          </div>
+          <div class="col-md-8">
+            <div class="row text-center">
+              <h4>Service d'entretien : <?= $niveauEntretien->getService(); ?></h4>&nbsp;
+              <a href="<?= HOST . "manage/update-niveau_entretien?idNiveauEntretien=" . $niveauEntretien->getIdNiveauEntretien(); ?>" class="btn btn-warning">
+                <i class="fas fa-edit"></i> 
+              </a>
+            </div>
+            <div class="row">
+              <select class="form-control span3 btn-info col-md-6" name="idInterlocuteur" id="idInterlocuteur" required="required" data-validation-required-message="Veuillez séléctionner un interlocuteur.">
+                <option class="text-center" value="">Ajouter un interlocuteur</option>
+                <?php foreach ($allIntelocuteurs as $interlocuteur): ?>
+                  <option value="<?= $interlocuteur->getIdInterlocuteur(); ?>">
+                    <?= ucwords($interlocuteur->getNom()); ?>
+                  </option>
+                <?php endforeach ?>
+                <option class="text-center" value="autre">Autre</option>
+              </select>
+            </div>
+            <div class="row">
+              <table class="table table-stiped table-scroll small-first-col">
+              <thead>
+                <tr>
+                  <th>Les interlocuteur dans ce service</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="tableSearch" class="body-half-screen">
+                <?php if(!empty($interlocuteurs)) : foreach ($interlocuteurs as $interlocuteur) : extract($interlocuteur);?>
+                <tr>
+                  <td>
+                      <?= ucwords($interlocuteur->getNom()); ?>
+                  </td>
+                  <td class="text-center">
+                    <a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $interlocuteurNivEntretien->getIdInterlocuteurNiveauEntretien(); ?>" data-name="<?= ucwords($interlocuteur->getNom()); ?>" data-url="delete-interlocuteur_niveau_entretien?idInterlocuteurNiveauEntretien=">
+                      <i class="fas fa-trash"></i>   
+                    </a>
+                  </td>
+                </tr>
+                <?php endforeach; endif;?>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
+
+      <?php if($url == "domaine" && !empty($data)): extract($data); $pageTitle = "Domaine : " . $domaine->getNomDomaine(); ?>
+        <?php $_SESSION['variable']['idDomaine'] = $domaine->getIdDomaine(); ?>
+        <div class="row">
+          <div class="col-md-2">
+            <a href="<?= HOST . "manage/domaines"; ?>" class="btn btn-primary rounded-circle">
+              <i class="fas fa-arrow-left"></i>
+            </a>  
+          </div>
+          <div class="col-md-8">
+            <div class="row text-center">
+              <h4>Domaine : <?= $domaine->getNomDomaine(); ?></h4>
+            </div>
+            <div class="row">
+              <a href="<?= HOST . "manage/create-sousdomaine";?>" class="btn btn-info">
+                <i class="fas fa-plus"></i> Ajouter un sous domaine
+              </a>
+            </div>
+            <div class="row">
+              <table class="table table-stiped table-scroll small-first-col">
+              <thead>
+                <tr>
+                  <th>Sous domaine</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody class="body-half-screen">
+                <?php if(!empty($sousDomaines)) : foreach ($sousDomaines as $sousDomaine) :?>
+                <tr>
+                  <td>
+                      <?= $sousDomaine->getNomSousDomaine(); ?>
+                  </td>
+                  <td class="text-center">
+                    <a href="<?= HOST . "manage/update-sousdomaine?idSousDomaine=" . $sousDomaine->getIdSousDomaine(); ?>" class="btn btn-warning">
+                      <i class="fas fa-edit"></i>  
+                    </a>&nbsp;
+                    <a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $sousDomaine->getIdSousDomaine(); ?>" data-name="<?= $sousDomaine->getNomSousDomaine(); ?>" data-url="delete-sousdomaine?idSousDomaine=">
+                      <i class="fas fa-trash"></i>   
+                    </a>
+                  </td>
+                </tr>
+                <?php endforeach; endif;?>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
+      
+      <?php if($url == "entreprise_poste" && !empty($data)): extract($data); $pageTitle = "Poste : " . $entreprisePoste->getPoste(); ?>
+        <div class="row">
+          <div class="col-md-1">
+            <a href="<?= HOST . "manage/entreprise_postes"; ?>" class="btn btn-primary rounded-circle">
+              <i class="fas fa-arrow-left"></i>
+            </a>  
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4"></div>
+          <div class="col-md-8">
+            <h5>Intitulé du poste : <?= $entreprisePoste->getPoste(); ?></h5>
+          </div>
+        </div><hr>
+        <div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-5">
+            <strong>Formation requise :</strong><br>
+            <label>
+              <?= $niveauEtude->getNiveau() ?>
+              <?php if (!empty($entreprisePoste->getCapaciteNiveauEtude())) { echo " " . $entreprisePoste->getCapaciteNiveauEtude() . " ";} ?>
+              <?= nl2br($entreprisePoste->getFormationRequise()); ?>
+            </label><hr>
+          </div>
+          <div class="col-md-5">
+            <strong>Relation fonctionnelle :</strong><br>
+            <label>En interne : <?= nl2br($entreprisePoste->getRelationInterne()); ?></label><br>
+            <label>En externe : <?= nl2br($entreprisePoste->getRelationExterne()); ?></label><hr>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-5">
+            <strong class="text-center">Expériences :</strong>
+            <strong>Interne :</strong><br>
+            <label>Niveau : 
+              <?= is_object($anneeExperienceInterne) ? $anneeExperienceInterne->getNiveau() : 'N/A'; ?>
+              <?php if (!empty($entreprisePoste->getCapaciteExperienceInterne())) { echo " " . $entreprisePoste->getCapaciteExperienceInterne();} ?>
+            </label><br>
+            <label>Description : <?= " " . $entreprisePoste->getExperienceInterne(); ?></label><br>
+            <strong>Externe :</strong><br>
+            <label>Niveau : 
+              <?= $anneeExperienceExterne->getNiveau(); ?>
+              <?php if (!empty($entreprisePoste->getCapaciteExperienceExterne())) { echo " " . $entreprisePoste->getCapaciteExperienceExterne();} ?>
+            </label><br>
+            <label>Description : <?= " " . $entreprisePoste->getExperienceExterne(); ?></label><hr>
+          </div>
+          <div class="col-md-5">
+            <strong>Raison d'être :</strong><br>
+            <label><?= nl2br($entreprisePoste->getRaison()); ?></label><hr>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-5">
+            <strong>Evolution du poste : </strong>
+            <label>
+              <?php if ($evolution != null) : ?>
+                <?= " " . $evolution->getPoste(); ?>
+              <?php else : ?>
+                N/A
+              <?php endif ?>
+            </label><br>
+            <strong>Continuité de service : </strong>
+            <label>
+              <?php if ($continuite != null) : ?>
+                <?= " " . $continuite->getPoste(); ?>    
+              <?php else : ?>
+                N/A
+              <?php endif ?>
+            </label><br>
+            <?php if (!empty($missions)): ?> <hr>
+            <strong class="text-center">Mission(s) :</strong><br>
+            <ul>
+              <?php foreach ($missions as $mission): ?>
+                <li>
+                  <?= $mission->getDescription();?><br>
+                  Niveau : <?= $mission->getNiveau(); ?>
+                </li>
+              <?php endforeach ?>
+            </ul>
+            <?php endif ?>
+            
+          </div>
+          <div class="col-md-5">
+            <strong class="text-center">Compétences requises :</strong>
+            <strong>Savoirs : </strong><br>
+            <label><?= nl2br($entreprisePoste->getSavoirs()); ?></label><br>
+            <strong>Savoir faire : </strong><br>
+            <label><?= nl2br($entreprisePoste->getSavoirFaire()); ?></label><br>
+            <strong>Savoir être : </strong><br>
+            <label><?= nl2br($entreprisePoste->getSavoirEtre()); ?></label>
+          </div>
+        </div>
+      <?php endif; ?>
+
+      <?php if($url == "entreprise_service" && !empty($data)): extract($data); $pageTitle = "Service : " . $entrepriseService->getService(); ?>
+        <?php $_SESSION['variable']['idEntrepriseService'] = $entrepriseService->getIdEntrepriseService(); ?>
+        <div class="row" style="margin-top: -15px;">
+          <div class="col-md-2">
+            <a href="<?= HOST . "manage/entreprise_services"; ?>" class="btn btn-primary btn-sm">
+              <i class="fas fa-arrow-left"></i>
+              <span class="tippy-act ml-2">Services</span>
+            </a>  
+          </div>
+          <div class="col-md-8 text-center">
+              <h4 class="list-title section-heading"><?= ucwords($entrepriseService->getService()); ?></h4>
+          </div>
+          <div class="col-md-2 text-right">
+            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalEnregistrementPoste">
+              <i class="fa fa-plus" aria-hidden="true"></i>
+              <span class="tippy-act ml-2">ajouter</span>
+            </button>
+          </div>
+        </div>
+        <div class="row block-section">
+          <table class="table table-striped small-first-col" id="table-servicePoste" style="background: #f6f9fe!important;">
+            <thead style="background: #647994!important; color: #ffffff;">
+              <tr>
+                <th>Les postes existants dans ce service</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="tableSearch" class="body-half-screen">
+              <?php if(!empty($entreprisePostes)) : foreach ($entreprisePostes as $entreprisePoste) : extract($entreprisePoste); ?>
+              <tr>
+                <td>
+                    <?= ucwords($entreprisePoste->getPoste()); ?>
+                </td>
+                <td class="text-center">
+                  <button id="modifier-servicePoste<?=$servicePoste->getIdServicePoste()?>" class="btn btn-warning">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $servicePoste->getIdServicePoste(); ?>" data-name="<?= ucwords($entreprisePoste->getPoste()); ?>" data-url="delete-service_poste?idServicePoste=">
+                    <i class="fas fa-trash"></i>   
+                  </a>
+                </td>
+              </tr>
+              <script type="text/javascript">
+                $("#modifier-servicePoste<?=$servicePoste->getIdServicePoste()?>").click(function() {
+                    $.ajax({
+                      url : "<?= HOST . 'manage/update-service_poste'?>",
+                      type : 'POST',
+                      data : jQuery.param({idServicePoste: "<?=$servicePoste->getIdServicePoste()?>", action : "json"}),
+                      dataType : "json",
+                      success : function(data)
+                      {
+                        $('#idServicePoste').val(data['idServicePoste']);
+                        $('#idEntreprisePoste').val(data['idEntreprisePoste']);
+                        $('#ModalLabel').html("Modifier le poste");
+                        $('#modalEnregistrementPoste').modal('toggle');
+                      }
+                    });
+                });
+              </script>
+              <?php endforeach; endif;?>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal fade" id="modalEnregistrementPoste" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <form method="POST" id="form" action="<?= HOST . 'manage/save-service_poste'?>" enctype="multipart/form-data" novalidate="novalidate">
+                  <div class="modal-header">
+                    <div class="text-center" style="width: 100%;">
+                      <h5 class="modal-title" id="ModalLabel">Ajouter un nouveau poste</h5>
+                    </div>
+                    <button type="button" class="close" id="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="card p-3" style="background: #efefff;">
+                      <div class="form-group hidden">
+                        <input class="form-control" id="idServicePoste" name="idServicePoste" type="number" value="
+                          <?php if (!empty($servicePoste)) { echo $servicePoste->getIdServicePoste(); } ?>">
+                      </div>
+                      <div class="row">
+                        <div class="col-md-4">
+                          <span class="titre">Selectionner : </span>
+                        </div>
+                        <div class="col-md-8">
+                          <div class="form-group">
+                            <select  class="form-control span3 focus_activated modal-input" name="idEntreprisePoste" id="idEntreprisePoste" required="required" data-validation-required-message="Veuillez séléctionner un poste" >
+                              <option class="text-center" value="">__Choisir un poste__</option>
+                                <?php foreach($allPostes as $onePoste): ?>
+                                  <option value="<?= $onePoste->getIdEntreprisePoste(); ?>">
+                                      <?= ucfirst($onePoste->getPoste()); ?>
+                                  </option>
+                                <?php endforeach; ?>
+                            </select>                             
+                            <p class="help-block text-danger"></p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <div class="row" style="width: 105%!important;">
+                      <div class="col-md-3">
+                        <button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+                      </div>
+                      <div class="col-md-5"></div>
+                      <div class="col-md-4">
+                        <div class="form-group"> 
+                          <button type="submit" id="submit" class="btn btn-md btn-info">
+                            Enregistrer 
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+            </div>
+          </div>
+        </div>
+        <script>
+          $(document).ready(function() {
+              $('#table-servicePoste').DataTable( {
+                  "pagingType" : "full_numbers",
+                  "language" : {
+                    "search": "_INPUT_",
+                    "searchPlaceholder": "rechercher",
+                    "zeroRecords": "Aucun poste n'appartient à ce service",
+                    "oPaginate": {
+                        "sFirst":    "Premier",
+                        "sLast":    "Dernier",
+                        "sNext":    "Suivant",
+                        "sPrevious": "Précédent"
+                    }
+                  },
+                  "searchPlaceholder" : "rechercher",
+                  "lengthMenu" : [[10, 25, 50, -1], [10, 25, 50, "All"]]
+              } );
+              $('#table-servicePoste_length').addClass("invisible");
+              $('#table-servicePoste_info').parent().removeClass();
+              $('#table-servicePoste_info').parent().addClass("col-md-4");
+              $('#table-servicePoste_info').remove();
+              $('#table-servicePoste_wrapper').css("padding","0px");
+              tippy('.fa-plus', {
+                content: "Inclure un nouveau poste dans ce service"
+              });
+              $("#annuler").click(function(){
+                window.location.reload();
+              });
+          } );
+        </script>
+      <?php endif; ?>
+    </div>
+ </section>
+
+ <!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="text-confirmation"></p>
+      </div>
+      <div class="modal-footer">
+        <a id="action-delete" class="btn btn-success">Oui</a>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Non</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/tabs.css">
+<script src="<?= HOST; ?>../Web/Ressources/js/voirDetailRecrutement.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabs.js"></script>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/es6-promise@4.2.5/dist/es6-promise.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js"></script>
+<script type="text/javascript" src="https://fbktnsetnet.000webhostapp.com/wp-content/uploads/2018/04/html2canvas.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.9.0/dist/html2pdf.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/cv.js"></script>
+
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>
+<script>
+  $(function() {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+    });
+</script>

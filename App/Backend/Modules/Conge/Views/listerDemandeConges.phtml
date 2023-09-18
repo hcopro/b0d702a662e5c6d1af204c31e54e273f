@@ -1,0 +1,207 @@
+<?php
+	extract($data);
+?>
+<div>
+	<?php if (count($demandes) > 0) : ?>
+		<?php foreach ($demandes as $demande) : ?>
+			<?php if ($demande->getStatut() == ManagerModuleConge::LEAVE_VALIDATED) :?>
+				<div class="card m-2 p-2" style="border: 1px solid #00c853;">
+			<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_PROPOSED) :?>
+				<div class="card m-2 p-2" style="border: 1px solid #ffab00;">
+			<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_REJECTED) :?>
+				<div class="card m-2 p-2" style="border: 1px solid #d32f2f;">
+			<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_CANCELED) :?>
+				<div class="card m-2 p-2" style="border: 1px solid #ff2598;">
+			<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_ABOLISHED) :?>
+				<?php  if ($validations[$demande->getIdConge()][0]['statut'] == ManagerModuleConge::LEAVE_PROPOSED) :
+					$text 	='en attente' ;
+				 	$color 	= '#8d0512cf';
+					$fas 	= 'fa-hourglass';
+				else :
+				 	$text 	= 'annulation validée';
+				 	$color 	= '#2371b9e8';
+					$fas 	= 'fa-check';
+				endif; ?>
+				<div class="card m-2 p-2" style="border: 1px solid <?= $color?>;">
+			<?php endif?>
+				<div class="row">
+					<div class="col-md-1 text-center">
+						<?php if ($demande->getStatut() == ManagerModuleConge::LEAVE_VALIDATED) :?>
+							<i class="fa fa-check" style="color: #00c853;" aria-hidden="true"></i>
+						<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_PROPOSED) :?>
+							<i class="fa fa-hourglass" style="color: #ffab00;" aria-hidden="true"></i>
+						<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_ABOLISHED) :?>
+							<i class="fa <?= $fas?>" style="color: <?= $color?>;" aria-hidden="true"></i>
+						<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_REJECTED) :?>
+							<i class="fa fa-times" style="color: #d32f2f;" aria-hidden="true"></i>
+						<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_CANCELED) :?>
+							<i class="fa fa-trash" style="color: #ff2598;" aria-hidden="true"></i>
+						<?php endif?>
+					</div>
+					<div class="col-md-3 text-left">
+						<?php if ($demande->getStatut() == ManagerModuleConge::LEAVE_VALIDATED) :?>
+							<span class="text-important" style="color: #00c853;">validée</span>
+						<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_REJECTED) :?>
+							<span class="text-important" style="color: #d32f2f;">rejetée</span>
+						<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_PROPOSED) :?>
+							<span class="text-important" style="color: #ffab00;">en attente</span>
+						<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_CANCELED) :?>
+							<span class="text-important" style="color: #ff2598;">retirée</span>
+						<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_ABOLISHED) :?>
+							<span class="text-important" style="color: <?= $color?>;"><?= $text?></span>
+						<?php endif ?>
+					</div>
+					<div class="col-md-5 text-left">
+						du 
+						<?php $date = explode("-", $demande->getDebut()) ?>
+						<span class="titre"><?= ' ' . $date[2] . '/' . $date[1] . '/' . $date[0]?></span>
+						au
+						<?php $date = explode("-", $demande->getFin()) ?>
+						<span class="titre"><?=' ' . $date[2] . '/' . $date[1] . '/' . $date[0]?></span>
+					</div>
+					<div class="col-md-3 text-right">
+						<?php if ($demande->getEtat() == ManagerModuleConge::LEAVE_NOT_ARCHIVED) : ?>
+							<?php if ($demande->getStatut() == ManagerModuleConge::LEAVE_PROPOSED) : ?>
+								<button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalSupprimer<?=$demande->getIdConge()?>">retirer</button>
+								<a class="btn btn-sm btn-success" href = "<?= HOST . 'manage/rappeler-demandeConge?idConge=' . $demande->getIdConge()?>">rappeler</a>
+							<?php else : ?>
+								<a class="btn btn-sm btn-danger" href="<?= HOST . 'manage/archiver-demandeConge?idConge=' . $demande->getIdConge() ?>" >archiver</a>
+							<?php endif ?>
+						<?php elseif ($demande->getEtat() == ManagerModuleConge::LEAVE_ARCHIVED) : ?>
+							<a class="btn btn-sm btn-success" href="<?= HOST . 'manage/restaurer-demandeConge?idConge=' . $demande->getIdConge() ?>" >restaurer</a>
+						<?php endif ?>
+						<button class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalDemande<?=$demande->getIdConge()?>">voir</button>
+						<?php if (date('Y-m-d') <= $demande->getDebut() && $demande->getStatut() == ManagerModuleConge::LEAVE_VALIDATED) : ?>
+							<button class="btn btn-sm btn-danger" style="background-color: #b31468c2;" data-toggle="modal" id="annuler-<?=$demande->getIdConge()?>" data-target="#modalAnnuler-<?=$demande->getIdConge()?>">annuler mon congé</button>
+						<?php endif; ?>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="modalDemande<?=$demande->getIdConge()?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  				<div class="modal-dialog modal-dialog-centered" role="document">
+    				<div class="modal-content">
+      					<div class="modal-header">
+        					<div class="text-center" style="width: 100%;">
+					      		<h5 class="modal-title section-heading" style="margin-bottom: -15px!important;" id="exampleModalLabel">Les détails de votre demande</h5>
+					      	</div>
+        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          						<span aria-hidden="true">&times;</span>
+        					</button>
+      					</div>
+      					<div class="modal-body">
+        					<div class="card p-3" style="background: #efefff;">
+        						<div class="card m-1 p-2 titre text-center">
+        							<p class="m-0">
+	        							<span class="text-important"> Suivi des validations : </span>
+									</p>
+        						</div>
+        						<div class="card m-1 p-2 text-left">
+        							<?php foreach ($validations[$demande->getIdConge()] as $key => $validation) : extract($validation); ?>
+	        							<div class="row">
+	        								<div class="col-md-9">
+		        								<?php if ($responsable == ManagerModuleConge::COMPTE_EMPLOYE) :?>
+		        									<span class="text-important"> <?= $employe->getCivilite() . ' ' . $employe->getNom() . ' ' . $employe->getPrenom() ?> </span>
+		        								<?php elseif ($responsable == ManagerModuleConge::COMPTE_ENTREPRISE) :?>
+		        									<span class="text-important"> <?= $entreprise->getNom() ?> </span>
+		        								<?php endif ?>
+		        							</div>
+		        							<div class="col-md-3">
+		        								<?php if ($demande->getStatut() == ManagerModuleConge::LEAVE_ABOLISHED && $key == 0) : ?>
+		        									<?php if ($statut == ManagerModuleConge::LEAVE_PROPOSED) : $color='#8d0512cf' ; $text = "annulation en cours"; ?>
+			        								<?php elseif ($statut == ManagerModuleConge::LEAVE_VALIDATED) : $color='#2371b9e8' ; $text = "annulation validée"; ?>
+			        								<?php elseif ($statut == ManagerModuleConge::LEAVE_REJECTED) : $color='#d32f2f' ; $text = "annulation rejetée"; ?>
+			        								<?php elseif ($statut == ManagerModuleConge::LEAVE_ABOLISHED) : $color='#8d0512cf' ; $text = "annulée"; ?>
+			        								<?php elseif ($statut == ManagerModuleConge::LEAVE_CANCELED) : $color='#ff2598' ; $text = "retirée"; ?>
+			        								<?php endif ?>
+		        								<?php else : ?>
+			        								<?php if ($statut == ManagerModuleConge::LEAVE_PROPOSED) : $color='#ffab00' ; $text = "en attente"; ?>
+			        								<?php elseif ($statut == ManagerModuleConge::LEAVE_VALIDATED) : $color='#00c853' ; $text = "validée"; ?>
+			        								<?php elseif ($statut == ManagerModuleConge::LEAVE_REJECTED) : $color='#d32f2f' ; $text = "rejetée"; ?>
+			        								<?php elseif ($statut == ManagerModuleConge::LEAVE_ABOLISHED) : $color='#8d0512cf' ; $text = "annulée"; ?>
+			        								<?php elseif ($statut == ManagerModuleConge::LEAVE_CANCELED) : $color='#ff2598' ; $text = "retirée"; ?>
+			        								<?php endif ?>
+		        								<?php endif; ?>
+	        									<span class="titre" style="color: <?=$color?>;"><?=$text?></span>
+		        							</div>
+	        							</div>
+	        							<hr>
+	        						<?php endforeach ?>
+	        					</div>
+        					</div>
+      					</div>
+      					<div class="modal-footer">
+        					<div class="text-right" style="width: 105%!important;">
+        						
+					      	</div>
+      					</div>
+    				</div>
+  				</div>
+  			</div>
+  			<div class="modal fade" id="modalSupprimer<?=$demande->getIdConge()?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			  	<div class="modal-dialog modal-dialog-centered" role="document">
+			    	<div class="modal-content">
+			      		<div class="modal-header text-center">
+			      			<div class="text-center" style="width: 100%;">
+			      				<h5 class="modal-title section-heading" id="exampleModalLabel">Confirmation de la suppression</h5>
+			      			</div>
+			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          			<span aria-hidden="true">&times;</span>
+			        		</button>
+			      		</div>
+			      		<div class="modal-body">
+		      				<div class="card p-3 text-center" style="background: #ffffff;">
+								<?php $date = explode("-", $demande->getDebut()) ?>
+		      					Voulez-vous vraiment retirer votre demande de congé du <span class="titre"><?= ' ' . $date[2] . '/' . $date[1] . '/' . $date[0] . '?'?></span>
+				        	</div>
+			      		</div>
+			      		<div class="modal-footer">
+			      			<div class="row" style="width: 105%!important;">
+			      				<div class="col-sm-3 text-left">
+			      					<a href="" class="btn btn-red">Annuler</a>
+			      				</div>
+			      				<div class="col-sm-5"></div>
+			      				<div class="col-sm-4">
+			      					<a href="<?= HOST . 'manage/delete-demandeConge?idConge=' . $demande->getIdConge() ?>" class="btn btn-green">Confirmer</a>
+			      				</div>
+			      			</div>
+			      		</div>
+			    	</div>
+			  	</div>
+			</div>
+  			<div class="modal fade" id="modalAnnuler-<?=$demande->getIdConge()?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			  	<div class="modal-dialog modal-dialog-centered" role="document">
+			    	<div class="modal-content">
+			      		<div class="modal-header text-center">
+			      			<div class="text-center" style="width: 100%;">
+			      				<h5 class="modal-title section-heading">Confirmation de l'annulation de demande de congé</h5>
+			      			</div>
+			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          			<span aria-hidden="true">&times;</span>
+			        		</button>
+			      		</div>
+			      		<div class="modal-body" style="background: #ffffff;">
+		      				<div class="card p-3 text-center">
+		      					Voulez-vous vraiment annuler votre demande de congé ?
+				        	</div>
+			      		</div>
+			      		<div class="modal-footer">
+			      			<div class="row" style="width: 105%!important;">
+			      				<div class="col-sm-3 text-left">
+			      					<a href="" class="btn btn-red">Annuler</a>
+			      				</div>
+			      				<div class="col-sm-5"></div>
+			      				<div class="col-sm-4">
+			      					<a href="<?= HOST . 'manage/annuler-demandeConge?idConge=' . $demande->getIdConge()?>" class="btn btn-green">Confirmer</a>
+			      				</div>
+			      			</div>
+			      		</div>
+			    	</div>
+			  	</div>
+			</div>
+		<?php endforeach?>
+	<?php else : ?>
+		<div class="card m-2 p-2 text-center">
+			<span>Vous n'avez aucune demande de congé à afficher</span>
+		</div>
+	<?php endif?>
+</div>

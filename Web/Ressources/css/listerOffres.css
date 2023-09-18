@@ -1,0 +1,61 @@
+.section-offre{
+	margin-top: 15px;
+}
+.offre-detail-sytle{
+	margin-left: 10px;
+}
+.list-style{
+	background: border-box;
+	margin-top: 25px;
+}
+.element-offre-liste{
+	margin-top: -250px;
+}
+.image-offres{
+	margin-top: 93px;
+}
+.style-select{
+	margin-left: 15px;
+}
+.card-style{
+	width: 350px;
+	background: linear-gradient(135deg, #F8F8F8 25%, #FFFFFF 25%, #FFFFFF 50%, #FFFFFF 50%, #F8F8F8 75%, #FFFFFF 75%, #3a2a2f 100%);
+}
+.center-image {
+    display: inline-block;
+}
+.image-offre-slide{
+	max-height: 150px;
+	max-width: 600px;
+}
+.image-entreprise{
+	height: 80px;
+	width: 80px;
+}
+.formListe{
+	background: linear-gradient(156deg, #083d8c, #2f66a4, #5f8eb7, #96b5c9, #d4dbde);
+}
+.vague-color{
+	background: linear-gradient(156deg, black, darkgrey, darkgray, grey, darkblue);
+/*	background: ;*/
+}
+.texte3d{
+	color: #000000!important;
+    opacity: .6;
+    background: white;
+}
+.message {
+  	white-space: nowrap;
+  	overflow: hidden;
+  	animation: typing 3s steps(30) infinite, blink-caret .5s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes blink-caret {
+  from, to { border-right-color: transparent }
+  50% { border-right-color: orange }
+}

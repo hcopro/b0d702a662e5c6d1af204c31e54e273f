@@ -1,0 +1,160 @@
+<div> 
+	<table class="table table-borderless table-striped" id="" style="width: 98%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr>
+				<th class="text-left">Nom et Prénom</th>
+				<th class="text-left">Salaire Brut</th>
+				<th class="text-left">Cnaps</th>
+				<th class="text-left">Ostie</th>
+				<th class="text-left">Irsa</th>
+				<th class="text-left">Salaire Net</th>
+				<th class="text-center th-pointage">Action</th>
+			</tr>
+		</thead>
+		<tbody class="" style="padding: 10px!important;"> 
+			<?php if (count($data) > ManagerModulePaie::NO) : ?>
+				<?php foreach ($data as $datum) :
+					extract($datum);
+					if (!isset($contratEmploye)) {
+						$contratEmploye = null;
+					}
+				?>
+					<tr>
+						<td class="text-important text-left">
+							<span class="">
+								<?= $employe->getNom() . ' ' . $employe->getPrenom();?>
+							</span>
+						</td>
+						<td class="text-left">
+							<span class="">
+								<?= number_format($salaireBrut, 2); ?>
+							</span>
+						</td>
+						<td class="text-left">
+							<span class="">
+								<?= number_format($cnaps, 2); ?>
+							</span>
+						</td>
+						<td class="text-left">
+							<span class="">
+								<?= number_format($ostie, 2); ?>
+							</span>
+						</td>
+						<td class="text-left">
+							<span class="">
+								<?= number_format($irsa, 2); ?>
+							</span>
+						</td>
+						<td class="text-left">
+							<span class="">
+								<?= number_format($salaireNet, 2); ?>
+							</span>
+						</td>
+						<td class="text-important text-center">
+							<div class="row">
+								<div class="col-md-2"></div>
+								<div class="col-md-1">
+									<a class="btn btn-sm btn-transparent" href="<?= HOST . 'manage/entreprise/detailFichePaie?idEmploye=' . $employe->getIdEmploye()?>" style="margin-top: -5px!important;">
+										<i class="fa fa-info-circle tippy-act fa-15x text-dark" aria-hidden="true"></i>
+									</a>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<?php if ($contratEmploye != null) : ?>
+						<script>
+							$('document').ready(function(){
+								<?php if ($employe->getPhoto() != "") : ?>
+									photo = "<?= HOST . '../Web/Ressources/images/employes/' . $employe->getPhoto() ?>";
+								<?php else : ?>
+									photo = "<?= HOST . '../Web/Ressources/images/profilCandidat.png' ?>";
+								<?php endif ?>
+								contentHtml = "<div class='row' style='width: 400px;'>" + 
+												"<div class='col-md-2'>" + 
+													"<img src=" + photo + " style='height: 50px; width: 50px;'>" +
+												"</div>" +
+												"<div class='col-md-10'>" +
+													"<span><?=$employe->getNom() . ' ' . $employe->getPrenom()?><span/></br>" + 
+													"<span><?=$service?><span/></br>" +
+													"<span><?=$poste?><span/></br>" +
+													"<span><?=$categorie?><span/></br>" +
+												"</div>" +
+											"</div>";
+								setHtmlTippy('emp-<?=$employe->getIdEmploye()?>', contentHtml);
+							});
+						</script>
+					<?php endif ?>
+				<?php endforeach ?>
+			<?php else : ?>
+				<td colspan="3">
+					<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+						Aucun enregitrement trouvé
+					</div>
+				</td>
+			<?php endif ?>
+		</tbody>
+		<?php if (count($data) > ManagerModulePaie::NO) : ?>
+			<tfoot class="text-left" style="border-top: 1px solid #777; font-size: 1.1em;">
+				<tr>
+					<td>
+						<span class="text-important">Somme</span>
+					</td>
+					<td>
+						<span class="text-important"><?= number_format($totalBrut, 2) ?></span>
+					</td>
+					<td>
+						<span class="text-important"><?= number_format($totalCnaps, 2) ?></span>
+					</td>
+					<td>
+						<span class="text-important"><?= number_format($totalOstie, 2) ?></span>
+					</td>
+					<td>
+						<span class="text-important"><?= number_format($totalIrsa, 2) ?></span>
+					</td>
+					<td>
+						<span class="text-important"><?= number_format($totalNet, 2) ?></span>
+					</td>
+				</tr>
+			</tfoot>
+		<?php endif ?>
+	</table>
+</div>
+<script>
+	$('document').ready(function(){
+		$('#table-paie').DataTable( {
+	        "pagingType" : "full_numbers",
+	        "language" : {
+		        "search" : "_INPUT_",
+		        "searchPlaceholder" : "rechercher",
+		        "zeroRecords": "Aucune donnée disponible",
+	            "oPaginate": {
+	                "sFirst":    "Premier",
+	                "sLast":    "Dernier",
+	                "sNext":    "Suivant",
+	                "sPrevious": "Précédent"
+	            }
+		    },
+	        "searchPlaceholder" : "rechercher",
+	        "lengthMenu" : [[10, 25, 50, -1], [10, 25, 50, "All"]]
+	    } );
+	    $('#table-paie_length').addClass("invisible");
+	    $('#table-paie_info').parent().removeClass();
+	    $('#table-paie_info').parent().addClass("col-md-3");
+	    $('#table-paie_info').remove();
+	    $('#table-paie_wrapper').css("padding","0px");
+
+	});
+	function setHtmlTippy(classTippy, contentTippy)
+	{
+		var attente = setTimeout(function() {
+			tippy('.' + classTippy, {
+				content: contentTippy,
+				allowHtml : true,
+				placement : 'top-start'
+	  		});	
+		}, 1000);
+	}
+	tippy('.fa-info-circle', {
+		content: "Les détails des fiches de paie"
+	});
+</script>

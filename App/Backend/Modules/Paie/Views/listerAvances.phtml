@@ -1,0 +1,147 @@
+<div>
+	<table class="table table-borderless" id="table-paie" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0">
+				<th class="p-0 text-left" style="width: 35%!important;"><div class="card p-2 m-1 card-grey">Nom et Prénom</div></th>
+				<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Catégorie professionnelle</div></th>
+				<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Avance quinzaine</div></th>
+				<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Avance spéciale</div></th>
+				<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Aucune avance spéciale en cours</div></th>
+				<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Action</div></th>
+			</tr>
+		</thead>
+		<tbody class="" style="padding: 0px!important;"> 
+			<?php if (count($data) > ManagerModulePaie::NO) : ?>
+				<?php foreach ($data as $datum) : extract($datum); ?>
+					<tr class="p-0">
+						<td class="text-important p-0 text-left">
+							<div class="card p-2 m-1 card-light-grey emp-<?=$employe->getIdEmploye();?>" style="height: 40px; max-height: 40px;">
+								<span class=""><?= $employe->getNom() . ' ' . $employe->getPrenom();?></span>
+							</div>
+						</td>
+						<td class="p-0 text-left">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<span class="">
+									<?= $categorie->getDesignation(); ?>
+								</span>
+							</div>
+						</td>
+						<td class="p-0 text-center">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<span class="">
+									<?php if ($employe->getAvanceSalaire() == ManagerModulePaie::NO) : ?>
+										<i class="fa fa-times fa-15x text-danger"></i>
+									<?php else : ?>
+										<i class="fa fa-check fa-15x text-success"></i>
+									<?php endif ?> 
+								</span>
+							</div>
+						</td>
+						<td class="p-0 text-center">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<span class="">
+									<?php if ($employe->getAvanceSpeciale() == ManagerModulePaie::NO) : ?>
+										<i class="fa fa-times fa-15x text-danger"></i>
+									<?php else : ?>
+										<i class="fa fa-check fa-15x text-success"></i>
+									<?php endif ?> 
+								</span>
+							</div>
+						</td>
+						<td class="p-0 text-center">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<span class="">
+									<?php if ($avance != null) : ?>
+										<i class="fa fa-times fa-15x text-danger"></i>
+									<?php else : ?>
+										<i class="fa fa-check fa-15x text-success"></i>
+									<?php endif ?> 
+								</span>
+							</div>
+						</td>
+						<td class="p-0 text-important text-center">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<div class="row">
+									<div class="col-md-2"></div>
+									<div class="col-md-1">
+										<a class="btn btn-sm btn-transparent" href="<?= HOST . 'manage/entreprise/detailAvance?idEmploye=' . $employe->getIdEmploye()?>" style="margin-top: -5px!important;">
+											<i class="fa fa-info-circle tippy-act fa-15x text-dark" aria-hidden="true"></i>
+										</a>
+									</div>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<?php if ($contratEmploye != null) : ?>
+						<script>
+							$('document').ready(function(){
+								<?php if ($employe->getPhoto() != "") : ?>
+									photo = "<?= HOST . '../Web/Ressources/images/employes/' . $employe->getPhoto() ?>";
+								<?php else : ?>
+									photo = "<?= HOST . '../Web/Ressources/images/profilCandidat.png' ?>";
+								<?php endif ?>
+								contentHtml = "<div class='row' style='width: 400px;'>" + 
+												"<div class='col-md-2'>" + 
+													"<img src=" + photo + " style='height: 50px; width: 50px;'>" +
+												"</div>" +
+												"<div class='col-md-10'>" +
+													"<span><?=$employe->getNom() . ' ' . $employe->getPrenom()?><span/></br>" + 
+													"<span><?=$service?><span/></br>" +
+													"<span><?=$poste?><span/></br>" +
+													"<span><?=$categorie?><span/></br>" +
+												"</div>" +
+											"</div>";
+								setHtmlTippy('emp-<?=$employe->getIdEmploye()?>', contentHtml);
+							});
+						</script>
+					<?php endif ?>
+				<?php endforeach ?>
+			<?php else : ?>
+				<td colspan="3">
+					<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+						Aucun enregitrement trouvé
+					</div>
+				</td>
+			<?php endif ?>
+		</tbody>
+	</table>
+</div>
+<script>
+	$('document').ready(function(){
+		$('#table-paie').DataTable( {
+	        "pagingType" : "full_numbers",
+	        "language" : {
+		        "search" : "_INPUT_",
+		        "searchPlaceholder" : "rechercher",
+		        "zeroRecords": "Aucune donnée disponible",
+	            "oPaginate": {
+	                "sFirst":    "Premier",
+	                "sLast":    "Dernier",
+	                "sNext":    "Suivant",
+	                "sPrevious": "Précédent"
+	            }
+		    },
+	        "searchPlaceholder" : "rechercher",
+	        "lengthMenu" : [[10, 25, 50, -1], [10, 25, 50, "All"]]
+	    } );
+	    $('#table-paie_length').addClass("invisible");
+	    $('#table-paie_info').parent().removeClass();
+	    $('#table-paie_info').parent().addClass("col-md-3");
+	    $('#table-paie_info').remove();
+	    $('#table-paie_wrapper').css("padding","0px");
+
+	});
+	function setHtmlTippy(classTippy, contentTippy)
+	{
+		var attente = setTimeout(function() {
+			tippy('.' + classTippy, {
+				content: contentTippy,
+				allowHtml : true,
+				placement : 'top-start'
+	  		});	
+		}, 1000);
+	}
+	tippy('.fa-info-circle', {
+		content: "Plus de détails"
+	});
+</script>

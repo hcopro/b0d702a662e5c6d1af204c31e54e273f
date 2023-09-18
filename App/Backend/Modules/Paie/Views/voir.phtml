@@ -1,0 +1,1996 @@
+<?php
+	extract($data);
+	$url = explode('/', $_GET['page']);
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row" style="margin-top: -15px;">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<?php if ($_SESSION['compte']['identifiant'] == "entreprise" && ($url[2] == "paie" || $url[2] == "avantagePaie" || $url[2] == "parametrePaie"  )) : ?>
+					<h4 class="text-center list-title section-heading">La paie</h4>
+				<?php elseif ($_SESSION['compte']['identifiant'] == "entreprise" && ($url[2] == "detailFichePaie" || $url[2] == "parametreFichePaie")) : ?>
+					<h4 class="text-center list-title section-heading">Fiche de paie individuelle</h4>
+				<?php elseif ($_SESSION['compte']['identifiant'] == "employe") : ?>
+					<h4 class="text-center list-title section-heading">Fiche de paie</h4>
+				<?php endif ?>
+			</div>
+			<div class="col-md-2 text-right">
+				<?php if ($url[2] == "avantagePaie" && $url[1] == "entreprise") : ?>
+					<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalEnregistrement">
+						<i class="fa fa-plus" aria-hidden="true"></i>
+						<span class="ml-2">ajouter</span>
+					</button>
+				<?php elseif (($url[2] == "detailFichePaie" || $url[2] == "parametreFichePaie") && $_SESSION['compte']['identifiant'] == "entreprise") : ?>
+		        	<a href="<?= HOST . 'manage/entreprise/paie' ?>" class="btn btn-sm btn-transparent text-primary btn-circle-sm">
+						<i class="fa fa-list fa-15x tippy-act" aria-hidden="true"></i>
+					</a>
+				<?php endif ?>
+			</div>
+		</div>
+		<div class="block-section">
+			<?php if ($_SESSION['compte']['identifiant'] == "entreprise" && ($url[2] == "paie" || $url[2] == "avantagePaie" || $url[2] == "parametrePaie"  )) : ?>
+				<div class="row">
+			        <ul id="new-tab-button">
+		        		<li id="tab1">
+		        			<a href="<?= HOST. 'manage/entreprise/paie'?>">
+		        				Les employés
+		        			</a>
+		        		</li>
+		        		<li id="tab2">
+		        			<a href="<?= HOST. 'manage/entreprise/avantagePaie'?>">
+		        				Les avantages
+		        			</a>
+		        		</li>
+		        		<li id="tab3">
+		        			<a href="<?= HOST. 'manage/entreprise/parametrePaie'?>">
+		        				Paramètres globaux
+		        			</a>
+		        		</li>
+			        </ul>
+		      	</div>
+		    <?php elseif ($_SESSION['compte']['identifiant'] == "entreprise" && ($url[2] == "detailFichePaie" || $url[2] == "parametreFichePaie")) : ?>
+		    	<div class="row">
+			        <ul id="new-tab-button">
+		        		<li id="tab1">
+		        			<a href="<?= HOST. 'manage/entreprise/detailFichePaie?idEmploye=' . $employe->getIdEmploye()?>">
+		        				Les détails
+		        			</a>
+		        		</li>
+		        		<li id="tab2">
+		        			<a href="<?= HOST. 'manage/entreprise/parametreFichePaie?idEmploye=' . $employe->getIdEmploye()?>">
+		        				Les paramètres individuels
+		        			</a>
+		        		</li>
+			        </ul>
+		      	</div>
+		    <?php endif ?>
+		    <?php if ($url[1] == "entreprise" && $url[2] == "parametrePaie") : ?>
+				<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-12 text-center">
+	      						<span class="titre" style="color: #ffffff;">Paramètres à définir</span>
+	      					</div>
+	      				</div>
+	      				<div class="" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      					<div class="col-lg-12 text-center">
+	      						<div class="card p-2 m-2" style="background: #ffffff;">
+	      							<span class="text-important m-auto">
+		      							Arrondissement
+		      						</span>
+		      						<hr>
+	      							<div class="row">
+		      							<div class="col-md-6">
+		      								<p class="text-justify">
+		      									Vous pouvez choisir le type d'arrondissement utilisé dans tous les calculs dans le module paie.
+		      								</p>
+		      							</div>
+		      							<div class="col-md-1"></div>
+		      							<div class="col-md-5 text-left">
+	      									<form method="POST" id="form" action="<?= HOST . 'manage/save-parametrePaie'?>" enctype="multipart/form-data" novalidate="novalidate">
+	      										<label class="label-input">Type d'arrondissement</label>
+	      										<div class="row">
+	      											<div class="col-md-8">
+	      												<div class="form-group">
+			      											<select class="form-control select-time" name="typeArrondissement" id="typeArrondissement" required="required" data-validation-required-message="Veuillez choisir le type d'arrondissement" style="width: 100%!important; height: 40px!important;">
+			      												<option value="1">2 chiffres après virgule</option>
+			      												<option value="2">entier</option>
+			      											</select>
+			      											<p class="help-block text-danger"></p>
+			      										</div>
+			      										<script type="text/javascript">
+			      											$('document').ready(function(){
+			      												$('#typeArrondissement option[value = "<?= $parametrePaie->getTypeArrondissement(); ?>"]').prop('selected', true);
+			      											});
+			      										</script>
+		      										</div>
+		      										<div class="col-md-4">
+		      											<button class="btn btn-sm btn-info" type="submit">Enregistrer</button>
+		      										</div>
+	      										</div>
+	      									</form>
+		      							</div>
+		      						</div>
+		      					</div>
+	      						<div class="card p-2 m-2" style="background: #ffffff;">
+	      							<span class="text-important m-auto">
+		      							Salaire Minimum d'Embauche (SME)
+		      						</span>
+		      						<hr>
+	      							<div class="row">
+		      							<div class="col-md-6">
+		      								<p class="text-justify">
+		      									Le salaire minimum d'embauche(SME) est le salaire minimal légal que doit percevoir un salarié.
+		      									Le SME est revalorisé généralement tous les ans par décret, par le Ministère du Travail, de l’emploi, de la Fonction Publique et des Lois Sociales, veuillez donc mettre à jour chaque début d'année votre SME.
+		      								</p>
+		      							</div>
+		      							<div class="col-md-1"></div>
+		      							<div class="col-md-5 text-left">
+	      									<form method="POST" id="form" action="<?= HOST . 'manage/save-parametrePaie'?>" enctype="multipart/form-data" novalidate="novalidate">
+	      										<label class="label-input">Salaire Minimum d'embauche</label>
+	      										<div class="row">
+	      											<div class="col-md-8">
+	      												<div class="form-group">
+			      											<input type="number" class="form-control select-time" name="salaireMinimumEmbauche" id="salaireMinimumEmbauche" placeholder="Salaire minimum d'embauche" value="<?=$parametrePaie->getSalaireMinimumEmbauche()?>" required="required" data-validation-required-message="Veuillez renseigner le SME" style="width: 100%!important;">
+			      											<p class="help-block text-danger"></p>
+			      										</div>
+		      										</div>
+		      										<div class="col-md-4">
+		      											<button class="btn btn-sm btn-info" type="submit">Enregistrer</button>
+		      										</div>
+	      										</div>
+	      									</form>
+		      							</div>
+		      						</div>
+		      					</div>
+		      					<div class="card p-2 m-2" style="background: #ffffff;">
+	      							<span class="text-important m-auto">
+		      							Mode de calcul de l'IRSA
+		      						</span>
+		      						<hr>
+	      							<div class="row">
+		      							<div class="col-md-6">
+		      								<p class="text-left">
+		      									<ul>
+		      										<li class="text-left">
+		      											A partir de l'année 2021, la formule de l'IRSA a changé.
+		      										</li>
+		      										<br>
+		      										<li class="text-left">
+		      											Le  Minimum de Perception (MP) désigne  le montant minimum légal qui doit être versé à l’administration fiscale.
+		      										</li>
+		      										<br>
+		      										<li class="text-left">
+		      											Le seuil d’imposition correspond au montant de revenus à partir duquel on est imposable.
+		      										</li>
+		      									</ul>
+		      								</p>
+		      							</div>
+		      							<div class="col-md-1"></div>
+		      							<div class="col-md-5 text-left">
+	      									<form method="POST" id="form" action="<?= HOST . 'manage/save-parametrePaie'?>" enctype="multipart/form-data" novalidate="novalidate">
+	      										<label class="label-input">Mode de calcul</label>
+	      										<div class="row">
+	      											<div class="col-md-8">
+	      												<div class="form-group">
+			      											<select class="form-control select-time" name="modeIrsa" id="modeIrsa" required="required" data-validation-required-message="Veuillez choisir le mode de calcul" style="padding-left:-45px!important; width: 100%!important; height: 40px!important;">
+			      												<option value="1">Ancien</option>
+			      												<option value="2">Nouveau (A partir de 2021)</option>
+			      											</select>
+			      											<p class="help-block text-danger"></p>
+			      											<script type="text/javascript">
+			      												$('document').ready(function(){
+			      													$('#modeIrsa option[value = "<?= $parametrePaie->getModeIrsa(); ?>"]').prop('selected', true);
+			      												});
+			      											</script>
+			      										</div>
+		      										</div>
+	      										</div>
+	      										<label class="label-input">Minimum de perception</label>
+	      										<div class="row">
+	      											<div class="col-md-8">
+	      												<div class="form-group">
+			      											<input type="number" class="form-control select-time" name="minimumDePerception" id="minimumDePerception" placeholder="Minimum de perception" value="<?=$parametrePaie->getMinimumDePerception()?>" required="required" data-validation-required-message="Veuillez renseigner le MP" style="width: 100%!important;">
+			      											<p class="help-block text-danger"></p>
+			      										</div>
+		      										</div>
+	      										</div>
+	      										<label class="label-input">Seuil d'imposition</label>
+	      										<div class="row">
+	      											<div class="col-md-8">
+	      												<div class="form-group">
+			      											<input type="number" class="form-control select-time" name="seuilImposition" id="seuilImposition" placeholder="Seuil d'imposition" value="<?=$parametrePaie->getSeuilImposition()?>" required="required" data-validation-required-message="Veuillez renseigner le seuil d'imposition" style="width: 100%!important;">
+			      											<p class="help-block text-danger"></p>
+			      										</div>
+		      										</div>
+		      										<div class="col-md-4">
+		      											<button class="btn btn-sm btn-info" type="submit">Enregistrer</button>
+		      										</div>
+	      										</div>
+	      									</form>
+		      							</div>
+		      						</div>
+		      					</div>
+		      					<div class="card p-2 m-2" style="background: #ffffff;">
+	      							<span class="text-important m-auto">
+		      							Charge Familiale
+		      						</span>
+		      						<hr>
+	      							<div class="row">
+		      							<div class="col-md-6">
+		      								<p class="text-justify">
+		      									La charge familiale représente une somme que doit bénéficier le salarié
+		      									en fonction du nombre de personnes qu'il a en charge.
+		      								</p>
+		      							</div>
+		      							<div class="col-md-1"></div>
+		      							<div class="col-md-5 text-left">
+	      									<form method="POST" id="form" action="<?= HOST . 'manage/save-parametrePaie'?>" enctype="multipart/form-data" novalidate="novalidate">
+	      										<label class="label-input">Charge familiale</label>
+	      										<div class="row">
+	      											<div class="col-md-8">
+	      												<div class="form-group">
+			      											<input type="number" class="form-control select-time" name="chargeFamiliale" id="chargeFamiliale" placeholder="Charge Familiale" value="<?=$parametrePaie->getChargeFamiliale()?>" required="required" data-validation-required-message="Veuillez renseigner la charge familiale" style="width: 100%!important;">
+			      											<p class="help-block text-danger"></p>
+			      										</div>
+		      										</div>
+		      										<div class="col-md-4">
+		      											<button class="btn btn-sm btn-info" type="submit">Enregistrer</button>
+		      										</div>
+	      										</div>
+	      									</form>
+		      							</div>
+		      						</div>
+		      					</div>
+		      					<div class="card p-2 m-2" style="background: #ffffff;">
+		      						<span class="text-important m-auto">
+		      							limite pour l'allocation de congé
+		      						</span>
+		      						<hr>
+		      						<div class="row">
+		      							<div class="col-md-6">
+		      								<p class="text-justify">
+		      									La valeur limite pour l'allocation de congé indique la durée minimale requise
+		      									d'un congé pour qu'il soit pris en compte dans le calcul de l'allocation de congé.
+		      								</p>
+		      							</div>
+		      							<div class="col-md-1"></div>
+		      							<div class="col-md-5 text-left">
+		      								<form method="POST" id="form" action="<?= HOST . 'manage/save-parametrePaie'?>" enctype="multipart/form-data" novalidate="novalidate">
+	      										<label class="label-input">durée minimale requise (en jour)</label>
+	      										<div class="row">
+	      											<div class="col-md-8">
+	      												<div class="form-group">
+			      											<input type="number" class="form-control select-time" name="limiteAllocationConge" id="limiteAllocationConge" placeholder="Durée limite pour l'allocation de congé" value="<?=$parametrePaie->getLimiteAllocationConge()?>" required="required" data-validation-required-message="Veuillez renseigner la durée minimale" style="width: 100%!important;">
+			      											<p class="help-block text-danger"></p>
+			      										</div>
+		      										</div>
+		      										<div class="col-md-4">
+		      											<button class="btn btn-sm btn-info" type="submit">Enregistrer</button>
+		      										</div>
+	      										</div>
+	      									</form>
+		      							</div>
+		      						</div>
+		      					</div>
+		      					<div class="card p-2 m-2" style="background: #ffffff;">
+		      						<span class="text-important m-auto">
+		      							Template pour les fiches de paie
+		      						</span>
+		      						<hr>
+		      						<div class="row">
+		      							<div class="col-md-6">
+		      								<p class="text-justify">
+		      									Uploadez votre modèle de fiche de paie au format docx pour que vous puissiez télécharger et imprimer
+		      									les fiches  de paie de vos salariés.
+		      									Les mots clés pour votre template sont à récupérer ici
+		      									<button class="btn btn-transparent" data-toggle="modal" data-target="#modalInfo">
+		      										<i class="fa fa-info-circle text-info fa-15x"></i>
+		      									</button>
+		      								</p>
+		      							</div>
+		      							<div class="col-md-1"></div>
+		      							<div class="col-md-5 text-left">
+		      								<form method="POST" id="form" action="<?= HOST . 'manage/save-parametrePaie'?>" enctype="multipart/form-data" novalidate="novalidate">
+	      										<label class="label-input">template pour fiche de paie</label>
+	      										<div class="row">
+	      											<div class="col-md-8">
+	      												<div class="form-group">
+																<input type="hidden" name="page" value="document">
+																<?php if ($parametrePaie->getTemplate() != null) : ?>
+																	<input type="hidden" name="fichier" value="<?= $parametrePaie->getTemplate() ?>" >
+																	<input type="text" class="form-control select-time" readonly="readonly" id="" value="<?= $parametrePaie->getTemplate() ?>" style="width: 100%!important;" >
+																<?php else : ?>
+																	<input type="hidden" name="fichier" value="" >
+																	<input type="text" class="form-control select-time" readonly="readonly" id="" value="" style="width: 100%!important;">
+																<?php endif ?>
+																<input type="file" accept=".docx" name="fileToUpload" class="select-time" id="file-template" onchange="showSubmit(this)" style="font-size: 0.8em; padding-left: 0px;">
+															</form>
+			      										</div>
+		      										</div>
+		      										<div class="col-md-4">
+		      											<div class='row' id="delete-template">
+															<div class='col-md-5'>
+																<button type="submit" name="download" value="download" class="btn btn-sm btn-warning mt-1" style="font-size: 0.8em!important;">Télécharger</button>
+															</div>
+														</div>
+														<div class='row invisible' id="submit-template">
+															<div class='col-md-5'>
+																<button type="submit" style="font-size: 0.8em!important;" name="save" value="save" class="btn btn-sm btn-info mt-1">Enregistrer</button>
+															</div>
+														</div>
+		      										</div>
+	      										</div>
+	      									</form>
+		      							</div>
+		      						</div>
+		      					</div>
+	      					</div>
+	      				</div>
+	      			</div>
+	      		</div>
+	      		<script>
+	      			function showSubmit(input)
+					{
+						$('#submit-template').removeClass('invisible');
+						$('#delete-template').addClass('invisible');
+					}
+	      		</script>
+	      		<div class="modal fade bd-example-modal-lg" id="modalInfo" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+				  <div class="modal-dialog modal-lg">
+				    <div class="modal-content">
+				    	<div class="modal-header">
+        					<div class="text-center" style="width: 100%;">
+					      		<h5 class="modal-title section-heading" style="margin-bottom: -15px!important;" id="exampleModalLabel">Les mots clés pour votre template</h5>
+					      	</div>
+        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          						<span aria-hidden="true">&times;</span>
+        					</button>
+      					</div>
+      					<div class="modal-body">
+        					<div class="card p-3" style="max-height: 65vh; background: #ffffff; overflow-y: auto;">
+        						<table class="table table-striped" style="font-size: 0.9em;">
+        							<thead>
+        								<tr>
+        									<th>Mots clés</th>
+        									<th>Signification</th>
+        								</tr>
+        							</thead>
+        							<tbody>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_NOM ?></td>
+        									<td>Le nom du salarié</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_PRENOM ?></td>
+        									<td>Le(s) prénom(s) du salarié</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_POSTE ?></td>
+        									<td>Le poste du salarié</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_EMBAUCHE ?></td>
+        									<td>La d'embauche du salarié</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_DEBUT ?></td>
+        									<td>Le début de la période</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_FIN ?></td>
+        									<td>La fin de la période</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_MOIS ?></td>
+        									<td>Le mois du paiement</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_ANNEE ?></td>
+        									<td>L'année du paiement</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_SALAIRE_BASE ?></td>
+        									<td>Le salaire de base de l'employé</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_SALAIRE_PRORATA ?></td>
+        									<td>Le salaire de base de l'employé après calcul au prorata</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_HEURE_SUP ?></td>
+        									<td>La quantité en heure des heures supplémentaires </td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_MAJORATION_HEURE_SUP ?></td>
+        									<td>Le montant de la majoration des heures supplémentaires</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_HEURE_NUIT ?></td>
+        									<td>La quantité en heure des heures de travail de nuit </td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_MAJORATION_HEURE_NUIT ?></td>
+        									<td>Le montant de la majoration des heures de travail de nuit</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_HEURE_DIMANCHE ?></td>
+        									<td>La quantité en heure des heures de travail de dimanche </td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_MAJORATION_HEURE_DIMANCHE ?></td>
+        									<td>Le montant de la majoration des heures de travail de dimanche</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_HEURE_FERIE ?></td>
+        									<td>La quantité en heure des heures de jour férié travaillé </td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_MAJORATION_HEURE_FERIE ?></td>
+        									<td>Le montant de la majoration des heures de jour férié travaillé</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_RATIO_CNAPS ?></td>
+        									<td>Le pourcentage de la somme à déduire pour la cotisation CNaPS</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_DEDUCTION_CNAPS ?></td>
+        									<td>La somme à déduire pour la cotisation CNaPS</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_RATIO_OSTIE ?></td>
+        									<td>Le pourcentage de la somme à déduire pour la cotisation OSTIE</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_DEDUCTION_OSTIE ?></td>
+        									<td>La somme à déduire pour la cotisation OSTIE</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_REVENU_IMPOSABLE ?></td>
+        									<td>Le revenu imposable</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_IRSA ?></td>
+        									<td>le montant de l'IRSA</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_QUANTITE_CHARGE ?></td>
+        									<td>Le nombre de charges (enfants)</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_DEDUCTION_CHARGE ?></td>
+        									<td>La somme à déduire de l'IRSA par rapport à la charge</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_IRSA_NET ?></td>
+        									<td>Le montant de l'IRSA net</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_SALAIRE_NET ?></td>
+        									<td>La somme du salaire net</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_SALAIRE_BRUT ?></td>
+        									<td>La somme du salaire brut</td>
+        								</tr>
+        								<tr>
+        									<td class="titre"><?= ManagerModulePaie::CHAMP_SALAIRE_NET_EN_LETTRE ?></td>
+        									<td>La somme du salaire net écrite en lettre</td>
+        								</tr>
+        							</tbody>
+        						</table>
+        					</div>
+      					</div>
+      					<div class="modal-footer">
+        					<div class="text-right" style="width: 105%!important;">
+        						<a class="btn btn-sm btn-danger" href="<?= HOST . 'manage/entreprise/parametrePaie'?>">Fermer</a>
+					      	</div>
+      					</div>
+				    </div>
+				  </div>
+				</div>
+	      	<?php elseif ($url[1] == "entreprise" && $url[2] == "avantagePaie") : ?>
+	      		<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+	      						<div class="row">
+	      							<div class="col-md-4">
+	      								<label class="titre" style="color: #ffffff;">Statut imposable : </label>
+	      							</div>
+									<div class="col-md-8">
+										<select class="select-time" id='filter-statut'  style="font-size: 0.8em!important; width: 100%!important">
+											<option class="option-tout" id="o-t" value="">Tout</option>
+											<option class="" value="1">imposable pour tous</option>
+											<option class="" value="0">non imposable pour tous</option>
+											<option class="" value="3">imposable par défaut</option>
+											<option class="" value="2">non imposable par défaut</option>
+										</select>
+									</div>
+								</div>
+							</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+	      		<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	    					<form method="POST" id="form" action="<?= HOST . 'manage/save-avantage'?>" enctype="multipart/form-data" novalidate="novalidate">
+	    						<input type="hidden" name="idAvantage" id="idAvantage">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title section-heading m-0" id="titre">Enregistrement</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3" style="background: #efefff; max-height: 60vh; overflow-y: auto;">
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Libellé : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+													<i class="fa fa-money-bill icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+												  	<input class="form-control" type="text" name="libelle" id="libelle" placeholder="avantage" required="required" data-validation-required-message="Veuillez renseigner l'avantage" style="height: 38px; font-size: 0.9em;">
+												  	<p class="help-block text-danger"></p>
+												</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Type : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+			        								<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<select class="form-control font-weight-bold" name="imposable" id="imposable" required="required" data-validation-required-message="Veuillez sélectionner le type" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+			        									<option class="" value="">Sélectionner</option>
+														<option class="" value="1">imposable pour tous</option>
+														<option class="" value="0">non imposable pour tous</option>
+														<option class="" value="3">imposable par défaut</option>
+														<option class="" value="2">non imposable par défaut</option>
+			        								</select>
+								        			<p class="help-block text-danger"></p>
+								        		</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Ratio imposable : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+		        									<i class="fa fa-balance-scale icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        									<input class="form-control" type="number" min="0" max="100" name="ratioImposable" id="ratioImposable" placeholder="ratio imposable" required="required" data-validation-required-message="Veuillez renseigner le ratio imposable" style="height: 38px; font-size: 0.9em;">
+		        									<p class="help-block text-danger"></p>
+		        								</div>
+		        							</div>
+		        						</div>
+		        					</div>
+		      					</div>
+		      					<div class="modal-footer">
+		        					<div class="row" style="width: 105%!important;">
+							      		<div class="col-md-3">
+							      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group">
+							      				<button type="submit" id="submit" class="btn btn-md btn-info">
+							      					Enregistrer
+							      				</button>
+							      			</div>
+							      		</div>
+							      	</div>
+		      					</div>
+		      				</form>
+	    				</div>
+	  				</div>
+				</div>
+	      		<script>
+	      			$('document').ready(function(){
+      					$("#liste").load("<?= HOST . 'manage/avantagePaies'?>", {
+							statut : $('#filter-statut').val()
+						});
+	      			});
+	      			$('#filter-statut').change(function() {
+	      				$("#liste").load("<?= HOST . 'manage/avantagePaies'?>", {
+							statut : $('#filter-statut').val()
+						});
+	      			});
+	      		</script>
+	      	<?php elseif ($url[1] == "entreprise" && $url[2] == "paie") : ?>
+	      		<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-6" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+	      						<div class="row">
+	      							<div class="col-md-2">
+	      								<span class="titre text-white">Filtres : </span>
+	      							</div>
+	      							<div class="col-md-5">
+										<select class="select-time" id='filter-group' style="font-size: 0.8em!important;">
+											<option value=""> -- groupe --</option>
+											<option value="1" selected="selected">tout</option>
+											<option value="2">par service</option>
+											<option value="3">par poste</option>
+											<option value="4">par employé</option>
+										</select>
+									</div>
+									<div class="col-md-5">
+										<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;">
+											<option class="option-tout" id="o-t" value="">-- selectionnez --</option>
+											<?php foreach ($filtres['services'] as $service) : ?>
+												<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['postes'] as $poste) : ?>
+												<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['employes'] as $employe) : ?>
+												<option class="option-employe invisible" value="<?=$employe->getIdEmploye();?>"><?=$employe->getNom() . ' ' . $employe->getPrenom()?></option>
+											<?php endforeach ?>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="row">
+									<div class="col-md-4">
+										<label class="titre text-white">Par mois : </label>
+									</div>
+									<div class="col-md-5">
+										<select class="form-control font-weight-bold" name="mois" id="mois" required="required" data-validation-required-message="Veuillez selectionner le mois de début de remboursement" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+        									<option value="13">Toute l'année</option>
+        									<option value="1">Janvier</option>
+        									<option value="2">Février</option>
+        									<option value="3">Mars</option>
+        									<option value="4">Avril</option>
+        									<option value="5">Mai</option>
+        									<option value="6">Juin</option>
+        									<option value="7">Juillet</option>
+        									<option value="8">Août</option>
+        									<option value="9">Septembre</option>
+        									<option value="10">Octobre</option>
+        									<option value="11">Novembre</option>
+        									<option value="12">Décembre</option>
+        								</select>
+									</div>
+									<div class="col-md-3">
+										<input class="form-control font-weight-bold text-center" type="number" id="annee" value="<?= $annee ?>" min="2000" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+									</div>
+								</div>
+							</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+	      		<script>
+	      			const FILTER_GROUP_ALL     = 1;
+        			const FILTER_GROUP_SERVICE = 2;
+        			const FILTER_GROUP_POSTE   = 3;
+        			const FILTER_GROUP_EMPLOYE = 4;
+
+	      			$('document').ready(function(){
+	      				$('#mois option[value=<?=$mois?>]').prop('selected', true);
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste").load("<?= HOST . 'manage/paies'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								mois      : $('#mois').val(),
+								annee     : $('#annee').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				}
+	      			});
+	      			$('#filter-group').change(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste").load("<?= HOST . 'manage/paies'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								mois      : $('#mois').val(),
+								annee     : $('#annee').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_SERVICE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').removeClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_POSTE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').removeClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_EMPLOYE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').removeClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				}
+	      			});
+	      			$('#filter-element').change(function() {
+	      				$("#liste").load("<?= HOST . 'manage/paies'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							mois      : $('#mois').val(),
+							annee     : $('#annee').val()
+						});
+	      			});
+					$('#annee').change(function() {
+						$("#liste").load("<?= HOST . 'manage/paies'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							mois      : $('#mois').val(),
+							annee     : $('#annee').val()
+						});
+					});
+					$('#mois').change(function() {
+						$("#liste").load("<?= HOST . 'manage/paies'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							mois      : $('#mois').val(),
+							annee     : $('#annee').val()
+						});
+					});
+	      		</script>
+	      	<?php elseif ($url[2] == "detailFichePaie") : ?>
+	      		<div class="">
+		      		<table class="table" id="table-fiche-paie">
+		      			<thead>
+		      				<tr>
+		      					<th colspan="4">
+		      						<div class="row">
+		      							<div class="col-md-6">
+		      								<label>Mois : </label>
+				      						<select class="ml-3" id="mois">
+				      							<option value="1">Janvier</option>
+				      							<option value="2">Février</option>
+				      							<option value="3">Mars</option>
+				      							<option value="4">Avril</option>
+				      							<option value="5">Mai</option>
+				      							<option value="6">Juin</option>
+				      							<option value="7">Juillet</option>
+				      							<option value="8">Août</option>
+				      							<option value="9">Septembre</option>
+				      							<option value="10">Octobre</option>
+				      							<option value="11">Novembre</option>
+				      							<option value="12">Décembre</option>
+				      						</select>
+				      						<label class="ml-3"> Année : </label>
+				      						<input class="ml-3" type="number" id="annee" min="2020" value="<?= $annee ?>">
+		      							</div>
+		      							<div class="col-md-6 text-right">
+		      								<div class="row">
+		      									<div class="col-md-8"></div>
+		      									<div class="col-md-1">
+		      										<?php if ($_SESSION['compte']['identifiant'] == "entreprise") : ?>
+		      											<?php if ($statut == ManagerModulePaie::NO) : ?>
+		      												<a class="btn btn-warning btn-sm" href="<?= HOST . 'manage/edit-fichePaie?idEmploye=' . $employe->getIdEmploye() . '&mois=' . $mois . '&annee=' . $annee ?>">
+						      									<i class="fa fa-edit"></i>
+						      								</a>
+		      											<?php else : ?>
+		      												<a class="btn btn-warning btn-sm disabled" disabled="disabled">
+						      									<i class="fa fa-edit"></i>
+						      								</a>
+		      											<?php endif ?>
+		      										<?php endif ?>
+		      									</div>
+		      									<div class="col-md-1">
+		      										<?php if ($_SESSION['compte']['identifiant'] == "entreprise") : ?>
+			      										<form method="POST" action="<?= HOST . 'manage/save-fichePaie' ?>">
+			      											<input type="hidden" name="idEmploye" value="<?= $employe->getIdEmploye() ?>">
+			      											<input type="hidden" name="mois" value="<?= $mois ?>">
+			      											<input type="hidden" name="annee" value="<?= $annee ?>">
+			      											<input type="hidden" name="poste" value="<?= $poste ?>">
+			      											<input type="hidden" name="salaireDeBase" value="<?= $employe->getSalaire() ?>">
+			      											<input type="hidden" name="heureEffective" value="<?= $heureTotale ?>">
+			      											<input type="hidden" name="salaire" value="<?= $salaire ?>">
+			      											<input type="hidden" name="heureSupplementaireActive" value="<?= $parametreHeure->getHeureSupplementaireActive() ?>">
+			      											<input type="hidden" name="heureSupplementaireImposable" value="<?= $parametreHeure->getHeureSupplementaireImposable() ?>">
+			      											<input type="hidden" name="quantiteHeureSupplementaire" value="<?= $heureSupplementaire ?>">
+			      											<input type="hidden" name="majorationHeureSupplementaire" value="<?= $majorationSupplementaire ?>">
+			      											<input type="hidden" name="heureNuitImposable" value="<?= $parametreHeure->getHeureNuitImposable() ?>">
+			      											<input type="hidden" name="quantiteHeureNuit" value="<?= $heureNuit ?>">
+			      											<input type="hidden" name="majorationHeureNuit" value="<?= $majorationNuit ?>">
+			      											<input type="hidden" name="heureDimancheImposable" value="<?= $parametreHeure->getHeureDimancheImposable() ?>">
+			      											<input type="hidden" name="quantiteHeureDimanche" value="<?= $heureDimanche ?>">
+			      											<input type="hidden" name="majorationHeureDimanche" value="<?= $majorationDimanche ?>">
+			      											<input type="hidden" name="heureFerieImposable" value="<?= $parametreHeure->getHeureFerieImposable() ?>">
+			      											<input type="hidden" name="quantiteheureFerie" value="<?= $heureFerie ?>">
+			      											<input type="hidden" name="majorationHeureFerie" value="<?= $majorationFerie ?>">
+			      											<input type="hidden" name="quantiteCnaps" value="<?= ManagerModulePaie::COEFFICIENT_CNAPS ?>">
+			      											<input type="hidden" name="deductionCnaps" value="<?= $cotisationCnaps ?>">
+			      											<input type="hidden" name="quantiteOstie" value="<?= ManagerModulePaie::COEFFICIENT_OSTIE ?>">
+			      											<input type="hidden" name="deductionOstie" value="<?= $cotisationOstie ?>">
+			      											<input type="hidden" name="revenuImposable" value="<?= $revenuImposable ?>">
+			      											<input type="hidden" name="irsa" value="<?= $irsa ?>">
+			      											<input type="hidden" name="quantiteCharge" value="<?= $employe->getNombreEnfants() ?>">
+			      											<input type="hidden" name="deductionCharge" value="<?= $charge ?>">
+			      											<input type="hidden" name="irsaNet" value="<?= $irsaNet ?>">
+			      											<input type="hidden" name="salaireNet" value="<?= $salaireNet ?>">
+			      											<input type="hidden" name="salaireBrut" value="<?= $salaireBrut ?>">
+			      											<input type="hidden" name="soldeCongeDebut" value="<?= $soldeCongeDebut ?>">
+			      											<input type="hidden" name="soldeCongeFin" value="<?= $soldeCongeFin ?>">
+			      											<input type="hidden" name="congePris" value="<?= $congePris ?>">
+			      											<input type="hidden" name="quantiteAllocation" value="<?= $quantiteAllocation ?>">
+			      											<input type="hidden" name="allocationConge" value="<?= $allocationConge ?>">
+			      											<input type="hidden" name="debut" value="<?= $debut ?>">
+			      											<input type="hidden" name="fin" value="<?= $fin ?>">
+			      											<input type="hidden" name="presence" value="<?= $presence ?>">
+			      											<input type="hidden" name="statut" value="<?= ManagerModulePaie::FICHE_SAVED ?>">
+			      											<?php if ($statut == ManagerModulePaie::NO) : ?>
+			      												<button type="submit" class="btn btn-info btn-sm">
+							      									<i class="fa fa-save"></i>
+							      								</button>
+			      											<?php else : ?>
+			      												<button type="submit" class="btn btn-info btn-sm disabled" disabled="disabled">
+							      									<i class="fa fa-save"></i>
+							      								</button>
+			      											<?php endif ?>
+							      						</form>
+							      					<?php endif ?>
+		      									</div>
+		      									<div class="col-md-1">
+		      										<form method="POST" action="<?= HOST . 'manage/print-fichePaie' ?>">
+		      											<input type="hidden" name="idEmploye" value="<?= $employe->getIdEmploye() ?>">
+		      											<input type="hidden" name="mois" value="<?= $mois ?>">
+		      											<input type="hidden" name="annee" value="<?= $annee ?>">
+			      										<?php if (isset($statut)) : ?>
+			      											<?php if ($statut == ManagerModulePaie::NO) : ?>
+					      										<button type="submit" class="btn btn-dark btn-sm disabled" disabled="disabled">
+								      								<i class="fa fa-print"></i>
+								      							</button>
+							      							<?php endif ?>
+							      						<?php else : ?>
+							      							<button type="submit" class="btn btn-dark btn-sm">
+							      								<i class="fa fa-print"></i>
+							      							</button>
+							      						<?php endif ?>
+							      					</form>
+		      									</div>
+		      									<div class="col-md-1">
+		      										<?php if ($_SESSION['compte']['identifiant'] == "entreprise") : ?>
+			      										<form method="POST" action="<?= HOST . 'manage/send-fichePaie' ?>">
+			      											<input type="hidden" name="idEmploye" value="<?= $employe->getIdEmploye() ?>">
+			      											<input type="hidden" name="mois" value="<?= $mois ?>">
+			      											<input type="hidden" name="annee" value="<?= $annee ?>">
+				      										<?php if ($statut == ManagerModulePaie::NO) : ?>
+					      										<button class="btn btn-success btn-sm disabled" disabled="disabled">
+								      								<i class="fa fa-paper-plane"></i>
+								      							</button>
+								      						<?php else : ?>
+								      							<button class="btn btn-success btn-sm">
+								      								<i class="fa fa-paper-plane"></i>
+								      							</button>
+								      						<?php endif ?>
+								      					</form>
+								      				<?php endif ?>
+		      									</div>
+		      								</div>
+		      							</div>
+		      						</div>
+		      					</th>
+		      				</tr>
+		      				<tr>
+		      					<th colspan="2">
+		      						<div class="row">
+		      							<div class="col-md-4">
+		      								<span class="titre">L'entreprise :
+		      							</div>
+		      							<div class="col-md-8">
+		      								<span><?= $entreprise->getNom() ?></span>
+		      							</div>
+		      						</div>
+		      						<div class="row">
+		      							<div class="col-md-4">
+		      								<span class="titre">Adresse :
+		      							</div>
+		      							<div class="col-md-8">
+		      								<span class="font-weight-normal"><?= $entreprise->getAdresse() . " " . $entreprise->getVille() ?></span>
+		      							</div>
+		      						</div>
+		      					</th>
+		      					<th colspan="2">
+		      						<div class="row">
+		      							<div class="col-md-5">
+		      								<span class="titre">
+		      									L'employé :
+		      								</span>
+		      							</div>
+		      							<div class="col-md-7">
+		      								<span><?= $employe->getCivilite() . ' ' . $employe->getNom() . ' ' . $employe->getPrenom() ?></span>
+		      							</div>
+		      						</div>
+		      						<div class="row">
+		      							<div class="col-md-5">
+		      								<span class="titre">
+		      									Poste :
+		      								</span>
+		      							</div>
+		      							<div class="col-md-7">
+		      								<span><?= $poste ?></span>
+		      							</div>
+		      						</div>
+		      						<div class="row">
+		      							<div class="col-md-5">
+		      								<span class="titre">
+		      									Période :
+		      								</span>
+		      							</div>
+		      							<div class="col-md-7">
+		      								<span class="font-weight-normal">
+		      									du
+		      									<b><?= date("d/m/Y", strtotime($debut)) ?></b>
+		      									au
+		      									<b><?= date("d/m/Y", strtotime($fin)) ?></b>
+		      								</span>
+		      							</div>
+		      						</div>
+		      						<div class="row">
+		      							<div class="col-md-5">
+		      								<span class="titre">
+		      									Salaire de base :
+		      								</span>
+		      							</div>
+		      							<div class="col-md-7">
+		      								<span><?= isset($salaireDeBase) ? ($salaireDeBase ? number_format($salaireDeBase, 2) : 00.00) : 00.00; ?></span>
+		      							</div>
+		      						</div>
+		      						<div class="row">
+		      							<div class="col-md-5">
+		      								<span class="titre">
+		      									Heures effectives :
+		      								</span>
+		      							</div>
+		      							<div class="col-md-7">
+		      								<span><?= isset($heureTotale) ? $heureTotale . ' heures' : '0 heure'; ?></span>
+		      							</div>
+		      						</div>
+		      						<div class="row">
+		      							<div class="col-md-5">
+		      								<span class="titre">
+		      									Solde congé début du mois :
+		      								</span>
+		      							</div>
+		      							<div class="col-md-7">
+		      								<span><?= $soldeCongeDebut . ' jours'; ?></span>
+		      							</div>
+		      						</div>
+		      						<div class="row">
+		      							<div class="col-md-5">
+		      								<span class="titre">
+		      									Congé pris :
+		      								</span>
+		      							</div>
+		      							<div class="col-md-7">
+		      								<span><?= $congePris . ' jours'; ?></span>
+		      							</div>
+		      						</div>
+		      						<div class="row">
+		      							<div class="col-md-5">
+		      								<span class="titre">
+		      									Solde congé :
+		      								</span>
+		      							</div>
+		      							<div class="col-md-7">
+		      								<span><?= $soldeCongeFin . ' jours'; ?></span>
+		      							</div>
+		      						</div>
+		      					</th>
+		      				</tr>
+		      				<tr style="background: #eceff1;">
+		      					<th> Rubrique </th>
+		      					<th> Quantité </th>
+		      					<th> Gain </th>
+		      					<th> Déduction </th>
+		      				</tr>
+		      			</thead>
+		      			<?php $indisponible = !isset($indisponible) ? false : $indisponible; 
+		      			if (!$indisponible) : ?>
+			      			<tbody>
+			      				<tr>
+			      					<td>
+			      						<span class="titre">Salaire de base au prorata</span>
+			      					</td>
+			      					<td>
+			      						pour <?= $presence ?> jours
+			      					</td>
+			      					<td>
+			      						<?= number_format($salaire, 2); ?>
+			      					</td>
+			      					<td></td>
+			      				</tr>
+			      				<tr>
+			      					<td>
+			      						<span class="titre">Allocation de congé</span>
+			      					</td>
+			      					<td>
+			      						pour <?= $quantiteAllocation ?> jours
+			      					</td>
+			      					<td>
+			      						<?= number_format($allocationConge, 2); ?>
+			      					</td>
+			      					<td>
+			      				</tr>
+			      				<?php if ($parametreHeure->getHeureSupplementaireActive() && $parametreHeure->getHeureSupplementaireImposable()) : ?>
+						      		<tr>
+						      			<td>
+						      				<span class="titre">Heures supplémentaires</span>
+						      			</td>
+						      			<td>
+						      				<?= $heureSupplementaire . ' heures'; ?>
+						      			</td>
+						      			<td>
+						      				<?= number_format($majorationSupplementaire, 2); ?>
+						      			</td>
+						      			<td></td>
+						      		</tr>
+						      	<?php endif ?>
+						      	<?php if ($parametreHeure->getHeureNuitImposable()) : ?>
+						      		<tr>
+						      			<td>
+						      				<span class="titre">Heures de nuit</span>
+						      			</td>
+						      			<td>
+						      				<?= $heureNuit . ' heures'; ?>
+						      			</td>
+						      			<td>
+						      				<?= number_format($majorationNuit, 2); ?>
+						      			</td>
+						      			<td></td>
+						      		</tr>
+						      	<?php endif ?>
+						      	<?php if ($parametreHeure->getHeureDimancheImposable()) : ?>
+						      		<tr>
+						      			<td>
+						      				<span class="titre">Heures de Dimanche</span>
+						      			</td>
+						      			<td>
+						      				<?= $heureDimanche . ' heures'; ?>
+						      			</td>
+						      			<td>
+						      				<?= number_format($majorationDimanche, 2); ?>
+						      			</td>
+						      			<td></td>
+						      		</tr>
+						      	<?php endif ?>
+						      	<?php if ($parametreHeure->getHeureFerieImposable()) : ?>
+						      		<tr>
+						      			<td>
+						      				<span class="titre">Heures jour férié</span>
+						      			</td>
+						      			<td>
+						      				<?= $heureFerie . ' heures'; ?>
+						      			</td>
+						      			<td>
+						      				<?= number_format($majorationFerie, 2); ?>
+						      			</td>
+						      			<td></td>
+						      		</tr>
+						      	<?php endif ?>
+						      	<?php foreach ($avantageImposables as $avantageImposable) : ?>
+						      		<tr>
+						      			<td>
+						      				<span class="titre"><?= $avantages[$avantageImposable->getIdAvantageEmploye()] ?></span>
+						      			</td>
+						      			<td>
+						      				<span class=""><?= $avantageImposable->getRatioImposable() . ' %' ?></span>
+						      			</td>
+						      			<td>
+						      				<?= number_format(($avantageImposable->getMontant() * $avantageImposable->getRatioImposable()) / ManagerModulePaie::CENT_POUR_CENT , 2); ?>
+						      			</td>
+						      			<td>
+						      		</tr>
+						      	<?php endforeach ?>
+						      	<tr style="background: #eeeeee;">
+					      			<td>
+					      				<span class="text-important">Salaire Brut</span>
+					      			</td>
+					      			<td></td>
+					      			<td>
+					      				<span class="text-important"><?= number_format($salaireBrut, 2); ?></span>
+					      			</td>
+					      			<td></td>
+					      		</tr>
+					      		<tr>
+					      			<td>
+					      				<span class="titre">Cnaps</span>
+					      			</td>
+					      			<td>1 %</td>
+					      			<td></td>
+					      			<td>
+					      				<?= number_format($cotisationCnaps, 2); ?>
+					      			</td>
+					      		</tr>
+					      		<tr>
+					      			<td>
+					      				<span class="titre">Ostie</span>
+					      			</td>
+					      			<td>1 %</td>
+					      			<td></td>
+					      			<td>
+					      				<?= number_format($cotisationOstie, 2); ?>
+					      			</td>
+					      		</tr>
+					      		<tr style="background: #eeeeee;">
+					      			<td>
+					      				<span class="text-important">Revenu Imposable</span>
+					      			</td>
+					      			<td></td>
+					      			<td>
+					      				<span class="text-important"><?= number_format($revenuImposable, 2); ?></span>
+					      			</td>
+					      			<td></td>
+					      		</tr>
+					      		<tr>
+					      			<td>
+					      				<span class="titre">IRSA</span>
+					      			</td>
+					      			<td></td>
+					      			<td></td>
+					      			<td>
+					      				<?= number_format($irsa, 2); ?>
+					      			</td>
+					      		</tr>
+					      		<tr>
+					      			<td>
+					      				<span class="titre">Charge</span>
+					      			</td>
+					      			<td>
+					      				<?= $enfants . ' enfant(s)' ?>
+					      			</td>
+					      			<td>
+					      				<?= number_format($charge, 2); ?>
+					      			</td>
+					      			<td></td>
+					      		</tr>
+					      		<tr>
+					      			<td>
+					      				<span class="titre">IRSA net</span>
+					      			</td>
+					      			<td>
+					      			</td>
+					      			<td></td>
+					      			<td>
+					      				<?= number_format($irsaNet, 2); ?>
+					      			</td>
+					      		</tr>
+					      		<?php if ($parametreHeure->getHeureSupplementaireActive() && !$parametreHeure->getHeureSupplementaireImposable()) : ?>
+						      		<tr>
+						      			<td>
+						      				<span class="titre">Heures supplémentaires</span>
+						      			</td>
+						      			<td>
+						      				<?= $heureSupplementaire . ' heures'; ?>
+						      			</td>
+						      			<td>
+						      				<?= number_format($majorationSupplementaire, 2); ?>
+						      			</td>
+						      			<td></td>
+						      		</tr>
+						      	<?php endif ?>
+						      	<?php if (!$parametreHeure->getHeureNuitImposable()) : ?>
+						      		<tr>
+						      			<td>
+						      				<span class="titre">Heures de nuit</span>
+						      			</td>
+						      			<td>
+						      				<?= $heureNuit . ' heures'; ?>
+						      			</td>
+						      			<td>
+						      				<?= number_format($majorationNuit, 2); ?>
+						      			</td>
+						      			<td></td>
+						      		</tr>
+						      	<?php endif ?>
+						      	<?php if (!$parametreHeure->getHeureDimancheImposable()) : ?>
+						      		<tr>
+						      			<td>
+						      				<span class="titre">Heures de Dimanche</span>
+						      			</td>
+						      			<td>
+						      				<?= $heureDimanche . ' heures'; ?>
+						      			</td>
+						      			<td>
+						      				<?= number_format($majorationDimanche, 2); ?>
+						      			</td>
+						      			<td></td>
+						      		</tr>
+						      	<?php endif ?>
+						      	<?php if (!$parametreHeure->getHeureFerieImposable()) : ?>
+						      		<tr>
+						      			<td>
+						      				<span class="titre">Heures jour férié</span>
+						      			</td>
+						      			<td>
+						      				<?= $heureFerie . ' heures'; ?>
+						      			</td>
+						      			<td>
+						      				<?= number_format($majorationFerie, 2); ?>
+						      			</td>
+						      			<td></td>
+						      		</tr>
+						      	<?php endif ?>
+						      	<?php foreach ($avantageNonImposables as $avantageNonImposable) : ?>
+						      		<tr>
+						      			<td>
+						      				<span class="titre"><?= $avantages[$avantageNonImposable->getIdAvantageEmploye()] ?></span>
+						      			</td>
+						      			<td></td>
+						      			<td>
+						      				<?= number_format($avantageNonImposable->getMontant(), 2); ?>
+						      			</td>
+						      			<td></td>
+						      		</tr>
+						      	<?php endforeach ?>
+						      	<?php foreach ($deductions as $deduction) : ?>
+						      		<tr>
+						      			<td>
+						      				<span class="titre"><?= $deduction->getLibelle() ?></span>
+						      			</td>
+						      			<td></td>
+						      			<td></td>
+						      			<td>
+						      				<?= number_format($deduction->getMontant(), 2); ?>
+						      			</td>
+						      		</tr>
+						      	<?php endforeach ?>
+					      		<tr style="background: #eeeeee;">
+					      			<td>
+					      				<span class="text-important">Salaire Net</span>
+					      			</td>
+					      			<td></td>
+					      			<td>
+					      				<span class="text-important"><?= number_format($salaireNet, 2); ?></span>
+					      			</td>
+					      			<td></td>
+					      		</tr>
+			      			</tbody>
+			      			<tfoot>
+			      				<tr>
+			      					<td colspan="4">
+			      						Arrêtée à la somme de <span class="text-important"><?= $salaireNetLettre ?></span>
+			      					</td>
+			      				</tr>
+			      			</tfoot>
+			      		<?php else : ?>
+			      			<tbody>
+			      				<tr>
+			      					<td colspan="4" class="text-center">
+			      						<span class="text-danger text-important">Aucune fiche de paie n'est disponible pour ce mois</span>
+			      					</td>
+			      				</tr>
+			      			</tbody>
+			      		<?php endif ?>
+		      		</table>
+		      	</div>
+		      	<script>
+		      		$('document').ready(function(){
+		      			var mois = parseInt("<?= $mois ?>");
+		      			$('#mois option[value="' + mois + '"]').prop("selected", true);
+		      		});
+		      		$('#mois').change(function(){
+		      			window.location.href = "<?= HOST . "manage/" . $_SESSION['compte']['identifiant'] . "/detailFichePaie?idEmploye=" . $employe->getIdEmploye() . "&mois=" ?>" + $('#mois').val() + "&annee=" + $("#annee").val();
+		      		});
+		      		$('#annee').change(function(){
+		      			window.location.href = "<?= HOST . "manage/" . $_SESSION['compte']['identifiant'] . "/detailFichePaie?idEmploye=" . $employe->getIdEmploye() . "&mois=" ?>" + $('#mois').val() + "&annee=" + $("#annee").val();
+		      		});
+		      		tippy('.fa-print', {
+		      			content: "Imprimer la fiche de paie"
+		      		});
+		      		tippy('.fa-save', {
+		      			content: "Enregistrer la fiche de paie"
+		      		});
+		      		tippy('.fa-paper-plane', {
+		      			content: "Envoyer la fiche de paie à l'employé"
+		      		});
+		      	</script>
+	      	<?php elseif ($url[1] == "entreprise" && $url[2] == "parametreFichePaie") : ?>
+	      		<div class="row card card-extra-light-grey m-2 p-3">
+	      			<h5 class="text-center" style="width: 100%;">Paramètres de paie de <?= $employe->getCivilite() . ' ' . $employe->getNom() . ' ' . $employe->getPrenom()?></h5>
+	      		</div>
+	      		<div class="row">
+	      			<div class="col-md-6">
+	      				<p class="text-important text-center" style="width: 100%; text-decoration: underline;">Avantages et primes</p>
+	      				<div class="card m-1 p-3">
+	      					<div class="row">
+      							<div class="col-md-5">
+      								<span class="text-important">Avantage</span>
+      							</div>
+      							<div class="col-md-3">
+      								<span class="text-important">Montant</span>
+      							</div>
+      							<div class="col-md-1">
+      								<span class="text-important">NI</span>
+      							</div>
+      							<div class="col-md-3">
+      								<span class="text-important">Action</span>
+      							</div>
+      						</div>
+      						<br>
+	      					<?php foreach ($avantageEmployes as $avantageEmploye) : ?>
+	      						<div class="row">
+	      							<div class="col-md-5">
+	      								<?= $tableauAvantages[$avantageEmploye->getIdAvantage()]->getLibelle(); ?>
+	      							</div>
+	      							<div class="col-md-3">
+	      								<?= $avantageEmploye->getMontant() ?>
+	      							</div>
+	      							<div class="col-md-1" style="padding-left: 18px!important;">
+	      								<?php if ($avantageEmploye->getImposable() == ManagerModulePaie::YES) : ?>
+	      									<i class="fa fa-times i-reponse text-danger"></i>
+	      								<?php else : ?>
+	      									<i class="fa fa-check ni-reponse text-success"></i>
+	      								<?php endif ?>
+	      							</div>
+	      							<div class="col-md-3">
+	      								<button class="btn btn-sm btn-warning" style="margin-top: -5px!important;" id="edit-<?= $avantageEmploye->getIdAvantageEmploye() ?>">
+	      									<i class="fa fa-edit text-white tippy-act"></i>
+	      								</button>
+	      								<button class="btn btn-sm btn-danger" style="margin-top: -5px!important;" data-toggle="modal" data-target="#delete-<?=$avantageEmploye->getIdAvantageEmploye()?>">
+	      									<i class="fa fa-trash text-white tippy-act"></i>
+	      								</button>
+	      							</div>
+	      						</div>
+	      						<br>
+	      						<div class="modal fade" id="delete-<?= $avantageEmploye->getIdAvantageEmploye() ?>" tabindex="-1" role="dialog" aria-hidden="true">
+								  	<div class="modal-dialog modal-dialog-centered" role="document">
+									    <div class="modal-content">
+									      	<div class="modal-header">
+									        	<h5 class="modal-title text-center">Confirmation</h5>
+									        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									          		<span aria-hidden="true">&times;</span>
+									        	</button>
+									      	</div>
+									      	<div class="modal-body">
+									        	<p id="text-confirmation"> Voulez-vous vraiment supprimer ces données ?</p>
+									      	</div>
+									      	<div class="modal-footer">
+									      		<a href="" type="button" class="btn btn-sm btn-danger">Annuler</a>
+									        	<a href="<?= HOST . 'manage/delete-avantageEmploye?idAvantageEmploye=' . $avantageEmploye->getIdAvantageEmploye() . '&idEmploye=' . $avantageEmploye->getIdEmploye() ?>" class="btn btn-sm btn-success">Confirmer</a>
+									      	</div>
+									    </div>
+									</div>
+								</div>
+								<script>
+									$('#edit-<?= $avantageEmploye->getIdAvantageEmploye() ?>').click(function(){
+										$('#btn-action').html("Modifier");
+										$('#btn-action').removeClass("btn-success");
+										$('#btn-action').addClass("btn-info");
+										$('#btn-annuler').removeClass("hidden");
+										$('#idAvantageEmploye').val("<?= $avantageEmploye->getIdAvantageEmploye() ?>");
+										$('#montant').val("<?= $avantageEmploye->getMontant() ?>");
+										$('#idAvantage option[value="<?= $avantageEmploye->getIdAvantage() ?>"]').prop('selected', true);
+										$.ajax({
+											url : "<?= HOST . 'manage/get-avantage' ?>",
+											data : "idAvantage=<?= $avantageEmploye->getIdAvantage() ?>",
+											dataType : "json",
+											success : function(data)
+											{
+												if (data['imposable'] == IMPOSABLE_POUR_TOUS) {
+													$('#imposable').attr("checked", false);
+													$('#imposable').addClass("i-reponse");
+													$('#imposable').attr("disabled", true);
+												} else if (data['imposable'] == NON_IMPOSABLE_POUR_TOUS) {
+													$('#imposable').attr("checked", true);
+													$('#imposable').addClass("ni-reponse");
+													$('#imposable').attr("disabled", true);
+												} else {
+													<?php if ($avantageEmploye->getImposable() == ManagerModulePaie::NO) : ?>
+														$('#imposable').attr("checked", true);
+													<?php else : ?>
+														$('#imposable').attr("checked", false);
+													<?php endif ?>
+												}
+											}
+										});
+									});
+								</script>
+	      					<?php endforeach ?>
+	      					<form method="POST" id="form" action="<?= HOST . 'manage/save-avantageEmploye'?>" enctype="multipart/form-data" novalidate="novalidate">
+	      						<input type="hidden" name="idEmploye" id="idEmploye" value="<?= $employe->getIdEmploye() ?>">
+	      						<input type="hidden" name="idAvantageEmploye" id="idAvantageEmploye" value="">
+		      					<div class="row">
+		      						<div class="col-md-5 form-group">
+		      							<select class="input-form-group" name="idAvantage" id="idAvantage" required="required" data-validation-required-message="Obligatoire">
+		      								<option value="">Sélectionnez un avantage</option>
+		      								<?php foreach ($avantages as $avantage) : ?>
+		      									<option value="<?= $avantage->getIdAvantage() ?>"> <?= $avantage->getLibelle() ?> </option>
+		      								<?php endforeach ?>
+		      							</select>
+		      							<p class="text-danger help-block"></p>
+		      						</div>
+		      						<div class="col-md-3 form-group">
+		      							<input class="input-form-group" type="number" min="0" name="montant" id="montant" required="required" data-validation-required-message="Obligatoire" placeholder="montant">
+		      							<p class="text-danger help-block"></p>
+		      						</div>
+		      						<div class="col-md-1 form-group">
+										<div class="custom-control custom-checkbox my-1 mr-sm-2" id="div-imposable">
+											<input type="checkbox" class="form-check-input i-reponse" id="imposable" name="imposable" style="width: 20px; height: 20px; margin-left: -25px!important;">
+									  	</div>
+		      						</div>
+		      						<div class="col-md-3">
+		      							<button class="btn btn-md btn-success" id="btn-action" type="submit">
+		      								Ajouter
+		      							</button>
+		      							<a class="btn btn-md btn-danger mt-2 hidden" id="btn-annuler" href="<?= HOST . 'manage/entreprise/parametreFichePaie?idEmploye=' . $employe->getIdEmploye() ?>">
+		      								Annuler
+		      							</a>
+		      						</div>
+		      					</div>
+		      				</form>
+	      				</div>
+	      				<br>
+	      				<p class="text-important text-center" style="width: 100%; text-decoration: underline;">Déductions</p>
+	      				<div class="card m-1 p-3">
+	      					<div class="row">
+      							<div class="col-md-5">
+      								<span class="text-important">Libellé</span>
+      							</div>
+      							<div class="col-md-3">
+      								<span class="text-important">Montant</span>
+      							</div>
+      							<div class="col-md-1">
+      							</div>
+      							<div class="col-md-3">
+      								<span class="text-important">Action</span>
+      							</div>
+      						</div>
+      						<br>
+      						<?php foreach ($deductions as $deduction) : ?>
+	      						<div class="row">
+	      							<div class="col-md-5">
+	      								<?= $deduction->getLibelle() ?>
+	      							</div>
+	      							<div class="col-md-3">
+	      								<?= $deduction->getMontant() ?>
+	      							</div>
+	      							<div class="col-md-1">
+	      							</div>
+	      							<div class="col-md-3">
+	      								<button class="btn btn-sm btn-warning" style="margin-top: -5px!important;" id="edit-deduction-<?= $deduction->getIdDeduction() ?>">
+	      									<i class="fa fa-edit text-white tippy-act"></i>
+	      								</button>
+	      								<button class="btn btn-sm btn-danger" style="margin-top: -5px!important;" data-toggle="modal" data-target="#delete-deduction-<?=$deduction->getIdDeduction()?>">
+	      									<i class="fa fa-trash text-white tippy-act"></i>
+	      								</button>
+	      							</div>
+	      						</div>
+	      						<br>
+	      						<div class="modal fade" id="delete-deduction-<?= $deduction->getIdDeduction() ?>" tabindex="-1" role="dialog" aria-hidden="true">
+								  	<div class="modal-dialog modal-dialog-centered" role="document">
+									    <div class="modal-content">
+									      	<div class="modal-header">
+									        	<h5 class="modal-title text-center">Confirmation</h5>
+									        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									          		<span aria-hidden="true">&times;</span>
+									        	</button>
+									      	</div>
+									      	<div class="modal-body">
+									        	<p id="text-confirmation"> Voulez-vous vraiment supprimer ces données ?</p>
+									      	</div>
+									      	<div class="modal-footer">
+									      		<a href="" type="button" class="btn btn-sm btn-danger">Annuler</a>
+									        	<a href="<?= HOST . 'manage/delete-deduction?idDeduction=' . $deduction->getIdDeduction() . '&idEmploye=' . $deduction->getIdEmploye() ?>" class="btn btn-sm btn-success">Confirmer</a>
+									      	</div>
+									    </div>
+									</div>
+								</div>
+								<script>
+									$('#edit-deduction-<?= $deduction->getIdDeduction() ?>').click(function() {
+										$('#btn-action-deduction').html("Modifier");
+										$('#btn-action-deduction').removeClass("btn-success");
+										$('#btn-action-deduction').addClass("btn-info");
+										$('#btn-annuler-deduction').removeClass("hidden");
+										$('#idDeduction').val("<?= $deduction->getIdDeduction() ?>");
+										$('#montant-deduction').val("<?= $deduction->getMontant() ?>");
+										$('#libelle').val("<?= $deduction->getLibelle() ?>");
+									});
+								</script>
+	      					<?php endforeach ?>
+	      					<form method="POST" id="form" action="<?= HOST . 'manage/save-deduction'?>" enctype="multipart/form-data" novalidate="novalidate">
+	      						<input type="hidden" name="idEmploye" id="idEmploye" value="<?= $employe->getIdEmploye() ?>">
+	      						<input type="hidden" name="idDeduction" id="idDeduction" value="">
+		      					<div class="row">
+		      						<div class="col-md-5 form-group">
+		      							<input class="input-form-group" type="text" name="libelle" id="libelle" required="required" data-validation-required-message="Obligatoire" placeholder="libellé">
+		      							<p class="text-danger help-block"></p>
+		      						</div>
+		      						<div class="col-md-3 form-group">
+		      							<input class="input-form-group" type="number" min="0" name="montant" id="montant-deduction" required="required" data-validation-required-message="Obligatoire" placeholder="montant">
+		      							<p class="text-danger help-block"></p>
+		      						</div>
+		      						<div class="col-md-1 form-group">
+		      						</div>
+		      						<div class="col-md-3">
+		      							<button class="btn btn-md btn-success" id="btn-action-deduction" type="submit">
+		      								Ajouter
+		      							</button>
+		      							<a class="btn btn-md btn-danger mt-2 hidden" id="btn-annuler-deduction" href="<?= HOST . 'manage/entreprise/parametreFichePaie?idEmploye=' . $employe->getIdEmploye() ?>">
+		      								Annuler
+		      							</a>
+		      						</div>
+		      					</div>
+		      				</form>
+	      				</div>
+	      			</div>
+	      			<div class="col-md-6">
+	      				<p class="text-important text-center" style="width: 100%; text-decoration: underline;">Heures de travail</p>
+	      				<div class="card m-1 p-3">
+		      				<div class="row">
+		      					<div class="col-md-5">
+		      						<label class="text-important">Heure de travail par semaine : </label>
+		      					</div>
+		      					<div class="col-md-4">
+		      						<input type="hidden" id="valeur-heureNormale" value="1">
+		      						<input type="number" min="0" max="160" class="input-paie" id="texte-heureNormale" value="<?= $parametreHeure->getHeureNormale() ?>">
+		      					</div>
+		      					<div class="col-md-2">
+		      						<button class="btn btn-sm btn-info" id="changer-heureNormale">
+		      							changer
+		      						</button>
+		      					</div>
+		      				</div>
+		      				<br>
+		      				<div class="row">
+		      					<div class="col-md-5">
+		      						<label class="text-important">Heures supplémentaires : </label>
+		      					</div>
+		      					<div class="col-md-4">
+									<?php if ($parametreHeure->getHeureSupplementaireActive() == ManagerModulePaie::YES) : ?>
+										<input type="hidden" id="valeur-heureSupActive" value="1">
+								  		<input type="text" class="input-paie text-success" id="texte-heureSupActive" value="activées"  readonly="readonly">
+								  	<?php elseif ($parametreHeure->getHeureSupplementaireActive() == ManagerModulePaie::NO) : ?>
+								  		<input type="hidden" id="valeur-heureSupActive" value="0">
+								  		<input type="text" class="input-paie text-danger" id="texte-heureSupActive" value="désactivées"  readonly="readonly">
+								  	<?php endif ?>
+		      					</div>
+		      					<div class="col-md-2">
+		      						<button class="btn btn-sm btn-info" id="changer-heureSupActive">
+		      							changer
+		      						</button>
+		      					</div>
+		      				</div>
+		      				<br>
+		      				<div class="row">
+		      					<div class="col-md-5">
+		      						<label class="text-important">Heures supplémentaires imposables : </label>
+		      					</div>
+		      					<div class="col-md-4">
+		      						<?php if ($parametreHeure->getHeureSupplementaireImposable() == ManagerModulePaie::YES) : ?>
+										<input type="hidden" id="valeur-heureSupImposable" value="1">
+								  		<input type="text" class="input-paie text-info" id="texte-heureSupImposable" value="imposables"  readonly="readonly">
+								  	<?php elseif ($parametreHeure->getHeureSupplementaireImposable() == ManagerModulePaie::NO) : ?>
+								  		<input type="hidden" id="valeur-heureSupImposable" value="0">
+								  		<input type="text" class="input-paie text-danger" id="texte-heureSupImposable" value="non imposables"  readonly="readonly">
+								  	<?php endif ?>
+		      					</div>
+		      					<div class="col-md-2">
+		      						<button class="btn btn-sm btn-info" id="changer-heureSupImposable">
+		      							changer
+		      						</button>
+		      					</div>
+		      				</div>
+		      				<br>
+		      				<div class="row">
+		      					<div class="col-md-5">
+		      						<label class="text-important">Heures de nuit imposables : </label>
+		      					</div>
+		      					<div class="col-md-4">
+		      						<?php if ($parametreHeure->getHeureNuitImposable() == ManagerModulePaie::YES) : ?>
+										<input type="hidden" id="valeur-heureNuitImposable" value="1">
+								  		<input type="text" class="input-paie text-info" id="texte-heureNuitImposable" value="imposables"  readonly="readonly">
+								  	<?php elseif ($parametreHeure->getHeureNuitImposable() == ManagerModulePaie::NO) : ?>
+								  		<input type="hidden" id="valeur-heureNuitImposable" value="0">
+								  		<input type="text" class="input-paie text-danger" id="texte-heureNuitImposable" value="non imposables"  readonly="readonly">
+								  	<?php endif ?>
+		      					</div>
+		      					<div class="col-md-2">
+		      						<button class="btn btn-sm btn-info" id="changer-heureNuitImposable">
+		      							changer
+		      						</button>
+		      					</div>
+		      				</div>
+		      				<br>
+		      				<div class="row">
+		      					<div class="col-md-5">
+		      						<label class="text-important">Travail de nuit : </label>
+		      					</div>
+		      					<div class="col-md-4">
+		      						<?php if ($parametreHeure->getTravailNuitHabituel() == ManagerModulePaie::YES) : ?>
+										<input type="hidden" id="valeur-travailNuitHabituel" value="1">
+								  		<input type="text" class="input-paie text-info" id="texte-travailNuitHabituel" value="habituel"  readonly="readonly">
+								  	<?php elseif ($parametreHeure->getTravailNuitHabituel() == ManagerModulePaie::NO) : ?>
+								  		<input type="hidden" id="valeur-travailNuitHabituel" value="0">
+								  		<input type="text" class="input-paie text-danger" id="texte-travailNuitHabituel" value="occasionnel"  readonly="readonly">
+								  	<?php endif ?>
+		      					</div>
+		      					<div class="col-md-2">
+		      						<button class="btn btn-sm btn-info" id="changer-travailNuitHabituel">
+		      							changer
+		      						</button>
+		      					</div>
+		      				</div>
+		      				<br>
+		      				<div class="row">
+		      					<div class="col-md-5">
+		      						<label class="text-important">Heures du Dimanche imposables : </label>
+		      					</div>
+		      					<div class="col-md-4">
+		      						<?php if ($parametreHeure->getHeureDimancheImposable() == ManagerModulePaie::YES) : ?>
+										<input type="hidden" id="valeur-heureDimancheImposable" value="1">
+								  		<input type="text" class="input-paie text-info" id="texte-heureDimancheImposable" value="imposables"  readonly="readonly">
+								  	<?php elseif ($parametreHeure->getHeureDimancheImposable() == ManagerModulePaie::NO) : ?>
+								  		<input type="hidden" id="valeur-heureDimancheImposable" value="0">
+								  		<input type="text" class="input-paie text-danger" id="texte-heureDimancheImposable" value="non imposables"  readonly="readonly">
+								  	<?php endif ?>
+		      					</div>
+		      					<div class="col-md-2">
+		      						<button class="btn btn-sm btn-info" id="changer-heureDimancheImposable">
+		      							changer
+		      						</button>
+		      					</div>
+		      				</div>
+		      				<br>
+		      				<div class="row">
+		      					<div class="col-md-5">
+		      						<label class="text-important">Travail du Dimanche : </label>
+		      					</div>
+		      					<div class="col-md-4">
+		      						<?php if ($parametreHeure->getTravailDimancheHabituel() == ManagerModulePaie::YES) : ?>
+										<input type="hidden" id="valeur-travailDimancheHabituel" value="1">
+								  		<input type="text" class="input-paie text-info" id="texte-travailDimancheHabituel" value="habituel"  readonly="readonly">
+								  	<?php elseif ($parametreHeure->getTravailDimancheHabituel() == ManagerModulePaie::NO) : ?>
+								  		<input type="hidden" id="valeur-travailDimancheHabituel" value="0">
+								  		<input type="text" class="input-paie text-danger" id="texte-travailDimancheHabituel" value="occasionnel"  readonly="readonly">
+								  	<?php endif ?>
+		      					</div>
+		      					<div class="col-md-2">
+		      						<button class="btn btn-sm btn-info" id="changer-travailDimancheHabituel">
+		      							changer
+		      						</button>
+		      					</div>
+		      				</div>
+		      				<br>
+		      				<div class="row">
+		      					<div class="col-md-5">
+		      						<label class="text-important">Heures fériées imposables : </label>
+		      					</div>
+		      					<div class="col-md-4">
+		      						<?php if ($parametreHeure->getHeureFerieImposable() == ManagerModulePaie::YES) : ?>
+										<input type="hidden" id="valeur-heureFerieImposable" value="1">
+								  		<input type="text" class="input-paie text-info" id="texte-heureFerieImposable" value="imposables"  readonly="readonly">
+								  	<?php elseif ($parametreHeure->getHeureFerieImposable() == ManagerModulePaie::NO) : ?>
+								  		<input type="hidden" id="valeur-heureFerieImposable" value="0">
+								  		<input type="text" class="input-paie text-danger" id="texte-heureFerieImposable" value="non imposables"  readonly="readonly">
+								  	<?php endif ?>
+		      					</div>
+		      					<div class="col-md-2">
+		      						<button class="btn btn-sm btn-info" id="changer-heureFerieImposable">
+		      							changer
+		      						</button>
+		      					</div>
+		      				</div>
+		      			</div>
+	      			</div>
+	      		</div>
+	      		<script>
+	      			const OK                        = 1;
+	      			const WRONG                     = 0;
+	      			const IMPOSABLE_POUR_TOUS       = 1;
+	      			const IMPOSABLE_PAR_DEFAUT      = 3;
+        			const NON_IMPOSABLE_POUR_TOUS   = 0;
+			        const NON_IMPOSABLE_PAR_DEFAUT  = 2;
+
+	      			$('#changer-heureNormale').click(function(){
+	      				$('#valeur-heureNormale').val($('#texte-heureNormale').val());
+	      				$.ajax({
+	      					url : "<?= HOST . 'manage/save-parametreHeure'?>",
+	      					data : "idEmploye=<?=$employe->getIdEmploye()?>&heureNormale=" + $('#valeur-heureNormale').val(),
+	      					dataType : "text",
+	      					success : function(data)
+	      					{
+	      						if (data != WRONG) {
+	      							notifier("success", "Heure de travail modifiée avec succès");
+	      						} else {
+	      							notifier("danger", "Echec de la modification");
+	      						}
+	      					}
+	      				});
+	      			});
+	      			$('#changer-heureSupActive').click(function(){
+	      				if ($('#valeur-heureSupActive').val() == 1) {
+	      					$('#valeur-heureSupActive').val(0);
+	      				} else if ($('#valeur-heureSupActive').val() == 0) {
+	      					$('#valeur-heureSupActive').val(1);
+	      				}
+	      				$.ajax({
+	      					url : "<?= HOST . 'manage/save-parametreHeure'?>",
+	      					data : "idEmploye=<?=$employe->getIdEmploye()?>&heureSupplementaireActive=" + $('#valeur-heureSupActive').val(),
+	      					dataType : "text",
+	      					success : function(data)
+	      					{
+	      						if (data != WRONG) {
+	      							if ($('#valeur-heureSupActive').val() == 0) {
+	      								$('#texte-heureSupActive').val("désactivées");
+	      								$('#texte-heureSupActive').removeClass("text-success");
+	      								$('#texte-heureSupActive').addClass("text-danger");
+	      								notifier("success", "Les heures supplémentaires ont été désactivées");
+	      							} else {
+	      								$('#texte-heureSupActive').val("activées");
+	      								$('#texte-heureSupActive').removeClass("text-danger");
+	      								$('#texte-heureSupActive').addClass("text-success");
+	      								notifier("success", "Les heures supplémentaires ont été activées");
+	      							}
+	      						} else {
+	      							notifier("danger", "Echec de la modification");
+	      						}
+	      					}
+	      				});
+	      			});
+	      			$('#changer-heureSupImposable').click(function(){
+	      				if ($('#valeur-heureSupImposable').val() == 1) {
+	      					$('#valeur-heureSupImposable').val(0);
+	      				} else if ($('#valeur-heureSupImposable').val() == 0) {
+	      					$('#valeur-heureSupImposable').val(1);
+	      				}
+	      				$.ajax({
+	      					url : "<?= HOST . 'manage/save-parametreHeure'?>",
+	      					data : "idEmploye=<?=$employe->getIdEmploye()?>&heureSupplementaireImposable=" + $('#valeur-heureSupImposable').val(),
+	      					dataType : "text",
+	      					success : function(data)
+	      					{
+	      						if (data != WRONG) {
+	      							if ($('#valeur-heureSupImposable').val() == 0) {
+	      								$('#texte-heureSupImposable').val("non imposables");
+	      								$('#texte-heureSupImposable').removeClass("text-info");
+	      								$('#texte-heureSupImposable').addClass("text-danger");
+	      								notifier("success", "Les heures supplémentaires sont désormais NON IMPOSABLES");
+	      							} else {
+	      								$('#texte-heureSupImposable').val("imposables");
+	      								$('#texte-heureSupImposable').removeClass("text-danger");
+	      								$('#texte-heureSupImposable').addClass("text-info");
+	      								notifier("success", "Les heures supplémentaires sont désormais IMPOSABLES");
+	      							}
+	      						} else {
+	      							notifier("danger", "Echec de la modification");
+	      						}
+	      					}
+	      				});
+	      			});
+	      			$('#changer-heureNuitImposable').click(function(){
+	      				if ($('#valeur-heureNuitImposable').val() == 1) {
+	      					$('#valeur-heureNuitImposable').val(0);
+	      				} else if ($('#valeur-heureNuitImposable').val() == 0) {
+	      					$('#valeur-heureNuitImposable').val(1);
+	      				}
+	      				$.ajax({
+	      					url : "<?= HOST . 'manage/save-parametreHeure'?>",
+	      					data : "idEmploye=<?=$employe->getIdEmploye()?>&heureNuitImposable=" + $('#valeur-heureNuitImposable').val(),
+	      					dataType : "text",
+	      					success : function(data)
+	      					{
+	      						if (data != WRONG) {
+	      							if ($('#valeur-heureNuitImposable').val() == 0) {
+	      								$('#texte-heureNuitImposable').val("non imposables");
+	      								$('#texte-heureNuitImposable').removeClass("text-info");
+	      								$('#texte-heureNuitImposable').addClass("text-danger");
+	      								notifier("success", "Les heures de nuit sont désormais NON IMPOSABLES");
+	      							} else {
+	      								$('#texte-heureNuitImposable').val("imposables");
+	      								$('#texte-heureNuitImposable').removeClass("text-danger");
+	      								$('#texte-heureNuitImposable').addClass("text-info");
+	      								notifier("success", "Les heures de nuit sont désormais IMPOSABLES");
+	      							}
+	      						} else {
+	      							notifier("danger", "Echec de la modification");
+	      						}
+	      					}
+	      				});
+	      			});
+	      			$('#changer-travailNuitHabituel').click(function(){
+	      				if ($('#valeur-travailNuitHabituel').val() == 1) {
+	      					$('#valeur-travailNuitHabituel').val(0);
+	      				} else if ($('#valeur-travailNuitHabituel').val() == 0) {
+	      					$('#valeur-travailNuitHabituel').val(1);
+	      				}
+	      				$.ajax({
+	      					url : "<?= HOST . 'manage/save-parametreHeure'?>",
+	      					data : "idEmploye=<?=$employe->getIdEmploye()?>&travailNuitHabituel=" + $('#valeur-travailNuitHabituel').val(),
+	      					dataType : "text",
+	      					success : function(data)
+	      					{
+	      						if (data != WRONG) {
+	      							if ($('#valeur-travailNuitHabituel').val() == 0) {
+	      								$('#texte-travailNuitHabituel').val("occasionnel");
+	      								$('#texte-travailNuitHabituel').removeClass("text-info");
+	      								$('#texte-travailNuitHabituel').addClass("text-danger");
+	      								notifier("success", "Le travail de nuit a été changé en OCCASIONNEL");
+	      							} else {
+	      								$('#texte-travailNuitHabituel').val("habituel");
+	      								$('#texte-travailNuitHabituel').removeClass("text-danger");
+	      								$('#texte-travailNuitHabituel').addClass("text-info");
+	      								notifier("success", "Le travail de nuit a été changé en HABITUEL");
+	      							}
+	      						} else {
+	      							notifier("danger", "Echec de la modification");
+	      						}
+	      					}
+	      				});
+	      			});
+	      			$('#changer-heureDimancheImposable').click(function(){
+	      				if ($('#valeur-heureDimancheImposable').val() == 1) {
+	      					$('#valeur-heureDimancheImposable').val(0);
+	      				} else if ($('#valeur-heureDimancheImposable').val() == 0) {
+	      					$('#valeur-heureDimancheImposable').val(1);
+	      				}
+	      				$.ajax({
+	      					url : "<?= HOST . 'manage/save-parametreHeure'?>",
+	      					data : "idEmploye=<?=$employe->getIdEmploye()?>&heureDimancheImposable=" + $('#valeur-heureDimancheImposable').val(),
+	      					dataType : "text",
+	      					success : function(data)
+	      					{
+	      						if (data != WRONG) {
+	      							if ($('#valeur-heureDimancheImposable').val() == 0) {
+	      								$('#texte-heureDimancheImposable').val("non imposables");
+	      								$('#texte-heureDimancheImposable').removeClass("text-info");
+	      								$('#texte-heureDimancheImposable').addClass("text-danger");
+	      								notifier("success", "Les heures de Dimanche sont désormais NON IMPOSABLES");
+	      							} else {
+	      								$('#texte-heureDimancheImposable').val("imposables");
+	      								$('#texte-heureDimancheImposable').removeClass("text-danger");
+	      								$('#texte-heureDimancheImposable').addClass("text-info");
+	      								notifier("success", "Les heures de Dimanche sont désormais IMPOSABLES");
+	      							}
+	      						} else {
+	      							notifier("danger", "Echec de la modification");
+	      						}
+	      					}
+	      				});
+	      			});
+	      			$('#changer-travailDimancheHabituel').click(function(){
+	      				if ($('#valeur-travailDimancheHabituel').val() == 1) {
+	      					$('#valeur-travailDimancheHabituel').val(0);
+	      				} else if ($('#valeur-travailDimancheHabituel').val() == 0) {
+	      					$('#valeur-travailDimancheHabituel').val(1);
+	      				}
+	      				$.ajax({
+	      					url : "<?= HOST . 'manage/save-parametreHeure'?>",
+	      					data : "idEmploye=<?=$employe->getIdEmploye()?>&travailDimancheHabituel=" + $('#valeur-travailDimancheHabituel').val(),
+	      					dataType : "text",
+	      					success : function(data)
+	      					{
+	      						if (data != WRONG) {
+	      							if ($('#valeur-travailDimancheHabituel').val() == 0) {
+	      								$('#texte-travailDimancheHabituel').val("occasionnel");
+	      								$('#texte-travailDimancheHabituel').removeClass("text-info");
+	      								$('#texte-travailDimancheHabituel').addClass("text-danger");
+	      								notifier("success", "Le travail de Dimanche a été changé en OCCASIONNEL");
+	      							} else {
+	      								$('#texte-travailDimancheHabituel').val("habituel");
+	      								$('#texte-travailDimancheHabituel').removeClass("text-danger");
+	      								$('#texte-travailDimancheHabituel').addClass("text-info");
+	      								notifier("success", "Le travail de Dimanche a été changé en HABITUEL");
+	      							}
+	      						} else {
+	      							notifier("danger", "Echec de la modification");
+	      						}
+	      					}
+	      				});
+	      			});
+	      			$('#changer-heureFerieImposable').click(function(){
+	      				if ($('#valeur-heureFerieImposable').val() == 1) {
+	      					$('#valeur-heureFerieImposable').val(0);
+	      				} else if ($('#valeur-heureFerieImposable').val() == 0) {
+	      					$('#valeur-heureFerieImposable').val(1);
+	      				}
+	      				$.ajax({
+	      					url : "<?= HOST . 'manage/save-parametreHeure'?>",
+	      					data : "idEmploye=<?=$employe->getIdEmploye()?>&heureFerieImposable=" + $('#valeur-heureFerieImposable').val(),
+	      					dataType : "text",
+	      					success : function(data)
+	      					{
+	      						if (data != WRONG) {
+	      							if ($('#valeur-heureFerieImposable').val() == 0) {
+	      								$('#texte-heureFerieImposable').val("non imposables");
+	      								$('#texte-heureFerieImposable').removeClass("text-info");
+	      								$('#texte-heureFerieImposable').addClass("text-danger");
+	      								notifier("success", "Les heures fériées sont désormais NON IMPOSABLES");
+	      							} else {
+	      								$('#texte-heureFerieImposable').val("imposables");
+	      								$('#texte-heureFerieImposable').removeClass("text-danger");
+	      								$('#texte-heureFerieImposable').addClass("text-info");
+	      								notifier("success", "Les heures fériées sont désormais IMPOSABLES");
+	      							}
+	      						} else {
+	      							notifier("danger", "Echec de la modification");
+	      						}
+	      					}
+	      				});
+	      			});
+	      			$('#imposable').change(function(){
+	      				if ($('#imposable').is(":checked")) {
+							$('#imposable').removeClass('i-reponse');
+							$('#imposable').addClass('ni-reponse');
+							tippy('.ni-reponse', {
+			      				content: "Non Imposable"
+			      			});
+						} else {
+							$('#imposable').removeClass('ni-reponse');
+							$('#imposable').addClass('i-reponse');
+							tippy('.i-reponse', {
+			      				content: "Imposable"
+			      			});
+						}
+	      			});
+	      			$('#idAvantage').change(function(){
+	      				$.ajax({
+	      					url : "<?= HOST . 'manage/get-avantage'?>",
+	      					data : "idAvantage=" + $('#idAvantage').val(),
+	      					dataType : "json",
+	      					success : function(data)
+	      					{
+	      						if (data['imposable'] == <?= ManagerModulePaie::IMPOSABLE_POUR_TOUS ?>) {
+	      							$('#imposable').attr('checked', false);
+	      							$('#imposable').attr('disabled', true);
+	      						} else if (data['imposable'] == <?= ManagerModulePaie::NON_IMPOSABLE_POUR_TOUS ?>) {
+	      							$('#imposable').attr('checked', true);
+	      							$('#imposable').attr('disabled', true);
+	      						} else if (data['imposable'] == <?= ManagerModulePaie::IMPOSABLE_PAR_DEFAUT ?>) {
+	      							$('#imposable').attr('checked', false);
+	      						} else if (data['imposable'] == <?= ManagerModulePaie::NON_IMPOSABLE_PAR_DEFAUT ?>) {
+	      							$('#imposable').attr('checked', true);
+	      						}
+	      					}
+	      				});
+	      			});
+	      			tippy('.ni-question', {
+	      				content: "Non Imposable ?"
+	      			});
+	      			tippy('.i-reponse', {
+	      				content: "Imposable"
+	      			});
+	      			tippy('.ni-reponse', {
+	      				content: "Non Imposable"
+	      			});
+	      		</script>
+	      	<?php endif ?>
+		</div>
+	</div>
+</section>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabPaie.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabFichePaie.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>
+<script>
+	$(function() {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+    });
+</script>

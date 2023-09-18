@@ -1,0 +1,359 @@
+<style type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/dataTable.bootstrap.css"></style>
+<style type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/dataTable.responsive.css"></style>
+<?php
+	$_SESSION['previousUrl'] = $_GET['page'];
+	$url = explode("/", $_GET['page']);
+	$url = $url[1];
+	unset($_SESSION['variable']);
+	unset($_SESSION['candidat']);
+	unset($_SESSION['poste']);
+	unset($_SESSION['employe']);
+	unset($_SESSION['compteEmploye']);
+?>
+
+<section class="page-section" id="back-section">
+	<div class="container">
+		<?php if($url == "banques"): $banques = $data; $pageTitle = "Banques";?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-banque";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des banques</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Code banque</th>
+								<th>Nom de la banque</th>
+								<th>Ville</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($banques)) : foreach ($banques as $banque): ?>
+					        <tr>
+					            <td>
+					              <?= strtoupper($banque->getCodeBanque()); ?>
+					            </td>
+					            <td>
+					              <?= ucwords($banque->getNomBanque()); ?>
+					            </td>
+					            <td>
+					              <?= ucwords($banque->getVille()); ?>
+					            </td>
+					            <td class="text-center">
+					            	<a href="<?= HOST . "manage/update-banque?idBanque=" . $banque->getIdBanque(); ?>" class="btn btn-warning">
+							        	<i class="fas fa-edit">	</i>
+							      	</a>
+					            	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $banque->getIdBanque(); ?>" data-name="<?= ucwords($banque->getNomBanque()); ?>" data-url="delete-banque?idBanque=">
+					                    <i class="fas fa-trash"></i>
+					                </a>
+					            </td>
+					        </tr>
+					        <?php endforeach; ?>
+					        <?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php endif ?>
+
+		<?php if($url == "categorieProfessionnelles"): $categorieProfessionnelles = $data; $pageTitle = "categories professionnelles";?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-categorieProfessionnelle";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des catégories professionnelles</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Catégorie</th>
+								<th>Indice d'embauche</th>
+								<th>Indice d'ancienneté</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($categorieProfessionnelles)) : foreach ($categorieProfessionnelles as $categorieProfessionnelle): ?>
+					        <tr>
+					            <td>
+					              <?= $categorieProfessionnelle->getDesignation(); ?>
+					            </td>
+					            <td>
+					              <?= $categorieProfessionnelle->getIndiceEmbauche(); ?>
+					            </td>
+					            <td>
+					              <?= $categorieProfessionnelle->getIndiceAnciennete(); ?>
+					            </td>
+					            <td class="text-center">
+					            	<a href="<?= HOST . "manage/update-categorieProfessionnelle?idCategorieProfessionnelle=" . $categorieProfessionnelle->getIdCategorieProfessionnelle(); ?>" class="btn btn-warning">
+							        	<i class="fas fa-edit">	</i>
+							      	</a>
+					            	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $categorieProfessionnelle->getIdCategorieProfessionnelle(); ?>" data-name="<?= ucwords($categorieProfessionnelle->getDesignation()); ?>" data-url="delete-categorieProfessionnelle?idCategorieProfessionnelle=" >
+					                    <i class="fas fa-trash"></i>
+					                </a>
+					            </td>
+					        </tr>
+					        <?php endforeach; ?>
+					        <?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php endif ?>
+
+		<?php if($url == "employes"): $pageTitle = "Employés";?>
+			<div class="row" style="margin-top: -15px;">
+				<div class="col-md-2">
+				</div>
+				<div class="col-md-8">
+					<h4 class="text-center list-title section-heading">Liste des employés</h4>
+				</div>
+				<div class="col-md-2 text-right">
+					<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalEnregistrement">
+						<i class="fa fa-plus" aria-hidden="true"></i>
+						<span class="ml-2">ajouter</span>
+					</button>
+				</div>
+				<div class="col-md-2 text-left">
+					<form enctype="multipart/form-data" method="POST" action="<?= HOST. 'manage/download-template'?>" role="form">
+						<div class="form-group ">
+							<label style="position: absolute;background: #00fff6;border-radius: 50%;">1</label>
+							<div class='col-md-4'>
+								<input type="hidden" name="fichier" value="templates_import_employés.xlsx">
+								<button type="submit" name="download" value="download" class="btn btn-sm btn-warning mt-1" style="font-size: 0.8em!important;">Télécharger</button>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="col-md-2 text-center">
+					<form enctype="multipart/form-data" method="POST" action="<?= HOST. 'manage/import-employe'?>" role="form">
+						<div class="form-group ">
+							<label style="position: absolute;background: #00fff6;border-radius: 50%;">2</label>
+							<input type="file" name="file" id="file" style="padding: 7px; padding-left: 2px; font-weight: 400; font-size: 16px;" accept=".csv">
+							<button type="submit" class="btn btn-success hidden" name="upload"><i class="fas fa-file-import fa-1x"></i>&nbsp; Upload</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-employe" style="background: #f6f9fe!important;">
+						<thead style="background: #647994!important; color: #ffffff;">
+							<tr>
+								<th>Employés</th>
+								<th>Détails</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($data)) : foreach ($data as $employes): extract($employes); ?>
+					        <tr>
+					            <td>
+									<img src="
+										<?php
+				            				if ($employe->getPhoto() != "") {
+				            					echo HOST . "../Web/Ressources/images/employes/" . $employe->getPhoto();
+				            				} else {
+				            					echo HOST ."../Web/Ressources/images/profilCandidat.png";
+				            				}
+				            			?>
+									" style="height: 100px; width: 100px;">
+					            </td>
+				            	<td style="width: 50%!important; text-align: left!important;">
+				   					<p class="titre"><?= $employe->getCivilite() . " " . strtoupper($employe->getNom()) . " " . ucwords($employe->getPrenom()); ?></p>
+				   					<?php if ($service != null) : ?>
+				   						<p><strong>Service : </strong><?= " " . ucwords($service->getService()) ?></p>
+				   					<?php else : ?>
+				   						<p><strong>Service : </strong>N/A</p>
+				   					<?php endif ?>
+				   					<?php if ($poste != null) : ?>
+				   						<p><strong>Poste : </strong><?= " " . ucwords($poste->getPoste()); ?></p>  
+				   					<?php else : ?>
+				   						<p><strong>Poste : </strong>N/A</p>  
+				   					<?php endif ?> 			
+				            	</td>
+					            <td class="text-center">
+								      	<a href="<?= HOST . "manage/employe?idEmploye=" . $employe->getIdEmploye(); ?>" class="btn btn-info">
+								        	<i class="fas fa-eye">	</i>
+								      	</a>
+						            	<a href="<?= HOST . "manage/update-employe?idEmploye=" . $employe->getIdEmploye(); ?>" class="btn btn-warning">
+								        	<i class="fas fa-edit">	</i>
+								      	</a>
+					            	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $employe->getIdEmploye(); ?>" data-name="<?= ucwords($employe->getPrenom()); ?>" data-url="delete-employe?idEmploye=">
+			                    <i class="fas fa-trash"></i>
+				                </a>
+					            </td>
+					        </tr>
+					        <?php endforeach; ?>
+					        <?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  				<div class="modal-dialog modal-dialog-centered" role="document">
+    				<div class="modal-content">
+    					<form method="POST" id="form" action="<?= HOST . 'manage/create-employee'?>" enctype="multipart/form-data" novalidate="novalidate">
+	      					<div class="modal-header">
+	        					<div class="text-center" style="width: 100%;">
+						      		<h5 class="modal-title" id="exampleModalLabel">Créer un compte employé</h5>
+						      	</div>
+	        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          						<span aria-hidden="true">&times;</span>
+	        					</button>
+	      					</div>
+	      					<div class="modal-body">
+	        					<div class="card p-3" style="background: #efefff;">
+	        						<div class="form-group hidden">
+					                  	<input class="form-control" id="idCompte" name="idCompte" type="number" >
+					                </div>
+					                <div class="form-group hidden">
+					                  	<input class="form-control" id="identifiant" name="identifiant" type="text" value="employe" readonly>
+					                  	<p class="help-block text-danger"></p>
+					                </div>
+	        						<div class="row">
+	        							<div class="col-md-4">
+	        								<span class="titre">Pseudo : </span>
+	        							</div>
+	        							<div class="col-md-8">
+	        								<div class="form-group">
+	        									<i class="fa fa-user icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+							                  	<input class="form-control text-lowercase focus_activated" id="login" name="login" type="text" required="required" data-validation-required-message="Veuillez entrer votre pseudo *" data-validation-regex-regex="^[a-z-_]*" data-validation-regex-message="Caractères non valide" style="width: 100%; height: 38px; font-size: 0.9em" placeholder="pseudo">
+							                  	<p class="help-block text-danger"></p>
+							                </div>
+	        							</div>
+	        						</div>
+	        						<hr>
+	        						<div class="row">
+	        							<div class="col-md-4">
+	        								<span class="titre">Mot de passe : </span>
+	        							</div>
+	        							<div class="col-md-8">
+	        								<div class="form-group" style="position: relative;">
+	        									<i class="fa fa-key icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+	        									<input class="form-control focus_activated" id="motDePasse" name="motDePasse" type="password" required="required" data-validation-required-message="Veuillez entrer votre mot de passe *"  data-validation-regex-regex="^.{6,}$" data-validation-regex-message="6 caractères minimum *" style="width: 100%; height: 38px; font-weight: bold; font-size: 0.9em;" placeholder="mot de passe">
+                  					<i class="fas fa-eye eye-icon" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); z-index: 2;"></i>
+                  					<p class="help-block text-danger"></p>
+		        							</div>
+	        							</div>
+	        						</div>
+	        						<hr>
+	        						<div class="row">
+	        							<div class="col-md-4">
+	        								<span class="titre">Confirmer : </span>
+	        							</div>
+	        							<div class="col-md-8">
+	        								<div class="form-group" style="position: relative;">
+	        									<i class="fa fa-key icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        								<input class="form-control focus_activated" id="confirmation" name="confirmation" type="password" required="required" data-validation-required-message="Veuillez confirmer votre mot de passe *" style="width: 100%; height: 38px; font-weight: bold; font-size: 0.9em;" placeholder="confirmation du mot de passe">
+                  					<i class="fas fa-eye eye-icon" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); z-index: 2;"></i>
+                  					<p class="help-block text-danger" id="match-message"></p>
+							        		</div>
+	        							</div>
+	        						</div>
+	        					</div>
+	      					</div>
+	      					<div class="modal-footer">
+	        					<div class="row" style="width: 105%!important;">
+						      		<div class="col-md-3">
+						      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+						      		</div>
+						      		<div class="col-md-5"></div>
+						      		<div class="col-md-4">
+						      			<div class="form-group"> 
+						      				<button type="submit" id="submit" class="btn btn-md btn-info">
+						      					Suivant 
+						      					<i class="fas fa-angle-double-right fa-inverse ml-3"></i>
+						      				</button>
+						      			</div>
+						      		</div>
+						      	</div>
+	      					</div>
+	      				</form>
+    				</div>
+  				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/creerCompte.js"></script>
+			<script>
+				$(document).ready(function() {
+				    $('#table-employe').DataTable( {
+				        "pagingType" : "full_numbers",
+				        "language" : {
+					        "search" : "_INPUT_",
+					        "searchPlaceholder" : "rechercher",
+					        "zeroRecords": "Aucun employé n'a été enregistreé",
+		                    "oPaginate": {
+		                        "sFirst":    "Premier",
+		                        "sLast":    "Dernier",
+		                        "sNext":    "Suivant",
+		                        "sPrevious": "Précédent"
+		                    }
+					    },
+				        "searchPlaceholder" : "rechercher",
+				        "lengthMenu" : [[5, 25, 50, -1], [5, 25, 50, "All"]]
+				    } );
+				    $('#table-employe_length').addClass("invisible");
+				    $('#table-employe_info').parent().removeClass();
+				    $('#table-employe_info').parent().addClass("col-md-3");
+				    $('#table-employe_info').remove();
+				    $('#table-employe_wrapper').css("padding","0px");
+				    tippy('.fa-plus', {
+						content: "Enregistrer un nouvel employé"
+			  		});
+			  		$("#annuler").click(function(){
+						window.location.reload();
+					});
+				} );
+			</script>
+		<?php endif ?>
+	</div>	
+</section>
+
+ <!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="text-confirmation"></p>
+      </div>
+      <div class="modal-footer">
+        <a id="action-delete" class="btn btn-success">Oui</a>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Non</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+<script>
+	$(function() {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+    });
+</script>

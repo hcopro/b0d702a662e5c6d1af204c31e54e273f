@@ -1,0 +1,198 @@
+<?php $pageTitle = "Une question"; ?>	
+<table class="table table-striped small-first-col" id="table-back">
+	<thead>
+		<tr>
+			<th>Questions</th>
+			<th>CODE</th>
+			<th class="text-center">Actions</th>
+		</tr>
+	</thead>
+	<tbody id="tableSearch" class="body-half-screen">
+		<?php foreach ($data['questionnaires'] as $questionnaire): ?>
+			<tr class="">
+				<td>
+		   			<?= ucfirst($questionnaire->getLibelle()); ?>
+				</td>
+				<td>
+		   			<?= mb_strtoupper($questionnaire->getCode()); ?>
+				</td>
+				<td class="text-center">
+			      	<button class="btn btn-warning btn-warning-filter" data-toggle="modal"
+			      		onclick="gererForm(<?= $questionnaire->getIdQuestion()?>,<?= $questionnaire->getIdCategorie()?>, '<?= ucfirst($questionnaire->getLibelle()); ?>')"
+			      		data-target="#modalModificationQuestion" id="modifier-questionnaire" data-url="update-questionnaire?idQuestion=<?=$questionnaire->getIdQuestion()?>">
+			        	<i class="fas fa-edit"></i>	
+			      	</button>
+			      	<a href="delete-questionnaire?idQuestion=<?= $questionnaire->getIdQuestion();?>" class="btn btn-danger delete"
+			      		data-toggle="modal" data-target="#deleteModal<?=$questionnaire->getIdQuestion(); ?>"
+			      		data-id="<?= $questionnaire->getIdQuestion(); ?>"
+			      		data-url="delete-questionnaire?idQuestion=<?= $questionnaire->getIdQuestion();?>">
+	         			<i class="fas fa-trash"></i>
+		        	</a>
+				</td>
+				<!-- Debut Modal Suppression questionnaire -->
+					<div class="modal fade" id="deleteModal<?=$questionnaire->getIdQuestion(); ?>" tabindex="-1" role="dialog" aria-hidden="true">
+					  <div class="modal-dialog modal-dialog-centered" role="document">
+					    <div class="modal-content">
+					      <div class="modal-header">
+					        <h5 class="modal-title text-center">Confirmation</h5>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          <span aria-hidden="true">&times;</span>
+					        </button>
+					      </div>
+					      <div class="modal-body">
+					        <p id="text-confirmation"> Voulez-vous vraiment supprimer <b><em>"<?= ucfirst($questionnaire->getLibelle()); ?>" </b></em>?</p>
+					      </div>
+					      <div class="modal-footer">
+					        <a id="action-delete" class="btn btn-success"
+					        	href="delete-questionnaire?idQuestion=<?= $questionnaire->getIdQuestion(); ?>">Oui</a>
+					        <button type="button" class="btn btn-danger" data-dismiss="modal">Non</button>
+					      </div>
+					    </div>
+					  </div>
+					</div>
+				<!-- Fin du Modal Suppression questionnaire -->
+			</tr>
+		<?php endforeach;?>
+	</tbody>
+</table>
+<!-- Debut du Modal Modification questionnaire  -->
+	<div class="modal fade" id="modalModificationQuestion" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+			<div class="modal-content">
+				<form method="POST" id="form" action="<?= HOST . 'manage/entreprise/evaluation/update-questionnaire' ?>"
+					enctype="multipart/form-data" novalidate="novalidate" class="error">
+					<div class="modal-header">
+						<div class="text-center" style="width: 100%;">
+				      		<h5 class="modal-title" id="exampleModalLabel"> <?= 'Modifier '.lcfirst($pageTitle) ?></h5>
+				      	</div>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+	  					<div class="card p-3" style="background: #efefff;">
+	  						<div class="form-group hidden">
+				              	<input class="form-control" id="idQuestion" name="id_question" type="number" value="" readonly>
+				              	<p class="help-block text-danger"></p>
+			              	</div>
+				            <div class="form-group hidden">
+				              	<input class="form-control" id="idEntreprise" type="number" value="<?= $_SESSION['user']['idEntreprise']; ?>" readonly>
+				              	<p class="help-block text-danger"></p>
+				            </div>
+				            <div class="row">
+	  							<div class="col-md-4">
+	  								<span class="titre">Dimension : </span>
+	  							</div>
+	  							<div class="col-md-8" style="margin-left: -237px;">
+	  								<div class="form-group">
+	  									<i class="fa fa-tag icon-input" aria-hidden="false" style="color: #3a434f; bottom: 32px"></i>
+				                  		<select  class="form-control span3 focus_activated modal-input" id="modif-select-idCategorie" required="required"
+				                  		data-validation-required-message="Veuillez choisir une trait de personnalité">
+			                    			<?php foreach($data['categories'] as $categorie): ?>
+				                      			<option  value="<?= $categorie->getIdCategorie(); ?>">
+				                        			<?= ucfirst($categorie->getLibelle()); ?>
+				                      			</option>
+			                    			<?php endforeach; ?>
+				                  		</select>
+					                </div>
+	  							</div>
+	  						</div>
+  							<hr>
+							<div class="row">
+								<div class="col-md-4">
+									<span class="titre">Question : </span>
+								</div>
+								<div class="col-md-8" style="margin-left: -237px;">
+									<div class="form-group">
+										<i class="fa fa-pencil-alt icon-input" aria-hidden="true" style="color: #3a434f; bottom: 30px;"></i>
+										<input class="form-control focus_activated text-capitalize modal-input" id="questionnaire"
+											name="libelle" type="text" required="required" data-validation-required-message="Entrez la question svp!" 
+										data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùçâ |'-?<>,;:!\/'']*"
+										data-validation-regex-message="Caractères non valide" placeholder="Saisir une question" value="">
+										<p class="help-block text-danger"></p>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-md-4">
+									<span class="titre">Interpretation : </span>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-3">
+									<div class="form-group">
+										<div class="card p-2 m-1 card-grey">
+											<strong>
+												<i class="fa fa-pencil-alt icon-input" aria-hidden="false" style="color: #ff00ea;margin: 6px;"></i>
+												<label for="exampleFormControlTextarea2" style="font-style: italic;font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initiation 1 :</label>
+											</strong>
+										</div>
+										<textarea name="Initiation 1" class="form-control focus_activated text-capitalize input-note" rows="5"></textarea>
+								  	</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<div class="card p-2 m-1 card-grey">
+											<i class="fa fa-pencil-alt icon-input" aria-hidden="false" style="color: #ff00ea;margin: 6px;"></i>
+											<strong>
+												<label for="exampleFormControlTextarea2" style="font-style: italic;font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pratique 2 :</label>
+											</strong> 
+										</div>
+										<textarea name="Pratique 2" class="form-control focus_activated text-capitalize input-note" rows="5"></textarea>
+								  	</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<div class="card p-2 m-1 card-grey">
+											<i class="fa fa-pencil-alt icon-input" aria-hidden="false" style="color: #ff00ea;margin: 6px;"></i>
+											<strong>
+												<label for="exampleFormControlTextarea2" style="font-style: italic;font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maîtrise 3 :</label>
+											</strong> 
+										</div>
+										<textarea name="Maîtrise 3" class="form-control focus_activated text-capitalize input-note" rows="5"></textarea>
+								  	</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<div class="card p-2 m-1 card-grey">
+											<i class="fa fa-pencil-alt icon-input" aria-hidden="false" style="color: #ff00ea;margin: 6px;"></i>
+											<strong>
+												<label for="exampleFormControlTextarea2" style="font-style: italic;font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Expertise 4 :</label>
+											</strong> 
+										</div>
+										<textarea name="Expertise 4" class="form-control focus_activated text-capitalize input-note" rows="5"></textarea>
+								  	</div>
+								</div>
+							</div>
+							<hr>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<div class="row" style="width: 105%!important;">
+				      		<div class="col-md-4"></div>
+				      		<div class="col-md-2">
+				      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+				      		</div>
+				      		<div class="col-md-2">
+				      			<div class="form-group"> 
+				      				<button type="submit" id="submit" class="btn btn-md btn-info">
+				      					Enregister 
+				      				</button>
+			      				</div>
+			      			</div>
+				      		<div class="col-md-4"></div>
+			      		</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+<!-- Fin du Modal Modification questionnaire -->
+<script type="text/javascript" src="<?= HOST; ?>../App/Backend/Modules/Evaluation/Views/listeQuestionnaire.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabEvaluation.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>

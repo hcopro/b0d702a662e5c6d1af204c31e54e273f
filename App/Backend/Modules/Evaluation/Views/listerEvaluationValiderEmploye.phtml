@@ -1,0 +1,107 @@
+<?php
+	extract($data);
+	$url = explode('/', $_GET['page']);
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row" style="margin-top: -15px;">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h4 class="text-center list-title section-heading">Évaluation à valider</h4>
+			</div>
+		</div>
+		<div class="block-section">
+			<?php if ($_SESSION['compte']['identifiant'] == "employe") : ?>
+				<?php if ($url[2] == "evaluation_valider") : ?>
+					<div class="row">
+				        <ul id="new-tab-button">
+			        		<li id="tab9">
+			        			<a href="<?= HOST. 'manage/employe/evaluation_valider'?>">
+			        				La liste des évaluations à valider
+			        			</a>
+			        		</li>
+				        </ul>
+			      	</div>
+				<?php endif ?>
+				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+					<div class="row block-section">
+						<div>
+							<table class="table table-striped small-first-col" id="table-back">
+								<?php if ($url[2] == "evaluation_valider") : $pageTitle = "Valider l'évaluation"; ?>
+									<thead>
+										<tr>
+											<th>N°</th>
+											<th>Poste</th>
+											<th>Libelle</th>
+											<th>Évaluateurs</th>
+											<th>Personne à évaluer</th>
+											<th>Trait de personnalité</th>
+											<th>Date de création</th>
+											<th class="text-center">Actions</th>
+										</tr>
+									</thead>
+									<tbody id="tableSearch" class="body-half-screen">
+										<?php if ($data) :
+											foreach ($data as $key => $donnees) : ?>
+												<tr class="">
+													<td>
+														<?= $key + 1; ?>
+													</td>
+													<td>
+														<?= $donnees->getPoint()['poste']->getPoste(); ?>
+													</td>
+													<td>
+														<?= ucfirst(strtolower($donnees->getLibelle())); ?>
+													</td>
+													<td>
+														<?php foreach ($donnees->getEvaluateur() as $keyThree => $eval) : 
+															if ($_SESSION['user']['idEmploye'] === $eval->getIdEmploye()) : ?>
+																<?= $eval->getNom(); ?>&nbsp;<?= $eval->getPrenom(); ?>
+															<?php endif; 
+														endforeach; ?>
+													</td>
+													<?php foreach ($donnees->getPoint() as $keyTwo => $value) : ?>
+														<?php if ($keyTwo == 'points') : ?>
+															<td>
+																<?php foreach ($value as $keyFour => $valueFour) :
+																	$categ = $valueFour['parent']; ?>
+																	&nbsp;&#8209;&nbsp;
+																	<?= $categ->getLibelle() ; ?>
+																	<br>
+																<?php endforeach; ?>
+															</td>
+														<?php elseif ($keyTwo == 'evaluee') : ?>
+															<td>
+																<?= $value->getNom(); ?>&nbsp;<?= $value->getPrenom(); ?>
+															</td>
+													<?php endif; ?>
+													<?php endforeach;  ?>
+													<td>
+														<?= $donnees->getDateCreation() ; ?>
+													</td>
+													<td class="text-center">
+												      	<a href="valide-evaluation_valider?idEvaluation=<?= $donnees->getIdEvaluationEmploye(); ?>" class="btn btn-info">valider</a>
+													</td>
+												</tr>		
+											<?php endforeach;
+										endif; ?>
+									</tbody>
+								<?php endif; ?>
+							</table>
+						</div>
+					</div>
+				</div>
+				<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+			<?php endif ?>
+		</div>
+	</div>
+</section>
+<script type="text/javascript" src="<?= HOST; ?>../App/Backend/Modules/Evaluation/Views/listerEvaluation.js" async></script>
+<script type="text/javascript" src="<?= HOST; ?>../App/Backend/Modules/Evaluation/Views/listeEvaluationGlobal.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabEvaluation.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script type="text/javascript"> var employes = <?= json_encode(array_key_exists('employes',$data) ? $data['employes'] : []); ?></script>

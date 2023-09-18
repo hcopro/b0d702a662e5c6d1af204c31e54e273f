@@ -1,0 +1,442 @@
+        .format-etoile{
+          margin-top: -25px;
+          margin-left: -15px;
+        }
+        .modal-style-body{
+          background-color: #dee2e6;
+          max-height: 470px;
+          background-image: linear-gradient(67deg, #C0C0C0 , #9B9B9B , #6c757d6b , #2125294a , #ebeeee);
+          overflow: auto;
+        }
+        .espace{
+          height: 85px;
+          background: #b9cfeb;
+        }
+        .placementElement{
+          margin-top: 130px;
+        }
+        .partie-droite{
+          background: white;
+          border-radius: 0.5em;
+        }
+        .modal-style-header{
+          background-color:#343a402e;
+          color: #1f487c;
+          text-align: center;
+        }
+        .modal-style-footer{
+          background-color: #343a402e;
+          color:white;
+        }
+        .format-div-updown{
+          border-radius: 0.5em;
+          height: auto;
+          width: auto;
+          max-height: 30em;
+          margin-top: 2px;
+          background: white;
+          color:black;
+        }
+        .underline {
+          text-decoration: underline;
+        }
+        .format-offre{
+          background: transparent;
+          color: white;
+        }
+        .format-centre-interet{
+          background: linear-gradient(217deg, rgba(94, 85, 82, .8), rgba(94, 85, 82, 0) 70.71%),
+                      linear-gradient(127deg, rgba(192, 182, 179, .8), rgba(192, 182, 179, 0) 70.71%),
+                      linear-gradient(336deg, rgba(112, 128, 144, .8), rgba(112, 128, 144, 0) 70.71%);
+          color:white;
+        }
+        .format-langue-fond{
+          background: linear-gradient(217deg, rgba(94, 85, 82, .8), rgba(94, 85, 82, 0) 70.71%),
+                      linear-gradient(127deg, rgba(192, 182, 179, .8), rgba(192, 182, 179, 0) 70.71%),
+                      linear-gradient(336deg, rgba(112, 128, 144, .8), rgba(112, 128, 144, 0) 70.71%);
+          color: #1f487c;
+        }
+        .format-logiciel-fond{
+          background: linear-gradient(217deg, rgba(94, 85, 82, .8), rgba(94, 85, 82, 0) 70.71%),
+                      linear-gradient(127deg, rgba(192, 182, 179, .8), rgba(192, 182, 179, 0) 70.71%),
+                      linear-gradient(336deg, rgba(112, 128, 144, .8), rgba(112, 128, 144, 0) 70.71%);
+          color: white;
+        }
+        .format-div-up{
+          background-color: whitesmoke;
+          max-height: 5em;
+          color: white;
+          height: auto;
+          background-image: linear-gradient(to right, #1f487c , grey , #1f487c , grey , #1f487c);
+          border-radius: 0.5em;
+          margin-bottom: 0px;
+          width: auto;
+          margin-left: 0px;
+          margin-right: 0px;
+        }
+        .card-image{
+          background: transparent;
+          max-height: 90px;
+          max-width: 115px;
+          height: auto;
+          width: auto;
+        }
+        .barre-recherche-offre{
+          position: sticky;
+          z-index: 3;
+          top: 0px;
+        }
+        .format-div-down{
+          background-color: transparent;
+          margin-top: 5px;
+          overflow: auto;
+          border-radius: 0.5em;
+          max-height: 25em;
+          min-height: 20em;
+          overflow-x: hidden;
+        }
+        .format-offre-updown{
+          border-radius: 0.5em;
+          height: auto;
+          width: auto;
+          max-height: 50em;
+          margin-top: 2px;
+        }
+        .format-offre-down{
+          background-color: transparent;
+          margin-top: 5px;
+          overflow: auto;
+          border-radius: 0.5em;
+          max-height: 45em;
+          min-height: 5em;
+          overflow-x: hidden;
+        }
+        .titre-div-up{
+          margin-top:10px;
+        }
+        @keyframes wave {
+          0% {
+            background-color: #CEE4DD;
+          }
+          10% {
+            background-color: #D3D7A2;
+          }
+          20% {
+            background-color: #D7A8A2;
+          }
+          30% {
+            background-color: #8CA3CB;
+          }
+          40% {
+            background-color: #B08CCB;
+          }
+          50% {
+            background-color: #CB8CB6;
+          }
+          60% {
+            background-color: #64535E;
+          }
+          70% {
+            background-color: whitesmoke;
+          }
+          80% {
+            background-color: #FFFFCC;
+          }
+          90% {
+            background-color: #FFE5CC;
+          }
+          100% {
+            background-color: #ccc;
+          }
+        }
+
+        .wave {
+          animation: wave 30s ease-in-out infinite;
+        }
+
+        /* width */
+        ::-webkit-scrollbar {
+          width: 10px;
+          border-radius: 5px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 5px;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+          background: #c9c7c2;
+          border-radius: 5px;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+          background: #555;
+        }
+        
+        .place-couverture-profil{
+          width: auto;
+          border-radius: 2em;
+          height: 22em;
+          margin-top: 51px;
+          margin-bottom:  60px;
+          background-color: #1f487c;
+          /*margin-left: -100px;
+          margin-right: -100px;*/
+          position: sticky;
+          z-index: 4;
+        }
+        .place-couverture{
+          width: auto;
+          height: 280px;
+          border-radius: 2em;
+          background-color: white;
+        }
+        .photo-place{
+          margin-top: -70px;
+        }
+        .sticky-bar{
+          position:sticky ;
+          top:55px;
+        }
+        .place-boutton-photo{
+          width: auto;
+          height: 220px;
+          border-radius: 2em;
+          background-color: #1f487c;
+          margin-left: 0px;
+          margin-right: 0px;
+        }
+        .boutton-photo{
+          margin-top: 20px;
+          text-align: center;
+        }
+        .placement-experience{
+          margin-top: 15px;
+        }
+        .margin-photoProfil{
+          margin-left: 70px;
+          margin-top: -70px;
+        }
+        .photo-profil{
+          width:150px;
+          height: 150px;
+          border-radius: 50%;
+        }
+        .allignement-centre{
+          text-align: center;
+        }
+        .allignement-droite{
+          text-align: right;
+        }
+        .place-profil-rond{
+          border-radius: 50%;
+          width: 150px!important;
+          height: 150px!important;
+          margin-top: -50px;
+          margin-left: auto;
+          margin-right: auto;
+          background: #FFFFFF;
+          border-color: white;
+          color: hsl(186deg 74% 8%);
+          border: solid;
+        }
+        .profil-cv{
+          width: 120px;
+          height: 120px;
+        }
+        .editAnimation:hover {
+          animation-name: wiggle;
+          animation-duration: 2s;
+          animation-iteration-count: 2;
+        }
+
+        @keyframes wiggle  {
+          0%, 7% {
+            transform: rotateZ(0);
+          }
+          15% {
+            transform: rotateZ(-15deg);
+          }
+          20% {
+            transform: rotateZ(10deg);
+          }
+          25% {
+            transform: rotateZ(-10deg);
+          }
+          30% {
+            transform: rotateZ(6deg);
+          }
+          35% {
+            transform: rotateZ(-4deg);
+          }
+          40%, 100% {
+            transform: rotateZ(0);
+          }
+        }
+        .format-camera:hover {
+          animation-name: rotate;
+          animation-duration: 1s;
+          animation-iteration-count: 2;
+        }
+        .animation-plus:hover {
+          animation-name: rotate;
+          animation-duration: 0.7s;
+          animation-iteration-count: 2;
+        }
+
+        @keyframes rotate {
+          0% {
+            transform: rotate(0);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+        .annimation-to-left{
+          animation-duration: 2s;
+          animation-name: fadeIn;
+        }
+        @keyframes fadeIn {
+          from {
+            margin-left: 100%;
+            width: 300%;
+          }
+
+          to {
+            margin-left: 0%;
+            width: 100%;
+          }
+        }
+
+        .rate {
+            float: left;
+            height: 46px;
+            padding: 0 10px;
+        }
+        .rate:not(:checked) > input {
+            position:absolute;
+            top:-9999px;
+        }
+        .rate:not(:checked) > label {
+            float:right;
+            width:1em;
+            overflow:hidden;
+            white-space:nowrap;
+            cursor:pointer;
+            font-size:30px;
+            color:#E9E9E9;
+        }
+        .rate:not(:checked) > label:before {
+            content: '★';
+        }
+        .rate > input:checked ~ label {
+            color: #FCF305;    
+        }
+        .rate:not(:checked) > label:hover,
+        .rate:not(:checked) > label:hover ~ label {
+            color: #F6F600;  
+        }
+        .rate > input:checked + label:hover,
+        .rate > input:checked + label:hover ~ label,
+        .rate > input:checked ~ label:hover,
+        .rate > input:checked ~ label:hover ~ label,
+        .rate > label:hover ~ input:checked ~ label {
+            color: #FDD845;
+        }
+        .format-camera{
+          background:#0000009c;
+          text-align: center;
+          margin-top:-50px;
+          margin-left: 115px;
+        }
+        .nav-profil{
+          background: #1f487c;
+          z-index: 2;
+          width: auto;
+          height: 40px;
+          align-self: center;
+          position: fixed;
+        }
+        .footer-candidat{
+          background-image: linear-gradient(to right, #1f487c , grey , #1f487c , grey , #1f487c);
+          background: #1f487c;
+          margin-top: 25px;
+          height: auto;
+          margin-left: -100px;
+          margin-right: -100px;
+          margin-bottom: -25px;
+          color: white;
+        }
+        .elements-footer{
+          margin-top: 10px;
+        }
+        .format-icone{
+          width: 20px;
+          height: 20px;
+          border-radius: 10px;
+          background:white;
+        }
+        .image-footerCandidat{
+          height: 70px;
+          width: auto;
+          margin-top: 10px;
+        }
+        .sticky-top{
+          top: -150px;
+          margin-top: 40px;
+        }
+        .paragraphe{
+          margin-top: 0;
+          margin-bottom: 0px;
+        }
+        .photo-couverture{
+          height: 280px;
+          width: 128em;
+        }
+        .image-couverture{
+          height: auto;
+          width: auto;
+        }
+        .placement-offre{
+          margin-left: -28px;
+          background-color: whitesmoke;
+          border-radius: 0.5px;
+          color: black;
+        }
+        .offres-design{
+          height: 50px;
+          margin-top: 0px;
+          background-image: linear-gradient(to right, #1f487c , grey , #1f487c );
+          width: auto;
+          border-radius: 0.5em;
+          color: white;
+        }
+        .offres-titre{
+          text-align: center;
+          padding-top: 10px;
+        }
+        .list-group{
+          background: black;
+        }
+        .position-offres{
+          position: sticky;
+          top: 250px;
+        }
+        .overlayed:hover {
+          transform: translateY(30px)  rotateY(-35deg) rotateX(15deg) scale(1.2);
+          z-index:3;
+        }
+        .modal {
+          animation-name: rotate;
+          transition: transform 0.1s ease-in;
+        }
+        .modal.closed {
+          animation-name:fadeIn ;
+          transform: scale(0);
+        }
+
+        

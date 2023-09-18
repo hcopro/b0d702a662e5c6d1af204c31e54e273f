@@ -1,0 +1,221 @@
+<!DOCTYPE html!>
+<html lang="en">
+	<head>
+  		<meta charset="utf-8">
+		<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="icon" type="image/png" href="<?= HOST ?>../Web/Ressources/images/entreprises/logoHumanexusV2.png">
+
+  		<title><?= isset($pageTitle) ? $pageTitle : '' ; ?></title>
+
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/agency.min.css">			
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/datepicker.css">
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/virtual-select.min.css">
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/bootstrap-select.min.css" />
+ 		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/unpkg/themes/light.css">
+ 		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/unpkg/dist/backdrop.css">
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/fontawesome-free/css/all.min.css">	
+ 		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/styleBack.css">		
+ 		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/tabs.css">	
+ 		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/configuration.css">
+ 		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/presence.css">
+ 		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/conge.css">
+ 		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/organigramme.css">
+ 		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/formation.css">
+ 		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/paie.css">
+ 		<!-- Fonts CDN -->
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/fonts/montserrat.css">
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/fonts/kaushan.css">
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/fonts/serif.css">
+		<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/fonts/roboto.css">
+
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.min.js"></script>
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.easing.min.js"></script>
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/bootstrap.bundle.min.js"></script>
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jqBootstrapValidation.js"></script>
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/agency.min.js"></script>			
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/icon.js"></script>				
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datepicker.js"></script>		
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/popper.min.js"></script>	
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/tippy-bundle.iief.min.js"></script>
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/unpkg/popper.min.js"></script>
+		<script src="<?= HOST; ?>../Web/Ressources/js/plugin/unpkg/tippy-bundle.iife.min.js"></script>
+		<script src="<?= HOST; ?>../Web/Ressources/js/indexPlace.js"></script>
+
+	</head>
+	<body class="m-0 p-0 mb-0 body-humanexus">
+		<!-- Navigation -->
+		<!-- <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+    		<div class="container">
+    			<div class="row m-0 p-0" style="width: 100%!important;">
+					<div class="col-md-5 m-0 p-0 text-left">
+						<img class="rounded-circle img-profil" src="<?= HOST . 'Web/Ressources/images/entreprises/Logo-laficheRH.png'?>" style="height: 72px!important; width: 72px!important; background: #ffffff;">
+					</div>
+					<div class="col-md-7 m-0 p-0 text-right">
+						<a class="tippy-act profil" href="<?= HOST . 'manage/' . $_SESSION['compte']['identifiant'] . '/dashboard';?>">
+		      				<?php if (isset($_SESSION['user']['logo']) && $_SESSION['user']['logo'] != ""): ?>
+		      					<img class="rounded-circle img-profil" src="<?= HOST . 'Web/Ressources/images/' . $_SESSION['compte']['identifiant'] . 's/'. $_SESSION['user']['logo'] ?>">
+		      				<?php endif ?>
+		      				<?php if (isset($_SESSION['user']['photo']) && $_SESSION['user']['photo'] != ""): ?>
+		      					<img class="rounded-circle img-profil" src="<?= HOST . 'Web/Ressources/images/' . $_SESSION['compte']['identifiant'] . 's/'. $_SESSION['user']['photo'] ?>">
+		      				<?php endif ?>
+		      				<span class=" font-italic" style="color: #ffffff; text-decoration: none; font-size: 1.2em;">
+		      					<?php
+		      						if ($_SESSION['compte']['identifiant'] == "employe") {
+		      							echo strtoupper($_SESSION['user']['nom']) . ' ' . ucwords($_SESSION['user']['prenom']);
+		      						} else {
+		      							echo strtoupper($_SESSION['user']['nom']);
+		      						}
+		      					?>
+		      				</span>
+		      			</a>    
+		      			<a class="btn btn-md btn-transparent ml-3" href="<?= HOST . 'manage/show-messages' ?>">
+		      				<i class="fa fa-envelope-open fa-2x tippy-act" id="icon-message" style="color: #ffffff;">
+		      				</i>
+		      			</a>
+		      			<span class="text-danger" id="new-message" style="font-size: 1.2em; font-family: serif; font-weight: bold; margin-top: -15px; margin-left: -10px;"></span>
+		      			<a href="<?= HOST;?>deconnexion" class="btn btn-transparent btn-md ml-3">
+		      				<i class="fa fa-sign-out-alt fa-2x tippy-act" style="color: #ffffff;"></i>
+		      			</a>  			
+				    	<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+				        		Menu
+				    		<i class="fas fa-bars"></i>
+				   		</button>
+				   	</div>
+				</div>
+			</div>
+  		</nav> -->
+  		<nav id="newNav" class="navbar navbar-expand-lg first-nav navbar-dark fixed-top" style="background-color: rgb(31, 72, 124); z-index:99999999;">
+			<button id="barre-menu" class="btn btn-transparent">
+		 		<i class="fa fa-bars" style="font-size: 2em; color: white; font-weight: bold; margin-right: 10px;"></i>
+			</button>
+			<img class="img-profil" id="imageLogo" src="<?= HOST . 'Web/Ressources/images/entreprises/logoHumanexusV2.png'?>" style="height: 30px!important; width: 200px!important;">
+		 	<button class="navbar-toggler" data-toggle="collapse" data-target="#menuhamburger">
+		 		<span class="navbar-toggler-icon"></span>
+		 	</button>
+		 	<div class="collapse navbar-collapse" id="menuhamburger">
+		 		<ul class="navbar-nav ml-auto">
+		 			<li class="nav-item active" style="margin-top: 5px">
+		 				<a class="tippy-act profil" href="<?= HOST . 'manage/' . $_SESSION['compte']['identifiant'] . '/dashboard';?>">
+		      				<?php if (isset($_SESSION['user']['logo']) && $_SESSION['user']['logo'] != ""): ?>
+		      					<img class="rounded-circle img-profil" src="<?= HOST . 'Web/Ressources/images/' . $_SESSION['compte']['identifiant'] . 's/'. $_SESSION['user']['logo'] ?>">
+		      				<?php endif ?>
+		      				<?php if (isset($_SESSION['user']['photo']) && $_SESSION['user']['photo'] != ""): ?>
+		      					<img class="rounded-circle img-profil" src="<?= HOST . 'Web/Ressources/images/' . $_SESSION['compte']['identifiant'] . 's/'. $_SESSION['user']['photo'] ?>">
+		      				<?php endif ?>
+		      				<span class=" font-italic" style="color: #ffffff; text-decoration: none; font-size: 1.2em;">
+		      					<?php
+		      						if ($_SESSION['compte']['identifiant'] == "employe") {
+		      							echo strtoupper($_SESSION['user']['nom']) . ' ' . ucwords($_SESSION['user']['prenom']);
+		      						} else {
+		      							echo strtoupper($_SESSION['user']['nom']);
+		      						}
+		      					?>
+		      				</span>
+		      			</a>
+		 			</li>
+		 			<li class="nav-item">
+		 				<a class="btn btn-md btn-transparent ml-3" href="<?= HOST . 'manage/show-messages' ?>">
+		      				<i class="fa fa-envelope-open fa-2x tippy-act" id="icon-message" style="color: #ffffff;">
+		      				</i>
+		      			</a>
+		      			<span class="text-danger" id="new-message" style="font-size: 1.2em; font-family: serif; font-weight: bold; margin-top: -15px; margin-left: -10px;"></span>
+		 			</li>
+		 			<li class="nav-item">
+		 				<a href="<?= HOST;?>deconnexion" class="btn btn-transparent btn-md ml-3">
+		      				<i class="fa fa-sign-out-alt fa-2x tippy-act" style="color: #ffffff;"></i>
+		      			</a> 
+		 			</li>
+		 		</ul>
+		 	</div>
+	 	</nav>
+  		<div class="container-fluid main" id="body-back">
+  		<!-- <div class="main m-0 p-0" style="width: 99%;"> -->
+  			<div class="row">
+  				<div class="col-md-2 menu-gauche hidden" id="myDiv" style="margin-top: -60px">
+  					<div class="pl-2 mb-3" style="color: #42578d;">
+  						<span class="ml-3" id="menu1"><b>Menu</b></span>
+  					</div>
+  					<?php
+		          		if ($_SESSION['compte']['identifiant'] == "candidat") {
+		          			include_once(__DIR__ . '/menuCandidat.phtml');
+		          		} elseif ($_SESSION['compte']['identifiant'] == "entreprise") {
+		          			include_once(__DIR__ . '/menuEntreprise.phtml');
+		          		} elseif ($_SESSION['compte']['identifiant'] == "employe") {
+		          			include_once(__DIR__ . '/menuEmploye.phtml');
+		          		} else 
+		          		if ($_SESSION['compte']['identifiant'] == "superadmin") {
+		          			include_once(__DIR__ . '/menuAdmin.phtml');
+		          		}
+		          	?>
+  				</div>
+  				<div class="col-md-12 m-0 p-0 contenu-droite" id="div-back">
+  					<div id="content-page">
+						<?= $pageContent; ?>
+					</div>
+  				</div>
+  			</div>
+  		</div>
+		<div class="position-fixed" style="bottom: 50px; left:0; right:0; margin-left:auto; margin-right:auto;">
+			<?php if (isset($_SESSION['info'])) {
+	   			foreach ($_SESSION['info'] as $type => $message) {
+					echo "<div class='info alert alert-" . $type . "' data-dismiss='alert' id='alert'>" . $message . "</div>";
+					unset($_SESSION['info']);		
+				}
+	    	}?>
+		</div>
+	</body>
+</html>
+<script src="<?= HOST; ?>../Web/Ressources/js/header.js"></script>
+<script>
+	$('document').ready(function() {
+		if ($('.carousel').length > 0) {
+			$('.carousel').carousel('pause');
+		}
+	});
+	$(window).on('load', function(){
+		// var x = setInterval(function() {
+			$.post(
+			    "<?= HOST . 'manage/nouveauMessage'?>",
+			    {
+			        idCompte : <?=$_SESSION['user']['idCompte']?>
+			    },
+			    function(data) {
+			    	if (data == "non") {
+			    		$('#icon-message').removeClass('fa-envelope');
+						$('#icon-message').removeClass('faa-shake');
+						$('#icon-message').removeClass('animated');
+						$('#icon-message').addClass('fa-envelope-open');
+						$('#new-message').html("");
+			    	} else {
+			    		$('#icon-message').addClass('fa-envelope');
+						$('#icon-message').addClass('faa-shake');
+						$('#icon-message').addClass('animated');
+						$('#icon-message').removeClass('fa-envelope-open');
+						if ($.isNumeric(data)) {
+							$('#new-message').html("(" + data + ")");
+						}
+			    	}
+			    },
+			    'text'
+			);
+		// }, 1000);
+	});
+	tippy('.fa-envelope-open', {
+		content: 'Notification'
+	});
+	tippy('.fa-envelope', {
+		content: 'Notification'
+	});
+	tippy('.profil', {
+		content: 'Profil'
+	});
+	tippy('.fa-sign-out-alt', {
+		content: 'Déconnexion'
+	});
+	var screenHeight = $(window).height();
+	$('#myDiv').attr('style', 'height:'+screenHeight);
+	$('#body-back').attr('style', 'height:'+screenHeight);
+	$('#div-back').attr('style', 'height:'+screenHeight);
+</script>

@@ -1,0 +1,1577 @@
+<?php
+	$url = explode('/', $_GET['page']);
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row" style="margin-top: -15px;">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h4 class="text-center list-title section-heading" id="titre"></h4>
+			</div>
+			<div class="col-md-2 text-right">
+				<?php if ($url[2] == "catalogueFormation" && $url[1] == "entreprise") : ?>
+					<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalEnregistrement">
+						<i class="fa fa-plus" aria-hidden="true"></i>
+						<span class="ml-2">ajouter</span>
+					</button>
+				<?php elseif ($url[2] == "suggestionFormation" && $url[1] == "employe") : ?>
+					<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalEnregistrement">
+						<i class="fa fa-plus" aria-hidden="true"></i>
+						<span class="ml-2">ajouter</span>
+					</button>
+				<?php elseif ($url[2] == "formateur" && $url[1] == "entreprise") : ?>
+					<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalEnregistrement">
+						<i class="fa fa-plus" aria-hidden="true"></i>
+						<span class="ml-2">ajouter</span>
+					</button>
+				<?php elseif ($url[2] == "offreFormation" && $url[1] == "entreprise") : ?>
+					<button class="btn btn-sm btn-primary" id="btn-new">
+						<i class="fa fa-plus" aria-hidden="true"></i>
+						<span class="ml-2">ajouter</span>
+					</button>
+					<a href="<?= HOST . 'manage/entreprise/catalogueFormation' ?>" class="btn btn-sm btn-transparent text-primary btn-circle-sm">
+						<i class="fa fa-list fa-15x tippy-act" aria-hidden="true"></i>
+					</a>
+				<?php elseif ($url[2] == "formationFormateur" && $url[1] == "entreprise") : ?>
+					<a href="<?= HOST . 'manage/entreprise/formateur' ?>" class="btn btn-sm btn-transparent text-primary btn-circle-sm">
+						<i class="fa fa-list fa-15x tippy-act" aria-hidden="true"></i>
+					</a>
+				<?php endif ?>
+			</div>
+		</div>
+		<div class="block-section">
+			<?php if ($_SESSION['compte']['identifiant'] == "entreprise" && $url[2] != "offreFormation" && $url[2] != "formationFormateur") : ?>
+				<div class="row">
+			        <ul id="new-tab-button">
+		        		<li id="tab1">
+		        			<a href="<?= HOST. 'manage/entreprise/catalogueFormation'?>">
+		        				Catalogue de thèmes
+		        			</a>
+		        		</li>
+		        		<?php if (end($url) == 'formateur') : ?>
+			        		<li id="tab2">
+			        			<a href="<?= HOST. 'manage/entreprise/formateur'?>">
+			        				Formateurs
+			        			</a>
+			        		</li>   
+			        	<?php elseif (end($url) == 'formation') : ?> 
+			        		<li id="tab3">
+			        			<a href="<?= HOST. 'manage/entreprise/formation'?>">
+			        				Formations
+			        			</a>
+			        		</li>   			    
+		        		<?php endif; ?>		    
+			        </ul>
+		      	</div>
+		    <?php endif ?>
+		    <?php if ($url[2] == "formation" && $url[1] == "entreprise") : extract($data); ?>
+		    	<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-6">
+	      						<div class="row">
+	      							<div class="col-md-3">
+	      								<span class="titre text-white">Domaine : </span>
+	      							</div>
+	      							<div class="col-md-6">
+	      								<select id="idSousDomaine" class="select-time" style="font-size: 0.8em!important; width: 200px!important;">
+	      									<option value="0">Tout</option>
+	      									<?php foreach ($domaines as $domaine) : ?>
+	      										<option value="<?= $domaine->getIdSousDomaine() ?>"><?= $domaine->getNomSousDomaine() ?></option>
+	      								 	<?php endforeach ?>
+	      								</select>
+	      							</div>
+	      						</div>
+	      					</div>
+	      					<div class="col-md-6">
+	      						<div class="row">
+	      							<div class="col-md-1">
+	      								<span class="titre text-white">Année : </span>
+	      							</div>
+	      							<div class="col-md-6">
+	      								<input type="number" min="2020" id="annee" class="select-time" value="<?= date('Y') ?>">
+	      							</div>
+	      						</div>
+	      					</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+	      		<script>
+					$("document").ready(function(){
+						$("#liste").load('<?= HOST . "manage/formationProfessionnelles"?>', {
+							idSousDomaine : $('#idSousDomaine').val(),
+							annee : $('#annee').val()
+						});
+						$("#titre").html("Les formations");
+					});
+					$("#idSousDomaine").change(function(){
+						$("#liste").load('<?= HOST . "manage/formationProfessionnelles"?>', {
+							idSousDomaine : $('#idSousDomaine').val(),
+							annee : $('#annee').val()
+						});
+					});
+					$("#annee").change(function(){
+						$("#liste").load('<?= HOST . "manage/formationProfessionnelles"?>', {
+							idSousDomaine : $('#idSousDomaine').val(),
+							annee : $('#annee').val()
+						});
+					});
+				</script>
+			<?php elseif ($url[2] == "catalogueFormation" && $url[1] == "entreprise") : extract($data);?>
+				<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-6">
+	      						<div class="row">
+	      							<div class="col-md-3">
+	      								<span class="titre text-white">Domaine : </span>
+	      							</div>
+	      							<div class="col-md-6">
+	      								<select id="idSousDomaine" class="select-time" style="font-size: 0.8em!important; width: 200px!important;">
+	      									<option value="0">Tout</option>
+	      									<?php foreach ($domaines as $domaine) : ?>
+	      										<option value="<?= $domaine->getIdSousDomaine() ?>"><?= $domaine->getNomSousDomaine() ?></option>
+	      								 	<?php endforeach ?>
+	      								</select>
+	      							</div>
+	      						</div>
+	      					</div>
+	      					<div class="col-md-6">
+	      						<div class="row">
+	      							<div class="col-md-1">
+	      								<span class="titre text-white">Année : </span>
+	      							</div>
+	      							<div class="col-md-6">
+	      								<input type="number" min="2020" id="annee" class="select-time" value="<?= date('Y') ?>">
+	      							</div>
+	      						</div>
+	      					</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+				<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	    					<form method="POST" id="form" action="<?= HOST . 'manage/save-themeFormation'?>" enctype="multipart/form-data" novalidate="novalidate">
+	    						<input type="hidden" id="idThemeFormation" name="idThemeFormation">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title section-heading m-0" id="titreModal">Ajout d'un thème pour cette année</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3" style="background: #efefff; max-height: 60vh; overflow-y: auto;">
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="text-important">Domaine : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+			        								<select id="idSousDomaine2" name="idSousDomaine" class="form-control" style="height: 38px; font-size: 0.9em;">
+				      									<option value="">Sélectionnez un domaine</option>
+				      									<?php foreach ($domaines as $domaine) : ?>
+				      										<option value="<?= $domaine->getIdSousDomaine() ?>"><?= $domaine->getNomSousDomaine() ?></option>
+				      								 	<?php endforeach ?>
+				      								</select>
+				      								<p class="help-block text-danger"></p>
+				      							</div>
+				      							<div class="form-group mt-0">
+				      								<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        									<input type="text" name="nomSousDomaine" id="nomSousDomaine" class="form-control" required="required" data-validation-required-message="Veuillez renseigner le domaine" placeholder="Nouveau domaine" style="height: 38px; font-size: 0.8em; font-weight: 600!important;">
+		        									<p class="help-block text-danger"></p>
+		        								</div>
+		        							</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="text-important">Thème : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+		        									<input type="text" name="theme" id="theme" class="form-control" required="required" data-validation-required-message="Veuillez renseigner le thème" placeholder="thème" style="height: 38px; font-size: 0.9em; font-weight: 500;">
+		        									<p class="help-block text-danger"></p>
+		        								</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="text-important">Description : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+		        									<textarea class="form-control pl-3" name="description" id="description" rows="5" required="required" data-validation-required-message="Veuillez laisser une description" style="border-radius: 5px; width: 100%; font-size: 0.8em;">N/A</textarea>
+		        									<p class="help-block text-danger"></p>
+		        								</div>
+		        							</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="text-important">niveau de priorité : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+		        									<select name="priorite" id="priorite" class="form-control" required="required" ata-validation-required-message="Veuillez indiquer le niveau de priorité" style="height: 38px; font-size: 0.8em; font-weight: 600!important;">
+		        										<option value="4">urgent</option>
+		        										<option value="3">important</option>
+		        										<option value="2">important / pas urgent</option>
+		        										<option value="1">pas urgent</option>
+		        									</select>
+		        									<p class="help-block text-danger"></p>
+		        								</div>
+		        							</div>
+		        						</div>
+		        					</div>
+		      					</div>
+		      					<div class="modal-footer">
+		        					<div class="row" style="width: 105%!important;">
+							      		<div class="col-md-3">
+							      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submit" class="btn btn-md btn-info">
+							      					Enregistrer
+							      				</button>
+							      			</div>
+							      		</div>
+							      	</div>
+		      					</div>
+		      				</form>
+	    				</div>
+	  				</div>
+				</div>
+				<script>
+					$("document").ready(function(){
+						$("#liste").load('<?= HOST . "manage/themeFormations"?>', {
+							idSousDomaine : $('#idSousDomaine').val(),
+							annee : $('#annee').val()
+						});
+						$("#titre").html("Catalogue de thèmes");
+					});
+					$("#idSousDomaine").change(function(){
+						$("#liste").load('<?= HOST . "manage/themeFormations"?>', {
+							idSousDomaine : $('#idSousDomaine').val(),
+							annee : $('#annee').val()
+						});
+					});
+					$("#idSousDomaine2").change(function(){
+						if ($("#idSousDomaine2").val() != "") {
+							$("#nomSousDomaine").val($("#idSousDomaine2 option:selected").text());
+						} else {
+							$("#nomSousDomaine").val("");
+						}
+					});
+					$("#annee").change(function(){
+						$("#liste").load('<?= HOST . "manage/themeFormations"?>', {
+							idSousDomaine : $('#idSousDomaine').val(),
+							annee : $('#annee').val()
+						});
+					});
+					tippy(".fa-plus", {
+						content: "Ajouter un nouveau thème"
+					});
+				</script>
+			<?php elseif ($url[2] == "formateur" && $url[1] == "entreprise") : extract($data); ?>
+				<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-6">
+	      						<div class="row">
+	      							<div class="col-md-3">
+	      								<span class="titre text-white">Domaine : </span>
+	      							</div>
+	      							<div class="col-md-6">
+	      								<select id="idSousDomaine" class="select-time" style="font-size: 0.8em!important; width: 200px!important;">
+	      									<option value="0">Tout</option>
+	      									<?php foreach ($domaines as $domaine) : ?>
+	      										<option value="<?= $domaine->getIdSousDomaine() ?>"><?= $domaine->getNomSousDomaine() ?></option>
+	      								 	<?php endforeach ?>
+	      								</select>
+	      							</div>
+	      						</div>
+	      					</div>
+	      					<div class="col-md-6">
+	      						<div class="row">
+	      							<div class="col-md-2">
+	      								<span class="titre text-white">Lister : </span>
+	      							</div>
+	      							<div class="col-md-6">
+	      								<select id="statut" class="select-time" style="font-size: 0.8em!important; width: 250px!important;">
+	      									<option value="1">Formateurs actifs</option>
+	      									<option value="0">Formateurs archivés</option>
+	      								</select>
+	      							</div>
+	      						</div>
+	      					</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+				<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	    					<form method="POST" id="form" action="<?= HOST . 'manage/save-formateur'?>" enctype="multipart/form-data" novalidate="novalidate">
+	    						<input type="hidden" id="idFormateur" name="idFormateur">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title section-heading m-0" id="titreModal">Ajout d'un nouveau formateur</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3" style="background: #efefff; max-height: 60vh; overflow-y: auto;">
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="text-important">civilité : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+			        								<select id="civilite" name="civilite" class="form-control" required="required" data-validation-required-message="Veuillez choisir la civilité" style="height: 38px; font-size: 0.9em;">
+				      									<option class="text-center" value="">-- Choisir -- </option>
+										                <option value="Mr">Monsieur</option>
+										                <option value="Mme">Madame</option>
+										                <option value="Mlle">Mademoiselle</option>
+				      								</select>
+				      								<p class="help-block text-danger"></p>
+				      							</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="text-important">nom : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-user icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        									<input type="text" name="nom" id="nom" class="form-control text-uppercase" required="required" data-validation-required-message="Veuillez renseigner le nom" placeholder="nom du formateur" style="height: 38px; font-size: 0.9em; font-weight: 500;">
+		        									<p class="help-block text-danger"></p>
+		        								</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="text-important">prénom : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-user icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        									<input type="text" name="prenom" id="prenom" class="form-control text-capitalize" required="required" data-validation-required-message="Veuillez renseigner le prénom" placeholder="prénom du formateur" style="height: 38px; font-size: 0.9em; font-weight: 500;">
+		        									<p class="help-block text-danger"></p>
+		        								</div>
+		        							</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="text-important">contact : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-globe icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        									<select id="select-country" class="form-control focus_activated" style="height: 38px; font-size: 0.9em;">
+												    	<option value="">Séléctionner un pays</option>
+											      			<?php foreach(unserialize(COUNTRIES) as $country): ?>
+											                	<option value="<?= $country['code']; ?>"><?= $country['country'] ?></option>
+											            	<?php endforeach; ?>
+												    </select>
+												    <i class="fa fa-phone icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+												    <input type="text" id="input-phone" class="form-control focus_activated" value="" required="required" data-validation-required-message="Veuillez entrer un contact" placeholder="numero de téléphone" style="height: 38px; font-size: 0.9em;">		
+												    <input class="form-control focus_activated" id="contact" name="contact" type="hidden" value="">	
+												    <p class="help-block text-danger"></p>	
+		        								</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="text-important">email : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-envelope icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        									<input type="email" name="email" id="email" class="form-control" required="required" data-validation-required-message="Veuillez renseigner l'adresse email" placeholder="adresse email du formateur" style="height: 38px; font-size: 0.9em; font-weight: 500;">
+		        									<p class="help-block text-danger"></p>
+		        								</div>
+		        							</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="text-important">NIF : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        									<input class="form-control" id="nif" name="nif" type="number" data-validation-regex-regex="[0-9]{10}" data-validation-regex-message="10 chiffres obligatoire*" placeholder="Référence NIF" style="height: 38px; font-size: 0.9em; font-weight: 500;">
+		        									<p class="help-block text-danger"></p>
+		        								</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="text-important">STAT : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        									<input class="form-control" id="stat" name="stat" type="number" data-validation-regex-regex="[0-9]{17}" data-validation-regex-message="17 chiffres obligatoire*" placeholder="Référence STAT" style="height: 38px; font-size: 0.9em; font-weight: 500;">
+		        									<p class="help-block text-danger"></p>
+		        								</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="text-important">RCS : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        									<input class="form-control" id="rcs" name="rcs" type="text" placeholder="Référence RCS" style="height: 38px; font-size: 0.9em; font-weight: 500;">
+		        									<p class="help-block text-danger"></p>
+		        								</div>
+		        							</div>
+		        						</div>
+		        					</div>
+		      					</div>
+		      					<div class="modal-footer">
+		        					<div class="row" style="width: 105%!important;">
+							      		<div class="col-md-3">
+							      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submit-formateur" class="btn btn-md btn-info">
+							      					Enregistrer
+							      				</button>
+							      			</div>
+							      		</div>
+							      	</div>
+		      					</div>
+		      				</form>
+	    				</div>
+	  				</div>
+				</div>
+	      		<script>
+	      			$("document").ready(function(){
+						$("#liste").load('<?= HOST . "manage/formateurs"?>', {
+							idSousDomaine : $('#idSousDomaine').val(),
+							statut : $('#statut').val()
+						});
+						$("#titre").html("Formateurs");
+					});
+					$("#idSousDomaine").change(function(){
+						$("#liste").load('<?= HOST . "manage/formateurs"?>', {
+							idSousDomaine : $('#idSousDomaine').val(),
+							statut : $('#statut').val()
+						});
+					});
+					$("#statut").change(function(){
+						$("#liste").load('<?= HOST . "manage/formateurs"?>', {
+							idSousDomaine : $('#idSousDomaine').val(),
+							statut : $('#statut').val()
+						});
+					});
+					$("#submit-formateur").click(function(){
+	  					if ($('#select-country').val() != "" && $('#input-phone').val() != "") {
+	  						var valeur = $('#select-country').val() + "/" + $('#input-phone').val();
+	    					$('#contact').val(valeur);
+	    				}
+	    			});
+	      		</script>
+	      	<?php elseif ($url[2] == "offreFormation" && $url[1] == "entreprise") : extract($data); ?>
+	      		<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-6">
+	      						<div class="row">
+	      							<div class="col-md-3">
+	      								<span class="titre text-white">Thème : </span>
+	      							</div>
+	      							<div class="col-md-9 text-left">
+	      								<input type="text" class="select-time" value="<?= $theme->getTheme() ?>" readonly="readonly" style="font-size: 0.9em!important; width: 90%!important; background: #dddddd;"> 
+	      								<input type="hidden" id="idThemeFormation" value="<?= $theme->getIdThemeFormation() ?>">
+	      							</div>
+	      						</div>
+	      					</div>
+	      					<div class="col-md-3">
+	      						<div class="row">
+	      							<div class="col-md-4">
+	      								<span class="titre text-white">coût min : </span>
+	      							</div>
+	      							<div class="col-md-6">
+	      								<input type="number" min="0" class="select-time" id="cout-min" step="1000"> 
+	      							</div>
+	      						</div>
+	      					</div>
+	      					<div class="col-md-3">
+	      						<div class="row">
+	      							<div class="col-md-4">
+	      								<span class="titre text-white">coût max : </span>
+	      							</div>
+	      							<div class="col-md-6">
+	      								<input type="number" min="0" class="select-time" id="cout-max" step="1000">
+	      							</div>
+	      						</div>
+	      					</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 60vh; max-height: 60vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+				<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	    					<form method="POST" id="form" action="<?= HOST . 'manage/save-offreFormation'?>" enctype="multipart/form-data" novalidate="novalidate">
+	    						<input type="hidden" id="idThemeFormation" name="idThemeFormation" value="<?= $theme->getIdThemeFormation() ?>">
+	    						<input type="hidden" id="idOffreFormateur" name="idOffreFormateur" value="">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title section-heading m-0" id="titreModal">Ajout d'une nouvelle offre</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3" style="background: #efefff; max-height: 60vh; overflow-y: auto;">
+		        						<div class="row card m-0 p-2">
+		        							<div class="text-center">
+			        							<span class="titre" style="text-decoration: underline;"><?= $theme->getTheme() ?></span>
+			        						</div>
+			        						<div class="text-justify">
+			        							<p style="font-size: 0.9em;">
+			        								<?= $theme->getDescription() ?>
+			        							</p>
+			        						</div>
+		        						</div>
+		        						<div class="row" style="height: 20px;"></div>
+		        						<hr class="m-2">
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="text-important">Formateur : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+		        									<i class="fa fa-user icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<select id="idFormateur" name="idFormateur" class="form-control" required="required" data-validation-required-message="Veuillez choisir un domaine" style="height: 38px; font-size: 0.9em;">
+				      									<option value="">Sélectionnez un formateur</option>
+				      									<?php foreach ($formateurs as $formateur) : ?>
+				      										<option value="<?= $formateur->getIdFormateur() ?>"><?= $formateur->getNom() . ' ' . $formateur->getPrenom()?></option>
+				      								 	<?php endforeach ?>
+				      								</select>
+				      								<p class="help-block text-danger"></p>
+				      							</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="text-important">Coût : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+		        									<i class="fa fa-money-bill mt-2 icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+		        									<input type="number" name="cout" id="cout" class="form-control" min="0" required="required" data-validation-required-message="Veuillez renseigner le coût de la formation" placeholder="coût de la formation"  style="border-radius: 5px; width: 100%; font-size: 0.8em; font-weight: bolder;">
+		        									<p class="help-block text-danger"></p>
+		        								</div>
+		        							</div>
+		        						</div>
+		        					</div>
+		      					</div>
+		      					<div class="modal-footer">
+		        					<div class="row" style="width: 105%!important;">
+							      		<div class="col-md-3">
+							      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submit" class="btn btn-md btn-info">
+							      					Enregistrer
+							      				</button>
+							      			</div>
+							      		</div>
+							      	</div>
+		      					</div>
+		      				</form>
+	    				</div>
+	  				</div>
+				</div>
+	      		<script type="text/javascript">
+	      			$("document").ready(function(){
+	      				$("#liste").load('<?= HOST . "manage/offreFormations"?>', {
+		      				idThemeFormation : $('#idThemeFormation').val(),
+		      				coutMin : $('#cout-min').val(),
+		      				coutMax : $('#cout-max').val()
+						});
+						$("#titre").html("Les offres des formateurs");
+	      			});
+					$("#cout-min").change(function(){
+						$("#liste").load('<?= HOST . "manage/offreFormations"?>', {
+		      				idThemeFormation : $('#idThemeFormation').val(),
+		      				coutMin : $('#cout-min').val(),
+		      				coutMax : $('#cout-max').val()
+						});
+					});
+					$("#cout-max").change(function(){
+						$("#liste").load('<?= HOST . "manage/offreFormations"?>', {
+		      				idThemeFormation : $('#idThemeFormation').val(),
+		      				coutMin : $('#cout-min').val(),
+		      				coutMax : $('#cout-max').val()
+						});
+					});
+					$('#btn-new').click(function(){
+						$('#cout').val("");
+						$('#idFormateur').val("");
+						$('#idOffreFormateur').val("");
+						$('#titreModal').html("Ajout d'une nouvelle offre");
+						$('#modalEnregistrement').modal('show');
+					});
+					tippy('.fa-plus', {
+						content: "Ajouter une nouvelle offre"
+					});
+					tippy('.fa-list', {
+						content: "Voir catalogue de thèmes"
+					});
+	      		</script>
+	      	<?php elseif ($url[2] == "formationFormateur" && $url[1] == "entreprise") : extract($data); ?>
+	      		<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-5">
+	      						<div class="row">
+	      							<div class="col-md-3">
+	      								<span class="titre text-white">Formateur : </span>
+	      							</div>
+	      							<div class="col-md-9 text-left">
+	      								<input type="text" class="select-time" value="<?= $formateur->getNom() . ' ' . $formateur->getPrenom() ?>" readonly="readonly" style="font-size: 0.9em!important; width: 90%!important; background: #dddddd;"> 
+	      							</div>
+	      						</div>
+	      					</div>
+	      					<div class="col-md-3">
+	      						<div class="row">
+	      							<div class="col-md-3">
+	      								<span class="titre text-white">contact : </span>
+	      							</div>
+	      							<div class="col-md-9">
+	      								<input type="text" class="select-time" value="<?= explode('/', $formateur->getContact())[1] ?>" readonly="readonly" style="font-size: 0.9em!important; width: 90%!important; background: #dddddd;">
+	      							</div>
+	      						</div>
+	      					</div>
+	      					<div class="col-md-4">
+	      						<div class="row">
+	      							<div class="col-md-3">
+	      								<span class="titre text-white">email : </span>
+	      							</div>
+	      							<div class="col-md-9">
+	      								<input type="text" class="select-time" value="<?= $formateur->getEmail() ?>" readonly="readonly" style="font-size: 0.9em!important; width: 90%!important; background: #dddddd;">
+	      							</div>
+	      						</div>
+	      					</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 60vh; max-height: 60vh; background: #f5f5f5; overflow-y: auto;">
+      						<div>
+								<table class="table table-borderless" style="width: 100%; font-size: 0.9em; border : none;">
+									<thead>
+										<tr class="p-0">
+											<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Domaine</div></th>
+											<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Thème</div></th>
+											<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Dates</div></th>
+											<th class="p-0 text-center" style="width: 7%;"><div class="card p-2 m-1 card-grey">Actions</div></th>
+										</tr>
+									</thead>
+									<tbody>
+										<?php if (count($donnees) > ManagerModuleFormation::NO) : ?>
+											<?php foreach ($donnees as $donnee) : extract($donnee); ?>
+												<tr class="p-0">
+													<td class="p-0">
+														<div class="card p-2 m-1 card-light-grey text-important text-left" style="height: 40px; max-height: 40px;">
+															<span><?= $sousDomaine->getNomSousDomaine() ?></span>
+														</div>
+													</td>
+													<td class="p-0">
+														<div class="card p-2 m-1 card-light-grey text-important text-left">
+															<span><?= $theme->getTheme() ?></span>
+														</div>
+													</td>
+													<td class="p-0">
+														<div class="card p-2 m-1 card-light-grey">
+															<?php if ($formation->getDebut() != null && $formation->getFin() != null) : ?>
+																<span>
+																	du <span class="text-important"><?= date('d/m/Y', strtotime($formation->getDebut())) ?></span>
+																	 au <span class="text-important"><?= date('d/m/Y', strtotime($formation->getFin())) ?></span> 
+																</span>
+															<?php else : ?>
+																indéterminées
+															<?php endif ?>
+														</div>
+													</td>
+													<td class="p-0">
+														<div class="card p-2 m-1 card-light-grey text-center" style="height: 40px; max-height: 40px;">
+															<button class="btn btn-transparent btn-sm m-0 p-0" data-toggle="modal" data-target="#detailModal<?= $formation->getIdFormationProfessionnelle();?>">
+																<i class="fa fa-info-circle text-dark tippy-act" style="font-size: 1.3em;"></i>
+															</button>
+														</div>
+													</td>
+												</tr>
+												<div class="modal fade" id="detailModal<?=$formation->getIdFormationProfessionnelle()?>" tabindex="-1" role="dialog" aria-hidden="true">
+												  	<div class="modal-dialog modal-dialog-centered" role="document">
+													    <div class="modal-content" style="background: #cfd8dc;">
+													      	<div class="modal-header text-center">
+													      		<div class="text-center" style="width: 100%;">
+													      			<h5 class="modal-title section-heading m-0">Détails</h5>
+													      		</div>
+													        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+													          		<span aria-hidden="true">&times;</span>
+													        	</button>
+													      	</div>
+													      	<div class="modal-body">
+													      		<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+														      		<div class="card mt-2 p-2 card-light-grey">
+													      				<span class="titre font-style-italic">
+													      					Formation dans le domaine de <?= $sousDomaine->getNomSousDomaine() ?>
+													      				</span>
+																	</div>
+																	<div class="card mt-2 p-2 card-light-grey">
+																		<div class="row">
+																			<div class="col-md-4 text-left">
+																				<span class="titre">
+																					thème :
+																				</span>
+																			</div>
+																			<div class="col-md-8 text-left">
+																				<?= $theme->getTheme(); ?>
+																			</div>
+																		</div>
+																		<br>
+																		<div class="row">
+																			<div class="col-md-4 text-left">
+																				<span class="titre">
+																					Description :
+																				</span>
+																			</div>
+																			<div class="col-md-8 text-left">
+																				<?= $theme->getDescription() ?>
+																			</div>
+																		</div>
+																	</div>
+																	<div class="card mt-2 p-2 card-light-grey">
+																		<div class="row">
+																			<div class="col-md-4 text-left">
+																				<span class="titre">
+																					Note :
+																				</span>
+																			</div>
+																			<div class="col-md-8 text-left">
+																				<?php if ($evaluation != null) : ?>
+																					<span class="text-important"><?= $evaluation->getNote() . ' / 10' ?></span>
+																				<?php else : ?>
+																					N/A
+																				<?php endif ?>
+																			</div>
+																		</div>
+																		<br>
+																		<div class="row">
+																			<div class="col-md-4 text-left">
+																				<span class="titre">
+																					Remarque :
+																				</span>
+																			</div>
+																			<div class="col-md-8 text-left">
+																				<?php if ($evaluation != null) : ?>
+																					<span class=""><?= $evaluation->getRemarque() ?></span>
+																				<?php else : ?>
+																					N/A
+																				<?php endif ?>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+													      	</div>
+													    </div>
+													</div>
+												</div>
+											<?php endforeach ?>
+										<?php else : ?>
+											<tr class="p-0">
+												<td class="p-0" colspan="5">
+													<div class="card p-2 m-1 card-light-grey">Aucun enregistrement trouvé</div>
+												</td>
+											</tr>
+										<?php endif ?>
+									</tbody>
+								</table>
+							</div>
+							<script type="text/javascript">
+							    tippy('.fa-list', {
+									content: "Voir catalogue de thèmes"
+								});
+								tippy('.fa-info-circle', {
+									content: "Voir les détails du thème"
+								});
+								$("#titre").html("Les formations du formateur");
+							</script>
+	      				</div>
+	      			</div>
+	      		</div>
+	      	<?php elseif ($url[1] == "employe") : ?>
+	      		<div class="row">
+			        <ul id="new-tab-button">
+		        		<li id="tab1">
+		        			<a href="<?= HOST. 'manage/employe/formationDisponible'?>">
+		        				Les formations disponibles
+		        			</a>
+		        		</li>
+		        		<li id="tab4">
+		        			<a href="<?= HOST. 'manage/employe/suggestionFormation'?>">
+		        				Mes suggestions de thèmes
+		        			</a>
+		        		</li>
+		        		<li id="tab2">
+		        			<a href="<?= HOST. 'manage/employe/formationAssistee'?>">
+		        				Mes formations
+		        			</a>
+		        		</li>
+		        		<li id="tab3">
+		        			<a href="<?= HOST. 'manage/employe/validationFormation'?>">
+		        				Les demandes de formation
+		        			</a>
+		        		</li>  			    
+			        </ul>
+		      	</div>
+	      		<?php if ($url[2] == "formationDisponible") : ?>
+		      		<div>
+						<table class="table table-borderless" style="width: 100%; font-size: 0.9em; border : none;">
+							<thead>
+								<tr class="p-0">
+									<th class="p-0 text-left" style="width: 20%;"><div class="card p-2 m-1 card-grey">domaine</div></th>
+									<th class="p-0 text-left" style="width: 25%;"><div class="card p-2 m-1 card-grey">theme</div></th>
+									<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Formateur</div></th>
+									<th class="p-0 text-center" style="width: 8%;"><div class="card p-2 m-1 card-grey">Actions</div></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php if (count($data) > ManagerModuleFormation::NO) : $noData = true; ?>
+									<?php foreach ($data as $datum) : extract($datum); ?>
+										<?php if ($formationOuverte == true) : $noData = false; ?>
+											<tr class="p-0">
+												<td class="p-0">
+													<div class="card p-2 m-1 card-light-grey text-important text-left" style="height: 40px; max-height: 40px;">
+														<?= $domaine->getNomSousDomaine() ?>
+													</div>
+												</td>
+												<td class="p-0">
+													<div class="card p-2 m-1 card-light-grey text-important text-left" style="height: 40px; max-height: 40px;">
+														<?= $theme->getTheme() ?>
+													</div>
+												</td>
+												<td class="p-0">
+													<div class="card p-2 m-1 card-light-grey text-important text-left">
+														<?= $formateur->getCivilite() . ' ' . $formateur->getNom() . ' ' . $formateur->getPrenom() ?>
+													</div>
+												</td>
+												<td class="p-0 text-center">
+													<div class="card p-2 m-1 card-light-grey text-center" style="height: 40px; max-height: 40px;">
+														<button class="btn btn-transparent btn-sm m-0 p-0" data-toggle="modal" data-target="#modalDetail<?= $offre->getIdOffreFormateur() ?>">
+															<i class="fa fa-info-circle text-dark tippy-act" style="font-size: 1.3em;"></i>
+														</button>
+													</div>
+												</td>
+											</tr>
+											<div class="modal fade" id="modalDetail<?=$offre->getIdOffreFormateur()?>" tabindex="-1" role="dialog" aria-hidden="true">
+											  	<div class="modal-dialog modal-dialog-centered" role="document">
+												    <div class="modal-content" style="background: #cfd8dc;">
+												      	<div class="modal-header text-center">
+												      		<div class="text-center" style="width: 100%;">
+												      			<h5 class="modal-title section-heading m-0">Détails de la formation</h5>
+												      		</div>
+												        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												          		<span aria-hidden="true">&times;</span>
+												        	</button>
+												      	</div>
+												      	<div class="modal-body">
+												      		<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+													      		<div class="card mt-2 p-2 card-light-grey">
+												      				<span class="titre font-style-italic">
+												      					Formation dans le domaine de <?= $domaine->getNomSousDomaine() ?>
+												      				</span>
+																</div>
+																<div class="card mt-2 p-2 card-light-grey">
+																	<div class="row">
+																		<div class="col-md-4 text-left">
+																			<span class="titre">
+																				Formateur :
+																			</span>
+																		</div>
+																		<div class="col-md-8 text-left">
+																			<?= $formateur->getCivilite() . ' ' . $formateur->getNom() . ' ' . $formateur->getPrenom(); ?>
+																		</div>
+																	</div>
+																</div>
+																<div class="card mt-2 p-2 card-light-grey">
+																	<div class="row">
+																		<div class="col-md-4 text-left">
+																			<span class="titre">
+																				thème :
+																			</span>
+																		</div>
+																		<div class="col-md-8 text-left">
+																			<?= $theme->getTheme(); ?>
+																		</div>
+																	</div>
+																</div>
+																<div class="card mt-2 p-2 card-light-grey">
+																	<div class="row">
+																		<div class="col-md-4 text-left">
+																			<span class="titre">
+																				Description :
+																			</span>
+																		</div>
+																		<div class="col-md-8 text-left">
+																			<?= $theme->getDescription() ?>
+																		</div>
+																	</div>
+																</div>
+															</div>
+												      	</div>
+												      	<div class="modal-footer" style="width: 100%;">
+												      		<?php if ($isParticipant == true) : ?>
+												      			<div class="row" style="width: 100%;">
+												      				<div class="col-md-8 text-left">
+												      					<span>[Vous participez à cette formation]</span>
+												      				</div>
+												      				<div class="col-md-4 text-right">
+												      					<a href="<?= HOST . 'manage/delete-employeFormation?idFormationProfessionnelle=' . $formation->getIdFormationProfessionnelle()?>" class="btn btn-sm btn-danger">Annuler</a>
+												      				</div>
+												      			</div>
+												      		<?php elseif ($isDemandant == true) : ?>
+												      			<div class="row" style="width : 100%;">
+												      				<div class="col-md-8 text-left">
+												      					<span>[Demande de participation envoyée]</span>
+												      				</div>
+												      				<div class="col-md-4 text-right">
+												      					<a href="<?= HOST . 'manage/annuler-demandeFormation?idFormationProfessionnelle=' . $formation->getIdFormationProfessionnelle()?>" class="btn btn-sm btn-danger">Retirer</a>
+												      				</div>
+												      			</div>
+												      		<?php else : ?>
+												        		<a href="<?= HOST . 'manage/participer-formationProfessionnelle?idFormationProfessionnelle=' . $formation->getIdFormationProfessionnelle()?>" class="btn btn-sm btn-success">Participer</a>
+												        	<?php endif ?>
+												      	</div>
+												    </div>
+												</div>
+											</div>
+										<?php endif ?>
+									<?php endforeach ?>
+								<?php endif ?>
+								<?php if (count($data) == ManagerModuleFormation::NO || $noData == true) : ?>
+									<tr class="p-0">
+										<td class="p-0" colspan="5">
+											<div class="card p-2 m-1 card-light-grey text-center">Aucun enregistrement trouvé</div>
+										</td>
+									</tr>
+								<?php endif ?>
+							</tbody>
+						</table>
+					</div>
+					<script>
+						$("#titre").html("Les formations disponibles");
+					</script>
+				<?php elseif ($url[2] == "formationAssistee") : ?>
+					<div>
+						<table class="table table-borderless" style="width: 100%; font-size: 0.9em; border : none;">
+							<thead>
+								<tr class="p-0">
+									<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Domaine</div></th>
+									<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Thème</div></th>
+									<th class="p-0 text-left"><div class="card-pointage card p-2 m-1 card-grey">Formateur</div></th>
+									<th class="p-0 text-left"><div class="card-pointage card p-2 m-1 card-grey">Dates</div></th>
+									<th class="p-0 text-center"><div class="card-pointage card p-2 m-1 card-grey">Action</div></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php if (count($data) > ManagerModuleFormation::NO) : ?>
+									<?php foreach ($data as $datum) : extract($datum); ?>
+										<tr class="p-0">
+											<td class="p-0">
+												<div class="card p-2 m-1 card-light-grey text-important text-left">
+													<?= $sousDomaine->getNomSousDomaine() ?>
+												</div>
+											</td>
+											<td class="p-0">
+												<div class="card p-2 m-1 card-light-grey">
+													<?= $theme->getTheme() ?>
+												</div>
+											</td>
+											<td class="p-0">
+												<div class="card p-2 m-1 card-light-grey text-left">
+													<?= $formateur->getCivilite() . ' ' . $formateur->getNom() . ' ' . $formateur->getPrenom() ?>
+												</div>
+											</td>
+											<td class="p-0">
+												<div class="card p-2 m-1 card-light-grey text-left">
+													<?php if ($formation->getDebut() != null && $formation->getFin() != null) : ?>
+														<span>
+															du <span class="text-important"><?= date('d/m/Y', strtotime($formation->getDebut())) ?></span>
+															 au <span class="text-important"><?= date('d/m/Y', strtotime($formation->getFin())) ?></span> 
+														</span>
+													<?php else : ?>
+														indéterminée
+													<?php endif ?>
+												</div>
+											</td>
+											<td class="p-0">
+												<div class="card p-2 m-1 card-light-grey text-center" style="height: 40px; max-height: 40px;">
+													<span>
+														<button class="btn btn-transparent btn-sm m-0 p-0" data-toggle="modal" data-target="#modalDetail<?= $formation->getIdFormationProfessionnelle();?>">
+															<i class="fa fa-info-circle text-dark tippy-act" style="font-size: 1.4em;"></i>
+														</button>
+														<button class="btn btn-transparent btn-sm m-0 ml-3 p-0" id="evaluation<?= $formation->getIdFormationProfessionnelle() ?>">
+															<i class="fa fa-star text-dark tippy-act" style="font-size: 1.4em;"></i>
+														</button>
+													</span>
+												</div>
+											</td>
+										</tr>
+										<div class="modal fade" id="modalDetail<?= $formation->getIdFormationProfessionnelle();?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+										  	<div class="modal-dialog modal-dialog-centered" role="document">
+										    	<div class="modal-content">
+										      		<div class="modal-header text-center">
+										      			<div class="text-center" style="width: 100%;">
+										      				<h5 class="modal-title section-heading m-0" id="exampleModalLabel">Les détails de la formation</h5>
+										      			</div>
+										        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										          			<span aria-hidden="true">&times;</span>
+										        		</button>
+										      		</div>
+										      		<div class="modal-body">
+										      			<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+												      		<div class="card mt-2 p-2 card-light-grey">
+											      				<span class="titre font-style-italic">
+											      					Formation dans le domaine de <?= $sousDomaine->getNomSousDomaine() ?>
+											      				</span>
+															</div>
+															<div class="card mt-2 p-2 card-light-grey">
+																<div class="row">
+																	<div class="col-md-4 text-left">
+																		<span class="titre">
+																			Formateur :
+																		</span>
+																	</div>
+																	<div class="col-md-8 text-left">
+																		<?= $formateur->getCivilite() . ' ' . $formateur->getNom() . ' ' . $formateur->getPrenom(); ?>
+																	</div>
+																</div>
+															</div>
+															<div class="card mt-2 p-2 card-light-grey">
+																<div class="row">
+																	<div class="col-md-4 text-left">
+																		<span class="titre">
+																			thème :
+																		</span>
+																	</div>
+																	<div class="col-md-8 text-left">
+																		<?= $theme->getTheme(); ?>
+																	</div>
+																</div>
+															</div>
+															<div class="card mt-2 p-2 card-light-grey">
+																<div class="row">
+																	<div class="col-md-4 text-left">
+																		<span class="titre">
+																			Description :
+																		</span>
+																	</div>
+																	<div class="col-md-8 text-left">
+																		<?= $theme->getDescription() ?>
+																	</div>
+																</div>
+															</div>
+														</div>
+										      		</div>
+										    	</div>
+										  	</div>
+										</div>
+										<script>
+											$('#evaluation<?= $formation->getIdFormationProfessionnelle() ?>').click(function(){
+												$("#idEvaluationFormation").val("");
+												$("#idFormationProfessionnelle").val("");
+												$("#note").val("");
+												$("#remarque").html("N/A");
+												$("#modalDetail<?= $formation->getIdFormationProfessionnelle();?>").modal('hide');
+												$.ajax({
+													url : '<?= HOST . "manage/get-evaluationFormation" ?>',
+													data : 'idFormationProfessionnelle=<?= $formation->getIdFormationProfessionnelle() ?>',
+													dataType : 'json',
+													success : function(data) {
+														if (data['idEvaluationFormation'] != null) {
+															$("#modal-idEvaluationFormation").val(data['idEvaluationFormation']);
+															$("#note").val(data['note']);
+															$("#remarque").html(data['remarque']);
+														}
+														$("#modal-idFormationProfessionnelle").val("<?= $formation->getIdFormationProfessionnelle() ?>");
+														$('#modalEvaluation').modal('show');
+													}
+												});
+											});
+										</script>
+									<?php endforeach ?>
+								<?php else : ?>
+									<tr class="p-0">
+										<td class="p-0" colspan="5">
+											<div class="card p-2 m-1 card-light-grey text-center">Aucun enregistrement trouvé</div>
+										</td>
+									</tr>
+								<?php endif ?>
+							</tbody>
+						</table>
+					</div>
+					<div class="modal fade" id="modalEvaluation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered" role="document">
+					    	<div class="modal-content">
+					      		<div class="modal-header text-center">
+					      			<div class="text-center" style="width: 100%;">
+					      				<h5 class="modal-title section-heading m-0" id="exampleModalLabel">Evaluation de la formation</h5>
+					      			</div>
+					        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          			<span aria-hidden="true">&times;</span>
+					        		</button>
+					      		</div>
+					      		<div class="modal-body">
+					      			<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+					      				<form method="POST" id="form" action="<?= HOST . 'manage/save-evaluationFormation'?>" enctype="multipart/form-data" novalidate="novalidate">
+					      					<input type="hidden" name="idEvaluationFormation" id="modal-idEvaluationFormation">
+					      					<input type="hidden" name="idFormationProfessionnelle" id="modal-idFormationProfessionnelle" value="">
+					      					<input type="hidden" name="page" id="page" value="formationAssistee">
+								      		<div class="card mt-2 p-2 card-light-grey">
+												<div class="row">
+													<div class="col-md-5 text-left">
+														<span class="titre">
+															Note :
+														</span>
+													</div>
+													<div class="col-md-7 text-left">
+														<div class="form-group m-0">
+															<i class="fa fa-star icon-input" aria-hidden="true" style="color: #3a434f; font-size: 0.8em;"></i>
+															<input type="number" name="note" id="note" min="0" max="10" class="form-control select-time d-inline-block" style="width: 150px!important;" placeholder="note" required="required" data-validation-required-message="Veuillez attribuer une note">
+															<span class="text-important">/ 10</span>
+															<p class="help-block text-danger"></p>
+					    								</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-md-5 text-left">
+														<span class="titre">
+															Remarque :
+														</span>
+													</div>
+													<div class="col-md-7 text-left">
+														<div class="form-group">
+															<textarea class="pl-1" name="remarque" id="remarque" rows="5" required="required" data-validation-required-message="Veuillez laisser un commentaire" style="border-radius: 5px; width: 100%; font-size: 0.8em;">N/A</textarea>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="mt-2 p-2 text-right">
+												<button class="btn btn-info btn-sm" type="submit">
+													Enregistrer
+												</button>
+											</div>
+										</form>
+									</div>
+						      	</div>
+						    </div>
+					    </div>
+					</div>
+					<script>
+						$("#titre").html("Les formations assistées");
+					</script>
+				<?php elseif ($url[2] == "suggestionFormation") : extract($data); ?>
+					<table class="table table-borderless" style="width: 100%; font-size: 0.9em; border : none;">
+						<thead>
+							<tr class="p-0">
+								<th class="p-0 text-center"><div class="card p-2 m-1 card-grey">Statut</div></th>
+								<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Priorité</div></th>
+								<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Domaine</div></th>
+								<th class="p-0 text-left"><div class="card p-2 m-1 card-grey">Thème</div></th>
+								<th class="p-0 text-left"><div class="card-pointage card p-2 m-1 card-grey">Description</div></th>
+								<th class="p-0 text-center"><div class="card-pointage card p-2 m-1 card-grey">Détails</div></th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php if (count($themes) > ManagerModuleFormation::NO) : ?>
+								<?php foreach ($themes as $donnee) : extract($donnee); ?>
+									<tr class="p-0">
+										<td class="p-0">
+											<div class="card p-2 m-1 card-light-grey text-important text-center" style="height: 40px; max-height: 40px;">
+												<?php if ($formationOuverte !== null) : ?>
+													<?php if ($formationOuverte === false) : ?>
+														<i class="fa fa-check mt-1 text-success"></i>
+													<?php else : ?>
+														<i class="fa fa-hourglass mt-1 text-info"></i>
+													<?php endif ?>
+												<?php else : ?>
+													<i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>
+												<?php endif ?>
+											</div>
+										</td>
+										<td class="p-0">
+											<div class="card p-2 m-1 card-light-grey text-important text-left">
+												<?php if ($theme->getPriorite() == 1) : ?>
+													<span><?= $theme->getStringPriorite() ?></span>
+												<?php elseif ($theme->getPriorite() == 2) : ?>
+													<span style="color: #f57f17;"><?= $theme->getStringPriorite() ?></span>
+												<?php elseif ($theme->getPriorite() == 3) : ?>
+													<span style="color: #d84315;"><?= $theme->getStringPriorite() ?></span>
+												<?php elseif ($theme->getPriorite() == 4) : ?>
+													<span style="color: #d50000;"><?= $theme->getStringPriorite() ?></span>
+												<?php endif ?>
+											</div>
+										</td>
+										<td class="p-0">
+											<div class="card p-2 m-1 card-light-grey text-important text-left">
+												<?= $sousDomaine->getNomSousDomaine() ?>
+											</div>
+										</td>
+										<td class="p-0">
+											<div class="card p-2 m-1 card-light-grey">
+												<?= $theme->getTheme() ?>
+											</div>
+										</td>
+										<td class="p-0" style="width: 250px;">
+											<div class="card p-2 m-1 card-light-grey" style="max-width: 245px; text-overflow: ellipsis; overflow-x: hidden;white-space: nowrap;">
+												<?= $theme->getDescription() ?>
+											</div>
+										</td>
+										<td class="p-0">
+											<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+												<button class="btn btn-transparent btn-sm m-0 p-0" data-toggle="modal" data-target="#modalDetail<?= $theme->getIdThemeFormation();?>">
+													<i class="fa fa-info-circle text-dark" style="font-size: 1.4em;"></i>
+												</button>
+											</div>
+										</td>
+									</tr>
+									<div class="modal fade" id="modalDetail<?= $theme->getIdThemeFormation();?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+									  	<div class="modal-dialog modal-dialog-centered" role="document">
+									    	<div class="modal-content">
+									      		<div class="modal-header text-center">
+									      			<div class="text-center" style="width: 100%;">
+									      				<h5 class="modal-title section-heading m-0" id="exampleModalLabel">Les détails du thème</h5>
+									      			</div>
+									        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									          			<span aria-hidden="true">&times;</span>
+									        		</button>
+									      		</div>
+									      		<div class="modal-body">
+									      			<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+											      		<div class="card mt-2 p-2 card-light-grey">
+										      				<span class="titre font-style-italic">
+										      					Formation dans le domaine de <?= $sousDomaine->getNomSousDomaine() ?>
+										      				</span>
+														</div>
+														<div class="card mt-2 p-2 card-light-grey">
+															<div class="row">
+																<div class="col-md-4 text-left">
+																	<span class="titre">
+																		thème :
+																	</span>
+																</div>
+																<div class="col-md-8 text-left">
+																	<?= $theme->getTheme(); ?>
+																</div>
+															</div>
+														</div>
+														<div class="card mt-2 p-2 card-light-grey">
+															<div class="row">
+																<div class="col-md-4 text-left">
+																	<span class="titre">
+																		Description :
+																	</span>
+																</div>
+																<div class="col-md-8 text-left">
+																	<?= $theme->getDescription() ?>
+																</div>
+															</div>
+														</div>
+													</div>
+									      		</div>
+										      	<div class="modal-footer">
+										      		<?php if ($editable == true) : ?>
+											        	<button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal<?= $theme->getIdThemeFormation();?>">Supprimer</button>
+											        	<button class="btn btn-sm btn-warning" data-dismiss="modal" id="editer<?= $theme->getIdThemeFormation(); ?>" >Editer</button>
+											        <?php endif ?>
+											    </div>
+									    	</div>
+									  	</div>
+									</div>
+									<div class="modal fade" id="deleteModal<?=$theme->getIdThemeFormation()?>" tabindex="-1" role="dialog" aria-hidden="true">
+									  	<div class="modal-dialog modal-dialog-centered" role="document">
+										    <div class="modal-content" style="background: #cfd8dc;">
+										      	<div class="modal-header text-center">
+										      		<div class="text-center" style="width: 100%;">
+										      			<h5 class="modal-title section-heading m-0">Confirmation</h5>
+										      		</div>
+										        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										          		<span aria-hidden="true">&times;</span>
+										        	</button>
+										      	</div>
+										      	<div class="modal-body">
+										      		<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+										        		<p id="text-confirmation"> Voulez-vous vraiment supprimer le thème <?= $theme->getTheme() ?> ?</p>
+										        	</div>
+										      	</div>
+										      	<div class="modal-footer">
+										      		<button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Annuler</button>
+										        	<a href="<?= HOST . 'manage/delete-themeFormation?idThemeFormation=' . $theme->getIdThemeFormation()?>" class="btn btn-sm btn-success">Confirmer</a>
+										      	</div>
+										    </div>
+										</div>
+									</div>
+									<script>
+										$('#editer<?= $theme->getIdThemeFormation() ?>').click(function(){
+											$.ajax({
+												url : '<?= HOST . "manage/get-themeFormation" ?>',
+												data : 'idThemeFormation=<?= $theme->getIdThemeFormation() ?>',
+												dataType : 'json',
+												success : function(data) {
+													$('#theme').val(data['theme']);
+													$('#description').html(data['description']);
+													$('#priorite').val(data['priorite']);
+													$('#idSousDomaine2 option[value="' + data['idSousDomaine'] + '"]').prop('selected', true);
+													$('#nomSousDomaine').val($('#idSousDomaine2 option[value="' + data['idSousDomaine'] + '"]').text());
+													$('#idThemeFormation').val(data['idThemeFormation']);
+													$('#titreModal').html("Modifier le thème");
+													$('#modalEnregistrement').modal('show');
+												}
+											});
+										});
+										tippy('.fa-check', {
+									    	content: 'formation effectuée'
+									    });
+									    tippy('.fa-hourglass', {
+									    	content: 'formation à venir'
+									    });
+									    tippy('.fa-exclamation-triangle', {
+									    	content: "N'a pas encore d'offre validée"
+									    });
+									    tippy('.fa-info-circle', {
+									    	content: "Plus de détails"
+									    });
+									</script>
+								<?php endforeach ?>
+							<?php else : ?>
+								<tr class="p-0">
+									<td class="p-0" colspan="6">
+										<div class="card p-2 m-1 card-light-grey">Aucun enregistrement trouvé</div>
+									</td>
+								</tr>
+							<?php endif ?>
+						</tbody>
+					</table>
+					<tbody>
+					<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		  				<div class="modal-dialog modal-dialog-centered" role="document">
+		    				<div class="modal-content">
+		    					<form method="POST" id="form" action="<?= HOST . 'manage/save-themeFormation'?>" enctype="multipart/form-data" novalidate="novalidate">
+		    						<input type="hidden" id="idThemeFormation" name="idThemeFormation">
+		    						<input type="hidden" id="idEmploye" name="idEmploye" value="<?= $_SESSION['user']['idEmploye'] ?>">
+		    						<input type="hidden" id="statut" name="statut" value="0">
+			      					<div class="modal-header">
+			        					<div class="text-center" style="width: 100%;">
+								      		<h5 class="modal-title section-heading m-0" id="titreModal">Suggérez un thème</h5>
+								      	</div>
+			        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          						<span aria-hidden="true">&times;</span>
+			        					</button>
+			      					</div>
+			      					<div class="modal-body">
+			        					<div class="card p-3" style="background: #efefff; max-height: 60vh; overflow-y: auto;">
+			        						<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="text-important">Domaine : </span>
+			        							</div>
+			        							<div class="col-md-8">
+			        								<div class="form-group">
+				        								<select id="idSousDomaine2" name="idSousDomaine" class="form-control" style="height: 38px; font-size: 0.9em;">
+					      									<option value="">Sélectionnez un domaine</option>
+					      									<?php foreach ($domaines as $domaine) : ?>
+					      										<option value="<?= $domaine->getIdSousDomaine() ?>"><?= $domaine->getNomSousDomaine() ?></option>
+					      								 	<?php endforeach ?>
+					      								</select>
+					      								<p class="help-block text-danger"></p>
+					      							</div>
+					      							<div class="form-group mt-0">
+					      								<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        									<input type="text" name="nomSousDomaine" id="nomSousDomaine" class="form-control" required="required" data-validation-required-message="Veuillez renseigner le domaine" placeholder="Nouveau domaine" style="height: 38px; font-size: 0.8em; font-weight: 600!important;">
+			        									<p class="help-block text-danger"></p>
+			        								</div>
+			        							</div>
+			        						</div>
+			        						<hr>
+			        						<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="text-important">Thème : </span>
+			        							</div>
+			        							<div class="col-md-8">
+			        								<div class="form-group">
+			        									<input type="text" name="theme" id="theme" class="form-control" required="required" data-validation-required-message="Veuillez renseigner le thème" placeholder="thème" style="height: 38px; font-size: 0.9em; font-weight: 500;">
+			        									<p class="help-block text-danger"></p>
+			        								</div>
+			        							</div>
+			        						</div>
+			        						<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="text-important">Description : </span>
+			        							</div>
+			        							<div class="col-md-8">
+			        								<div class="form-group">
+			        									<textarea class="form-control pl-3" name="description" id="description" rows="5" required="required" data-validation-required-message="Veuillez laisser une description" style="border-radius: 5px; width: 100%; font-size: 0.8em;">N/A</textarea>
+			        									<p class="help-block text-danger"></p>
+			        								</div>
+			        							</div>
+			        						</div>
+			        						<hr>
+			        						<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="text-important">niveau de priorité : </span>
+			        							</div>
+			        							<div class="col-md-8">
+			        								<div class="form-group">
+			        									<select name="priorite" id="priorite" class="form-control" required="required" ata-validation-required-message="Veuillez indiquer le niveau de priorité" style="height: 38px; font-size: 0.8em; font-weight: 600!important;">
+			        										<option value="4">urgent</option>
+			        										<option value="3">important</option>
+			        										<option value="2">important / pas urgent</option>
+			        										<option value="1">pas urgent</option>
+			        									</select>
+			        									<p class="help-block text-danger"></p>
+			        								</div>
+			        							</div>
+			        						</div>
+			        					</div>
+			      					</div>
+			      					<div class="modal-footer">
+			        					<div class="row" style="width: 105%!important;">
+								      		<div class="col-md-3">
+								      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+								      		</div>
+								      		<div class="col-md-5"></div>
+								      		<div class="col-md-4">
+								      			<div class="form-group"> 
+								      				<button type="submit" id="submit" class="btn btn-md btn-info">
+								      					Enregistrer
+								      				</button>
+								      			</div>
+								      		</div>
+								      	</div>
+			      					</div>
+			      				</form>
+		    				</div>
+		  				</div>
+					</div>
+					<script>
+						$("#idSousDomaine2").change(function(){
+							if ($("#idSousDomaine2").val() != "") {
+								$("#nomSousDomaine").val($("#idSousDomaine2 option:selected").text());
+							} else {
+								$("#nomSousDomaine").val("");
+							}
+						});
+						$("#titre").html("Mes suggestions de formations");
+					</script>
+				<?php elseif ($url[2] == "validationFormation") : extract($data); ?>
+					<div class="row">
+						<div class="col-lg-12 text-center">
+		      				<div class="tete-list-section row" style="background: #647994;">
+		      					<div class="col-md-6">
+		      						<span class="text-white titre">Répondez aux demandes le plus tôt possible</span>
+		      					</div>
+		      					<div class="col-md-6">
+		      						<div class="row">
+		      							<div class="col-md-2">
+		      								<span class="titre text-white">Lister : </span>
+		      							</div>
+		      							<div class="col-md-6 text-left">
+ 											<select class="select-time" id="type" style="font-size: 0.9em!important;">
+ 												<option value="3">tout</option>
+ 												<option value="1">en attente</option>
+ 												<option value="2">validée</option>
+ 												<option value="0">refusée</option>
+ 												<option value="4">archivée</option>
+ 											</select>
+		      							</div>
+		      						</div>
+		      					</div>
+		      				</div>
+		      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+		      				</div>
+		      			</div>
+		      		</div>
+		      		<script>
+		      			$("document").ready(function(){
+		      				$("#liste").load('<?= HOST . "manage/demandeFormations"?>', {
+			      				type : $('#type').val()
+							});
+							$("#titre").html("Les demandes de formation à valider");
+		      			});
+		      			$('#type').change(function(){
+		      				$("#liste").load('<?= HOST . "manage/demandeFormations"?>', {
+			      				type : $('#type').val()
+							});
+		      			});
+		      		</script>
+				<?php endif ?>
+	      	<?php endif ?>
+		</div>
+	</div>
+</section>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabFormation.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabFormationEmploye.js"></script>
+<script>
+	$('#annuler').click(function(){
+		window.location.reload();
+	});
+	$(function() {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+    });
+</script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+<script>
+	var pathname = new URL(window.location.href).pathname; 
+	var cleave = new Cleave('#input-phone', {
+      phone:true,
+      phoneRegionCode: $('#select-country').children("option:selected").val()
+    });
+	if ($('#select-country').children("option:selected").val() == "") {
+    	$('#input-phone').addClass('hidden');
+    	$('.fa-phone').addClass('hidden');
+    } else {
+    	$('#input-phone').removeClass('hidden');
+    }
+	$('#select-country').change(function(){
+		if ($('#select-country').children("option:selected").val() == "") {
+	    	$('#input-phone').addClass('hidden');
+	    	$('.fa-phone').addClass('hidden');
+	    } else {
+			$('#input-phone').removeClass('hidden');
+			$('.fa-phone').removeClass('hidden');
+	      	cleave.setPhoneRegionCode(this.value);
+	      	cleave.setRawValue('');
+	    }
+    });
+</script>

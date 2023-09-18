@@ -1,0 +1,131 @@
+  /* @author (Lansky) 2022/03/04 */
+  @media print
+  {
+    body {
+      zoom: 80%;
+      print-color-adjust: exact;
+    }
+  }
+  #container
+  {
+    width: 1000px;
+    height: 1000px;
+     overflow: unset!important;
+    margin: 10px!important;
+    display:  flex!important;
+    flex-wrap: wrap;
+    position: absolute;
+    z-index: 99999;
+  }
+  svg 
+  {
+    overflow: unset!important;
+  }
+  #container_svg
+  {
+    background-color: #00000000;
+    position: absolute;
+    margin-left:  -118px;
+  }
+  #container_ChartBorder
+  {
+    fill: rgba(0,0,0,0);
+    width: 15000px;
+  }
+  #container_tooltip
+  {
+    position: relative;
+    left: 173px;
+    top: -809px;
+  }
+  .img-fluid.smiley.rounded-circle
+  {
+    width: 150px!important;
+  }
+  #containerAxisGroup1 path
+  {
+    stroke-width: 0;
+  }
+  #containerAxisLabels1 text
+  {
+    opacity: 0;
+  }
+  #containerAxisGroup0 path 
+  {
+    stroke-width: 0;
+  }
+ /* #container_Series_0
+  {
+    stroke: #b119d7;
+    stroke-width: 4;
+  }*/
+  #containerAxisLine_1
+  {
+    stroke: transparent;
+  }
+  /*ellipse, ellipse #container_chart_legend_shape_marker_0
+  {
+    stroke: #6610f2;
+  }*/
+  /**@changelog 2022/05/10 [EVOL] (Lansky) Version 2.0 */
+  /* Begin circle */
+  .containers
+  {
+    background: transparent;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 53px;
+    left: -49px;
+    /*top: 40px;*/
+    /*left: -44px;*/
+    z-index: 1;
+  }
+  .circle
+  {
+    position: relative;
+    width: 885px;
+    height: 885px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    background: #dad2ef;
+    z-index: -1;
+    border-radius: 50%;
+    box-shadow: 10px 50px 70px rgba(0, 0, 0, 0.25),
+                inset 5px 5px 10px rgba(0, 0, 0, 0.5),
+                inset 5px 5px 20px rgba(225, 225, 225, 0.2),
+                inset -5px -5px 15px rgba(0, 0, 0, 0.75);
+  }
+  .circle span
+  {
+    position: absolute;
+    inset:  -6px;
+    text-align: center;
+  }
+  .circle span b
+  {
+    opacity: 1;
+    display: inline-block;
+  }
+  .triangle
+  {
+    height: 384px;
+    clip-path: polygon(0% 100%, 50% 0%, 100% 100%); /* polygon(base , sommet, côtés) */
+    transform: rotate(180deg);
+    border-style: solid;
+    border-color: #007bff #28a745 #6610f2 #6610f2;
+    filter: drop-shadow(1px 1px 1px rgba(0,0,0,.5));
+    background: linear-gradient(180deg,
+                  rgba(var(--color),1) var(--percent2),
+                  rgba(255,255,255,1) var(--percent1));
+    width: var(--width);
+  }
+  .triangle-img
+  {
+    margin-top: 255px;
+    transform: rotate(var(--rotate));
+  }
+  /* End circle */

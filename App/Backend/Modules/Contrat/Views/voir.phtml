@@ -1,0 +1,551 @@
+<?php
+	extract($data);
+	$url = explode('/', $_GET['page']);
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row" style="margin-top: -15px;">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h4 class="text-center list-title section-heading">Les contrats des employés</h4>
+			</div>
+		</div>
+		<div class="block-section">
+			<?php if ($_SESSION['compte']['identifiant'] == "entreprise") : ?>
+				<div class="row">
+			        <ul id="new-tab-button">
+		        		<li id="tab1">
+		        			<a href="<?= HOST. 'manage/entreprise/contrat'?>">
+		        				La liste des contrats
+		        			</a>
+		        		</li>
+		        		<li id="tab2">
+		        			<a href="<?= HOST. 'manage/entreprise/templateContrat'?>">
+		        				Les templates
+		        			</a>
+		        		</li>   
+		        		<li id="tab3">
+		        			<a href="<?= HOST. 'manage/entreprise/parametreContrat'?>">
+		        				Paramètre
+		        			</a>
+		        		</li>      			    
+			        </ul>
+		      	</div>
+		    <?php endif ?>
+		    <?php if ($url[2] == "contrat") : ?>
+		    	<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+	      						<div class="row">
+	      							<div class="col-md-6">
+										<select class="select-time" id='filter-group' style="font-size: 0.8em!important;">
+											<option value=""> -- groupe --</option>
+											<option value="1" selected="selected">tout</option>
+											<option value="2">par service</option>
+											<option value="3">par poste</option>
+											<option value="4">par employé</option>
+										</select>
+									</div>
+									<div class="col-md-6">
+										<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;">
+											<option class="option-tout" id="o-t" value="">-- selectionnez --</option>
+											<?php foreach ($filtres['services'] as $service) : ?>
+												<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['postes'] as $poste) : ?>
+												<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['employes'] as $employe) : ?>
+												<option class="option-employe invisible" value="<?=$employe->getIdEmploye();?>"><?=$employe->getNom() . ' ' . $employe->getPrenom()?></option>
+											<?php endforeach ?>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3">
+	      						<label class="titre" style="color: #ffffff;">type : </label>
+	      						<select class="select-time"  style="font-size: 0.8em!important;" id="selection-type">
+	      							<option value="0" selected="selected">tout</option>
+	      							<?php foreach ($filtres['contrats'] as $contrat) : ?>
+	      								<option value="<?= $contrat->getIdContrat() ?>"><?= $contrat->getDesignation() ?></option>
+	      							<?php endforeach ?>
+	      						</select>
+	      					</div>
+	      					<div class="col-md-3">
+	      						<label class="titre" style="color: #ffffff;">statut : </label>
+	      						<select class="select-time"  style="font-size: 0.8em!important;" id="selection-statut">
+	      							<option value="4" selected="selected">tout</option>
+	      							<option value="1">en attente</option>
+	      							<option value="2">en cours</option>
+	      							<option value="3">expiré</option>
+	      							<option value="5">bientôt expiré</option>
+	      						</select>
+	      					</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+	      		<script>
+	      			const FILTER_GROUP_ALL     = 1;
+        			const FILTER_GROUP_SERVICE = 2;
+        			const FILTER_GROUP_POSTE   = 3;
+        			const FILTER_GROUP_EMPLOYE = 4;
+
+	      			$('document').ready(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste").load("<?= HOST . 'manage/contratEmployes'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								type      : $('#selection-type').val(),
+								statut    : $('#selection-statut').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				}
+	      			});
+	      			$('#filter-group').change(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste").load("<?= HOST . 'manage/contratEmployes'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								type      : $('#selection-type').val(),
+								statut    : $('#selection-statut').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_SERVICE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').removeClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_POSTE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').removeClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_EMPLOYE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').removeClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				}
+	      			});
+	      			$('#filter-element').change(function() {
+	      				$("#liste").load("<?= HOST . 'manage/contratEmployes'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							type      : $('#selection-type').val(),
+							statut    : $('#selection-statut').val()
+						});
+	      			});
+					$('#selection-type').change(function() {
+						$("#liste").load("<?= HOST . 'manage/contratEmployes'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							type      : $('#selection-type').val(),
+							statut    : $('#selection-statut').val()
+						});
+					});
+					$('#selection-statut').change(function() {
+						$("#liste").load("<?= HOST . 'manage/contratEmployes'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							type      : $('#selection-type').val(),
+							statut    : $('#selection-statut').val()
+						});
+					});
+	      		</script>
+		    <?php elseif ($url[2] == "templateContrat") : ?>
+		    	<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-12 text-center">
+	      						<span class="titre" style="color: #ffffff;">Personnalisez vos documents</span>
+	      					</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      					<div class="row" style="margin: auto;">
+								<div class="col-md-4" style="font-size: 0.9em;">
+									<div class="card p-2">
+										<div class="card card-light-grey m-1 p-2 text-center">
+											<h6 class="text-center m-0">Vos templates</h6>
+										</div>
+										<?php foreach ($documents as $document) : ?>
+											<div class="card card-extra-light-grey p-1 m-1">
+												<form id="form" method="POST" name="form" action="<?= HOST . "manage/save-configuration" ?>" enctype="multipart/form-data">
+													<label class="label-input">template pour <?=$document['typeContrat']->getDesignation()?> :</label>
+													<input type="hidden" name="page" value="document">
+													<?php if ($_SESSION['compte']['identifiant'] == ManagerModuleContrat::USER_ENTREPRISE) : ?>
+														<input type="hidden" name="idEntreprise" value=<?=$_SESSION['user']['idEntreprise']?> >
+													<?php elseif ($_SESSION['compte']['identifiant'] == ManagerModuleContrat::USER_ADMIN) : ?>
+														<input type="hidden" name="idEntreprise" value=<?=ManagerModuleContrat::NO?> >
+													<?php endif ?>
+													<input type="hidden" name="idContrat" value="<?=$document['typeContrat']->getIdContrat()?>" >
+													<?php if ($document['template'] != null) : ?>
+														<input type="hidden" name="fichier" value="<?=$document['template']->getFichier()?>" >
+														<input type="text" class="text-doc" disabled="disabled" id="" value="<?=$document['template']->getFichier()?>" >
+													<?php else : ?> 
+														<input type="hidden" name="fichier" value="" >
+														<input type="text" class="text-doc" disabled="disabled" id="" value="" >
+													<?php endif ?>
+													<input type="file" accept=".docx" name="fileToUpload" id="<?=strtolower($document['typeContrat']->getDesignation())?>" onchange="showSubmit(this)">
+													<div class='row' id="delete-<?=strtolower($document['typeContrat']->getDesignation())?>">
+														<div class='col-md-4'>
+															<?php if ($document['template'] != null) : ?>
+																<?php if ($document['template']->getIdEntreprise() != 0) : ?>
+																	<button type="submit" name="delete" value="delete" class="btn btn-sm btn-danger mt-1" style="font-size: 0.8em!important;">Supprimer</button>
+																<?php endif ?>
+															<?php endif ?>
+														</div>
+														<div class="col-md-3"></div>
+														<div class='col-md-4'>
+															<button type="submit" name="download" value="download" class="btn btn-sm btn-warning mt-1" style="font-size: 0.8em!important;">Télécharger</button>
+														</div>
+													</div>
+													<div class='row invisible' id="submit-<?=strtolower($document['typeContrat']->getDesignation())?>">
+														<div class='col-md-4'>
+															<button type="submit" style="font-size: 0.8em!important;" name="save" value="save" class="btn btn-sm btn-info mt-1">Enregistrer</button>
+														</div>
+														<div class="col-md-3"></div>
+														<div class='col-md-4'>
+															<a href="" style="font-size: 0.8em!important;" class="btn btn-sm btn-danger annuler mt-1">Annuler</a>
+														</div>
+													</div>
+												</form>
+											</div>
+										<?php endforeach ?>
+									</div>
+								</div>
+								<div class='col-md-8' style="font-size: 0.9em;">
+									<div class="card p-2">
+										<div class="card card-light-grey m-1 p-2 text-center">
+											<h6 class="text-center m-0">Directives sur les templates</h6>
+										</div>
+										<div class="card p-1 m-1 text-left">
+											<ol>
+												<li class="text-important">Format du template</li>
+												<p>Vos templates doivent être au format .docx</p>
+												<li class="text-important">Champs à remplacer</li>
+												<p>
+													Les champs à remplacer tels que les noms, prénoms, postes, salaire, etc doivent
+													être mis entre deux crochets '[...]'.
+												</p>
+												<p>
+													De ce fait, il serait vivement recommandé de ne pas utiliser les crochets '[...]'
+													que uniquement pour spécifier des champs variables qui seront ensuite remplacés par les 
+													informations appropriées.
+												</p>
+												<p>
+													Vous devez absolument utiliser les spécifications mentionnées ci-dessous sans utliser ni des
+													lettres minuscules ni d'accents ni des caractères numériques ni des caractères spéciaux à part
+													<b>l'underscore</b> ou <b>tiret bas</b> qui est utilisé pour séparer les mots.
+												</p>
+												<li class="text-important">Spécifications des champs</li>
+												<br>
+												<div>
+													<table class='table'>
+														<thead style="background: #c8d0e4;">
+															<th>[CHAMP]</th>
+															<th>Signification de l'information</th>
+														</thead>
+														<tbody>
+															<tr>
+																<td><b><?=CHAMP_CIVILITE_SALARIE?></b></td>
+																<td>La civilité du salarié concerné</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_NOM_SALARIE?></b></td>
+																<td>Le nom du salarié concerné</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_PRENOM_SALARIE?></b></td>
+																<td>Le(s) prénom(s) du salarié concerné</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_ADRESSE_SALARIE?></b></td>
+																<td>l'adresse physique du salarié</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_NUMERO_CIN?></b></td>
+																<td>le numéro de CIN du salarié</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_DATE_CIN?></b></td>
+																<td>la date d'émission de la CIN du salarié</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_LIEU_CIN?></b></td>
+																<td>le lieu d'émission de la CIN du salarié</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_NOM_ENTREPRISE?></b></td>
+																<td>Le nom de votre entreprise si nécessaire</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_NIF_ENTREPRISE?></b></td>
+																<td>Le NIF de l'entreprise</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_STAT_ENTREPRISE?></b></td>
+																<td>STAT de l'entreprise</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_RCS_ENTREPRISE?></b></td>
+																<td>le numéro de registre de commerce</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_REPRESENTANT_ENTREPRISE?></b></td>
+																<td>nom du représentant de l'entreprise</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_QUALITE_REPRESENTANT?></b></td>
+																<td>la qualitée du représentant de l'entreprise</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_DATE_DE_DEBUT?></b></td>
+																<td>La date où le contrat prend fait</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_DATE_DE_FIN?></b></td>
+																<td>La date où le contrat prend fin</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_POSTE?></b></td>
+																<td>Le poste auquel le salarié s'engage</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_SALAIRE_EN_CHIFFRE?></b></td>
+																<td>le salaire d'embauche en chiffre</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_SALAIRE_EN_LETTRE?></b></td>
+																<td>le salaire d'embauche en lettre</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_ESSAI?></b></td>
+																<td>La durée de la période d'essai</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_NOTIFICATION?></b></td>
+																<td>La marge de notification avant la fin du contrat</td>
+															</tr>
+															<tr>
+																<td><b><?=CHAMP_OBLIGATIONS?></b></td>
+																<td>La liste des obligations concernant le poste</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+	      				</div>
+	      			</div>
+	      		</div>
+		    <?php elseif ($url[2] == "parametreContrat") : ?>
+		    	<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-12 text-center">
+	      						<span class="titre" style="color: #ffffff;">Paramètrez les alertes</span>
+	      					</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      					<form id="form" class="m-0" method="POST" name="form" action="<?= HOST . "manage/save-configuration" ?>" enctype="multipart/form-data">
+				      			<div class="row m-0">
+				      				<div class="col-md-7">
+				      					<div class="card p-2 m-1">
+				      						<div class="card card-light-grey p-2 m-2">
+				      							<h6 class="m-0"> Directives </h6>
+				      						</div>
+					      					<p>
+					      						Des notifications d'alerte vous seront envoyées lorsque
+					      						le terme d'un contrat s'approche.
+					      					</p>
+					      					<p>
+					      						Vous avez alors la possibilité d'activer ou de désactiver 
+					      						ces notifications selon votre choix.
+					      					</p>
+					      					<p>
+					      						Vous pouvez également spécifier le nombre d'alertes que
+					      						vous souhaitez recevoir mais lors de la dernière alerte, 
+					      						vous devez faire le point avec le salarié concerné.
+					      					</p>
+					      					<div class="form-group">
+					      						<?php if ($alerteActive == true) : ?>
+													<div class="container-etat" style="background: #a5d6a7">
+														<div class="row">
+															<div class="col-md-3">
+																<i class="fas fa-check-circle fa-3x" style="margin-left: 20px; color: #ffffff;"></i>
+															</div>
+															<div class="col-md-8">
+																<label class="label-input" style="font-size: 0.9em">
+																	Les rappels automatiques concernant les expirations des contrats sont activés
+																</label>
+															</div>
+														</div>
+													  	<div style="text-align: center;">
+													  		<a class="btn btn-sm btn-danger" style="width: 90%" href="<?= HOST . 'manage/switchAlerte?idEntreprise=' . $_SESSION['user']['idEntreprise']?>" >Désactiver les rappels</a>
+													  	</div>
+													</div>
+					      						<?php else : ?>
+													<div class="container-etat text-center" style="background: #ef9a9a">
+														<div class="row">
+															<div class="col-md-3">
+																<i class="fas fa-times-circle fa-3x" style="margin-left: 20px; color: #ffffff;"></i>
+															</div>
+															<div class="col-md-8">
+																 <label class="label-input" style="font-size: 0.9em">
+																 	Les rappels automatiques concernant les expirations des contrats sont desactivés
+																 </label>
+															</div>
+														</div>
+													  	<div style="text-align: center;">
+													  		<a class="btn btn-sm btn-success" style="width: 90%" href="<?= HOST . 'manage/switchAlerte?idEntreprise=' . $_SESSION['user']['idEntreprise'] ?>" >Activer les rappels</a>
+													  	</div>
+													</div>
+					      						<?php endif ?>
+					      					</div>
+					      				</div>
+				      				</div>
+				      				<div class="col-md-5 text-left">
+				      					<div class="card p-2 m-1" style="font-size: 0.8em!important;">
+				      						<div class="card card-light-grey p-2 m-2">
+				      							<h6 class="m-0 text-center"> Configurations </h6>
+				      						</div>
+					      					<div class="form-group">
+					      						<input type="hidden" name="idEntreprise" value=<?=$_SESSION['user']['idEntreprise']?> >
+					      						<input type="hidden" name="idConfiguration" value=<?=$configuration->getIdConfiguration()?> >
+					      						<input type="hidden" name="page" value=<?=$page?> >
+					      					</div>
+					      					<div class="row">
+							                	<div class="col-md-6">
+							                		<label class="label-input titre">Email :</label>
+							                	</div>
+							                	<div class="col-md-6">
+							                		<input class="form-control focus_activated" id="emailAlerte" name="emailAlerte" type="email" value="<?=$configuration->getEmailAlerte();?>" required="required" data-validation-required-message="Veuillez saisir une adresse email *" style="font-size: 1.0em; font-weight : bolder; height: 35px;">
+							                		<p class="help-block text-danger"></p>
+							                	</div>
+							                </div>
+							                <div class="row">
+							                	<div class="col-md-6">
+							                		<label class="label-input titre">nombre d'alertes :</label>
+							                	</div>
+							                	<div class="col-md-6">
+							                		<div class="form-group">
+									                  	<input class="form-control focus_activated" id="nombreAlerte" name="nombreAlerte" type="number" min=1 max=3 value="<?=$configuration->getNombreAlerte();?>" required="required" data-validation-required-message="Veuillez saisir une adresse email *" style="font-size: 0.9em; font-weight : bolder; height: 30px;">
+									                  	<p class="help-block text-danger"></p>
+									                </div>
+							                	</div>
+							                </div>
+							                <div class="row" id="alerte1">
+							                	<div class="col-md-6">
+							                		<label class="label-input titre">première alerte (en mois):</label>
+							                	</div>
+							                	<div class="col-md-6">
+							                		<div class="form-group">
+									                  	<input class="form-control focus_activated" id="premierAlerte" name="premiereAlerte" type="number" value="<?=$configuration->getPremiereAlerte();?>" required="required" data-validation-required-message="Veuillez saisir le nombre de mois en avance avant la première alerte *" placeholder="nombre de mois en avance" style="font-size: 0.9em; font-weight : bolder; height: 30px;">
+							                  			<p class="help-block text-danger"></p>
+									                </div>
+							                	</div>
+							                </div>
+							                <div class="row" id="alerte2">
+							                	<div class="col-md-6">
+							                		<label class="label-input titre">deuxième alerte (en mois):</label>
+							                	</div>
+							                	<div class="col-md-6">
+							                		<div class="form-group">
+									                  	<input class="form-control focus_activated" id="deuxiemeAlerte" name="deuxiemeAlerte" type="number" value="<?=$configuration->getDeuxiemeAlerte();?>" required="required" data-validation-required-message="Veuillez saisir le nombre de mois en avance avant la deuxième alerte *" placeholder="nombre de mois en avance" style="font-size: 0.9em; font-weight : bolder; height: 30px;">
+							                  			<p class="help-block text-danger"></p>
+									                </div>
+							                	</div>
+							                </div>
+							                <div class="row" id="alerte3">
+							                	<div class="col-md-6">
+							                		<label class="label-input titre">troisième alerte (en mois):</label>
+							                	</div>
+							                	<div class="col-md-6">
+							                		<div class="form-group">
+									                  	<input class="form-control focus_activated" id="troisiemeAlerte" name="troisiemeAlerte" type="number" value="<?=$configuration->getTroisiemeAlerte();?>" required="required" data-validation-required-message="Veuillez saisir le nombre de mois en avance avant la dernière alerte *" placeholder="nombre de mois en avance" style="font-size: 0.9em; font-weight : bolder; height: 30px;">
+							                  			<p class="help-block text-danger"></p>
+									                </div>
+							                	</div>
+							                </div>
+							                <div class="row">
+						      					<div class="col-lg-12 text-center" id="validation">
+									                <div id="success"></div>
+									                <a class="btn btn-danger btn-sm cancel" href="" id="annuler">Annuler</a> 
+									                <button id="submit" class="btn btn-info btn-sm" type="submit">
+									                	Enregistrer
+									                </button>         	
+								              	</div>
+						      				</div>
+					      				</div>
+					      			</div>
+					            </div>
+				      		</form>
+	      				</div>
+	      			</div>
+	      		</div>
+		    <?php endif ?>
+		</div>
+	</div>
+</section>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabContrat.js"></script>
+<script>
+	$('document').ready(function(){
+		$('#annuler').click(function(){
+			window.location.reload();
+		});
+  		if ($('#nombreAlerte').val() == 1) {
+  			$('#alerte2').addClass('invisible');
+  			$('#alerte3').addClass('invisible');
+  		} else if ($('#nombreAlerte').val() == 2) {
+  			$('#alerte2').removeClass('invisible');
+  			$('#alerte3').addClass('invisible');
+  		} else if ($('#nombreAlerte').val() == 3) {
+  			$('#alerte2').removeClass('invisible');
+  			$('#alerte3').removeClass('invisible');
+  		}
+  		$('#nombreAlerte').change(function(){
+  			if ($('#nombreAlerte').val() == 1) {
+  				$('#alerte2').addClass('invisible');
+  				$('#alerte3').addClass('invisible');
+  			} else if ($('#nombreAlerte').val() == 2) {
+  				$('#alerte2').removeClass('invisible');
+  				$('#alerte3').addClass('invisible');
+  			} else if ($('#nombreAlerte').val() == 3) {
+  				$('#alerte2').removeClass('invisible');
+  				$('#alerte3').removeClass('invisible');
+  			}
+  		});
+	});
+	function showSubmit(input)
+	{
+		$('#submit-' + input.id).removeClass('invisible');
+		$('#delete-' + input.id).addClass('invisible');
+	}
+</script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>

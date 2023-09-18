@@ -1,0 +1,144 @@
+<?php
+	$pageTitle = "Configuration sur les contrats";
+	extract($data);
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+		<div class="row">
+	        <ul id="tab-button">
+        		<li id="update1"><a href="<?= HOST . 'manage/updateConfiguration-alerte?idEntreprise=' . $_SESSION['user']['idEntreprise'];?>">Alerte</a></li>
+			    <li id="update2"><a href="<?= HOST . 'manage/updateConfiguration-document?idEntreprise=' . $_SESSION['user']['idEntreprise'];?>">Documents</a></li></li>
+	        </ul>
+      	</div>
+      	<?php if ($page == 'alerte') :?>
+	      	<div class="row">
+	      		<form id="form" style="width: 100%" method="POST" name="form" action="<?= HOST . "manage/save-configuration" ?>" enctype="multipart/form-data">
+	      			<div class="row">
+	      				<div class="col-lg-12 text-center">
+							<h5>Configuration des envois d'alertes</h5>
+						</div>
+	      			</div>
+	      			<div class="row">
+	      				<div class="col-md-3">
+	      				</div>
+	      				<div class="col-md-5 block-div container-template" style="margin-left:45px;">
+	      					<div class="form-group">
+	      						<input type="hidden" name="idEntreprise" value=<?=$_SESSION['user']['idEntreprise']?> >
+	      						<input type="hidden" name="idConfiguration" value=<?=$configuration->getIdConfiguration()?> >
+	      						<input type="hidden" name="page" value=<?=$page?> >
+	      					</div>
+	      					<div class="form-group">
+	      						<?php if ($alerteActive == true) : ?>
+									<div class="container-etat" style="background: #a5d6a7">
+										<div class="row">
+											<div class="col-md-3">
+												<i class="fas fa-check-circle fa-4x" style="margin-left: 20px; color: #ffffff;"></i>
+											</div>
+											<div class="col-md-8">
+												<label class="label-input">Les rappels automatiques concernant les expirations des contrats sont activés</label>
+											</div>
+										</div>
+									  	<div style="text-align: center;">
+									  		<a class="btn btn-sm btn-danger" style="width: 90%" href="<?= HOST . 'manage/switchAlerte?idEntreprise=' . $_SESSION['user']['idEntreprise']?>" >Désactiver les rappels</a>
+									  	</div>
+									</div>
+	      						<?php else : ?>
+									<div class="container-etat text-center" style="background: #ef9a9a">
+										<div class="row">
+											<div class="col-md-3">
+												<i class="fas fa-times-circle fa-4x" style="margin-left: 20px; color: #ffffff;"></i>
+											</div>
+											<div class="col-md-8">
+												 <label class="label-input">Les rappels automatiques concernant les expirations des contrats sont desactivés</label>
+											</div>
+										</div>
+									  	<div style="text-align: center;">
+									  		<a class="btn btn-sm btn-success" style="width: 90%" href="<?= HOST . 'manage/switchAlerte?idEntreprise=' . $_SESSION['user']['idEntreprise'] ?>" >Activer les rappels</a>
+									  	</div>
+									</div>
+	      						<?php endif ?>
+	      					</div>
+	      					<hr>
+	      					<div class="form-group">
+			                	<label class="label-input">Email du destinataire :</label>
+			                  	<input class="form-control focus_activated" id="emailAlerte" name="emailAlerte" type="email" value="<?=$configuration->getEmailAlerte();?>" required="required" data-validation-required-message="Veuillez saisir une adresse email *">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group">
+			                	<label class="label-input">nombre d'alertes :</label>
+			                  	<input class="form-control focus_activated" id="nombreAlerte" name="nombreAlerte" type="number" min=1 max=3 value=<?=$configuration->getNombreAlerte();?> required="required" data-validation-required-message="Veuillez saisir une adresse email *">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group" id="alerte1">
+			                	<label class="label-input">première alerte (en mois) :</label>
+			                  	<input class="form-control focus_activated" id="premierAlerte" name="premiereAlerte" type="number" value=<?=$configuration->getPremiereAlerte();?> required="required" data-validation-required-message="Veuillez saisir le nombre de mois en avance avant la première alerte *" placeholder="nombre de mois en avance">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group" id="alerte2">
+			                	<label class="label-input">deuxième alerte (en mois) :</label>
+			                  	<input class="form-control focus_activated" id="deuxiemeAlerte" name="deuxiemeAlerte" type="number" value=<?=$configuration->getDeuxiemeAlerte();?> required="required" data-validation-required-message="Veuillez saisir le nombre de mois en avance avant la deuxième alerte *" placeholder="nombre de mois en avance">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+			                <div class="form-group" id="alerte3">
+			                	<label class="label-input">troisième alerte (en mois) :</label>
+			                  	<input class="form-control focus_activated" id="troisiemeAlerte" name="troisiemeAlerte" type="number" value=<?=$configuration->getTroisiemeAlerte();?> required="required" data-validation-required-message="Veuillez saisir le nombre de mois en avance avant la dernière alerte *" placeholder="nombre de mois en avance">
+			                  	<p class="help-block text-danger"></p>
+			                </div>
+	      				</div>
+	      			</div>
+	      			<div class="col-lg-12 text-center" id="validation">
+		                <div id="success"></div>
+		                <button id="submit" class="btn btn-info btn-xl" type="submit">
+		                	Enregistrer
+		                </button>
+		                <a class="btn btn-danger btn-xl cancel" href="" id="annuler">Annuler</a>          	
+	              	</div>
+	      		</form>
+	      	</div>
+	    <?php elseif ($page == 'document') : ?>
+	    	<div class="">
+	      		<div class='row'>
+		      		<div class="col-lg-12 text-center">
+						<h5>Personnaliser les templates de contrat</h5>
+					</div>
+				</div>
+				
+	      	</div>
+	    <?php endif ?>
+	</div>
+</section>
+<?php if (!empty($_SESSION['notification']) && $_SESSION['notification']['message'] != "") :?>
+	<div class="toast" id="notification" data-delay="10000" >
+		<?php if ($_SESSION['notification']['type'] == ManagerModuleCompte::NOTIFICATION_ERROR) :?>
+			<div class="toast-header" style="background: #b71c1c; color: #ffffff;">
+			<i class="fas fa-exclamation-circle fa-lg" style="margin-right: 10px; color: #ffffff;"></i>
+		<?php elseif ($_SESSION['notification']['type'] == ManagerModuleCompte::NOTIFICATION_SUCCESS) :?>
+			<div class="toast-header" style="background: #1b5e20; color: #ffffff;">
+			<i class="fas fa-check-circle fa-lg" style="margin-right: 10px; color: #ffffff;"></i>
+		<?php else : ?>
+			<div class="toast-header">
+		<?php endif ?>
+			<strong class="mr-auto"><?=$_SESSION['notification']['titre']?></strong>
+			    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+			        <span aria-hidden="true">&times;</span>
+			    </button>
+		</div>
+		<div class="toast-body">
+			<?=$_SESSION['notification']['message']?>
+		</div>
+	</div>
+	<script>
+		$('#notification').toast('show');
+	</script>
+	<?php
+		unset($_SESSION['notification']);
+	?>
+<?php endif?>
+
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/index.js"></script>
+
+
+

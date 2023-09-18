@@ -1,0 +1,20 @@
+<?php
+	$pageTitle = "ceci est juste un test";
+?>
+
+<section class="page-section" id="modifHomme">
+	<div class="container">
+		<form id="form" method="POST" action="" enctype="multipart/form-data" novalidate="novalidate">
+			<label for="nom">nom : </label>
+			<input type="text" id="nom" name="nom" value="<?php echo $data['nom']; ?>">
+			<br>
+			<label for="prenom">prénom : </label>
+			<input type="text" id="prenom" name="prenom" value="<?php echo $data['prenom']; ?>">
+			<br>
+			<label for="age">age : </label>
+			<input type="number" id="age" name="age" value="<?php echo $data['age']; ?>">
+			<br>
+			<button type="submit" class="btn btn-primary btn-xl">Modifier</button>
+		</form>
+	</div>
+</section>

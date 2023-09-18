@@ -1,0 +1,385 @@
+<style type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/dataTable.bootstrap.css"></style>
+<style type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/dataTable.responsive.css"></style>
+<?php
+	$_SESSION['previousUrl'] = $_GET['page'];
+	$url = explode("/", $_GET['page']);
+	$url = $url[1];
+	$title = "";
+	if ($url == "activeEntreprises") {  
+		$action = "Archiver";
+	} else if ($url == "activeCandidats") {
+		$action = "Archiver";
+	} else if ($url == "inactiveEntreprises") {
+		$action = "Activer";
+	} else if ($url == "archiveEntreprises" || $url == "archiveCandidats") {  
+		$action = "Restaurer";
+	}
+
+	unset($_SESSION['variable']);
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<?php if ($url == "superadmins"): $superadmins = $data; $pageTitle = "Super administrateurs";?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-compte?identifiant=superadmin";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des super administrateurs</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Super administrateur</th>
+								<th>Statut</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($superadmins)) : foreach ($superadmins as $superadmin): extract($superadmin); ?>
+					        <tr>
+					            <td> 
+					            	<div class="row">
+					            		<div class="col-md-2">
+					            			<img src="
+									              <?php
+									                      if ($superadmin->getPhoto() != "") {
+									                        echo HOST . "../Web/Ressources/images/superadmins/" . $superadmin->getPhoto();
+									                      } else {
+									                        echo HOST ."../Web/Ressources/images/profilAdmin.png";
+									                      }
+									                    ?>
+									              " style="height: 50px; width: 50px;">
+					            		</div>
+					            		<div class="col-md-7">
+					            			<span><?= ucwords($superadmin->getNom()); ?></span><br>
+							                <?= $superadmin->getRole(); ?>
+					            		</div>
+					            	</div>
+					            </td>
+					            <td>
+					              <?php if ($compte->getStatut() == "desactive") : ?>
+					                  <strong>Désactivé</strong><br>
+					                <?php elseif ($compte->getStatut() == "active"):?>
+					                  <strong>Activé</strong><br>
+					                <?php elseif ($compte->getStatut() == "archive"):?>
+					                  <strong>Archivé</strong><br>
+					                <?php endif; ?>
+					            </td>
+					            <td class="text-center">
+					              	<a href="<?= HOST . "manage/superadmin?idSuperadmin=" . $superadmin->getIdSuperadmin(); ?>" class="btn btn-info">
+					                    <i class="fas fa-eye"></i> 
+					            	</a>
+					            	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $superadmin->getIdSuperadmin(); ?>" data-name="<?= $superadmin->getNom(); ?>" data-url="delete-superadmin?idSuperadmin=">
+					                    <i class="fas fa-trash"></i>
+					                </a>
+					            </td>
+					        </tr>
+					        <?php endforeach; ?>
+					        <?php else: ?>
+					        	<tr>
+					        		<td>Aucun enregistrement trouvé</td>
+					        	</tr>
+					        <?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php endif ?>
+
+		<?php if($url == "activeCandidats" || $url == "archiveCandidats"): $candidats = $data; $pageTitle = "Candidats";?>
+			<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col-md-6">
+					<?php if ($url == "activeCandidats"): ?>
+						<h4 class="text-center list-title section-heading">Liste des candidats</h4>
+					<?php else : ?>
+						<h4 class="text-center list-title section-heading">Les candidats archivés</h4>
+					<?php endif ?>
+					
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+			      	<table class="table table-striped" id="table-back">
+				        <thead>
+					        <tr>
+								<th>Candidat</th>
+								<!-- <th>Prénom</th> -->
+					            <?php if ($url == "activeCandidats"): ?>
+					            <th>Statut du compte</th> 
+					            <?php endif ?>
+								<th class="text-center">Action</th>
+							</tr>
+				        </thead>
+				        <tbody id="tableSearch" class="body-half-screen">
+				          <?php  if(!empty($candidats)) : foreach ($candidats as $candidat): extract($candidat); ?>
+					        <tr>
+					            <td> 
+					            	<div class="row">
+					            		<div class="col-md-3">
+					            			<?php 
+									            if ($candidat->getPhoto() != "") { 
+									            	$imgUrl = HOST . "Web/Ressources/images/candidats/" . $candidat->getPhoto(); 
+									            } else { 
+									            	$imgUrl = HOST ."Web/Ressources/images/profilCandidat.png";
+									            }
+								            ?>
+								            <img src="<?php echo $imgUrl; ?>" style="height: 50px; width: 50px;">
+					            		</div>
+					            		<div class="col-md-9">
+					            			<span class="text-important"><?= $candidat->getCivilite() . " " . strtoupper($candidat->getNom()) . " " . ucwords($candidat->getPrenom()); ?></span>
+					            		</div>
+					            	</div>
+					            </td>
+					            <?php if ($url == "activeCandidats"): ?>
+					              <td>
+					                <?php if ($compte->getStatut() == "desactive") : ?>
+					                    <strong>Désactivé</strong><br>
+					                  <?php elseif ($compte->getStatut() == "active"):?>
+					                    <strong>Activé</strong><br>
+					                  <?php elseif ($compte->getStatut() == "archive"):?>
+					                    <strong>Archivé</strong><br>
+					                  <?php endif; ?>
+					              </td>
+					            <?php endif ?>
+					            <td class="text-center">
+					              	<a href="<?= HOST . "manage/candidat?idCandidat=" . $candidat->getIdCandidat(); ?>" class="btn btn-info">
+					                    <i class="fas fa-eye"></i> 
+					                </a>
+				                  	<a href="<?= HOST . "manage/archive-compte?idCompte=" . $compte->getIdCompte(); ?>" class="btn btn-danger">
+				                    	<?= $action; ?> 
+				                  	</a>
+					            </td>
+					        </tr>
+					        <?php endforeach; ?>
+					        <?php else: ?>
+					        	<tr>
+					        		<td colspan="3">Aucun enregistrement trouvé</td>
+					        	</tr>
+					        <?php endif; ?>
+				        </tbody>
+			      	</table>
+			    </div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php endif ?>
+
+		<?php if($url == "activeEntreprises" || $url == "inactiveEntreprises" || $url == "archiveEntreprises"): $entreprises = $data; $pageTitle = "Entreprises";?>
+			<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col-md-6">
+					<?php if ($url == "activeEntreprises"): ?>
+						<h4 class="text-center list-title section-heading">Liste des entreprises</h4>
+					<?php else : ?>
+						<h4 class="text-center list-title section-heading">Les entreprises archivées</h4>
+					<?php endif ?>
+				</div>
+			</div>
+			<?php if ($url != "archiveEntreprises"): ?>
+          	<div class="row">
+              	<ul id="tab-button">
+                	<li id="a"><a href="<?= HOST . "manage/activeEntreprises" ?>">Les entreprises actives</a></li>
+                	<li id="b"><a href="<?= HOST . "manage/inactiveEntreprises" ?>">Les entreprises inactives et en attente d'activation</a></li>
+              	</ul>
+          	</div>
+	        <?php endif ?>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Entreprise</th>
+								<th>Effectif du Collaborateur</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($entreprises)) :
+								foreach ($entreprises as $entreprise): extract($entreprise); ?>
+			          	<tr>
+				            <td> 
+				            	<div class="row">
+				            		<div class="col-md-2">
+				            			<img src="
+								              <?= HOST . "../Web/Ressources/images/" . ($entreprise->getLogo() != "" ? "entreprises/" . $entreprise->getLogo() : "defaultLogo.png");?>" style="height: 60px; width: 60px;">
+				            		</div>
+				            		<div class="col-md-10 text-left">
+				            			<span class="text-important"><?= $entreprise->getNom() ?></span>
+				            		</div>
+				            	</div>
+				            </td>
+				            <td>
+				            	<?= isset($effectifCollaborateur) ? number_format($effectifCollaborateur, 0, ',', ' ') : 0 ;?>
+				            </td>
+				            <td class="text-center">
+				              	<a href="<?= HOST . "manage/entreprise?idEntreprise=" . $entreprise->getIdEntreprise(); ?>" class="btn btn-info">
+				                    <i class="fas fa-eye"></i> 
+				                </a>
+				                <?php if ($url != "inactiveEntreprises"): ?>                    
+				                <a href="<?= HOST . "manage/archive-compte?idCompte=" . $compte->getIdCompte(); ?>" class="btn btn-danger">
+				                      <?= $action; ?> 
+				                </a>
+				                <?php else : ?>
+				                <a href="<?= HOST . "manage/update-compte?idCompte=" . $compte->getIdCompte(); ?>" class="btn btn-success">
+				                    <?= $action; ?> 
+				                </a>
+				                <?php endif ?>
+				            </td>
+			          	</tr>
+		          	<?php endforeach; ?>
+			        <?php else: ?>
+					        	<tr>
+					        		<td colspan="2">Aucun enregistrement trouvé</td>
+					        	</tr>
+			        <?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php endif ?>
+
+		<?php if($url == "historiques"): $historiques = $data; $pageTitle = "Historiques"; ?>
+			<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">L'historique des comptes</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Date</th>
+			            <th>Action</th>
+			            <th>Compte</th>
+			            <th>Super administrateur</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($historiques)) :
+								foreach ($historiques as $historique): extract($historique); ?>
+					        <tr>
+				            <td> 
+			                <span><?= date('d/m/Y', strtotime(str_replace('-', '/', $historique->getDate()))); ?><span>
+				            </td>
+				            <td>                 
+			                <?php if ($historique->getAction() == "desactive") : ?>
+			                  Desactivation<br>
+			                <?php elseif ($historique->getAction() == "active"):?>
+			                  Activation<br>
+			                <?php elseif ($historique->getAction() == "archive"):?>
+			                  Archivage<br>
+			                <?php endif; ?>
+				            </td>
+				            <td>
+	                    <span>- Identifiant : <?= $compte->getIdentifiant(); ?></span><br>
+	                    <span>- Nom : <?= strtoupper($user->getNom()); ?></span>
+				            </td>
+				            <td>
+	                    <span>- Nom : <?= $superadmin ? ucwords($superadmin->getNom()) : 'Aucun'; ?></span><br>
+	                    <span>- Rôle : <?= $superadmin ? $superadmin->getRole() : 'Aucun'; ?></span>
+				            </td>
+					        </tr>
+				        <?php endforeach; ?>
+			        <?php else: ?>
+			        	<tr>
+			        		<td>Aucun enregistrement trouvé</td>
+			        	</tr>
+			        <?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php endif ?>
+
+		<?php if($url == "emails_contacts"): $emailsContacts = $data; $pageTitle = "Contacts"; ?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-email_contact";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des contacts</h4>
+				</div>
+			</div>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th class="">Email</th>
+	            				<th class="">Type</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($emailsContacts)) : foreach ($emailsContacts as $emailContact): ?>
+					        <tr>
+					            <td class="text-left"> 
+					                <span class="text-important"><?= $emailContact->getEmail(); ?></span>
+					            </td>
+					            <td class="text-left"> 
+					                <span class="text-important"><?= $emailContact->getType(); ?></span>
+					            </td>
+					            <td class="text-center">
+					              	<a href="<?= HOST . "manage/update-email_contact?idEmailContact=" . $emailContact->getIdEmailContact(); ?>" class="btn btn-warning">
+					                    <i class="fas fa-edit"></i>  
+					                </a>
+					                <a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $emailContact->getIdEmailContact(); ?>" data-name="<?= $emailContact->getEmail(); ?>" data-url="delete-email_contact?idEmailContact=">
+					                    <i class="fas fa-trash"></i>
+					                </a>
+					            </td>
+					        </tr>
+					        <?php endforeach; ?>
+					        <?php else: ?>
+					        	<tr>
+					        		<td>Aucun enregistrement trouvé</td>
+					        	</tr>
+					        <?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php endif ?>
+
+	</div>	
+</section>
+
+ <!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="text-confirmation"></p>
+      </div>
+      <div class="modal-footer">
+        <a id="action-delete" class="btn btn-success">Oui</a>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Non</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="<?= HOST; ?>../Web/Ressources/js/listerRecrutement.js"></script>
+<link rel="stylesheet" type="text/css" href="<?= HOST; ?>../Web/Ressources/css/tabs.css">
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>

@@ -1,0 +1,55 @@
+  #container {
+    width: 1400px;
+    height: 1400px;
+  }
+  #container_ChartBorder {
+    fill: rgba(0,0,0,0);
+  }
+  #container_tooltip {
+    position: relative;
+    left: 173px;
+    top: -809px;
+  }
+  #container_MajorGridLine_1_1 {
+    stroke-width: 0;
+  }
+  #container_MajorGridLine_1_2 {
+    stroke-width: 0;
+  }
+  #container_MajorGridLine_1_3 {
+    stroke-width: 0;
+  }
+  #container_MajorGridLine_1_4 {
+    stroke-width: 0;
+  }
+  #container_MajorGridLine_1_5 {
+    stroke-width: 0;
+  }
+  #container_MajorGridLine_1_6 {
+    stroke-width: 0;
+  }
+  #container_MajorGridLine_1_7 {
+    stroke-width: 0;
+  }
+  #container_MajorGridLine_1_8 {
+    stroke-width: 0;
+  }
+  #container_MajorGridLine_1_9 {
+    stroke-width: 0;
+  }
+  #container_MajorGridLine_1_10 {
+    stroke-width: 0;
+  }
+  #container_Series_0 {
+    stroke: #b119d7;
+    stroke-width: 4;
+  }
+  ellipse, ellipse #container_chart_legend_shape_marker_0 {
+    stroke: #6610f2;
+  }
+  /*
+    container_MajorGridLine_0_0 ty le tsipika
+    container_Series_0_Point_1_Symbol ellipse
+    container_tooltip
+    container_Secondary_Element
+  */

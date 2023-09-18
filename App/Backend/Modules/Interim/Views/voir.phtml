@@ -1,0 +1,403 @@
+<?php
+	extract($data);
+	$url = explode('/', $_GET['page']);
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row" style="margin-top: -15px;">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h4 class="text-center list-title section-heading">Les intérimaires</h4>
+			</div>
+			<div class="col-md-2 text-right">
+				<?php if ($url[2] == "interim" && $url[1] == "entreprise") : ?>
+					<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalEnregistrement">
+						<i class="fa fa-plus" aria-hidden="true"></i>
+						<span class="ml-2">ajouter</span>
+					</button>
+				<?php endif ?>
+			</div>
+		</div>
+		<div class="block-section">
+			<?php if ($_SESSION['compte']['identifiant'] == "entreprise") : ?>
+				<div class="row">
+			        <ul id="new-tab-button">
+		        		<li id="tab1">
+		        			<a href="<?= HOST. 'manage/entreprise/interim'?>">
+		        				La liste des intérimaires
+		        			</a>
+		        		</li>
+		        		<li id="tab2">
+		        			<a href="<?= HOST. 'manage/entreprise/evaluationInterim'?>">
+		        				Les notes des supérieurs
+		        			</a>
+		        		</li>   			    
+			        </ul>
+		      	</div>
+		    <?php endif ?>
+		    <?php if ($url[2] == "interim" && $url[1] == "entreprise") : ?>
+		    	<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+	      						<div class="row">
+	      							<div class="col-md-6">
+	      								<label class="titre" style="color: #ffffff;">Poste exercé : </label>
+	      							</div>
+									<div class="col-md-6">
+										<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;">
+											<option class="option-tout" id="o-t" value="">Tout</option>
+											<?php foreach ($filtres['postes'] as $poste) : ?>
+												<option class="option-poste" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+											<?php endforeach ?>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-2"></div>
+							<div class="col-md-5 text-center">
+	      						<label class="titre" style="color: #ffffff;">Année d'activité : </label>
+	      						<input class="select-time" type="number" id="annee" min="2020" value="<?= date('Y')?>">
+	      					</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+				<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	    					<form method="POST" id="form" action="<?= HOST . 'manage/save-interim'?>" enctype="multipart/form-data" novalidate="novalidate">
+	    						<input type="hidden" name="idEntreprise" value="<?=$_SESSION['user']['idEntreprise']?>">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title section-heading m-0" id="exampleModalLabel">Enregistrement</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3" style="background: #efefff; max-height: 60vh; overflow-y: auto;">
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="titre">Employé : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+													<i class="fa fa-search fa-fw icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+												  	<input class="form-control" type="text" id="recherche" placeholder="Recherche" style="height: 38px; font-size: 0.9em;">
+												</div>
+		        								<div class="form-group">
+		        									<i class="fa fa-user icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<select class="form-control font-weight-bold" name="idEmploye" id="idEmploye" required="required" data-validation-required-message="Veuillez selectionner un employé" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+			        									<option value="">Selectionnnez l'employé</option>
+			        									<?php foreach ($employes as $employe) : ?>
+			        										<option value="<?=$employe->getIdEmploye()?>"><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></option>
+			        									<?php endforeach ?>
+			        								</select>
+			        								<p class="help-block text-danger"></p>
+			        							</div>
+		        							</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="titre">Début : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-calendar-alt icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<label for="datepicker">
+									        			<input class="form-control datepicker" id="date-debut" value="" type="text" autocomplete="off" placeholder="date de début" style="width: 110%; height: 38px; font-size: 0.9em; font-weight: bold;">
+								        			</label>
+								        			<input type="text" class="form-control hidden" name="debut" id="debut" required="required" data-validation-required-message="Veuillez renseigner la date de début de l'intérim">
+			        								<p class="help-block text-danger"></p>
+			        							</div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="titre">Fin : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+		        									<i class="fa fa-calendar-alt icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<label for="datepicker">
+									        			<input class="form-control datepicker" id="date-fin" value="" type="text" autocomplete="off" placeholder="date de fin" style="width: 110%; height: 38px; font-size: 0.9em; font-weight: bold;">
+								        			</label>
+								        			<input type="text" class="form-control hidden" name="fin" id="fin" required="required" data-validation-required-message="Veuillez renseigner la date de fin de l'intérim">
+								        			<p class="help-block text-danger"></p>
+								        		</div>
+		        							</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="titre">Poste : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+			        								<i class="fa fa-briefcase icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<select class="form-control font-weight-bold" name="idEntreprisePoste" id="idEntreprisePoste" required="required" data-validation-required-message="Veuillez selectionner un poste" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+			        									<option value="">Selectionnnez le poste</option>
+			        									<?php foreach ($filtres['postes'] as $poste) : ?>
+			        										<option value="<?=$poste->getIdEntreprisePoste()?>"><?= $poste->getPoste() ?></option>
+			        									<?php endforeach ?>
+			        								</select>
+								        			<p class="help-block text-danger"></p>
+								        		</div>
+		        							</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-3">
+		        								<span class="titre">Supérieur : </span>
+		        							</div>
+		        							<div class="col-md-9">
+		        								<div class="form-group">
+			        								<i class="fa fa-user icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<select class="form-control font-weight-bold" name="chef" id="chef" required="required" data-validation-required-message="Veuillez selectionner un employé" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+			        									<option value="0">Personne</option>
+			        									<?php foreach ($employes as $employe) : ?>
+			        										<option value="<?=$employe->getIdEmploye()?>"><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></option>
+			        									<?php endforeach ?>
+			        								</select>
+								        			<p class="help-block text-danger"></p>
+								        		</div>
+		        							</div>
+		        						</div>
+		        					</div>
+		      					</div>
+		      					<div class="modal-footer">
+		        					<div class="row" style="width: 105%!important;">
+							      		<div class="col-md-3">
+							      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submit" class="btn btn-md btn-info">
+							      					Enregistrer
+							      				</button>
+							      			</div>
+							      		</div>
+							      	</div>
+		      					</div>
+		      				</form>
+	    				</div>
+	  				</div>
+				</div>
+	      		<script>
+	      			$('document').ready(function(){
+      					$("#liste").load("<?= HOST . 'manage/interims'?>", {
+							id     : $('#filter-element').val(),
+							annee  : $('#annee').val()
+						}, function() {
+						});
+	      			});
+	      			$('#filter-element').change(function() {
+	      				$("#liste").load("<?= HOST . 'manage/interims'?>", {
+							id     : $('#filter-element').val(),
+							annee  : $('#annee').val(),
+						});
+	      			});
+	      			$('#annee').change(function() {
+	      				$("#liste").load("<?= HOST . 'manage/interims'?>", {
+							id     : $('#filter-element').val(),
+							annee  : $('#annee').val(),
+						});
+	      			});
+	      			$("#recherche").change(function() {
+						if ($("#recherche").val() != "") {
+							$('#idEmploye option').each(function(){
+							    if ($(this).text().toLowerCase().includes($("#recherche").val().toLowerCase())) {
+							    	$(this).removeClass('invisible');
+							    	$(this).attr('selected', true);
+							    } else {
+							    	$(this).attr('selected', false);
+							    	$(this).addClass('invisible');
+							    }
+							});
+							$("#idEmploye").trigger('change');
+						} else {
+							$('#idEmploye option').each(function(){
+								$(this).removeClass('invisible');
+								$(this).attr('selected', false);
+							});
+						}
+						$("#idEmploye").trigger('mousedown');
+					});
+	      			$("#submit").click(function(){
+			          	var date = $("#date-debut").val().split('/');
+			          	if (date != "") {
+			          		$("#debut").val(date[2] + '-' + date[1] + '-' + date[0]);
+			          	}
+			          	var date = $("#date-fin").val().split('/');
+			          	if (date != "") {
+			          		$("#fin").val(date[2] + '-' + date[1] + '-' + date[0]);
+			          	}
+					});
+	      			tippy('.fa-plus', {
+	      				content : 'Nouvel intérimaire'
+	      			});
+	      		</script>
+	      	<?php elseif ($url[2] == "interim" && $url[1] == "employe") : ?>
+	      		<div class="row">
+			        <ul id="new-tab-button">
+		        		<li id="tab1">
+		        			<a href="<?= HOST. 'manage/' . $url[1] . '/suivi/dashboard'?>">
+		        				Temps passé sur les tâches
+		        			</a>
+		        		</li>
+		        		<li id="tab3">
+		        			<a href="<?= HOST. 'manage/tracking'?>">
+		        				Tâches réalisée
+		        			</a>
+		        		</li>
+		        		<li id="tab4">
+		        			<a href="<?= HOST. 'manage/tracking/currentTask'?>">
+		        				Tâches en cours
+		        			</a>
+		        		</li>
+		        		<li id="tab2" class="is-active">
+		        			<a href="<?= HOST. 'manage/employe/interim'?>">
+		        				Subordonné intérimaire
+		        			</a>
+		        		</li>
+		        		<li id="tab5">
+		        			<a href="<?= HOST. 'manage/entreprise_postes'?>">
+		        				Poste de mes collaborateurs
+		        			</a>
+		        		</li> 
+			        </ul>
+		      	</div>
+		      	<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+	      						<span class="titre text-white">Evaluez les intérims</span>
+							</div>
+							<div class="col-md-2 text-center"></div>
+							<div class="col-md-3 text-center">
+								<label class="titre" style="color: #ffffff;">Note minimale : </label>
+	      						<input class="select-time" type="number" id="note-min" min="0" max="10" value="0" style="max-width: 50px;">
+							</div>
+							<div class="col-md-3 text-center">
+	      						<label class="titre" style="color: #ffffff;">Note maximale : </label>
+	      						<input class="select-time" type="number" id="note-max" min="0" max="10" value="10" style="max-width: 50px;">
+	      					</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+	      		<script>
+	      			$('document').ready(function(){
+      					$("#liste").load("<?= HOST . 'manage/suiviInterims'?>", {
+      						noteMin : $('#note-min').val(),
+      						noteMax : $('#note-max').val()
+						}, function() {
+						});
+	      			});
+	      			$('#filter-element').change(function() {
+	      				$("#liste").load("<?= HOST . 'manage/suiviInterims'?>", {
+							noteMin : $('#note-min').val(),
+      						noteMax : $('#note-max').val()
+						});
+	      			});
+	      			$('#note-min').change(function() {
+	      				$("#liste").load("<?= HOST . 'manage/suiviInterims'?>", {
+							noteMin : $('#note-min').val(),
+      						noteMax : $('#note-max').val()
+						});
+	      			});
+	      			$('#note-max').change(function() {
+	      				$("#liste").load("<?= HOST . 'manage/suiviInterims'?>", {
+							noteMin : $('#note-min').val(),
+      						noteMax : $('#note-max').val()
+						});
+	      			});
+	      		</script>
+		    <?php elseif ($url[2] == "evaluationInterim") : ?>
+		    	<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+	      						<div class="row">
+	      							<div class="col-md-6">
+	      								<label class="titre" style="color: #ffffff;">Poste exercé : </label>
+	      							</div>
+									<div class="col-md-6">
+										<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;">
+											<option class="option-tout" id="o-t" value="">Tout</option>
+											<?php foreach ($filtres['postes'] as $poste) : ?>
+												<option class="option-poste" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+											<?php endforeach ?>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-2 text-center"></div>
+							<div class="col-md-3 text-center">
+								<label class="titre" style="color: #ffffff;">Note minimale : </label>
+	      						<input class="select-time" type="number" id="note-min" min="0" max="10" value="0" style="max-width: 50px;">
+							</div>
+							<div class="col-md-3 text-center">
+	      						<label class="titre" style="color: #ffffff;">Note maximale : </label>
+	      						<input class="select-time" type="number" id="note-max" min="0" max="10" value="10" style="max-width: 50px;">
+	      					</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+	      		<script>
+	      			$('document').ready(function(){
+      					$("#liste").load("<?= HOST . 'manage/evaluationInterims'?>", {
+							id       : $('#filter-element').val(),
+							noteMin  : $('#note-min').val(),
+							noteMax  : $('#note-max').val()
+						});
+	      			});
+	      			$('#filter-element').change(function() {
+	      				$("#liste").load("<?= HOST . 'manage/evaluationInterims'?>", {
+							id       : $('#filter-element').val(),
+							noteMin  : $('#note-min').val(),
+							noteMax  : $('#note-max').val()
+						});
+	      			});
+	      			$('#note-min').change(function() {
+	      				$("#liste").load("<?= HOST . 'manage/evaluationInterims'?>", {
+							id       : $('#filter-element').val(),
+							noteMin  : $('#note-min').val(),
+							noteMax  : $('#note-max').val()
+						});
+	      			});
+	      			$('#note-max').change(function() {
+	      				$("#liste").load("<?= HOST . 'manage/evaluationInterims'?>", {
+							id       : $('#filter-element').val(),
+							noteMin  : $('#note-min').val(),
+							noteMax  : $('#note-max').val()
+						});
+	      			});
+	      		</script>
+	      	<?php endif ?>
+		</div>
+	</div>
+</section>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabInterim.js"></script>
+<script>
+	$('#annuler').click(function(){
+		window.location.reload();
+	});
+	$(function() {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+    });
+</script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>

@@ -1,0 +1,313 @@
+
+<?php
+	$user = null;
+	extract($data);
+	$url = explode('/', $_GET['page']);
+	if (!empty($_SESSION['compte']['identifiant'])) {
+		$user = $_SESSION['compte']['identifiant'];
+		if ($user == "employe") {
+			$pageTitle = "Tâches réalisées collab";
+		} elseif ($user == "entreprise") {
+			$pageTitle = "Tâches les salariés";
+		}
+	} else {
+		header("Location : " . HOST);
+	}
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row" style="margin-top: -15px;">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h4 class="text-center list-title section-heading"><?= $pageTitle ?></h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="block-section">
+					<div class="row">
+				        <ul id="new-tab-button">
+			        		<li id="tab1" >
+			        			<a href="<?= HOST. 'manage/' . $user . '/suivi/dashboard'?>">
+			        				Temps passé sur les tâches
+			        			</a>
+			        		</li>
+			        		<li id="tab3" <?=end($url)== 'tracking' ? 'class="is-active"' : '';?>>
+			        			<a href="<?= HOST. 'manage/tracking'?>">
+			        				Tâches réalisée
+			        			</a>
+			        		</li>
+			        		<li id="tab4" <?=end($url)== 'currentTask' ? 'class="is-active"' : '';?>>
+			        			<a href="<?= HOST. 'manage/tracking/currentTask'?>">
+			        				Tâches en cours
+			        			</a>
+			        		</li>
+							<?php if ($user == "employe") : ?>
+				        		<li id="tab2">
+				        			<a href="<?= HOST. 'manage/employe/interim'?>">
+				        				Subordonné intérimaire
+				        			</a>
+				        		</li> 
+				        		<li id="tab5">
+		        					<a href="<?= HOST. 'manage/entreprise_postes'?>">
+				        				Poste de mes collaborateurs
+				        			</a>
+				        		</li> 
+				        	<?php elseif ($user == 'entreprise'):?>
+				        		<li id="tab6">
+				        			<a href="<?= HOST. 'manage/entreprise/tacheRealisee'?>" >
+				        				Tâches réalisées par employés
+				        			</a>
+				        		</li>
+				        	<?php endif; ?>
+				        </ul>
+			      	</div>
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="tete-list-section row" style="background: #647994;">
+								<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+									<div class="row">
+										<div class="col-md-6">
+											<select class="select-time" id='filter-group' style="font-size: 0.8em!important;">
+												<option value=""> -- groupe --</option>
+												<option value="1" selected="selected">tout</option>
+												<option value="2">par service</option>
+												<option value="3">par poste</option>
+												<option value="4">par employé</option>
+											</select>
+										</div>
+										<div class="col-md-6">
+											<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;">
+												<option class="option-tout" id="o-t" value="">-- selectionnez --</option>
+												<?php foreach ($services as $service) : ?>
+													<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+												<?php endforeach ?>
+												<?php foreach ($postes as $poste) : ?>
+													<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+												<?php endforeach ?>
+												<?php foreach ($employes as $salarie) : ?>
+													<option class="option-salarie invisible" value="<?=$salarie->getIdEmploye();?>"><?=$salarie->getNom() . ' ' . $salarie->getPrenom()?></option>
+												<?php endforeach ?>
+											</select>
+										</div>
+									</div>
+								</div>
+								<?php if (end($url) == 'tracking') : ?>
+									<div class="col-md-5 text-center" id="filtre-droite">
+										<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+										  	<div class="carousel-inner">
+										    	<div class="carousel-item active">
+										      		<select id="periode" class="select-time"  style="font-size: 0.8em!important;">
+														<option value=""> -- période -- </option>
+														<!-- <option value=1 >aujourd'hui</option> -->
+														<!-- <option value=3>hier</option> -->
+														<option value=4>cette semaine</option>
+														<option value=6>la semaine passée</option>
+														<option value=7 selected="seconds">ce mois</option>
+														<option value=9>le mois dernier</option>
+													</select>
+										    	</div>
+										    	<!-- <div class="carousel-item">
+										      		<label for="datepicker">
+											        	<input class="form-control datepicker date-time" id="debut" type="text" autocomplete="off" placeholder="Début">
+										        	</label>
+												 	- 
+													<label for="datepicker">
+											        	<input class="form-control datepicker date-time" id="fin" type="text" autocomplete="off" placeholder="Fin">
+										        	</label>
+										    	</div> -->
+										    	<div class="carousel-item">
+										    		<?php $date = date('Y') ?>
+										      		<select class="select-time" style="width: 200px; font-size: 0.8em!important;" id="selection-month">
+										      			<option value="">par mois</option>
+										      			<option value="1">Janvier <?=$date?></option>
+										      			<option value="2">Février <?=$date?></option>
+										      			<option value="3">Mars <?=$date?></option>
+										      			<option value="4">Avril <?=$date?></option>
+										      			<option value="5">Mai <?=$date?></option>
+										      			<option value="6">Juin <?=$date?></option>
+										      			<option value="7">Juillet <?=$date?></option>
+										      			<option value="8">Août <?=$date?></option>
+										      			<option value="9">Septembre <?=$date?></option>
+										      			<option value="10">Octobre <?=$date?></option>
+										      			<option value="11">Novembre <?=$date?></option>
+										      			<option value="12">Décembre <?=$date?></option>
+										      		</select>
+										    	</div>
+										 	</div>
+										  	<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+										    	<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+										    	<span class="sr-only">Previous</span>
+										  	</a>
+										  	<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+										    	<span class="carousel-control-next-icon" aria-hidden="true"></span>
+										    	<span class="sr-only">Next</span>
+										  	</a>
+										</div>
+									</div>
+								<?php endif; ?>
+							</div>
+							<div class="container-list-section" id="liste-taches" style="background: #f7fbfc;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	const FILTER_GROUP_ALL     	= 1;
+	const FILTER_GROUP_SERVICE 	= 2;
+	const FILTER_GROUP_POSTE   	= 3;
+	const FILTER_GROUP_EMPLOYE 	= 4;
+	const MAX_INTERVAL         	= 3;
+	const TODAY      			= 1;
+	const TOMORROW   			= 2;
+	const YESTERDAY  			= 3;
+	const THIS_WEEK  			= 4;
+	const NEXT_WEEK  			= 5;
+	const LAST_WEEK  			= 6;
+	const THIS_MONTH 			= 7;
+	const NEXT_MONTH 			= 8;
+	const LAST_MONTH 			= 9;
+
+	$('document').ready(function(){
+		if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+			$("#liste-taches").load("<?= HOST . $_GET['page']?>", {
+			groupe    : $('#filter-group').val(),
+			id        : $('#filter-element').val(),
+			periode   : $('#periode').val(),
+			debut     : $('#debut').val(),
+			fin       : $('#fin').val(),
+			type      : $('#selection-type').val()
+		}, function() {
+			$('.option-tout').removeClass('invisible');
+			$('.option-service').addClass('invisible');
+			$('.option-poste').addClass('invisible');
+			$('.option-salarie').addClass('invisible');
+			$('#filter-element').val("");
+			$('#filter-element').attr("disabled", true);
+		});
+		}
+		$('.carousel').carousel({
+			interval: false,
+		});
+		$('.carousel').carousel('pause');
+	});
+	$('#filter-group').change(function(){
+		if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+			$("#liste-taches").load("<?= HOST . $_GET['page']?>", {
+			groupe    : $('#filter-group').val(),
+			id        : $('#filter-element').val(),
+			periode   : $('#periode').val(),
+			debut     : $('#debut').val(),
+			fin       : $('#fin').val(),
+			type      : $('#selection-type').val()
+		}, function() {
+			$('.option-tout').removeClass('invisible');
+				$('.option-service').addClass('invisible');
+				$('.option-poste').addClass('invisible');
+				$('.option-salarie').addClass('invisible');
+				$('#filter-element').val("");
+				$('#filter-element').attr("disabled", true);
+		});
+		} else if ($('#filter-group').val() == FILTER_GROUP_SERVICE) {
+			$('.option-tout').addClass('invisible');
+			$('.option-service').removeClass('invisible');
+			$('.option-poste').addClass('invisible');
+			$('.option-salarie').addClass('invisible');
+			$('#filter-element').attr("disabled", false);
+			$('#filter-element').val("");
+		} else if ($('#filter-group').val() == FILTER_GROUP_POSTE) {
+			$('.option-tout').addClass('invisible');
+			$('.option-service').addClass('invisible');
+			$('.option-poste').removeClass('invisible');
+			$('.option-salarie').addClass('invisible');
+			$('#filter-element').attr("disabled", false);
+			$('#filter-element').val("");
+		} else if ($('#filter-group').val() == FILTER_GROUP_EMPLOYE) {
+			$('.option-tout').addClass('invisible');
+			$('.option-service').addClass('invisible');
+			$('.option-poste').addClass('invisible');
+			$('.option-salarie').removeClass('invisible');
+			$('#filter-element').attr("disabled", false);
+			$('#filter-element').val("");
+		}
+	});
+	$('#filter-element').change(function() {
+		$("#liste-taches").load("<?= HOST . $_GET['page']?>", {
+		groupe    : $('#filter-group').val(),
+		id        : $('#filter-element').val(),
+		periode   : $('#periode').val(),
+		debut     : $('#debut').val(),
+		fin       : $('#fin').val(),
+		type      : $('#selection-type').val()
+	});
+	});
+	$('#periode').change(function() {
+	$("#liste-taches").load("<?= HOST . $_GET['page']?>", {
+		groupe    : $('#filter-group').val(),
+		id        : $('#filter-element').val(),
+		periode   : $('#periode').val(),
+		type      : $('#selection-type').val()
+	}, function() {
+		$("#debut").val(null);
+		$("#fin").val(null);
+		$('#selection-month').val("");
+	});
+});
+$('#debut').change(function() {
+	$("#liste-taches").load("<?= HOST . $_GET['page']?>", {
+		groupe    : $('#filter-group').val(),
+		id        : $('#filter-element').val(),
+		debut     : $('#debut').val(),
+		fin       : $('#fin').val(),
+		type      : $('#selection-type').val()
+	}, function() {
+		$("#periode").val("");
+		$('#selection-month').val("");
+		$('#fin').val("");
+		var stringDate = $('#debut').datepicker('getDate');
+		var date       = new Date(stringDate.getFullYear(), stringDate.getMonth() + MAX_INTERVAL, stringDate.getDate());
+	    $('#fin').datepicker('option', 'maxDate', date);
+	});
+});
+$('#fin').change(function() {
+	$("#liste-taches").load("<?= HOST . $_GET['page']?>", {
+		groupe    : $('#filter-group').val(),
+		id        : $('#filter-element').val(),
+		debut     : $('#debut').val(),
+		fin       : $('#fin').val(),
+		type      : $('#selection-type').val()
+	}, function() {
+		$("#periode").val("");
+		$('#selection-month').val("");
+	});
+});
+$('#selection-month').change(function() {
+	$("#liste-taches").load("<?= HOST . $_GET['page']?>", {
+		groupe    : $('#filter-group').val(),
+		id        : $('#filter-element').val(),
+		mois      : $('#selection-month').val(),
+		type      : $('#selection-type').val()
+	}, function() {
+		$("#periode").val("");
+		$('#debut').val(null);
+		$('#fin').val(null);
+	});
+});
+$('#selection-type').change(function() {
+	$("#liste-taches").load("<?= HOST . $_GET['page']?>", {
+		groupe    : $('#filter-group').val(),
+		id        : $('#filter-element').val(),
+		debut     : $('#debut').val(),
+		fin       : $('#fin').val(),
+		periode   : $('#periode').val(),
+		mois      : $('#selection-month').val(),
+		type      : $('#selection-type').val()
+	});
+});
+</script>
+
+

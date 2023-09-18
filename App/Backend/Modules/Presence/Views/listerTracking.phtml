@@ -1,0 +1,65 @@
+<div>	
+	<table class="table table-borderless" id="table-tache" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0">
+				<th class="p-0" style="width: 55%!important;"><div class="card p-2 m-1 card-grey">Nom et Prénom</div></th>
+				<th class="p-0 pe text-center th-tache" style="width: 13%!important;"><div class="card-tache card p-2 m-1 card-grey">Durée de travail</div></th>
+				<th class="p-0 pr text-center th-tache" style="width: 14%!important;"><div class="card-tache card p-2 m-1 card-grey">Tâches réalisées</div></th>
+				<th class="p-0 ab text-center th-tache" style="width: 18%!important;"><div class="card-tache card p-2 m-1 card-grey">Durée de travail effectif</div></th>
+			</tr>
+		</thead>
+		<tbody class="" style="padding: 0px!important;">
+			<?php foreach ($data as $key => $employe) : extract($employe);?>
+				<?php if ($key != 'totals') : extract($workedDuring); ?>
+					<tr class="p-0" id="<?=$key?>">
+						<td class="text-important p-0">
+							<div class="card p-2 m-1 card-light-grey">
+								<?= $name ?>
+							</div>
+						</td>
+						<td class="text-important text-center p-0">
+							<div class="card p-2 m-1 card-extra-light-grey">
+								<?= $hour . 'H ' . $minute . 'm ' . $second . 's'?>
+							</div>
+						</td>
+						<td class="text-important text-center p-0">
+							<div class="card p-2 m-1 card-extra-light-grey">
+								<?= number_format($tracked, 2, ',', '')?>&nbsp;%
+							</div>
+						</td>
+						<td class="text-important text-center p-0">
+							<div class="card p-2 m-1 card-extra-light-grey">
+								<?= number_format($totalDuring, 2, ',', '')?>&nbsp;%
+							</div>
+						</td>
+					</tr>
+				<?php endif; ?>
+			<?php endforeach; ?>
+		</tbody>
+		<tfoot>
+			<?php  $footerTab = end($data); extract($footerTab); ?>
+			<tr class="p-0" id="">
+				<td class="text-important p-0">
+					<div class="card p-2 m-1 card-light-grey">
+						<?= strtoupper(key($data)); ?>
+					</div>
+				</td>
+				<td class="text-important text-center p-0">
+					<div class="card p-2 m-1 card-extra-light-grey">
+						<?= $hour . 'H ' . $minute . 'm ' . $second . 's'?>
+					</div>
+				</td>
+				<td class="text-important text-center p-0">
+					<div class="card p-2 m-1 card-extra-light-grey">
+						<?= number_format($totalUserTracked, 2, ',', '')?>&nbsp;%
+					</div>
+				</td>
+				<td class="text-important text-center p-0">
+					<div class="card p-2 m-1 card-extra-light-grey">
+						<?= number_format($total, 2, ',', '')?>&nbsp;%
+					</div>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+</div>

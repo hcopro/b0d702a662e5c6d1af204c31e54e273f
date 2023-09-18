@@ -1,0 +1,428 @@
+<?php extract($data); ?>
+<div>
+	<table class="table table-borderless" id="table-pointage" style="width: 100%; font-size: 0.9em; border : none;">
+		<thead>
+			<tr class="p-0">
+				<th class="p-0" style="width: 35%!important;"><div class="card p-2 m-1 card-grey">Nom et Prénom</div></th>
+				<th class="p-0 text-center" style="width: 12%!important;"><div class="card p-2 m-1 card-grey">Temps</div></th>
+				<th class="p-0 rt text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Retard</div></th>
+				<th class="p-0 pr text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Présence</div></th>
+				<th class="p-0 pe text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Permission</div></th>
+				<th class="p-0 re text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Repos</div></th>
+				<th class="p-0 co text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Congé</div></th>
+				<th class="p-0 ab text-center th-pointage"><div class="card-pointage card p-2 m-1 card-grey">Absence</div></th>
+				<th class="p-0 text-center">
+					<div class="card p-2 m-1 card-grey" style="height: 40px;">
+						<i class="fa fa-chart-bar mt-1"></i>
+					</div>
+				</th>
+			</tr>
+		</thead>
+		<tbody class="" style="padding: 0px!important;">
+			<?php if ($pointages != null) : ?> 
+				<?php foreach($pointages as $pointage) : extract($pointage);?>
+					<tr class="p-0">
+						<td class="text-important p-0">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<?= $employe->getNom() . ' ' . $employe->getPrenom();?>
+							</div>
+						</td>
+						<td class="p-0 text-important text-center">
+							<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+								<?= $temps['hour'] . 'h ' . $temps['minute'] . 'min ' ?>
+							</div>	
+						</td>
+						<td class="p-0 text-important">
+							<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px; width: 93px;">
+								<?= $retard['hour'] . 'h ' . $retard['minute'] . 'min '?>
+							</div>	
+						</td>
+						<td class="text-center p-0">
+							<?php if ($presence != null) :?>
+								<?php if ($presence->getStatut() == ManagerModulePresence::PRESENT_YES) :?>
+									<div class="card p-2 m-1 card-light-green" style="height: 40px; max-height: 40px;">
+										<i class="fa fa-check fa pre-<?=$employe->getIdEmploye()?> mt-1" style="color: #026b2e;"></i>
+								<?php else : ?>
+									<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+										. . .
+								<?php endif ?>
+							<?php elseif ($nombrePresences !== null) : ?>
+								<div class="card p-2 m-1 card-light-green" style="height: 40px; max-height: 40px;">
+									<p class="m-0 p-0 text-important pr" style="color: #026b2e;"><?=$nombrePresences?> jours</p>
+							<?php else : ?>
+								<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+									<p class="m-0 p-0 text-important pr" style="color: #026b2e;">N/A</p>
+							<?php endif ?>
+							</div>
+						</td>
+						<td class="text-center p-0">
+							<?php if ($permission !== null) :?>
+								<?php if ($permission !== false) :?>
+									<div class="card p-2 m-1 card-light-yellow" style="height: 40px; max-height: 40px;">
+										<i class="fa fa-check pe mt-1" style="color: #742a02;"></i>
+								<?php else : ?>
+									<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+										. . .
+								<?php endif?>
+							<?php elseif ($nombrePermissions !== null) : ?>
+								<div class="card p-2 m-1 card-light-yellow" style="height: 40px; max-height: 40px;">
+									<p class="m-0 p-0 text-important " style="color: #742a02;"><?=$nombrePermissions?> jours</p>
+							<?php else : ?>
+								<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+									<p class=" m-0 p-0 text-important" style="color: #742a02;">N/A</p>
+							<?php endif ?>
+							</div>
+						</td>
+						<td class="text-center p-0">
+							<?php if ($presence != null) :?>
+								<?php if ($repos !== false) :?>
+									<div class="card p-2 m-1 card-light-pink" style="height: 40px; max-height: 40px;">
+										<i class="fa fa-medkit re mt-1 re" style="color: #7f0330;"></i>
+								<?php else : ?>
+									<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+										. . .
+								<?php endif?>
+							<?php elseif ($nombreRepos !== null) : ?>
+								<div class="card p-2 m-1 card-light-pink" style="height: 40px; max-height: 40px;">
+									<p class="m-0 p-0 text-important " style="color: #7f0330;"><?=$nombreRepos?> jours</p>
+							<?php else : ?>
+								<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+									<p class="m-0 p-0 text-important " style="color: #7f0330;">N/A</p>
+							<?php endif ?>
+							</div>
+						</td>
+						<td class="text-center p-0">
+							<?php if ($presence != null) :?>
+								<?php if ($conge !== false) :?>
+									<div class="card p-2 m-1 card-light-cyan" style="height: 40px; max-height: 40px;">
+										<i class="fa fa-check re mt-1 co" style="color: #02606c;"></i>
+								<?php else : ?>
+									<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+										. . .
+								<?php endif?>
+							<?php elseif ($nombreConges !== null) : ?>
+								<div class="card p-2 m-1 card-light-cyan" style="height: 40px; max-height: 40px;">
+									<p class="m-0 p-0 text-important" style="color: #02606c;"><?=$nombreConges?> jours</p>
+							<?php else : ?>
+								<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+									<p class="m-0 p-0 text-important" style="color: #02606c;">N/A</p>
+							<?php endif ?>
+							</div>
+						</td>
+						<td class="text-center p-0">
+							<?php if ($presence != null) : ?>
+								<?php if ($presence->getStatut() == ManagerModulePresence::PRESENT_NO && $permission == null && $repos == null && $conge == null) :?>
+									<div class="card p-2 m-1 card-light-red" style="height: 40px; max-height: 40px;">
+										<i class="fa fa-times fa ab mt-1" aria-hidden="true" style="color:#780101"></i>
+								<?php else : ?>
+									<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+											. . .
+								<?php endif ?>
+							<?php elseif ($nombreAbsences !== null) : ?>
+								<div class="card p-2 m-1 card-light-red" style="height: 40px; max-height: 40px;">
+									<p class="m-0 p-0 text-important ab" style="color: #780101;"><?=$nombreAbsences?> jours</p>
+							<?php else : ?>
+								<div class="card p-2 m-1 card-extra-light-grey" style="height: 40px; max-height: 40px;">
+									<p class="m-0 p-0 text-important ab" style="color: #780101;">N/A</p>
+							<?php endif ?>
+							</div>
+						</td>
+						<td class="text-right p-0">
+							<div class="card p-2 m-1 card-light-grey" style="height: 40px; max-height: 40px;">
+								<button type="button" class="m-0 p-0 btn btn-transparent btn-sm" data-toggle="modal" data-target="#modalStatistique<?= $employe->getIdEmploye();?>">
+	  								<i class="m-0 fas fa-info-circle icon-action" aria-hidden="true" style="color: #323d4b;font-size: 1.2em;"></i>
+								</button>
+							</div>
+						</td>
+					</tr>
+					<div class="modal fade" id="modalStatistique<?= $employe->getIdEmploye();?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered" role="document">
+					    	<div class="modal-content">
+					      		<div class="modal-header text-center">
+					      			<div class="text-center" style="width: 100%;">
+					      				<h5 class="modal-title section-heading" id="exampleModalLabel">Statistique mensuelle</h5>
+					      			</div>
+					        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          			<span aria-hidden="true">&times;</span>
+					        		</button>
+					      		</div>
+					      		<div class="modal-body">
+					      			<div class="card p-3 text-center" style="background: #ffffff; max-height: 500px; overflow-y: auto;">
+						      			<div class="row">
+						      				<div class="col-md-3">
+					      						<img src="
+													<?php
+							            				if ($employe->getPhoto() != "") {
+							            					echo HOST . "../Web/Ressources/images/employes/" . $employe->getPhoto();
+							            				} else {
+							            					echo HOST ."../Web/Ressources/images/profilCandidat.png";
+							            				}
+							            			?>
+												" style="height: 100px; width: 100px;">
+											</div>
+											<div class="col-md-9 text-left">
+												<label class="text-important"><?= $employe->getNom() . ' ' . $employe->getPrenom();?></label><br>
+												<label class="titre">Service : </label><?= ' ' . $service ?><br>
+												<label class="titre">Poste : </label><?= ' ' . $poste ?><br>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-grey">
+											<div class="row">
+												<div class="col-md-6 text-right">
+													<select class="select-time" id="month-stat<?=$employe->getIdEmploye();?>">
+														<option value="1">Janvier</option>
+										      			<option value="2">Février</option>
+										      			<option value="3">Mars</option>
+										      			<option value="4">Avril</option>
+										      			<option value="5">Mai</option>
+										      			<option value="6">Juin</option>
+										      			<option value="7">Juillet</option>
+										      			<option value="8">Août</option>
+										      			<option value="9">Septembre</option>
+										      			<option value="10">Octobre</option>
+										      			<option value="11">Novembre</option>
+										      			<option value="12">Décembre</option>
+													</select>
+												</div>
+												<div class="col-md-6 text-left">
+													<?php $yearNow = date("Y"); ?>
+													<input type="number" class="select-time" id="year-stat<?=$employe->getIdEmploye();?>" min="2020" value="<?= $yearNow ?>">
+												</div>
+												<input type="hidden" id="idEmploye<?=$employe->getIdEmploye()?>" value="<?=$employe->getIdEmploye()?>">
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-green">
+											<div class="row">
+												<div class="col-md-8 text-left">
+													temps de travail
+												</div>
+												<div class="col-md-4 text-left">
+													<span id="temps-travail<?=$employe->getIdEmploye()?>">
+														<i class="fa fa-spinner fa-pulse fa-fw"></i>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-orange">
+											<div class="row">
+												<div class="col-md-8 text-left">
+													temps de retard
+												</div>
+												<div class="col-md-4 text-left">
+													<span id="temps-retard<?=$employe->getIdEmploye()?>">
+														<i class="fa fa-spinner fa-pulse fa-fw"></i>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-yellow">
+											<div class="row">
+												<div class="col-md-8 text-left">
+													temps de permission
+												</div>
+												<div class="col-md-4 text-left">
+													<span id="temps-permission<?=$employe->getIdEmploye()?>">
+														<i class="fa fa-spinner fa-pulse fa-fw"></i>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-pink">
+											<div class="row">
+												<div class="col-md-8 text-left">
+													temps de repos médical
+												</div>
+												<div class="col-md-4 text-left">
+													<span id="temps-repos<?=$employe->getIdEmploye()?>">
+														<i class="fa fa-spinner fa-pulse fa-fw"></i>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-cyan">
+											<div class="row">
+												<div class="col-md-8 text-left">
+													temps de congé
+												</div>
+												<div class="col-md-4 text-left">
+													<span id="temps-conge<?=$employe->getIdEmploye()?>">
+														<i class="fa fa-spinner fa-pulse fa-fw"></i>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-grey">
+											<div class="row">
+												<div class="col-md-8 text-left">
+													temps total
+												</div>
+												<div class="col-md-4 text-left">
+													<span id="temps-total<?=$employe->getIdEmploye()?>">
+														<i class="fa fa-spinner fa-pulse fa-fw"></i>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="card mt-2 p-2 card-light-grey">
+											<div class="row">
+												<div class="col-md-8 text-left">
+													nombre de retard du mois
+												</div>
+												<div class="col-md-4 text-left">
+													<span id="nombre-retard<?=$employe->getIdEmploye()?>">
+														<i class="fa fa-spinner fa-pulse fa-fw"></i>
+													</span>
+												</div>
+											</div>
+										</div>
+									</div>
+					      		</div>
+					    	</div>
+					  	</div>
+					</div>
+					<script>
+						$('document').ready(function() {
+							$('#month-stat<?=$employe->getIdEmploye();?>').val((new Date).getMonth() + 1);
+							if ($('#month-stat<?=$employe->getIdEmploye();?>').val() != null && $('#year-stat<?=$employe->getIdEmploye();?>').val()) {
+								idEmploye = $('#idEmploye<?=$employe->getIdEmploye();?>').val();
+								mois = $('#month-stat<?=$employe->getIdEmploye();?>').val();
+								annee = $('#year-stat<?=$employe->getIdEmploye();?>').val();
+								getStatistique(idEmploye, mois, annee);
+							}
+							<?php if ($depart != null) : ?>
+								var content = "<p><b>Arrivée : </b><?= $arrivee ?></p><p><b>Départ : </b><?= $depart ?></p>";
+							<?php else : ?>
+								var content = "<p><b>Arrivée : </b><?= $arrivee ?></p><p><b>Départ : </b> . . . </p>";
+							<?php endif ?> 
+							setHtmlTippy('pre-<?=$employe->getIdEmploye()?>', content);
+						});
+						$('#table-pointage').on('page.dt', function (){
+							$('#month-stat<?=$employe->getIdEmploye();?>').val((new Date).getMonth() + 1);
+							if ($('#month-stat<?=$employe->getIdEmploye();?>').val() != null && $('#year-stat<?=$employe->getIdEmploye();?>').val()) {
+								idEmploye = $('#idEmploye<?=$employe->getIdEmploye();?>').val();
+								mois = $('#month-stat<?=$employe->getIdEmploye();?>').val();
+								annee = $('#year-stat<?=$employe->getIdEmploye();?>').val();
+								getStatistique(idEmploye, mois, annee);
+							}
+							<?php if ($depart != null) : ?>
+								var content = "<p><b>Arrivée : </b><?= $arrivee ?></p><p><b>Départ : </b><?= $depart ?></p>";
+							<?php else : ?>
+								var content = "<p><b>Arrivée : </b><?= $arrivee ?></p><p><b>Départ : </b> . . . </p>";
+							<?php endif ?> 
+							setHtmlTippy('pre-<?=$employe->getIdEmploye()?>', content);
+						});
+						$('#month-stat<?=$employe->getIdEmploye();?>').change(function() {
+							idEmploye = $('#idEmploye<?=$employe->getIdEmploye();?>').val();
+							mois = $('#month-stat<?=$employe->getIdEmploye();?>').val();
+							annee = $('#year-stat<?=$employe->getIdEmploye();?>').val();
+							getStatistique(idEmploye, mois, annee);
+						});
+						$('#year-stat<?=$employe->getIdEmploye();?>').change(function() {
+							idEmploye = $('#idEmploye<?=$employe->getIdEmploye();?>').val();
+							mois = $('#month-stat<?=$employe->getIdEmploye();?>').val();
+							annee = $('#year-stat<?=$employe->getIdEmploye();?>').val();
+							getStatistique(idEmploye, mois, annee);
+						});
+						function getStatistique(idEmploye, mois, annee) {
+							const TEMPS_PRESENCE 	= "presence";
+							const TEMPS_PERMISSION 	= "permission";
+							const TEMPS_REPOS 		= "repos";
+							const TEMPS_CONGE 		= "conge";
+							const TEMPS_TOTAL 		= "total";
+							const TEMPS_RETARD 		= "retard";
+							const NOMBRE_RETARD 	= "nombre-retard";
+							$('#temps-travail' + idEmploye).html("<i class='fa fa-spinner fa-pulse fa-fw'></i>");
+							$('#temps-retard' + idEmploye).html("<i class='fa fa-spinner fa-pulse fa-fw'></i>");
+							$('#temps-permission' + idEmploye).html("<i class='fa fa-spinner fa-pulse fa-fw'></i>");
+							$('#temps-repos' + idEmploye).html("<i class='fa fa-spinner fa-pulse fa-fw'></i>");
+							$('#temps-conge' + idEmploye).html("<i class='fa fa-spinner fa-pulse fa-fw'></i>");
+							$('#temps-total' + idEmploye).html("<i class='fa fa-spinner fa-pulse fa-fw'></i>");
+							$('#nombre-retard' + idEmploye).html("<i class='fa fa-spinner fa-pulse fa-fw'></i>");
+							$.ajax({
+	 							url  : "<?= HOST . 'manage/statistiques'?>",
+	 							data : "idEmploye=" + idEmploye + "&mois=" + mois + "&annee=" + annee,
+								dataType : "json",
+								success : function(data)
+								{	
+									data : JSON.stringify(data);
+									// console.log(data)
+									$.each(data, function(key,value) {
+										if (key == TEMPS_PRESENCE) {
+											$('#temps-travail' + idEmploye).html(value + " heures");
+										} else if (key == TEMPS_PERMISSION) {
+											$('#temps-permission' + idEmploye).html(value + " heures");
+										} else if (key == TEMPS_REPOS) {
+											$('#temps-repos' + idEmploye).html(value + " heures");
+										} else if (key == TEMPS_CONGE) {
+											$('#temps-conge' + idEmploye).html(value + " heures");
+										} else if (key == TEMPS_TOTAL) {
+											$('#temps-total' + idEmploye).html(value + " heures");
+										} else if (key == TEMPS_RETARD) {
+											$('#temps-retard' + idEmploye).html(value + " heures");
+										} else if (key == NOMBRE_RETARD) {
+											let addS = value > 1 ? 's' : '';
+											$('#nombre-retard' + idEmploye).html(value + " jour" + addS);
+										}
+									}); 
+								}
+							});
+						}
+					</script>
+				<?php endforeach ?>
+			<?php endif?>
+		</tbody>
+	</table>
+</div>
+<script>
+	$(document).ready(function() {
+	    $('#table-pointage').DataTable( {
+	        "pagingType" : "full_numbers",
+	        "language" : {
+		        "search" : "_INPUT_",
+		        "searchPlaceholder" : "rechercher",
+		        "zeroRecords": "Aucun employé n'a été enregistreé",
+	            "oPaginate": {
+	                "sFirst":    "Premier",
+	                "sLast":    "Dernier",
+	                "sNext":    "Suivant",
+	                "sPrevious": "Précédent"
+	            }
+		    },
+	        "searchPlaceholder" : "rechercher",
+	        "lengthMenu" : [[10, 25, 50, -1], [10, 25, 50, "All"]]
+	    } );
+	    $('#table-pointage_length').addClass("invisible");
+	    $('#table-pointage_info').parent().removeClass();
+	    $('#table-pointage_info').parent().addClass("col-md-3");
+	    $('#table-pointage_info').remove();
+	    $('#table-pointage_wrapper').css("padding","0px");
+  		tippy('.pe', {
+			content: "en permission"
+  		});
+  		tippy('.rt', {
+			content: "en retard"
+  		});
+  		tippy('.co', {
+			content: "en congé"
+  		});
+  		tippy('.re', {
+			content: "repos"
+  		});
+  		tippy('.ab', {
+			content: "absent"
+  		});
+  		tippy('.fa-info-circle', {
+  			content: "informations plus complètes"
+  		});
+	} );
+	function setHtmlTippy(classTippy, contentTippy)
+	{
+		var attente = setTimeout(function() {
+			tippy('.' + classTippy, {
+				content: contentTippy,
+				allowHtml : true,
+				placement : 'top-start'
+	  		});	
+		}, 1000);
+	}
+</script>

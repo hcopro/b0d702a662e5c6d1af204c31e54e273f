@@ -1,0 +1,1266 @@
+<?php
+	extract($data);
+	$url = explode('/', $_GET['page']);
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row" style="margin-top: -15px;">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<?php if ($_SESSION['compte']['identifiant'] == "entreprise" && ($url[2] == "avance" || $url[2] == "parametreAvance" || $url[2] == "demandeAvance")) : ?>
+					<h4 class="text-center list-title section-heading">Avance spéciale</h4>
+				<?php elseif ($_SESSION['compte']['identifiant'] == "entreprise" && ($url[2] == "detailAvance" || $url[2] == "historiqueAvance")) : ?>
+					<h4 class="text-center list-title section-heading">Les avances spéciales de <?= $employe->getNom() . ' ' . $employe->getPrenom() ?></h4>
+				<?php elseif ($_SESSION['compte']['identifiant'] == "employe" && ($url[2] == "detailAvance" || $url[2] == "demandeAvance" || $url[2] == "historiqueAvance")) : ?>
+					<h4 class="text-center list-title section-heading">Avance spéciale</h4>
+				<?php elseif ($url[2] == "demandeAvanceQuinzaine") : ?>
+					<h4 class="text-center list-title section-heading">Avance quinzaine</h4>
+				<?php endif ?>
+			</div>
+			<div class="col-md-2 text-right">
+				<?php if (($url[2] == "detailAvance" || $url[2] == "historiqueAvance") && $_SESSION['compte']['identifiant'] == "entreprise") : ?>
+		        	<a href="<?= HOST . 'manage/entreprise/avance' ?>" class="btn btn-sm btn-transparent text-primary btn-circle-sm">
+						<i class="fa fa-list fa-15x tippy-act" aria-hidden="true"></i>
+					</a>
+				<?php elseif ($url[2] == "demandeAvance" && $_SESSION['compte']['identifiant'] == "entreprise") : ?>
+					<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalEnregistrement">
+						<i class="fa fa-plus" aria-hidden="true"></i>
+						<span class="ml-2">ajouter</span>
+					</button>
+				<?php elseif ($url[2] == "demandeAvanceQuinzaine" && $_SESSION['compte']['identifiant'] == "entreprise") : ?>
+					<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalEnregistrementQuinzaine">
+						<i class="fa fa-plus" aria-hidden="true"></i>
+						<span class="ml-2">ajouter</span>
+					</button>
+				<?php elseif ($url[2] == "demandeAvance" && $_SESSION['compte']['identifiant'] == "employe") : ?>
+					<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalEnvoi">
+						<i class="fa fa-paper-plane" aria-hidden="true"></i>
+						<span class="ml-2">envoyer</span>
+					</button>
+				<?php elseif ($url[2] == "demandeAvanceQuinzaine" && $_SESSION['compte']['identifiant'] == "employe") : ?>
+					<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalEnvoiQuinzaine">
+						<i class="fa fa-paper-plane" aria-hidden="true"></i>
+						<span class="ml-2">envoyer</span>
+					</button>
+				<?php endif ?>
+			</div>
+		</div>
+		<div class="block-section">
+			<?php if ($_SESSION['compte']['identifiant'] == "entreprise" && ($url[2] == "avance" || $url[2] == "parametreAvance" || $url[2] == "demandeAvance" || $url[2] == "demandeAvanceQuinzaine")) : ?>
+				<div class="row">
+			        <ul id="new-tab-button">
+		        		<li id="tab1">
+		        			<a href="<?= HOST . 'manage/entreprise/avance'?>">
+		        				Les employés
+		        			</a>
+		        		</li>
+		        		<li id="tab3">
+		        			<a href="<?= HOST . 'manage/entreprise/demandeAvance'?>">
+		        				Les demandes d'avance spéciale
+		        			</a>
+		        		</li>
+		        		<li id="tab4">
+		        			<a href="<?= HOST . 'manage/entreprise/demandeAvanceQuinzaine'?>">
+		        				Les demandes d'avance quinzaine
+		        			</a>
+		        		</li>
+		        		<li id="tab2">
+		        			<a href="<?= HOST . 'manage/entreprise/parametreAvance'?>">
+		        				Paramètres
+		        			</a>
+		        		</li>      			    
+			        </ul>
+		      	</div>
+		    <?php elseif ($_SESSION['compte']['identifiant'] == "entreprise" && ($url[2] == "detailAvance" || $url[2] == "historiqueAvance")) : ?>
+		    	<div class="row">
+			        <ul id="new-tab-button">
+		        		<li id="tab1">
+		        			<a href="<?= HOST . 'manage/entreprise/detailAvance?idEmploye=' . $employe->getIdEmploye() ?>">
+		        				Avance spéciale en cours
+		        			</a>
+		        		</li> 
+		        		<li id="tab2">
+		        			<a href="<?= HOST . 'manage/entreprise/historiqueAvance?idEmploye=' . $employe->getIdEmploye()?>">
+		        				Historique 
+		        			</a>
+		        		</li>      			    
+			        </ul>
+		      	</div>
+		    <?php elseif ($_SESSION['compte']['identifiant'] == "employe" && ($url[2] == "detailAvance" || $url[2] == "demandeAvance" || $url[2] == "demandeAvanceQuinzaine" || $url[2] == "historiqueAvance")) : ?>
+		    	<div class="row">
+			        <ul id="new-tab-button">
+		        		<li id="tab1">
+		        			<a href="<?= HOST . 'manage/employe/demandeAvance' ?>">
+		        				Demande d'avance spéciale
+		        			</a>
+		        		</li> 
+		        		<li id="tab4">
+		        			<a href="<?= HOST . 'manage/employe/demandeAvanceQuinzaine' ?>">
+		        				Demande d'avance quinzaine
+		        			</a>
+		        		</li> 
+		        		<li id="tab2">
+		        			<a href="<?= HOST . 'manage/employe/detailAvance' ?>">
+		        				Avance spéciale en cours 
+		        			</a>
+		        		</li> 
+		        		<li id="tab3">
+		        			<a href="<?= HOST . 'manage/employe/historiqueAvance' ?>">
+		        				Historique
+		        			</a>
+		        		</li>      			    
+			        </ul>
+		      	</div>
+		    <?php endif ?>
+		    <?php if ($_SESSION['compte']['identifiant'] == "entreprise" && $url[2] == "avance") : ?>
+				<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+	      						<div class="row">
+	      							<div class="col-md-6">
+										<select class="select-time" id='filter-group' style="font-size: 0.8em!important;">
+											<option value="">-- groupe --</option>
+											<option value="1" selected="selected">tout</option>
+											<option value="2">par service</option>
+											<option value="3">par poste</option>
+											<option value="4">par employé</option>
+										</select>
+									</div>
+									<div class="col-md-6">
+										<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;">
+											<option class="option-tout" id="o-t" value="">-- selectionnez --</option>
+											<?php foreach ($filtres['services'] as $service) : ?>
+												<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['postes'] as $poste) : ?>
+												<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['employes'] as $employe) : ?>
+												<option class="option-employe invisible" value="<?=$employe->getIdEmploye();?>"><?=$employe->getNom() . ' ' . $employe->getPrenom()?></option>
+											<?php endforeach ?>
+										</select>
+									</div>
+								</div>
+							</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+	      		<script>
+	      			const FILTER_GROUP_ALL     = 1;
+        			const FILTER_GROUP_SERVICE = 2;
+        			const FILTER_GROUP_POSTE   = 3;
+        			const FILTER_GROUP_EMPLOYE = 4;
+	      			$('document').ready(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste").load("<?= HOST . 'manage/avances'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				}
+	      			});
+	      			$('#filter-group').change(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste").load("<?= HOST . 'manage/avances'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								type      : $('#selection-type').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_SERVICE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').removeClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_POSTE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').removeClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_EMPLOYE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').removeClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				}
+	      			});
+	      			$('#filter-element').change(function() {
+	      				$("#liste").load("<?= HOST . 'manage/avances'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val()
+						});
+	      			});
+					$('#selection-type').change(function() {
+						$("#liste").load("<?= HOST . 'manage/avances'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val()
+						});
+					});
+					$('#selection-statut').change(function() {
+						$("#liste").load("<?= HOST . 'manage/avances'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val()
+						});
+					});
+	      		</script>
+	      	<?php elseif ($_SESSION['compte']['identifiant'] == "entreprise" && $url[2] == "parametreAvance") : ?>
+	      		<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-12 text-center">
+	      						<span class="titre" style="color: #ffffff;">Paramètres à définir</span>
+	      					</div>
+	      				</div>
+	      				<div class="" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      					<div class="col-lg-12 text-center">
+	      						<div class="card p-2 m-2" style="background: #ffffff;">
+	      							<span class="text-important m-auto">
+		      							Durée maximale de remboursement
+		      						</span>
+		      						<hr>
+	      							<div class="row">
+		      							<div class="col-md-6">
+		      								<p class="text-justify">
+		      									C'est la durée maximale pendant laquelle le salarié doit effectuer par
+		      									mois les remboursements de la somme de l'avance spéciale qu'on lui a accordée.
+		      								</p>
+		      							</div>
+		      							<div class="col-md-1"></div>
+		      							<div class="col-md-5 text-left">
+	      									<form method="POST" id="form" action="<?= HOST . 'manage/save-parametreAvance'?>" enctype="multipart/form-data" novalidate="novalidate">
+	      										<label class="label-input">Durée maximale (en mois)</label>
+	      										<div class="row">
+	      											<div class="col-md-8">
+	      												<div class="form-group">
+			      											<input type="number" class="form-control select-time" name="dureeMax" id="dureeMax" placeholder="Durée maximale de remboursement" value="<?=$parametreAvance->getDureeMax()?>" required="required" data-validation-required-message="Veuillez renseigner une durée en mois" min="0" style="width: 100%!important;">
+			      											<p class="help-block text-danger"></p>
+			      										</div>
+		      										</div>
+		      										<div class="col-md-4">
+		      											<button class="btn btn-sm btn-info" type="submit">Enregistrer</button>
+		      										</div>
+	      										</div>
+	      									</form>
+		      							</div>
+		      						</div>
+		      					</div>
+		      					<div class="card p-2 m-2" style="background: #ffffff;">
+	      							<span class="text-important m-auto">
+		      							Taux maximum de remboursement par mois
+		      						</span>
+		      						<hr>
+	      							<div class="row">
+		      							<div class="col-md-6">
+		      								<p class="text-justify">
+		      									La déduction mensuelle en guise de remboursement ne devrait pas dépasser
+		      									ce taux par rapport au salaire de base de l'employé.
+		      								</p>
+		      							</div>
+		      							<div class="col-md-1"></div>
+		      							<div class="col-md-5 text-left">
+	      									<form method="POST" id="form" action="<?= HOST . 'manage/save-parametreAvance'?>" enctype="multipart/form-data" novalidate="novalidate">
+	      										<label class="label-input">taux maximum de remboursement (en pourcentage)</label>
+	      										<div class="row">
+	      											<div class="col-md-8">
+	      												<div class="form-group">
+			      											<input type="number" class="form-control select-time" name="tauxMax" id="tauxMax" placeholder="Durée maximale de remboursement" value="<?=$parametreAvance->getTauxMax()?>" required="required" data-validation-required-message="Veuillez renseigner une durée en mois" min="0" style="width: 100%!important;">
+			      											<p class="help-block text-danger"></p>
+			      										</div>
+		      										</div>
+		      										<div class="col-md-4">
+		      											<button class="btn btn-sm btn-info" type="submit">Enregistrer</button>
+		      										</div>
+	      										</div>
+	      									</form>
+		      							</div>
+		      						</div>
+		      					</div>
+		      				</div>
+		      			</div>
+		      		</div>
+		      	</div>
+		    <?php elseif ($url[2] == "detailAvance") : ?>
+		    	<div class="row">
+					<div class="col-lg-12 text-center">
+						<div class="card m-2 p-3">
+							<div class="row">
+								<div class="col-md-4 text-left">
+									<div class="row">
+										<div class="col-md-4">
+											<span class="titre">L'employé :</span>
+										</div>
+										<div class="col-md-8">
+											<span class="text-important"><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-4">
+											<span class="titre">Matricule :</span>
+										</div>
+										<div class="col-md-8">
+											<span class="text-important"><?= $employe->getMatricule() ?></span>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-2"></div>
+								<div class="col-md-5 text-left">
+									<div class="row">
+										<div class="col-md-5">
+											<span class="titre">Date de la demande :</span>
+										</div>
+										<div class="col-md-7">
+											<?php if ($avance != false) : ?>
+												<span class="text-important"><?= date('d/m/Y', strtotime($avance->getDate())) ?></span>
+											<?php endif ?>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-5">
+											<span class="titre">Montant :</span>
+										</div>
+										<div class="col-md-7">
+											<?php if ($avance != false) : ?>
+												<span class="text-important"><?= number_format($avance->getMontant(), 2) ?></span>
+											<?php endif ?>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-5">
+											<span class="titre">Raison :</span>
+										</div>
+										<div class="col-md-7">
+											<?php if ($avance != false) : ?>
+												<span class="text-important"><?= $avance->getMotif() ?></span>
+											<?php endif ?>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-5">
+											<span class="titre">Remboursement :</span>
+										</div>
+										<div class="col-md-7">
+											<?php if ($avance != false) : ?>
+												<span class="text-important"><?= count($remboursements) . " mois" ?></span>
+											<?php endif ?>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<?php if ($avance == false) : ?>
+							<div class="card m-2 p-3">
+								<?php if ($_SESSION['compte']['identifiant'] == "entreprise") : ?>
+									<span><span class="text-important"><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></span> n'a pas d'avance non remboursée actuellement.</span>
+								<?php elseif ($_SESSION['compte']['identifiant'] == "employe") : ?>
+									<span>Vous n'avez pas d'avance spéciale non remboursée actuellement.</span>
+								<?php endif ?>
+							</div>
+						<?php else : ?>
+							<div class="" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+								<?php foreach ($remboursements as $remboursement) : ?>
+									<div class="card m-2 p-2">
+										<div class="row">
+											<div class="col-md-4 text-left">
+												<span class="titre"><?= ManagerModulePaie::getMonthLetter($remboursement->getMois()) . ' ' . $remboursement->getAnnee() ?></span>
+											</div>
+											<div class="col-md-4 text-left">
+												Montant : 
+												<span class="text-important ml-2"><?= number_format($remboursement->getMontant(), 2) ?></span>
+											</div>
+											<div class="col-md-1"></div>
+											<div class="col-md-3">
+												<?php if ($remboursement->getStatut() == ManagerModulePaie::REMBOURSEMENT_PAYE) : ?>
+													<i class="fa fa-check text-success"></i>
+													<span class="text-important text-success ml-2">Payé</span>
+												<?php else : ?>
+													<span class="text-important text-info">En attente</span>
+												<?php endif ?>
+											</div>
+										</div>
+									</div>
+								<?php endforeach ?>
+							</div>
+						<?php endif ?>
+					</div>
+				</div>
+			<?php elseif ($url[2] == "historiqueAvance") : ?>
+				<div class="row">
+					<div class="col-lg-12 text-center">
+						<div class="card m-2 p-3">
+							<div class="row">
+								<div class="col-md-4 text-left">
+									<div class="row">
+										<div class="col-md-4">
+											<span class="titre">L'employé :</span>
+										</div>
+										<div class="col-md-8">
+											<span class="text-important"><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-4">
+											<span class="titre">Matricule :</span>
+										</div>
+										<div class="col-md-8">
+											<span class="text-important"><?= $employe->getMatricule() ?></span>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-2"></div>
+								<div class="col-md-5 text-left">
+									
+								</div>
+							</div>
+						</div>
+						<?php if (count($avances) == ManagerModulePaie::NO) : ?>
+							<div class="card m-2 p-3">
+								<span><span class="text-important"><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></span> n'a jamais demandé une avance auparavant.</span>
+							</div>
+						<?php else : ?>
+							<div class="" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+								<?php foreach ($avances as $avance) : ?>
+									<div class="card m-2 p-2">
+										<div class="row">
+											<div class="col-md-4 text-left">
+												<div class="row">
+													<div class="col-md-4">
+														<span>Date : </span>
+													</div>
+													<div class="col-md-6">
+														<span class="titre"><?= date('d/m/Y', strtotime($avance->getDate())) ?></span>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-md-4">
+														<span>Montant : </span>
+													</div>
+													<div class="col-md-6">
+														<span class="titre"><?= number_format($avance->getMontant(), 2) ?></span>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-md-4">
+														<span>Motif : </span>
+													</div>
+													<div class="col-md-6">
+														<span class="titre"><?= $avance->getMotif() ?></span>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-4 text-left">
+												<div class="row">
+													<div class="col-md-7">
+														<span>Mois de début de remboursement : </span>
+													</div>
+													<div class="col-md-5">
+														<span class="titre"><?= ManagerModulePaie::getMonthLetter($avance->getMoisRemboursement()) . ' ' . $avance->getAnneeRemboursement() ?></span>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-md-7">
+														<span>Durée de remboursement : </span>
+													</div>
+													<div class="col-md-5">
+														<span class="titre"><?= count($remboursements[$avance->getIdAvance()]) . ' mois' ?></span>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-md-7">
+														<span>Montant par mois : </span>
+													</div>
+													<div class="col-md-5">
+														<?php $montantMois = $remboursements[$avance->getIdAvance()][0] ? number_format($remboursements[$avance->getIdAvance()][0]->getMontant(), 2) : 0.00 ?>
+														<span class="titre"><?= $montantMois ?></span>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-4">
+												<?php if ($isEnCours[$avance->getIdAvance()] == false) : ?>
+													<div class="mt-3">
+														<i class="fa fa-check fa-15x text-success"></i>
+													</div>
+													<p class="text-success titre">Remboursée</p>
+												<?php else : ?>
+													<div class="mt-3">
+														<i class="fa fa-times fa-15x text-danger"></i>
+													</div>
+													<p class="text-danger titre">En cours de remboursement</p>
+												<?php endif ?>
+											</div>
+										</div>
+									</div>
+								<?php endforeach ?>
+							</div>
+						<?php endif ?>
+					</div>
+				</div>
+				<script type="text/javascript">
+					tippy('.fa-times', {
+						content : "Pas encore remboursée"
+					});
+				</script>
+			<?php elseif ($_SESSION['compte']['identifiant'] == "entreprise" && $url[2] == "demandeAvance") : ?>
+				<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+	      						<div class="row">
+	      							<div class="col-md-6">
+										<select class="select-time" id='filter-group' style="font-size: 0.8em!important;">
+											<option value="">-- groupe --</option>
+											<option value="1" selected="selected">tout</option>
+											<option value="2">par service</option>
+											<option value="3">par poste</option>
+											<option value="4">par employé</option>
+										</select>
+									</div>
+									<div class="col-md-6">
+										<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;">
+											<option class="option-tout" id="o-t" value="">-- selectionnez --</option>
+											<?php foreach ($filtres['services'] as $service) : ?>
+												<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['postes'] as $poste) : ?>
+												<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['employes'] as $employe) : ?>
+												<option class="option-employe invisible" value="<?=$employe->getIdEmploye();?>"><?=$employe->getNom() . ' ' . $employe->getPrenom()?></option>
+											<?php endforeach ?>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4" id="filtre-droite" style="overflow: hidden; white-space: nowrap;">
+								<select class="select-time" id='selection-type'  style="font-size: 0.8em!important;">
+									<option value="3" selected="selected">tout</option>
+									<option value="1">demande en attente</option>
+									<option value="2">demande accordée</option>
+									<option value="0">demande rejetée</option>
+									<option value="4">demande archivée</option>
+								</select>
+							</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+	      		<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	    					<form method="POST" id="form" action="<?= HOST . 'manage/save-demandeAvance'?>" enctype="multipart/form-data" novalidate="novalidate">
+	    						<input type="hidden" name="idEntreprise" value="<?=$_SESSION['user']['idEntreprise']?>">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title" id="exampleModalLabel">Demande d'avance spéciale</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3" style="background: #efefff;">
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Employé : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+													<i class="fa fa-search fa-fw icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+												  	<input class="form-control" type="text" id="recherche" placeholder="Recherche" style="height: 38px; font-size: 0.9em;">
+												</div>
+		        								<div class="form-group">
+		        									<i class="fa fa-user icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<select class="form-control font-weight-bold" name="idEmploye" id="idEmploye" required="required" data-validation-required-message="Veuillez selectionner un employé" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+			        									<option value="">Selectionnnez l'employé</option>
+			        									<?php foreach ($filtres['employes'] as $employe) : ?>
+			        										<option value="<?=$employe->getIdEmploye()?>"><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></option>
+			        									<?php endforeach ?>
+			        								</select>
+			        								<p class="help-block text-danger"></p>
+			        							</div>
+		        							</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Montant : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+		        									<i class="fa fa-money-bill icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+								        			<input type="number" class="form-control" min="0" name="montant" id="montant" required="required" data-validation-required-message="Veuillez renseigner le montant" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;" placeholder="Le montant demandé">
+								                  	<p class="help-block text-danger"></p>
+								                </div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Motif :</span>
+		        							</div>
+		        							<div class="col-md-8">
+			        							<div class="form-group">
+			        								<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+								        			<input type="text" class="form-control" name="motif" id="motif" required="required" data-validation-required-message="Veuillez indiquer le motif de la demande d'avance" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;" placeholder="Motif de l'avance">
+								                  	<p class="help-block text-danger"></p>
+			        							</div>
+			        						</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Mois du remboursement :</span>
+		        							</div>
+		        							<div class="col-md-8">
+			        							<div class="form-group">
+			        								<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+								        			<select class="form-control font-weight-bold" name="moisRemboursement" id="moisRemboursement" required="required" data-validation-required-message="Veuillez selectionner le mois de début de remboursement" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+			        									<option value="">Selectionnnez le mois</option>
+			        									<option value="1">Janvier</option>
+			        									<option value="2">Février</option>
+			        									<option value="3">Mars</option>
+			        									<option value="4">Avril</option>
+			        									<option value="5">Mai</option>
+			        									<option value="6">Juin</option>
+			        									<option value="7">Juillet</option>
+			        									<option value="8">Août</option>
+			        									<option value="9">Septembre</option>
+			        									<option value="10">Octobre</option>
+			        									<option value="11">Novembre</option>
+			        									<option value="12">Décembre</option>
+			        								</select>
+								                  	<p class="help-block text-danger"></p>
+			        							</div>
+			        						</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Année du remboursement : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+		        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+								        			<input type="number" class="form-control" min="2020" name="anneeRemboursement" id="anneeRemboursement" required="required" data-validation-required-message="Veuillez renseigner l'année du mois de début du remboursement" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;" placeholder="L'année du remboursement">
+								                  	<p class="help-block text-danger"></p>
+								                </div>
+		        							</div>
+		        						</div>
+		        					</div>
+		      					</div>
+		      					<div class="modal-footer">
+		        					<div class="row" style="width: 105%!important;">
+							      		<div class="col-md-3">
+							      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submit" class="btn btn-md btn-info">
+							      					Enregistrer
+							      				</button>
+							      			</div>
+							      		</div>
+							      	</div>
+		      					</div>
+		      				</form>
+	    				</div>
+	  				</div>
+				</div>
+	      		<script>
+	      			const FILTER_GROUP_ALL     = 1;
+        			const FILTER_GROUP_SERVICE = 2;
+        			const FILTER_GROUP_POSTE   = 3;
+        			const FILTER_GROUP_EMPLOYE = 4;
+	      			$('document').ready(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste").load("<?= HOST . 'manage/demandeAvances'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								type      : $('#selection-type').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				}
+	      			});
+	      			$('#filter-group').change(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste").load("<?= HOST . 'manage/demandeAvances'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								type      : $('#selection-type').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_SERVICE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').removeClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_POSTE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').removeClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_EMPLOYE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').removeClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				}
+	      			});
+	      			$('#filter-element').change(function() {
+	      				$("#liste").load("<?= HOST . 'manage/demandeAvances'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							type      : $('#selection-type').val()
+						});
+	      			});
+					$('#selection-type').change(function() {
+						$("#liste").load("<?= HOST . 'manage/demandeAvances'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							type      : $('#selection-type').val()
+						});
+					});
+					$('#selection-statut').change(function() {
+						$("#liste").load("<?= HOST . 'manage/demandeAvances'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							type      : $('#selection-type').val()
+						});
+					});
+					$("#recherche").change(function() {
+						if ($("#recherche").val() != "") {
+							$('#idEmploye option').each(function(){
+							    if ($(this).text().toLowerCase().includes($("#recherche").val().toLowerCase())) {
+							    	$(this).removeClass('invisible');
+							    	$(this).attr('selected', true);
+							    } else {
+							    	$(this).attr('selected', false);
+							    	$(this).addClass('invisible');
+							    }
+							});
+							$("#idEmploye").trigger('change');
+						} else {
+							$('#idEmploye option').each(function(){
+								$(this).removeClass('invisible');
+								$(this).attr('selected', false);
+							});
+						}
+						$("#idEmploye").trigger('mousedown');
+					});
+	      		</script>
+	      	<?php elseif ($_SESSION['compte']['identifiant'] == "entreprise" && $url[2] == "demandeAvanceQuinzaine") : ?>
+				<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-4" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+	      						<div class="row">
+	      							<div class="col-md-6">
+										<select class="select-time" id='filter-group' style="font-size: 0.8em!important;">
+											<option value="">-- groupe --</option>
+											<option value="1" selected="selected">tout</option>
+											<option value="2">par service</option>
+											<option value="3">par poste</option>
+											<option value="4">par employé</option>
+										</select>
+									</div>
+									<div class="col-md-6">
+										<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;">
+											<option class="option-tout" id="o-t" value="">-- selectionnez --</option>
+											<?php foreach ($filtres['services'] as $service) : ?>
+												<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['postes'] as $poste) : ?>
+												<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+											<?php endforeach ?>
+											<?php foreach ($filtres['employes'] as $employe) : ?>
+												<option class="option-employe invisible" value="<?=$employe->getIdEmploye();?>"><?=$employe->getNom() . ' ' . $employe->getPrenom()?></option>
+											<?php endforeach ?>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4" id="filtre-droite" style="overflow: hidden; white-space: nowrap;">
+								<select class="select-time" id='selection-type'  style="font-size: 0.8em!important;">
+									<option value="3" selected="selected">tout</option>
+									<option value="1">demande en attente</option>
+									<option value="2">demande accordée</option>
+									<option value="0">demande rejetée</option>
+									<option value="4">demande archivée</option>
+								</select>
+							</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+	      		<div class="modal fade" id="modalEnregistrementQuinzaine" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	    					<form method="POST" id="form" action="<?= HOST . 'manage/save-demandeAvanceQuinzaine'?>" enctype="multipart/form-data" novalidate="novalidate">
+	    						<input type="hidden" name="idEntreprise" value="<?=$_SESSION['user']['idEntreprise']?>">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title" id="exampleModalLabel">Demande d'avance quinzaine</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3" style="background: #efefff;">
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Employé : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+													<i class="fa fa-search fa-fw icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+												  	<input class="form-control" type="text" id="recherche" placeholder="Recherche" style="height: 38px; font-size: 0.9em;">
+												</div>
+		        								<div class="form-group">
+		        									<i class="fa fa-user icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+			        								<select class="form-control font-weight-bold" name="idEmploye" id="idEmploye" required="required" data-validation-required-message="Veuillez selectionner un employé" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+			        									<option value="">Selectionnnez l'employé</option>
+			        									<?php foreach ($filtres['employes'] as $employe) : ?>
+			        										<option value="<?=$employe->getIdEmploye()?>"><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></option>
+			        									<?php endforeach ?>
+			        								</select>
+			        								<p class="help-block text-danger"></p>
+			        							</div>
+		        							</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Montant : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+		        									<i class="fa fa-money-bill icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+								        			<input type="number" class="form-control" min="0" name="montant" id="montant" required="required" data-validation-required-message="Veuillez renseigner le montant" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;" placeholder="Le montant demandé">
+								                  	<p class="help-block text-danger"></p>
+								                </div>
+		        							</div>
+		        						</div>
+		        					</div>
+		      					</div>
+		      					<div class="modal-footer">
+		        					<div class="row" style="width: 105%!important;">
+							      		<div class="col-md-3">
+							      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submit" class="btn btn-md btn-info">
+							      					Enregistrer
+							      				</button>
+							      			</div>
+							      		</div>
+							      	</div>
+		      					</div>
+		      				</form>
+	    				</div>
+	  				</div>
+				</div>
+	      		<script>
+	      			const FILTER_GROUP_ALL     = 1;
+        			const FILTER_GROUP_SERVICE = 2;
+        			const FILTER_GROUP_POSTE   = 3;
+        			const FILTER_GROUP_EMPLOYE = 4;
+	      			$('document').ready(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste").load("<?= HOST . 'manage/demandeAvanceQuinzaines'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								type      : $('#selection-type').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				}
+	      			});
+	      			$('#filter-group').change(function(){
+	      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+	      					$("#liste").load("<?= HOST . 'manage/demandeAvanceQuinzaines'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								type      : $('#selection-type').val()
+							}, function() {
+								$('.option-tout').removeClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').val("");
+		      					$('#filter-element').attr("disabled", true);
+							});
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_SERVICE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').removeClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_POSTE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').removeClass('invisible');
+	      					$('.option-employe').addClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				} else if ($('#filter-group').val() == FILTER_GROUP_EMPLOYE) {
+	      					$('.option-tout').addClass('invisible');
+	      					$('.option-service').addClass('invisible');
+	      					$('.option-poste').addClass('invisible');
+	      					$('.option-employe').removeClass('invisible');
+	      					$('#filter-element').attr("disabled", false);
+	      					$('#filter-element').val("");
+	      				}
+	      			});
+	      			$('#filter-element').change(function() {
+	      				$("#liste").load("<?= HOST . 'manage/demandeAvanceQuinzaines'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							type      : $('#selection-type').val()
+						});
+	      			});
+					$('#selection-type').change(function() {
+						$("#liste").load("<?= HOST . 'manage/demandeAvanceQuinzaines'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							type      : $('#selection-type').val()
+						});
+					});
+					$('#selection-statut').change(function() {
+						$("#liste").load("<?= HOST . 'manage/demandeAvanceQuinzaines'?>", {
+							groupe    : $('#filter-group').val(),
+							id        : $('#filter-element').val(),
+							type      : $('#selection-type').val()
+						});
+					});
+					$("#recherche").change(function() {
+						if ($("#recherche").val() != "") {
+							$('#idEmploye option').each(function(){
+							    if ($(this).text().toLowerCase().includes($("#recherche").val().toLowerCase())) {
+							    	$(this).removeClass('invisible');
+							    	$(this).attr('selected', true);
+							    } else {
+							    	$(this).attr('selected', false);
+							    	$(this).addClass('invisible');
+							    }
+							});
+							$("#idEmploye").trigger('change');
+						} else {
+							$('#idEmploye option').each(function(){
+								$(this).removeClass('invisible');
+								$(this).attr('selected', false);
+							});
+						}
+						$("#idEmploye").trigger('mousedown');
+					});
+	      		</script>
+	      	<?php elseif ($_SESSION['compte']['identifiant'] == "employe" && $url[2] == "demandeAvance") : ?>
+	      		<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-6" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+	      						<?php if ($isEligible != false) : ?>
+	      							<i class="fa fa-check fa-15x text-white"></i>
+	      							<span class="ml-3 text-white titre">Vous êtes éligible à effectuer une demande d'avance spéciale.</span>
+	      						<?php else : ?>
+	      							<i class="fa fa-times fa-15x text-white"></i>
+	      							<span class="ml-3 titre text-white">Vous n'êtes pas éligible à effectuer une demande d'avance spéciale.</span>
+	      						<?php endif ?>
+							</div>
+							<div class="col-md-2">
+							</div>
+							<div class="col-md-4 text-right" id="filtre-droite" style="overflow: hidden; white-space: nowrap;">
+								<span class="text-important text-white">Filtre : </span>
+								<select class="select-time ml-3" id='selection-type'  style="font-size: 0.8em!important;">
+									<option value="3" selected="selected">tout</option>
+									<option value="1">demande en attente</option>
+									<option value="2">demande accordée</option>
+									<option value="0">demande rejetée</option>
+									<option value="4">demande archivée</option>
+								</select>
+							</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+	      		<div class="modal fade" id="modalEnvoi" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	    					<form method="POST" id="form" action="<?= HOST . 'manage/save-demandeAvance'?>" enctype="multipart/form-data" novalidate="novalidate">
+	    						<input type="hidden" name="idEmploye" value="<?=$_SESSION['user']['idEmploye']?>">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title" id="exampleModalLabel">Demande d'avance spéciale</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3" style="background: #efefff;">
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Montant : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+		        									<i class="fa fa-money-bill icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+								        			<input type="number" class="form-control" min="0" name="montant" id="montant" required="required" data-validation-required-message="Veuillez renseigner le montant" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;" placeholder="Le montant demandé">
+								                  	<p class="help-block text-danger"></p>
+								                </div>
+		        							</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Motif :</span>
+		        							</div>
+		        							<div class="col-md-8">
+			        							<div class="form-group">
+			        								<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+								        			<input type="text" class="form-control" name="motif" id="motif" required="required" data-validation-required-message="Veuillez indiquer le motif de la demande d'avance" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;" placeholder="Motif de l'avance">
+								                  	<p class="help-block text-danger"></p>
+			        							</div>
+			        						</div>
+		        						</div>
+		        						<hr>
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Mois du remboursement :</span>
+		        							</div>
+		        							<div class="col-md-8">
+			        							<div class="form-group">
+			        								<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+								        			<select class="form-control font-weight-bold" name="moisRemboursement" id="moisRemboursement" required="required" data-validation-required-message="Veuillez selectionner le mois de début de remboursement" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+			        									<option value="">Selectionnnez le mois</option>
+			        									<option value="1">Janvier</option>
+			        									<option value="2">Février</option>
+			        									<option value="3">Mars</option>
+			        									<option value="4">Avril</option>
+			        									<option value="5">Mai</option>
+			        									<option value="6">Juin</option>
+			        									<option value="7">Juillet</option>
+			        									<option value="8">Août</option>
+			        									<option value="9">Septembre</option>
+			        									<option value="10">Octobre</option>
+			        									<option value="11">Novembre</option>
+			        									<option value="12">Décembre</option>
+			        								</select>
+								                  	<p class="help-block text-danger"></p>
+			        							</div>
+			        						</div>
+		        						</div>
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Année du remboursement : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+		        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+								        			<input type="number" class="form-control" min="2020" name="anneeRemboursement" id="anneeRemboursement" required="required" data-validation-required-message="Veuillez renseigner l'année du mois de début du remboursement" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;" placeholder="L'année du remboursement">
+								                  	<p class="help-block text-danger"></p>
+								                </div>
+		        							</div>
+		        						</div>
+		        					</div>
+		      					</div>
+		      					<div class="modal-footer">
+		        					<div class="row" style="width: 105%!important;">
+							      		<div class="col-md-3">
+							      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submit" class="btn btn-md btn-info">
+							      					Enregistrer
+							      				</button>
+							      			</div>
+							      		</div>
+							      	</div>
+		      					</div>
+		      				</form>
+	    				</div>
+	  				</div>
+				</div>
+	      		<script>
+	      			const FILTER_GROUP_ALL     = 1;
+        			const FILTER_GROUP_SERVICE = 2;
+        			const FILTER_GROUP_POSTE   = 3;
+        			const FILTER_GROUP_EMPLOYE = 4;
+	      			$('document').ready(function(){
+      					$("#liste").load("<?= HOST . 'manage/demandeAvances'?>", {
+							groupe    : FILTER_GROUP_EMPLOYE,
+							id        : <?= $_SESSION['user']['idEmploye'] ?>,
+							type      : $('#selection-type').val()
+						});
+	      			});
+					$('#selection-type').change(function() {
+						$("#liste").load("<?= HOST . 'manage/demandeAvances'?>", {
+							groupe    : FILTER_GROUP_EMPLOYE,
+							id        : <?= $_SESSION['user']['idEmploye'] ?>,
+							type      : $('#selection-type').val()
+						});
+					});
+	      		</script>
+	      	<?php elseif ($_SESSION['compte']['identifiant'] == "employe" && $url[2] == "demandeAvanceQuinzaine") : ?>
+	      		<div class="row">
+					<div class="col-lg-12 text-center">
+	      				<div class="tete-list-section row" style="background: #647994;">
+	      					<div class="col-md-6" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+	      						<?php if ($isEligible != false) : ?>
+	      							<i class="fa fa-check fa-15x text-white"></i>
+	      							<span class="ml-3 text-white titre">Vous êtes éligible à effectuer une demande d'avance quinzaine.</span>
+	      						<?php else : ?>
+	      							<i class="fa fa-times fa-15x text-white"></i>
+	      							<span class="ml-3 titre text-white">Vous n'êtes pas éligible à effectuer une demande d'avance quinzaine.</span>
+	      						<?php endif ?>
+							</div>
+							<div class="col-md-2">
+							</div>
+							<div class="col-md-4 text-right" id="filtre-droite" style="overflow: hidden; white-space: nowrap;">
+								<span class="text-important text-white">Filtre : </span>
+								<select class="select-time ml-3" id='selection-type'  style="font-size: 0.8em!important;">
+									<option value="3" selected="selected">tout</option>
+									<option value="1">demande en attente</option>
+									<option value="2">demande accordée</option>
+									<option value="0">demande rejetée</option>
+									<option value="4">demande archivée</option>
+								</select>
+							</div>
+	      				</div>
+	      				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+	      				</div>
+	      			</div>
+	      		</div>
+	      		<div class="modal fade" id="modalEnvoiQuinzaine" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	    					<form method="POST" id="form" action="<?= HOST . 'manage/save-demandeAvanceQuinzaine'?>" enctype="multipart/form-data" novalidate="novalidate">
+	    						<input type="hidden" name="idEmploye" value="<?=$_SESSION['user']['idEmploye']?>">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title" id="exampleModalLabel">Demande d'avance quinzaine</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3" style="background: #efefff;">
+		        						<div class="row">
+		        							<div class="col-md-4">
+		        								<span class="titre">Montant : </span>
+		        							</div>
+		        							<div class="col-md-8">
+		        								<div class="form-group">
+		        									<i class="fa fa-money-bill icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+								        			<input type="number" class="form-control" min="0" name="montant" id="montant" required="required" data-validation-required-message="Veuillez renseigner le montant" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;" placeholder="Le montant demandé">
+								                  	<p class="help-block text-danger"></p>
+								                </div>
+		        							</div>
+		        						</div>
+		        					</div>
+		      					</div>
+		      					<div class="modal-footer">
+		        					<div class="row" style="width: 105%!important;">
+							      		<div class="col-md-3">
+							      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+							      		</div>
+							      		<div class="col-md-5"></div>
+							      		<div class="col-md-4">
+							      			<div class="form-group"> 
+							      				<button type="submit" id="submit" class="btn btn-md btn-info">
+							      					Enregistrer
+							      				</button>
+							      			</div>
+							      		</div>
+							      	</div>
+		      					</div>
+		      				</form>
+	    				</div>
+	  				</div>
+				</div>
+	      		<script>
+	      			const FILTER_GROUP_ALL     = 1;
+        			const FILTER_GROUP_SERVICE = 2;
+        			const FILTER_GROUP_POSTE   = 3;
+        			const FILTER_GROUP_EMPLOYE = 4;
+	      			$('document').ready(function(){
+      					$("#liste").load("<?= HOST . 'manage/demandeAvanceQuinzaines'?>", {
+							groupe    : FILTER_GROUP_EMPLOYE,
+							id        : <?= $_SESSION['user']['idEmploye'] ?>,
+							type      : $('#selection-type').val()
+						});
+	      			});
+					$('#selection-type').change(function() {
+						$("#liste").load("<?= HOST . 'manage/demandeAvanceQuinzaines'?>", {
+							groupe    : FILTER_GROUP_EMPLOYE,
+							id        : <?= $_SESSION['user']['idEmploye'] ?>,
+							type      : $('#selection-type').val()
+						});
+					});
+	      		</script>
+			<?php endif ?>
+		</div>
+	</div>
+</section>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabAvance.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabAvanceEmploye.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tabDetailAvance.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>
+<script>
+	$(function() {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+    });
+</script>

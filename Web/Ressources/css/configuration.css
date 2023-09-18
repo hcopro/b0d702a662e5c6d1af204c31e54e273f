@@ -1,0 +1,49 @@
+.block-doc-form{
+	background: #e1e5f0;
+	padding: 15px;
+	border-radius: 5px;
+	margin : -20px;
+	margin-top: 35px!important;
+}
+.block-doc-form .btn{
+	margin-top: 10px;
+	min-width: 120px;
+}
+.block-doc-form:hover{
+	background: #c8d0e4;
+}
+.text-doc{
+	width: 100%;
+}
+.invisible{
+	display: none;
+}
+.container-template{
+	border-radius: 5px;
+	padding: 25px;
+}
+.container-template ol>li{
+	font-weight: bold;
+	font-size: 1.1em;
+}
+.container-template td>b{
+	font-weight: 500;
+}
+.bloc-titre{
+	background: #c8d0e4;
+	padding: 15px;
+	border-radius: 5px;
+}
+#notification{
+	position: absolute; 
+	top: 30%; 
+	left: 50%;
+	width: 700px;
+	height: 200px;
+	font-size: 1.0em;
+	background: #c8d0e4;
+}
+.container-etat{
+	border-radius: 5px;
+	padding: 15px;
+}

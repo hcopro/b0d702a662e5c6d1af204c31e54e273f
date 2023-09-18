@@ -1,0 +1,363 @@
+<!-- <div class="menu-titre">
+  <button class="btn btn-sm btn-transparent text-dark text-left" id="btn-titre-1" type="button" data-toggle="collapse" data-target="#collapseMenu1" aria-expanded="false" aria-controls="collapseExample">
+    <i class="fa fa-caret-right fas" id="titre-1"></i>
+    <span class="ml-2">RECRUTEMENT</span>
+  </button>
+</div>
+<div class="collapse m-0 p-0" id="collapseMenu1">
+  <div class="m-0 p-0">
+    <div class="item menu-niv-1">
+        Offre
+    </div>
+    <div class="item menu-niv-2" id="item1">
+        <a class="lien-menu" href="<?= HOST; ?>manage/offres">Liste</a>
+    </div>
+    <div class="item menu-niv-2" id="item2">
+        <a class="lien-menu" href="<?= HOST; ?>manage/tableau_de_bord-offre">Tableau de bord</a>
+    </div>
+    <div class="item menu-niv-1">
+        Entretiens
+    </div>
+    <div class="item menu-niv-2" id="item3">
+        <a class="lien-menu" href="<?= HOST; ?>manage/entretiens">Liste</a>
+    </div>
+    <div class="item menu-niv-2" id="item4">
+        <a class='lien-menu' href="<?= HOST; ?>manage/niveaux_entretiens">Niveaux</a>
+    </div>
+    <div class="item menu-niv-2" id="item5">
+        <a class="lien-menu" href="<?= HOST; ?>manage/interlocuteurs">Interlocuteurs</a>
+    </div>
+  </div>
+</div>
+<div class="menu-titre">
+  <button class="btn btn-sm btn-transparent text-dark text-left" id="btn-titre-2" type="button" data-toggle="collapse" data-target="#collapseMenu2" aria-expanded="false" aria-controls="collapseExample">
+    <i class="fa fa-caret-right fas" id="titre-2"></i>
+    <span class="ml-2">GESTION</span>
+  </button>
+</div>
+<div class="collapse m-0 p-0" id="collapseMenu2">
+  <div class="m-0 p-0">
+    <div class="item menu-niv-1" id="item6">
+        <a class="lien-menu" href="<?= HOST; ?>manage/entreprise_services">Service</a>
+    </div>
+    <div class="item menu-niv-1" id="item7">
+        <a class="lien-menu" href="<?= HOST; ?>manage/entreprise_postes">Poste</a>
+    </div>
+    <div class="item menu-niv-1" id="item8">
+        <a class="lien-menu" href="<?= HOST; ?>manage/employes">Employés</a></li>
+    </div>
+    <div class="item menu-niv-1" id="item9">
+        <a class="lien-menu" href="<?= HOST; ?>manage/entreprise/contrat">Contrat</a>
+    </div>
+    <div class="item menu-niv-1" id="item14">
+        <a class="lien-menu" href="<?= HOST; ?>manage/entreprise/paie">Paie</a>
+    </div>
+    <div class="item menu-niv-1" id="item15">
+        <a class="lien-menu" href="<?= HOST; ?>manage/entreprise/avance">Avance</a>
+    </div>
+    <div class="item menu-niv-1" id="item10">
+        <a class="lien-menu" href="<?= HOST; ?>manage/entreprise/pointage/dashboard">Pointage</a>
+    </div>
+    <div class="item menu-niv-1" id="item11">
+        <a class="lien-menu" href="<?= HOST; ?>manage/entreprise/validation">Congé</a>
+    </div>
+    <div class="item menu-niv-1" id="item12">
+        <a class="lien-menu" href="<?= HOST; ?>manage/entreprise/interim">Intérimaire</a>
+    </div>
+    <div class="item menu-niv-1" id="item13">
+        <a class="lien-menu" href="<?= HOST; ?>manage/entreprise/formation">Formation</a>
+    </div>
+  </div>
+</div>
+<script src="<?= HOST; ?>../Web/Ressources/js/menuEntreprise.js"></script> -->
+
+
+
+
+
+
+
+<?php 
+    /** @changelog 02/12/2021 [EVOL] (Lansky) Dynamiser la liste des menus par entreprise */
+    /**
+     * Menu entreprise
+     *
+     * @author Lansky
+     *
+     * @since 02/12/2021 
+     */
+
+    use \Model\ManagerMenuEntreprise;
+
+    $manager        = new ManagerMenuEntreprise();
+     /**
+     * INTERDIT D'EFFACER CETTE TABLEAU CONTENANT DU MENU ENTREPRISE COMPLET
+       */ 
+/*      
+    echo "<pre>";
+        $res = array(
+        'entreprise' =>array(
+            'RECRUTEMENT' =>[
+                // "Entretiens"=>[
+                //     array(
+                //         "links"=>"manage/interlocuteurs",
+                //         "title"=> "Interlocuteurs"),
+                //     array(
+                //         "links"=>"manage/entretiens",
+                //         "title"=> "Liste"),
+                //     array(
+                //         "links"=>"manage/niveaux_entretiens",
+                //         "title"=> "Niveaux")
+                // ],
+                "Mes candidats"=>[
+                    array(
+                        "links"=>"manage/candidatures_entreprise",
+                        "title"=> "Candidatures"),
+                    array(
+                        "links"=>"manage/suiviCandidature",
+                        "title"=> "Suivi candidature")
+                ],
+                "Offres" =>[
+                    array(
+                        "links"=>"manage/offres",
+                        "title"=> "Liste"),
+                    array(
+                        "links"=>"manage/tableau_de_bord-offre",
+                        "title"=> "Tableau de bord")
+                ],
+                "Tests"=>[
+                    array(
+                        "links"=>"manage/tests",
+                        "title"=> "Mes tests"),
+                    array(
+                        "links"=>"manage/resultats",
+                        "title"=> "Résultat")
+                ]
+            ],
+            'GESTION'=>[
+                "Capital humain"=>[
+                    array(
+                        "links"=>"manage/entreprise/contrat",
+                        "title"=> "Contrat"),
+                    array(
+                        "links"=>"manage/employes",
+                        "title"=> "Employés"),
+                    array(
+                        "links"=>"manage/entreprise_postes",
+                        "title"=> "Poste"),
+                    array(
+                        "links"=>"manage/entreprise_services",
+                        "title"=> "Service"),
+                    "Formations"=>[
+                        array(
+                            "links"=>"manage/entreprise/formation",
+                            "title"=> "Catalogues de formations"),
+                        array(
+                            "links"=>"manage/entreprise/formateur",
+                            "title"=> "Catalogues de formateurs")
+                    ]
+                ],
+                "Temps & Absence"=>[
+                    "Gestion de pointage"=>[
+                        array(
+                            "links"=>"manage/entreprise/pointage/dashboard",
+                            "title"=> "Pointages"),
+                        array(
+                            "links"=>"manage/shift/dashboard",
+                            "title"=> "Shift"),
+                        array(
+                            "links"=>"manage/entreprise/tacheRealisee",
+                            "title"=> "Tâches réalisées")
+                    ],
+                    "Gestion d'absence" =>[
+                        array(
+                            "links"=>"manage/entreprise/permission/dashboard",
+                            "title"=> "Permission"),
+                        "Congé"=>[
+                            array(
+                                "links"=>"manage/entreprise/interim",
+                                "title"=> "Intérimaire"),
+                            array(
+                                "links"=>"manage/entreprise/conge",
+                                "title"=> "Gestion de congé"),
+                            array(
+                                "links"=>"manage/entreprise/planning",
+                                "title"=> "Planning de congés")
+                        ]
+                    ]
+                ],
+                "Paie & Prestations sociales"=>[
+                    array(
+                        "links"=>"manage/entreprise/avance",
+                        "title"=> "Avances"),
+                    array(
+                        "links"=>"manage/entreprise/paie",
+                        "title"=> "Paie")
+                ]
+            ] ,
+            'ÉVALUATION' => [
+                array(
+                    "links"=>"manage/entreprise/evaluation",
+                    "title"=> 'Mes évaluations'
+                ),
+                array(
+                    "links"=>"manage/entreprise/evaluation_modele",
+                    "title"=> 'Créer une évaluation'
+                ),
+                array(
+                    "links"=>"manage/entreprise/evaluation/categorie",
+                    "title"=> "Gérer mes formulaires d'évaluations"
+                )
+            ] ,
+            'BAROMETRE' => [
+                array(
+                    "links"=>"manage/barometre_list",
+                    "title"=> "Mes baromètres"
+                )
+            ]
+        ),
+            'employe' => array(
+                'GESTION'=>[
+                    "Paie & Prestations sociales"=>[
+                        array(
+                            "links"=>"manage/employe/demandeAvance",
+                            "title"=> "Avances"),
+                        array(
+                            "links"=>"manage/employe/detailFichePaie",
+                            "title"=> "Salaire")
+                    ],
+                    "Capital humain"=>[
+                        array(
+                            "links"=>"manage/show-monContrat",
+                            "title"=> "Contrat"),
+                        array(
+                            "links"=>"manage/employe/formationDisponible",
+                            "title"=> "Formation")
+                    ],
+                    "Temps et Absence"=>[
+                        array(
+                            "links"=>"manage/employe/conge",
+                            "title"=> "Congé"),
+                        array(
+                            "links"=>"manage/employe/pointage/dashboard",
+                            "title"=> "Pointage"),
+                        array(
+                            "links"=>"manage/employe/suivi/dashboard",
+                            "title"=> "Suivi"),
+                        array(
+                            "links"=>"manage/shift/dashboard",
+                            "title"=> "Planning")
+                    ]
+                ] ,
+                'ÉVALUATION' => [
+                    array(
+                        "links"=>"manage/employe/evaluation_valider",
+                        "title"=> 'Évaluation à valider'
+                    ),
+                    array(
+                        "links"=>"manage/employe/evaluation",
+                        "title"=> 'Mes évaluations'
+                    ),
+                    array(
+                        "links"=>"manage/employe/evaluation/archive",
+                        "title"=> "Mes archives"
+                    )        ] ,
+                'BAROMETRE' => [
+                    array(
+                        "links"=>"manage/employe/barometre?reply=NO",
+                        "title"=> "Mes baromètres"
+                    )
+                ]
+            )
+        );
+        var_dump(serialize($res)); 
+        var_dump($res); 
+        $manager->ajouter([
+        'id_entreprise' => 1,
+        'libelle' => "Grand complet les menus avec shift + graphe",
+        'containt' => serialize($res)
+        ]);
+        exit();
+
+*/   
+    $menus          = $manager->chercher(['id_entreprise'=>$_SESSION['user']['idEntreprise']]);
+    $indexMenu      = 0;
+    $indexSubMenu   = 0;
+    $incSubMenu     = 0;
+    $indiceSubMenu  = 0;
+    foreach ($menus->getContaint()['entreprise'] as $menu => $values) : $indexMenu++; ?>
+        <div class="menu-titre">
+            <button class="btn btn-sm btn-transparent text-dark text-left" id="btn-titre-<?= $indexMenu;?>" type="button" data-toggle="collapse" data-target="#collapseMenu<?= $indexMenu;?>" aria-expanded="false" aria-controls="collapseExample" onclick="changeCollapsed(this)">
+                <i class="fa fa-caret-right fas fa-cible" id="titre-<?= $indexMenu;?>"></i>
+
+                <span class="ml-2"><?= $menu; ?></span>
+            </button>
+        </div>
+        <div class="collapse m-0 p-0" id="collapseMenu<?= $indexMenu;?>">
+            <div class="m-0 p-0">
+                <?php foreach ($values as $keys => $subMenu) : 
+                    if (is_int($keys) && is_array($subMenu)) : ?>
+                        <div class="item menu-niv-1" id="item<?= $indexMenu.''.$keys;?>">
+                            <a class="lien-menu" href="<?= HOST.''.$subMenu['links']; ?>"><?= $subMenu['title']; ?></a>
+                        </div>
+                    <?php else : $indexSubMenu++; ?>
+                        <div class="menu-titre" style="padding: 5px 0px 3px 30px;">
+                            <button class="btn btn-sm btn-transparent text-dark text-left" id="btn-titre-<?= $indexMenu.''.$indexSubMenu;?>" type="button" data-toggle="collapse" data-target="#collapseMenu<?= $indexMenu.''.$indexSubMenu;?>" aria-expanded="false" aria-controls="collapseExample" style="color: #01063e!important;" onclick="changeCollapsed(this)">
+                                <i class="fa fa-caret-right fas fa-cible" id="titre-<?= $indexMenu.''.$indexSubMenu;?>"></i>
+                                <span class="ml-2"><?= $keys;?></span>
+                            </button>
+                        </div>
+                        <div class="collapse m-0 p-0" id="collapseMenu<?= $indexMenu.''.$indexSubMenu;?>">
+                            <div class="m-0 p-0">
+                                <?php foreach ($subMenu as $key => $value) : ?>
+                                    <?php if (is_int($key)) : ?>
+                                        <div class="item menu-niv-2" id="item<?= $indexMenu.''.$indexSubMenu.''.$key;?>">
+                                            <a class="lien-menu" href="<?= HOST.''.$value['links']; ?>"><?= $value['title']; ?></a>
+                                        </div>
+                                    <?php else : $incSubMenu++; ?>
+                                        <div class="menu-titre"  style="padding: 5px 0px 3px 40px;">
+                                            <button class="btn btn-sm btn-transparent text-dark text-left" id="btn-titre-<?= $indexMenu.''.$indexSubMenu.''.$incSubMenu;?>" type="button" data-toggle="collapse" data-target="#collapseMenu<?= $indexMenu.''.$indexSubMenu.''.$incSubMenu;?>" aria-expanded="false" aria-controls="collapseExample" style="color: #002e1d!important;" onclick="changeCollapsed(this)">
+                                                <i class="fa fa-caret-right fas fa-cible" id="titre-<?= $indexMenu.''.$indexSubMenu.''.$incSubMenu;?>"></i>
+                                                <span class="ml-2"><?= $key;?></span>
+                                            </button>
+                                        </div>
+                                        <div class="collapse m-0 p-0" id="collapseMenu<?= $indexMenu.''.$indexSubMenu.''.$incSubMenu;?>">
+                                            <div class="m-0 p-0">
+                                                <?php foreach ($value as $ke => $val) : ?>
+                                                    <?php if (is_int($ke)) : ?>
+                                                        <div class="item menu-niv-2" id="item<?= $indexMenu.''.$indexSubMenu.''.$incSubMenu.''.$ke;?>">
+                                                            <a class="lien-menu" href="<?= HOST.''.$val['links']; ?>"><?= $val['title']; ?></a>
+                                                        </div>
+                                                    <?php else : $indiceSubMenu++; ?>
+                                                        <div class="menu-titre"  style="padding: 5px 0px 3px 50px;">
+                                                            <button class="btn btn-sm btn-transparent text-dark text-left" id="btn-titre-<?= $indexMenu.''.$indexSubMenu.''.$incSubMenu.''.$indiceSubMenu;?>" type="button" data-toggle="collapse" data-target="#collapseMenu<?= $indexMenu.''.$indexSubMenu.''.$incSubMenu.''.$indiceSubMenu;?>" aria-expanded="false" aria-controls="collapseExample" style="color: #0f4987!important;" onclick="changeCollapsed(this)">
+                                                                <i class="fa fa-caret-right fas fa-cible" id="titre-<?= $indexMenu.''.$indexSubMenu.''.$incSubMenu.''.$indiceSubMenu;?>"></i>
+                                                                <span class="ml-2"><?= $ke; ?></span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="collapse m-0 p-0" id="collapseMenu<?= $indexMenu.''.$indexSubMenu.''.$incSubMenu.''.$indiceSubMenu;?>">
+                                                            <div class="m-0 p-0 col-l ">
+                                                                <?php foreach ($val as $k => $v) : ?>
+                                                                    <?php if (is_int($k)) : ?>
+                                                                        <div class="item menu-niv-3" id="item<?= $indexMenu.''.$indexSubMenu.''.$incSubMenu.''.$indiceSubMenu.''.$k;?>">
+                                                                            <a class="lien-menu" href="<?= HOST.''.$v['links']; ?>"><?= $v['title']; ?></a>
+                                                                        </div>
+                                                                    <?php endif; ?>
+                                                                <?php endforeach; ?>
+                                                            </div>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endforeach;?>
+<script src="<?= HOST; ?>../Web/Ressources/js/menuEntreprise.js"></script>
+

@@ -1,0 +1,604 @@
+<?xml version = "1.0" encoding="UTF-8" standalone="yes" ?>
+<routes>
+	<route url="manage/create-compte" module="compte" action="creerCompte" user="superadmin"></route>
+	<route url="manage/update-compte" module="compte" action="modifierCompte" user="superadmin"></route>
+	<route url="manage/archive-compte" module="compte" action="modifierCompte" user="superadmin"></route>
+	<route url="manage/update-password" module="compte" action="modifierPassword"></route>
+	<route url="manage/edit-pseudo" module="compte" action="afficherForm"></route>
+	<route url="manage/save-pseudo" module="compte" action="modifierCompte"></route>
+
+	<route url="manage/superadmins" module="compte" action="lister" user="superadmin"></route>
+	<route url="manage/register-superadmin" module="compte" action="afficherForm" user="superadmin"></route>
+	<route url="manage/edit-superadmin" module="compte" action="afficherForm" user="superadmin"></route>
+	<route url="manage/save-superadmin" module="compte" action="mettreAJour" user="superadmin"></route>
+	<route url="manage/delete-superadmin" module="compte" action="supprimer" user="superadmin"></route>
+	<route url="manage/superadmin/dashboard" module="compte" action="voirProfil" user="superadmin"></route>
+	<route url="manage/superadmin" module="compte" action="voirDetail" user="superadmin"></route>
+
+	<route url="manage/activeEntreprises" module="compte" action="lister" user="superadmin"></route>
+	<route url="manage/inactiveEntreprises" module="compte" action="lister" user="superadmin"></route>
+	<route url="manage/archiveEntreprises" module="compte" action="lister" user="superadmin"></route>
+	<route url="manage/edit-entreprise" module="compte" action="afficherForm" user="entreprise"></route>
+	<route url="manage/save-entreprise" module="compte" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/entreprise/dashboard" module="compte" action="voirProfil" user="entreprise"></route>
+	<route url="manage/entreprise" module="compte" action="voirDetail" user="superadmin"></route>
+
+	<route url="manage/activeCandidats" module="compte" action="lister" user="superadmin"></route>
+	<route url="manage/archiveCandidats" module="compte" action="lister" user="superadmin"></route>
+	<route url="manage/suggest_candidats" module="recrutement" action="lister" user="entreprise"></route>
+	<route url="manage/edit-candidat" module="compte" action="afficherForm" user="candidat"></route>
+	<route url="manage/save-candidat" module="compte" action="mettreAJour" user="candidat"></route>
+	<route url="manage/edit-photo" module="compte" action="photoUpdate" user=""></route>
+	<route url="manage/update-personnalite" module="compte" action="mettreAJour" user=""></route>
+	<route url="manage/candidat/dashboard" module="compte" action="voirProfil" user="candidat"></route>
+	<route url="manage/creerCV" module="compte" action="creerCV" user="candidat"></route>
+	<route url="manage/candidat" module="compte" action="voirDetail" user="superadmin"></route>
+	<route url="manage/cv_candidat" module="recrutement" action="voirDetail" user="entreprise"></route>
+	<route url="manage/cv_candidature" module="recrutement" action="voirDetail" user=""></route>
+	<route url="manage/edit-personnalite_candidat" module="compte" action="afficherFormPersonnalite" user="candidat"></route>
+	<route url="manage/publish-candidat" module="compte" action="mettreAJourPubliqueCandidat" user="candidat"></route>
+
+	<route url="manage/emails_contacts" module="compte" action="lister" user="superadmin"></route>
+	<route url="manage/create-email_contact" module="compte" action="afficherForm" user="superadmin"></route>
+	<route url="manage/save-email_contact" module="compte" action="mettreAJour" user="superadmin"></route>
+	<route url="manage/update-email_contact" module="compte" action="afficherForm" user="superadmin"></route>
+	<route url="manage/delete-email_contact" module="compte" action="supprimer" user="superadmin"></route>
+
+	<route url="manage/historiques" module="compte" action="lister" user="superadmin"></route>
+	<route url="manage/historique" module="compte" action="voirDetail" user="superadmin"></route>
+
+	<route url="manage/employes" module="employe" action="lister" user="entreprise"></route>
+	<route url="manage/employes/debache" module="employe" action="lister" user="entreprise"></route>
+	<route url="manage/create-employee" module="compte" action="creerCompte" user="entreprise"></route>
+	<route url="manage/register-employe" module="employe" action="afficherForm" user="entreprise"></route>
+	<route url="manage/update-employe" module="employe" action="afficherFormUpdate"></route>
+	<route url="manage/send-compte" module="employe" action="send" user="entreprise"></route>
+	<route url="manage/save-employe" module="employe" action="mettreAJour"></route>
+	<route url="manage/download-template" module="employe" action="exportxlx"></route>
+	<route url="manage/import-employe" module="employe" action="import"></route>
+	<route url="manage/cancel-employe" module="employe" action="cancelSave"></route>
+	<route url="manage/employe" module="employe" action="voirDetail" user="entreprise"></route>
+	<route url="manage/employe/dashboard" module="compte" action="voirProfil" user="employe"></route>
+	<route url="manage/hasSubordonne" module="employe" action="hasSubordonne" user="employe"></route>
+	<route url="manage/makeNumberToLetter" module="employe" action="getLetterJson" user=""></route>
+
+	<route url="manage/edit-compte_banque" module="employe" action="afficherFormUpdate" user="entreprise"></route>
+	<route url="manage/save-compte_banque" module="employe" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/cancel-compte_banque" module="employe" action="cancelSave" user="entreprise"></route>
+
+	<route url="manage/domaines" module="recrutement" action="lister" user="superadmin"></route>
+	<route url="manage/domaine" module="recrutement" action="voirDetail" user="superadmin"></route>
+	<route url="manage/create-domaine" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/update-domaine" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/save-domaine" module="recrutement" action="mettreAJour" user="superadmin"></route>
+	<route url="manage/delete-domaine" module="recrutement" action="supprimerExcept" user="superadmin"></route>
+
+	<route url="manage/create-sousdomaine" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/update-sousdomaine" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/save-sousdomaine" module="recrutement" action="mettreAJour" user="superadmin"></route>
+	<route url="manage/delete-sousdomaine" module="recrutement" action="supprimerExcept" user="superadmin"></route>
+
+	<route url="manage/niveaux_experiences" module="recrutement" action="lister" user="superadmin"></route>
+	<route url="manage/create-niveau_experience" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/update-niveau_experience" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/save-niveau_experience" module="recrutement" action="mettreAJour" user="superadmin"></route>
+	<route url="manage/delete-niveau_experience" module="recrutement" action="supprimerExcept" user="superadmin"></route>
+
+	<route url="manage/niveaux_etudes" module="recrutement" action="lister" user="superadmin"></route>
+	<route url="manage/create-niveau_etude" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/update-niveau_etude" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/save-niveau_etude" module="recrutement" action="mettreAJour" user="superadmin"></route>
+	<route url="manage/delete-niveau_etude" module="recrutement" action="supprimerExcept" user="superadmin"></route>
+
+	<route url="manage/contrats" module="recrutement" action="lister" user="superadmin"></route>
+	<route url="manage/create-contrat" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/update-contrat" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/save-contrat" module="recrutement" action="mettreAJour" user="superadmin"></route>	
+	<route url="manage/delete-contrat" module="recrutement" action="supprimerExcept" user="superadmin"></route>
+
+	<route url="manage/personnalites" module="recrutement" action="lister" user="superadmin"></route>
+	<route url="manage/create-personnalite" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/update-personnalite" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/save-personnalite" module="recrutement" action="mettreAJour" user="superadmin"></route>
+	<route url="manage/delete-personnalite" module="recrutement" action="supprimerExcept" user="superadmin"></route>
+
+	<route url="manage/services" module="recrutement" action="lister" user="superadmin"></route>
+	<route url="manage/create-service" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/update-service" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/save-service" module="recrutement" action="mettreAJour" user="superadmin"></route>
+	<!-- <route url="manage/delete-service" module="recrutement" action="supprimerExcept" user=""></route> NE PAS LAISSER ENTREPRISE SUPPRIMER POUR L'INSTANT -->
+	<route url="manage/delete-service" module="recrutement" action="supprimerExcept" user="superadmin"></route>
+	<route url="manage/entreprise_services" module="recrutement" action="lister" user=""></route>
+	<route url="manage/entreprise_service" module="recrutement" action="voirDetail" user=""></route>
+	<route url="manage/create-entreprise_service" module="recrutement" action="afficherForm" user=""></route>
+	<route url="manage/update-entreprise_service" module="recrutement" action="afficherForm" user=""></route>
+	<route url="manage/save-entreprise_service" module="recrutement" action="mettreAJour" user=""></route>
+
+	<route url="manage/create-service_poste" module="recrutement" action="afficherForm" user="entreprise"></route>
+	<route url="manage/update-service_poste" module="recrutement" action="afficherForm" user="entreprise"></route>
+	<route url="manage/save-service_poste" module="recrutement" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/delete-service_poste" module="recrutement" action="supprimer" user="entreprise"></route>
+
+	<route url="manage/postes" module="recrutement" action="lister" user="superadmin"></route>
+	<route url="manage/create-poste" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/update-poste" module="recrutement" action="afficherForm" user="superadmin"></route>
+	<route url="manage/save-poste" module="recrutement" action="mettreAJour" user="superadmin"></route>
+	<route url="manage/delete-poste" module="recrutement" action="supprimerExcept" user="superadmin"></route>
+	<route url="manage/entreprise_postes" module="recrutement" action="lister" user=""></route>
+	<route url="manage/create-entreprise_poste" module="recrutement" action="afficherForm" user=""></route>
+	<route url="manage/update-entreprise_poste" module="recrutement" action="afficherForm" user=""></route>
+	<route url="manage/save-entreprise_poste" module="recrutement" action="mettreAJour" user=""></route>
+	<route url="manage/entreprise_poste" module="recrutement" action="voirDetail" user=""></route>
+
+	<route url="manage/formations" module="recrutement" action="lister" user="candidat"></route>
+	<route url="manage/create-formation" module="recrutement" action="afficherForm" user="candidat"></route>
+	<route url="manage/update-formation" module="recrutement" action="afficherForm" user="candidat"></route>
+	<route url="manage/save-formation" module="recrutement" action="mettreAJour" user="candidat"></route>
+	<route url="manage/delete-formation" module="recrutement" action="supprimer" user="candidat"></route>
+
+	<route url="manage/logiciel" module="compte" action="lister" user="candidat"></route>
+	<route url="manage/create-logiciel" module="compte" action="mettreAJour" user="candidat"></route>
+	<route url="manage/candidat/update-logiciel" module="compte" action="mettreAJour" user="candidat"></route>
+	<route url="manage/delete-logiciel" module="compte" action="supprimer" user="candidat"></route>
+
+	<route url="manage/centre_interet" module="compte" action="lister" user="candidat"></route>
+	<route url="manage/create-centre_interet" module="compte" action="createCentreInteret" user="candidat"></route>
+	<route url="manage/update-centre_interet" module="compte" action="mettreAJour" user="candidat"></route>
+	<route url="manage/delete-centre_interet" module="compte" action="supprimer" user="candidat"></route>
+
+	<route url="manage/langues" module="compte" action="lister" user="candidat"></route>
+	<route url="manage/create-langue" module="compte" action="createLangue" user="candidat"></route>
+	<route url="manage/update-langue" module="compte" action="mettreAJour" user="candidat"></route>
+	<route url="manage/save-langue" module="compte" action="mettreAJour" user="candidat"></route>
+	<route url="manage/delete-langue" module="compte" action="supprimer" user="candidat"></route>
+
+	<route url="manage/diplomes" module="recrutement" action="lister" user="candidat"></route>
+	<route url="manage/create-diplome" module="recrutement" action="afficherForm" user="candidat"></route>
+	<route url="manage/update-diplome" module="recrutement" action="afficherForm" user="candidat"></route>
+	<route url="manage/save-diplome" module="recrutement" action="mettreAJour" user="candidat"></route>
+	<route url="manage/delete-diplome" module="recrutement" action="supprimer" user="candidat"></route>
+
+	<route url="manage/experiences" module="recrutement" action="lister" user="candidat"></route>
+	<route url="manage/create-experience" module="recrutement" action="afficherForm" user="candidat"></route>
+	<route url="manage/update-experience" module="recrutement" action="afficherForm" user="candidat"></route>
+	<route url="manage/save-experience" module="recrutement" action="mettreAJour" user="candidat"></route>
+	<route url="manage/delete-experience" module="recrutement" action="supprimer" user="candidat"></route> 
+
+	<route url="manage/create-experience-candidat" module="compte" action="createExperienceCandidat" user="candidat"></route>
+	<route url="manage/update-experience-candidat" module="compte" action="mettreAJour" user="candidat"></route> 
+	<route url="manage/delete-experience-candidat" module="compte" action="supprimer" user="candidat"></route> 
+	<route url="manage/create-formation-candidat" module="compte" action="createFormationCandidat" user="candidat"></route> 
+	<route url="manage/update-formation-candidat" module="compte" action="mettreAJour" user="candidat"></route>
+	<route url="manage/delete-formation-candidat" module="compte" action="supprimer" user="candidat"></route>
+	
+	<route url="manage/offres" module="recrutement" action="lister" user=""></route>
+	<route url="manage/suggest_offres" module="recrutement" action="lister" user="candidat"></route>
+	<route url="manage/offre" module="recrutement" action="voirDetail"></route>
+	<route url="manage/offreCandidature" module="recrutement" action="voirDetail"></route>
+	<route url="manage/create-offre" module="recrutement" action="afficherForm" user=""></route>
+	<route url="manage/create-newOffre" module="recrutement" action="afficherForm" user=""></route>
+	<route url="manage/update-offre" module="recrutement" action="afficherForm" user=""></route>
+	<route url="manage/save-offre" module="recrutement" action="mettreAJour" user=""></route>
+	<route url="manage/save-newOffre" module="recrutement" action="mettreAJour" user=""></route>
+	<route url="manage/actualize-offre" module="recrutement" action="mettreAJourOffre" user=""></route>
+	<route url="manage/delete-offre" module="recrutement" action="supprimerExcept" user=""></route>
+
+	<route url="manage/candidatures" module="recrutement" action="lister" user="candidat"></route>
+	<route url="manage/offre_candidatures" module="recrutement" action="lister" user="entreprise"></route>
+	<route url="manage/create-candidature" module="recrutement" action="mettreAJourCandidature" user="candidat"></route>
+	<route url="manage/create-candidatureEntreprise" module="recrutement" action="mettreAJourCandidature" user="candidat"></route>
+	<route url="manage/accept-candidature" module="recrutement" action="mettreAJourCandidature" user="entreprise"></route>
+	<!-- <route url="manage/set-candidature" module="recrutement" action="mettreAJourCandidature" user="entreprise"></route> -->
+	<route url="manage/refuse-candidature" module="recrutement" action="mettreAJourCandidature" user="entreprise"></route>
+	<route url="manage/candidatures_entreprise" module="recrutement" action="lister" user=""></route>
+	<route url="manage/archived-candidature" module="recrutement" action="archiver" user="entreprise"></route>
+
+	<route url="manage/commentaire" module="recrutement" action="lister" user=""></route>
+	<route url="manage/save-commentaire" module="recrutement" action="mettreAJour" user=""></route>
+	<route url="manage/comment" module="recrutement" action="lister" user=""></route>
+	<route url="manage/exportComment" module="recrutement" action="lister" user=""></route>
+	<route url="manage/delete-commentaire" module="recrutement" action="supprimerExcept" user=""></route>
+
+	<route url="manage/save-attribution" module="recrutement" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/entretiens" module="recrutement" action="lister" user=""></route>
+	<route url="manage/create-entretien" module="recrutement" action="afficherForm" user="entreprise"></route>
+	<route url="manage/edit-entretien" module="recrutement" action="afficherForm" user="entreprise"></route>
+	<route url="manage/next_level-entretien" module="recrutement" action="afficherForm" user="entreprise"></route>
+	<route url="manage/save-entretien" module="recrutement" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/validate-entretien" module="recrutement" action="mettreAJourEntretien" user="entreprise"></route>
+	<route url="manage/reject-entretien" module="recrutement" action="mettreAJourEntretien" user="entreprise"></route>
+	<route url="manage/cancel-entretien" module="recrutement" action="mettreAJourEntretien" user="entreprise"></route>
+
+	<route url="manage/niveaux_entretiens" module="recrutement" action="lister" user="entreprise"></route>
+	<route url="manage/niveau_entretien" module="recrutement" action="voirDetail" user="entreprise"></route>
+	<route url="manage/create-niveau_entretien" module="recrutement" action="afficherForm" user="entreprise"></route>
+	<route url="manage/update-niveau_entretien" module="recrutement" action="afficherForm" user="entreprise"></route>
+	<route url="manage/save-niveau_entretien" module="recrutement" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/delete-niveau_entretien" module="recrutement" action="supprimerExcept" user="entreprise"></route>
+
+	<route url="manage/interlocuteurs" module="recrutement" action="lister" user=""></route>
+	<route url="manage/interlocuteurRecrutement" module="recrutement" action="lister" user="entreprise"></route>
+	<route url="manage/create-interlocuteur" module="recrutement" action="afficherForm" user=""></route>
+	<route url="manage/update-interlocuteur" module="recrutement" action="afficherForm" user=""></route>
+	<route url="manage/save-interlocuteur" module="recrutement" action="mettreAJour" user=""></route>
+	<route url="manage/delete-interlocuteur" module="recrutement" action="supprimerExcept" user=""></route>
+	
+	<route url="manage/tests" module="recrutement" action="lister" user="entreprise"></route>
+ 	<route url="manage/testCandidate/csv_file" module="recrutement" action="upload" user="entreprise"></route>
+
+	<route url="manage/save-interlocuteur_niveau_entretien" module="recrutement" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/delete-interlocuteur_niveau_entretien" module="recrutement" action="supprimer" user="entreprise"></route>
+
+	<route url="manage/tableau_de_bord-offre" module="recrutement" action="parametrerGraphe" user="entreprise"></route>
+	<route url="manage/suiviCandidature" module="recrutement" action="lister" user=""></route>
+	<route url="manage/tableau_de_bord-entretien" module="recrutement" action="parametrerGraphe" user="entreprise"></route>
+	<route url="manage/tableau_de_bord-interlocuteur" module="recrutement" action="parametrerGraphe" user="entreprise"></route>
+
+	<route url="manage/recover-data" module="recrutement" action="recupererDonnees" user="entreprise"></route>
+
+	<route url="manage/banques" module="employe" action="lister" user="superadmin"></route>
+	<route url="manage/create-banque" module="employe" action="afficherForm" user="superadmin"></route>
+	<route url="manage/update-banque" module="employe" action="afficherForm" user="superadmin"></route>
+	<route url="manage/save-banque" module="employe" action="mettreAJour" user="superadmin"></route>
+
+	<route url="manage/categorieProfessionnelles" module="employe" action="lister" user="superadmin"></route>
+	<route url="manage/create-categorieProfessionnelle" module="employe" action="afficherForm" user="superadmin"></route>
+	<route url="manage/update-categorieProfessionnelle" module="employe" action="afficherForm" user="superadmin"></route>
+	<route url="manage/save-categorieProfessionnelle" module="employe" action="mettreAJour" user="superadmin"></route>
+	<route url="manage/cancel-categorieProfessionnelle" module="employe" action="cancelSave" user="superadmin"></route> 
+	<route url="manage/delete-categorieProfessionnelle" module="employe" action="deleteCategorieProfessionnelle"></route>
+
+	<route url="manage/contratEmployes" module="contrat" action="lister" user="entreprise"></route>
+	<route url="manage/entreprise/contrat" module="contrat" action="voir" user="entreprise"></route>
+	<route url="manage/entreprise/templateContrat" module="contrat" action="voir" user="entreprise"></route>
+	<route url="manage/admin/templateContrat" module="contrat" action="voir" user="superadmin"></route>
+	<route url="manage/entreprise/parametreContrat" module="contrat" action="voir" user="entreprise"></route>
+
+	<route url="manage/update-contratEmploye" module="contrat" action="afficherFormUpdate" user="entreprise"></route>
+	<route url="manage/save-contratEmploye" module="contrat" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/save-renouvellement" module="contrat" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/imprimerContrat" module="contrat" action="imprimerContrat" user="entreprise"></route>
+	<route url="manage/delete-contratEmploye" module="contrat" action="deleteContratEmploye" user="entreprise"></route> 
+	<route url="manage/show-historiqueContrat" module="contrat" action="afficherFormUpdate" user="entreprise"></route>
+	<route url="manage/getPostes" module="employe" action="getPostes" user="entreprise"></route>
+
+	<route url="manage/show-monContrat" module="contrat" action="afficherMonContrat" user="employe"></route>
+	<route url="manage/show-monHistoriqueContrat" module="contrat" action="afficherMonContrat" user="employe"></route>
+
+	<route url="manage/save-configuration" module="contrat" action="mettreAJourConfiguration" user=""></route>
+	<route url="manage/switchAlerte" module="contrat" action="switcherAlerte" user="entreprise"></route>
+
+	<route url="manage/jourFeries" module="presence" action="lister" user="superadmin"></route>
+	<route url="manage/create-jourFerie" module="presence" action="afficherForm" user="superadmin"></route>
+	<route url="manage/update-jourFerie" module="presence" action="afficherForm" user="superadmin"></route>
+	<route url="manage/save-jourFerie" module="presence" action="mettreAJour" user="superadmin"></route>
+	<route url="manage/cancel-jourFerie" module="presence" action="cancelSave" user="superadmin"></route>
+	<route url="manage/delete-jourFerie" module="presence" action="supprimer" user="superadmin"></route>
+
+	<route url="manage/permissions" module="presence" action="lister" user="superadmin"></route>
+	<route url="manage/create-permission" module="presence" action="afficherForm" user="superadmin"></route>
+	<route url="manage/update-permission" module="presence" action="afficherForm" user="superadmin"></route>
+	<route url="manage/save-permission" module="presence" action="mettreAJour" user="superadmin"></route>
+	<route url="manage/cancel-permission" module="presence" action="cancelSave" user="superadmin"></route>
+	<route url="manage/delete-permission" module="presence" action="supprimer" user="superadmin"></route>
+	<route url="manage/save-entreprisePermission" module="presence" action="mettreAJour" user="entreprise"></route>
+
+	<route url="manage/employe/pointage/dashboard" module="presence" action="voirTemps" user="employe"></route>
+	<route url="manage/employe/suivi/dashboard" module="presence" action="voirSuivi" user="employe"></route>
+	<route url="manage/entreprise/suivi/dashboard" module="presence" action="voirSuivi" user="entreprise"></route>
+	<route url="manage/entreprise/pointage/dashboard" module="presence" action="voirTemps" user="entreprise"></route>
+	<route url="manage/entreprise/tacheRealisee" module="presence" action="voirTemps" user="entreprise"></route>
+	<route url="manage/entreprise/permission/dashboard" module="presence" action="voirTemps" user="entreprise"></route>
+	<route url="manage/employe/permission/dashboard" module="presence" action="voirTemps" user="employe"></route>
+	<route url="manage/entreprise/parametre/permission" module="presence" action="voirTemps" user="entreprise"></route>
+	<route url="manage/entreprise/repos/dashboard" module="presence" action="voirTemps" user="entreprise"></route>
+	<route url="manage/entreprise/retard/dashboard" module="presence" action="voirTemps" user="entreprise"></route>
+	<route url="manage/employe/retard/dashboard" module="presence" action="voirTemps" user="employe"></route>
+
+	<route url="manage/entreprise/jourFerie" module="presence" action="voirTemps" users="entreprise"></route>
+	<route url="manage/increment-permission" module="presence" action="increment" user="entreprise"></route>
+	<route url="manage/decrement-permission" module="presence" action="decrement" user="entreprise"></route>
+	<route url="manage/increment-dureeMaxPermission" module="presence" action="increment" user="entreprise"></route>
+	<route url="manage/decrement-dureeMaxPermission" module="presence" action="decrement" user="entreprise"></route>
+	<route url="manage/increment-dureeMaxRepos" module="presence" action="increment" user="entreprise"></route>
+	<route url="manage/decrement-dureeMaxRepos" module="presence" action="decrement" user="entreprise"></route>
+
+	<route url="manage/save-tache" module="presence" action="mettreAJour" user="employe"></route>
+	<route url="manage/update-tache" module="presence" action="voirTemps" user="employe"></route>
+	<route url="manage/delete-tache" module="presence" action="supprimer" user="employe"></route>
+
+	<route url="manage/save-pointage" module="presence" action="mettreAJour" user="employe"></route>
+	<route url="manage/save-parametrePointage" module="presence" action="mettreAJour" user="entreprise"></route>
+
+	<route url="manage/journees" module="presence" action="lister"></route>
+	<route url="manage/pointages" module="presence" action="lister" user="entreprise"></route>
+	<route url="manage/retards" module="presence" action="lister" user=""></route>
+	<route url="manage/tacheRealisee" module="presence" action="lister" user="entreprise"></route>
+	<route url="manage/entrepriseFeries" module="presence" action="lister" user="entreprise"></route>
+	<route url="manage/suivis" module="presence" action="lister" user=""></route>
+	<route url="manage/statistiques" module="presence" action="lister" user="entreprise"></route>
+
+	<route url="manage/save-entrepriseFerie" module="presence" action="mettreAJour"></route>
+	<route url="manage/delete-entrepriseFerie" module="presence" action="supprimer"></route>
+
+	<route url="manage/demandePermissions" module="presence" action="lister" user=""></route>
+	<route url="manage/valider-demandePermission" module="presence" action="valider" user=""></route>
+	<route url="manage/rejeter-demandePermission" module="presence" action="rejeter" user=""></route>
+	<route url="manage/delete-demandePermission" module="presence" action="supprimer"></route>
+	<route url="manage/save-employePermission" module="presence" action="mettreAJour"></route>
+	<route url="manage/validation-permission" module="presence" action="lister" user=""></route>
+
+	<route url="manage/demandeRepos" module="presence" action="lister" user="entreprise"></route>
+	<route url="manage/valider-demandeRepos" module="presence" action="valider" user="entreprise"></route>
+	<route url="manage/rejeter-demandeRepos" module="presence" action="rejeter" user="entreprise"></route>
+	<route url="manage/delete-demandeRepos" module="presence" action="supprimer"></route>
+	<route url="manage/save-employeRepos" module="presence" action="mettreAJour"></route>
+	
+	<route url="manage/permissionPossibles" module="presence" action="getPermissionPossibles"></route>
+	<route url="manage/reposPossibles" module="presence" action="getReposPossibles"></route>
+	<route url="manage/setTimeWorked" module="presence" action="getWorkTimer" user =""></route>
+	<route url="manage/tracking" module="presence" action="trackingTask" user =""></route>
+	<route url="manage/tracking/currentTask" module="presence" action="trackingTask" user =""></route>
+	<route url="manage/getMySubordinates" module="presence" action="mySubordinate" user =""></route>
+	
+	<route url="manage/shift/dashboard" module="presence" action="voirShift" user =""></route>
+	<route url="manage/addNew-campaign" module="presence" action="shiftJson" user =""></route>
+	<route url="manage/add-shift" module="presence" action="shiftJson" user =""></route>
+	<route url="manage/update-shift" module="presence" action="shiftJson" user =""></route>
+	<route url="manage/delete-shift" module="presence" action="shiftJson" user =""></route>
+	<route url="manage/delete-campaign" module="presence" action="shiftJson" user =""></route>
+	<route url="manage/update-campaign" module="presence" action="shiftJson" user =""></route>
+	<route url="manage/getCampaignResponse" module="presence" action="shiftJson" user =""></route>
+	<route url="manage/getAllworker" module="presence" action="getAllworkerJson" user =""></route>
+	<route url="manage/exportExcel-tracking" module="presence" action="export" user =""></route>
+	<route url="manage/exportExcel-allUserTask" module="presence" action="export" user =""></route>
+
+	<route url="manage/show-messages" module="compte" action="voirMessage" ></route>
+	<route url="manage/marquer-message" module="compte" action="marquerMessage" ></route>
+	<route url="manage/archiver-message" module="compte" action="archiverMessage" ></route>
+	<route url="manage/restaurer-message" module="compte" action="restaurerMessage" ></route>
+	<route url="manage/messages" module="compte" action="lister"></route>
+	<route url="manage/nouveauMessage" module="compte" action="verifierNouveauMessage"></route>
+
+	<route url="manage/entreprise/planning" module="conge" action="voirPlanning" user="entreprise"></route>
+	<route url="manage/entreprise/datePlanning" module="conge" action="voir" user="entreprise"></route>
+	<route url="manage/entreprise/employePlanning" module="conge" action="voir" user="entreprise"></route>
+	<route url="manage/entreprise/contenuPlanning" module="conge" action="voir" user="entreprise"></route>
+	<route url="manage/collaborater/planning" module="conge" action="voirPlanning" user="employe"></route>
+	<route url="manage/collaborater/datePlanning" module="conge" action="voir" user="employe"></route>
+	<route url="manage/collaborater/employePlanning" module="conge" action="voir" user="employe"></route>
+	<route url="manage/collaborater/contenuPlanning" module="conge" action="voir" user="employe"></route>
+
+	<route url="manage/employe/conge" module="conge" action="voir" user="employe"></route>
+	<route url="manage/employe/congeCollaborateur" module="conge" action="voir" user="employe"></route>
+	<route url="manage/save-demandeConge" module="conge" action="mettreAJour"></route>
+	<route url="manage/delete-demandeConge" module="conge" action="supprimer"></route>
+	<route url="manage/annuler-demandeConge" module="conge" action="annuler"></route>
+	<route url="manage/archiver-demandeConge" module="conge" action="archiver" user="employe"></route>
+	<route url="manage/restaurer-demandeConge" module="conge" action="restaurer" user="employe"></route>
+	<route url="manage/rappeler-demandeConge" module="conge" action="rappeler" user="employe"></route>
+	<route url="manage/congeDisponible" module="conge" action="verifierCongeDisponible"></route>
+	<route url="manage/demandeConges" module="conge" action="lister" user="employe"></route>
+	<route url="manage/save-employeConge" module="conge" action="mettreAJour" user="employe"></route> 
+
+	<route url="manage/historiqueConge" module="conge" action="voir" user=""></route>
+	<route url="manage/employe/historiqueConge" module="conge" action="voir" user="employe"></route>
+	<route url="manage/employe/validation" module="conge" action="voir" user="employe"></route>
+	<route url="manage/validationConges" module="conge" action="lister" user="employe"></route> 
+	<route url="manage/valider-annulationConge" module="conge" action="valider"></route>
+	<route url="manage/valider-validationConge" module="conge" action="valider"></route>
+	<route url="manage/valider-revalidationConge" module="conge" action="valider"></route>
+	<route url="manage/rejeter-validationConge" module="conge" action="rejeter"></route>
+	<route url="manage/archiver-validationConge" module="conge" action="archiver"></route>
+	<route url="manage/restaurer-validationConge" module="conge" action="restaurer"></route>
+
+	<route url="manage/entreprise/validation" module="conge" action="voir" user="entreprise"></route>
+	<route url="manage/entreprise/conge" module="conge" action="voir" user="entreprise"></route>
+	<route url="manage/parametre/conge" module="conge" action="voir" user="entreprise"></route>
+	<route url="manage/conges" module="conge" action="lister" user=""></route>
+	<route url="manage/get-stockConge" module="conge" action="get" user="entreprise"></route>
+	<route url="manage/save-stockConge" module="conge" action="mettreAJour" user="entreprise"></route>
+
+	<route url="manage/tachePlanifiees" module="conge" action="voirTachePlanifiee" user="superadmin"></route>
+	<route url="manage/save-tachePlanifiee" module="conge" action="mettreAJour" user="superadmin"></route>
+	<route url="manage/delete-tachePlanifiee" module="conge" action="supprimer" user="superadmin"></route>
+	<route url="manage/activer-tachePlanifiee" module="conge" action="activer" user="superadmin"></route>
+	<route url="manage/desactiver-tachePlanifiee" module="conge" action="desactiver" user="superadmin"></route>
+	<route url="manage/get-tachePlanifiee" module="conge" action="get" user="superadmin"></route>
+
+	<route url="manage/activer-attenteConge" module="conge" action="activer" user="entreprise"></route>
+	<route url="manage/desactiver-attenteConge" module="conge" action="desactiver" user="entreprise"></route>
+	<route url="manage/changer-processusConge" module="conge" action="changer" user="entreprise"></route>
+	<route url="manage/changer-calculConge" module="conge" action="changer" user="entreprise"></route>
+	<route url="manage/changer-parametreConge" module="conge" action="changer" user="entreprise"></route>
+	<route url="manage/changer-autoriserDemandeConge" module="conge" action="changer" user=""></route>
+
+	<route url="manage/organigramme" module="compte" action="voirOrganigramme" user="entreprise"></route>
+	<route url="manage/get-dataOrganigramme" module="compte" action="get" user="entreprise"></route>
+
+	<route url="manage/interims" module="interim" action="lister" user="entreprise"></route>
+	<route url="manage/entreprise/interim" module="interim" action="voir" user="entreprise"></route>
+	<route url="manage/employe/interim" module="interim" action="voir" user="employe"></route>
+	<route url="manage/entreprise/evaluationInterim" module="interim" action="voir" user="entreprise"></route>
+	<route url="manage/save-interim" module="interim" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/delete-interim" module="interim" action="supprimer" user="entreprise"></route>
+
+	<route url="manage/evaluationInterims" module="interim" action="lister" user="entreprise"></route>
+	<route url="manage/save-evaluationInterim" module="interim" action="mettreAJour" user="employe"></route>
+	<route url="manage/getInterim" module="interim" action="getInterim" user="employe"></route>
+	<route url="manage/suiviInterims" module="interim" action="lister" user="employe"></route>
+
+	<route url="manage/entreprise/formateur" module="formation" action="voir" user="entreprise"></route>
+	<route url="manage/formateurs" module="formation" action="lister" user="entreprise"></route>
+	<route url="manage/save-formateur" module="formation" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/delete-formateur" module="formation" action="supprimer" user="entreprise"></route>
+	<route url="manage/archiver-formateur" module="formation" action="archiver" user="entreprise"></route>
+	<route url="manage/restaurer-formateur" module="formation" action="restaurer" user="entreprise"></route>
+	<route url="manage/get-formateur" module="formation" action="get" user="entreprise"></route>
+
+	<route url="manage/save-domaineFormateur" module="formation" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/delete-domaineFormateur" module="formation" action="supprimer" user="entreprise"></route>
+
+	<route url="manage/entreprise/catalogueFormation" module="formation" action="voir" user="entreprise"></route>
+	<route url="manage/save-themeFormation" module="formation" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/themeFormations" module="formation" action="lister" user="entreprise"></route>
+	<route url="manage/delete-themeFormation" module="formation" action="supprimer" user="entreprise"></route>
+	<route url="manage/get-themeFormation" module="formation" action="get" user="entreprise"></route>
+
+	<route url="manage/entreprise/offreFormation" module="formation" action="voir" user="entreprise"></route>
+	<route url="manage/offreFormations" module="formation" action="lister" user="entreprise"></route>
+	<route url="manage/save-offreFormation" module="formation" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/get-offreFormateur" module="formation" action="get" user="entreprise"></route>
+	<route url="manage/delete-offreFormation" module="formation" action="supprimer" user="entreprise"></route>
+	<route url="manage/valider-offreFormation" module="formation" action="valider" user="entreprise"></route>
+	<route url="manage/annuler-offreFormation" module="formation" action="annuler" user="entreprise"></route>
+	<route url="manage/reprendre-offreFormation" module="formation" action="reprendre" user="entreprise"></route>
+
+	<route url="manage/entreprise/formation" module="formation" action="voir" user="entreprise"></route>
+	<route url="manage/formationProfessionnelles" module="formation" action="lister" user="entreprise"></route>
+	<route url="manage/save-formationProfessionnelle" module="formation" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/get-formationProfessionnelle" module="formation" action="get" user="entreprise"></route>
+	<route url="manage/participer-formationProfessionnelle" module="formation" action="participer" user="employe"></route>
+	<route url="manage/annuler-demandeFormation" module="formation" action="annuler" user="employe"></route>
+	<route url="manage/demandeFormations" module="formation" action="lister" user="employe"></route>
+	<route url="manage/archiver-demandeFormation" module="formation" action="archiver" user="employe"></route>
+	<route url="manage/restaurer-demandeFormation" module="formation" action="restaurer" user="employe"></route>
+	<route url="manage/valider-demandeFormation" module="formation" action="valider" user="employe"></route>
+
+	<route url="manage/entreprise/formationFormateur" module="formation" action="voir" user="entreprise"></route>
+
+	<route url="manage/employe/formationDisponible" module="formation" action="voir" user="employe"></route>
+	<route url="manage/employe/validationFormation" module="formation" action="voir" user="employe"></route>
+	<route url="manage/employe/formationAssistee" module="formation" action="voir" user="employe"></route>
+	<route url="manage/employe/suggestionFormation" module="formation" action="voir" user="employe"></route>
+
+	<route url="manage/save-employeFormation" module="formation" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/delete-employeFormation" module="formation" action="supprimer" user="entreprise"></route>
+
+	<route url="manage/get-evaluationFormation" module="formation" action="get" user="entreprise"></route>
+	<route url="manage/save-evaluationFormation" module="formation" action="mettreAJour" user="employe"></route>
+	<route url="manage/rappeler-evaluationFormation" module="formation" action="rappeler" user="entreprise"></route>
+
+	<route url="manage/entreprise/paie" module="paie" action="voir" user="entreprise"></route>
+	<route url="manage/paies" module="paie" action="lister" user="entreprise"></route>
+	<route url="manage/entreprise/detailFichePaie" module="paie" action="voir" user="entreprise"></route>
+	<route url="manage/entreprise/parametreFichePaie" module="paie" action="voir" user="entreprise"></route>
+	<route url="manage/save-parametreHeure" module="paie" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/save-avantageEmploye" module="paie" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/delete-avantageEmploye" module="paie" action="supprimer" user="entreprise"></route>
+
+	<route url="manage/save-deduction" module="paie" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/delete-deduction" module="paie" action="supprimer" user="entreprise"></route>
+
+	<route url="manage/entreprise/parametrePaie" module="paie" action="voir" user="entreprise"></route>
+	<route url="manage/save-parametrePaie" module="paie" action="mettreAJour" user="entreprise"></route>
+
+	<route url="manage/entreprise/avantagePaie" module="paie" action="voir" user="entreprise"></route>
+	<route url="manage/avantagePaies" module="paie" action="lister" user="entreprise"></route>
+	<route url="manage/save-avantage" module="paie" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/delete-avantage" module="paie" action="supprimer" user="entreprise"></route>
+	<route url="manage/get-avantage" module="paie" action="get" user="entreprise"></route>
+
+	<route url="manage/employe/detailFichePaie" module="paie" action="voir" user="employe"></route>
+
+	<route url="manage/save-fichePaie" module="paie" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/send-fichePaie" module="paie" action="envoyer" user="entreprise"></route>
+	<route url="manage/print-fichePaie" module="paie" action="imprimer" user="entreprise"></route>
+	<route url="manage/edit-fichePaie" module="paie" action="afficherForm" user="entreprise"></route>
+
+	<route url="manage/entreprise/avance" module="paie" action="afficher" user="entreprise"></route>
+	<route url="manage/avances" module="paie" action="lister" user="entreprise"></route>
+	<route url="manage/entreprise/parametreAvance" module="paie" action="afficher" user="entreprise"></route>
+	<route url="manage/save-parametreAvance" module="paie" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/entreprise/detailAvance" module="paie" action="afficher" user="entreprise"></route>
+	<route url="manage/entreprise/historiqueAvance" module="paie" action="afficher" user="entreprise"></route>
+	<route url="manage/entreprise/demandeAvance" module="paie" action="afficher" user="entreprise"></route>
+	<route url="manage/demandeAvances" module="paie" action="lister" user=""></route>
+	<route url="manage/save-demandeAvance" module="paie" action="mettreAJour" user=""></route>
+	<route url="manage/valider-demandeAvance" module="paie" action="valider" user="entreprise"></route>
+	<route url="manage/rejeter-demandeAvance" module="paie" action="rejeter" user="entreprise"></route>
+	<route url="manage/archiver-demandeAvance" module="paie" action="archiver" user="entreprise"></route>
+	<route url="manage/restaurer-demandeAvance" module="paie" action="restaurer" user="entreprise"></route>
+	<route url="manage/delete-demandeAvance" module="paie" action="supprimer" user="entreprise"></route>
+
+	<route url="manage/employe/demandeAvance" module="paie" action="afficher" user="employe"></route> 
+	<route url="manage/employe/detailAvance" module="paie" action="afficher" user="employe"></route> 
+	<route url="manage/employe/historiqueAvance" module="paie" action="afficher" user="employe"></route> 
+
+	<route url="manage/entreprise/demandeAvanceQuinzaine" module="paie" action="afficher" user="entreprise"></route>
+	<route url="manage/employe/demandeAvanceQuinzaine" module="paie" action="afficher" user="employe"></route>
+	<route url="manage/demandeAvanceQuinzaines" module="paie" action="lister" user=""></route>
+	<route url="manage/save-demandeAvanceQuinzaine" module="paie" action="mettreAJour" user=""></route>
+	<route url="manage/valider-demandeAvanceQuinzaine" module="paie" action="valider" user="entreprise"></route>
+	<route url="manage/rejeter-demandeAvanceQuinzaine" module="paie" action="rejeter" user="entreprise"></route>
+	<route url="manage/archiver-demandeAvanceQuinzaine" module="paie" action="archiver" user=""></route>
+	<route url="manage/restaurer-demandeAvanceQuinzaine" module="paie" action="restaurer" user=""></route>
+	<route url="manage/delete-demandeAvanceQuinzaine" module="paie" action="supprimer" user=""></route>
+
+	<!-- @changelog 12/07/2021 [EVOL] (Lansky) Évaluation d'un employé -->
+ 	<route url="manage/entreprise/evaluation/csv_file" module="evaluation" action="upload" user="entreprise"></route>
+ 	<route url="manage/entreprise/evaluation" module="evaluation" action="lister" user="entreprise"></route>	
+ 	<route url="manage/entreprise/evaluation/archive" module="evaluation" action="lister" user="employe"></route>	
+ 	<route url="manage/entreprise/evaluation/affiche_graph" module="evaluation" action="draw" user="entreprise"></route>
+	<route url="manage/entreprise/create-evaluation" module="evaluation" action="ajout" user="entreprise"></route>
+  	<route url="manage/entreprise/update-evaluation" module="evaluation" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/entreprise/save-evaluation" module="evaluation" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/entreprise/archived-evaluation" module="evaluation" action="archiver" user="entreprise"></route>
+	<route url="manage/entreprise/restaurer-evaluation" module="evaluation" action="restaurer" user="entreprise"></route>
+	<route url="manage/entreprise/delete-evaluation" module="evaluation" action="supprimer" user="entreprise"></route>
+	<route url="manage/entreprise/detail-evaluation" module="evaluation" action="voir" user="entreprise"></route>
+	<route url="manage/delete-evaluation" module="evaluation" action="supprimer" user="entreprise"></route>
+	
+	<route url="manage/employe/detail-evaluation" module="evaluation" action="voir" user="employe"></route>
+	<route url="manage/employe/archived-evaluation" module="evaluation" action="archiver" user="employe"></route>
+	<route url="manage/employe/restaurer-evaluation" module="evaluation" action="restaurer" user="employe"></route>
+	<route url="manage/employe/delete-evaluation" module="evaluation" action="supprimer" user="employe"></route>
+ 	<route url="manage/employe/evaluation" module="evaluation" action="lister" user="employe"></route>
+ 	<route url="manage/employe/evaluation/archive" module="evaluation" action="lister" user="employe"></route>
+  	<route url="manage/employe/update-evaluation" module="evaluation" action="mettreAJour" user="employe"></route>
+  	<route url="manage/employe/beforeUpdate-evaluation" module="evaluation" action="afficherForm" user="employe"></route>
+ 	
+ 	<route url="manage/entreprise/evaluation_modele" module="evaluation" action="lister" user="entreprise"></route>	
+ 	<route url="manage/entreprise/detail-evaluation_modele" module="evaluation" action="voir" user="entreprise"></route>	
+ 	<route url="manage/entreprise/create-evaluation_modele" module="evaluation" action="ajout" user="entreprise"></route>	
+ 	<route url="manage/entreprise/delete-evaluation_modele" module="evaluation" action="supprimer" user="entreprise"></route>	
+	<route url="manage/entreprise/update-evaluation_modele" module="evaluation" action="mettreAJour" user="entreprise"></route>
+  	<route url="manage/save-evaluation_modele" module="evaluation" action="afficherForm" user="entreprise"></route>
+ 	
+ 	<route url="manage/employe/evaluation_valider" module="evaluation" action="lister" user="employe"></route>	
+ 	<route url="manage/employe/create-evaluation_valider" module="evaluation" action="ajout" user="employe"></route>
+ 	<route url="manage/employe/valide-evaluation_valider" module="evaluation" action="afficherForm" user="employe"></route>
+	
+	<route url="manage/entreprise/evaluation/categorie" module="evaluation" action="lister" user="entreprise"></route>
+	<route url="manage/entreprise/evaluation/categorie_detail" module="evaluation" action="voir" user="entreprise"></route>
+	<route url="manage/entreprise/evaluation/create-categorie" module="evaluation" action="ajout" user="entreprise"></route>
+	<route url="manage/entreprise/evaluation/create-categorie_detail" module="evaluation" action="ajout" user="entreprise"></route>
+	<route url="manage/entreprise/evaluation/update-categorie" module="evaluation" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/entreprise/evaluation/delete-categorie" module="evaluation" action="supprimer" user="entreprise"></route>
+	<route url="manage/entreprise/evaluation/getCategorie" module="evaluation" action="getCategories" user="entreprise"></route>
+	<route url="manage/entreprise/evaluation/getEvaluationAjax" module="evaluation" action="getEvaluationArray" user="entreprise"></route>
+
+	<route url="manage/entreprise/evaluation/questionnaire_detail" module="evaluation" action="voir" user="entreprise"></route>
+	<route url="manage/entreprise/evaluation/questionnaire" module="evaluation" action="lister" user="entreprise"></route>
+	<route url="manage/entreprise/evaluation/create-questionnaire" module="evaluation" action="ajout" user="entreprise"></route>
+	<route url="manage/entreprise/evaluation/update-questionnaire" module="evaluation" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/entreprise/evaluation/delete-questionnaire" module="evaluation" action="supprimer" user="entreprise"></route>
+	<route url="manage/entreprise/evaluation/getQuestion" module="evaluation" action="getQuestion" user="entreprise"></route>
+	<route url="manage/entreprise/evaluation/getQuestionAjax" module="evaluation" action="questionAjax" user="entreprise"></route>
+
+	<route url="manage/barometre_list" module="barometre" action="lister" user=""></route>
+	<route url="manage/barometre" module="barometre" action="lister" user="entreprise"></route>
+	<route url="manage/entreprise/update-barometre" module="barometre" action="mettreAJour" user="entreprise"></route>
+	<route url="manage/create-barometre" module="barometre" action="ajout" user="entreprise"></route>
+	<route url="manage/send-barometre" module="barometre" action="envoyer" user="entreprise"></route>
+	<route url="manage/employe/barometre" module="barometre" action="lister" user="employe"></route>
+	<route url="manage/employe/answer-barometre" module="barometre" action="answer" user="employe"></route>
+	<route url="manage/getBarometer" module="barometre" action="json" user=""></route>
+ 	<route url="manage/barometre/graph_barometer" module="barometre" action="draw" user=""></route>
+ 	<route url="manage/barometre/graph_barometerResponse" module="barometre" action="draw" user=""></route>
+	<route url="manage/" module="barometre" action="lister" user=""></route>
+	<route url="manage/linear_answers_barometer" module="barometre" action="lister" user=""></route>
+	<route url="manage/export_barometer" module="barometre" action="export" user=""></route>
+	
+	<route url="manage/power-off" module="presence" action="powerOff" user="employe"></route>
+</routes>

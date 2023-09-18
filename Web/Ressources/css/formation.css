@@ -1,0 +1,12 @@
+.liste-domaine:hover
+{
+	filter: brightness(75%);
+	font-weight: bold;
+}
+
+.note {
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	background: #fff;
+}

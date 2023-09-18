@@ -1,0 +1,391 @@
+<?php
+	extract($data);
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row" style="margin-top: -15px;">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h4 class="text-center list-title section-heading">Tâches planifiées</h4>
+			</div>
+			<div class="col-md-2 text-right">
+				<button class="btn btn-sm btn-primary" id="ajouter">
+					<i class="fa fa-plus" aria-hidden="true"></i>
+					<span class="ml-2">ajouter</span>
+				</button>
+			</div>
+		</div>
+		<div class="block-section" style="max-height: 350px; overflow-y: auto;">
+			<div class="card card-grey m-1 p-2" style="width: 100%;">
+				<div class="row">
+					<div class="col-md-1 text-center">
+						<span>Statut</span>
+					</div>
+					<div class="col-md-3">
+						<span>Nom</span>
+					</div>
+					<div class="col-md-6">
+						<span>Période</span>
+					</div>
+					<div class="col-md-2 text-center">
+						<span>Action</span>
+					</div>
+				</div>
+			</div>
+			<?php foreach ($resultats as $resultat) : extract($resultat);?>
+				<div class="card m-1 p-2 card-border-grey" style="width: 100%;">
+					<div class="row">
+						<div class="col-md-1 text-center">
+							<?php if ($isActive == true) : ?>
+								<i class="fa fa-circle text-success tache-activee"></i>
+							<?php else : ?>
+								<i class="fa fa-circle text-danger tache-desactivee"></i>
+							<?php endif?>
+						</div>
+						<div class="col-md-3">
+							<span> <?= $tache->getNom() ?> </span>
+						</div>
+						<div class="col-md-6" style="overflow-x: hidden; text-overflow: ellipsis;white-space: nowrap;">
+							<span> <?= $tache->getPeriode() ?> </span>
+						</div>
+						<div class="col-md-2 text-center">
+							<button class="btn btn-md p-0" data-toggle="modal" data-target="#modalDetail<?= $tache->getIdTacheAutomatique(); ?>">
+								<i class="fa fa-info-circle text-info" style="font-size: 1.2em;"></i>
+							</button>
+							<?php if ($isActive == true) : ?>
+								<button class="btn btn-md p-0 ml-2" disabled="disabled">
+									<i class="fa fa-edit text-warning" style="font-size: 1.1em;"></i>
+								</button>
+								<button class="btn btn-md p-0 ml-2" disabled="disabled">
+									<i class="fa fa-trash text-danger" style="font-size: 1.1em;"></i>
+								</button>
+								<a href="<?= HOST . 'manage/desactiver-tachePlanifiee?idTacheAutomatique=' . $tache->getIdTacheAutomatique() ?>" class="btn btn-md btn-transparent p-0 ml-2">
+									<i class="fa fa-stop text-danger" style="font-size: 1.1em;"></i>
+								</a>
+							<?php else : ?>
+								<button class="btn btn-md p-0 ml-2" id="editTache<?=$tache->getIdTacheAutomatique()?>">
+									<i class="fa fa-edit text-warning tippy-act" style="font-size: 1.1em;"></i>
+								</button>
+								<button class="btn btn-md p-0 ml-2" data-toggle="modal" data-target="#modalSupprimer<?= $tache->getIdTacheAutomatique(); ?>">
+									<i class="fa fa-trash text-danger" style="font-size: 1.1em;"></i>
+								</button>
+								<a href="<?= HOST . 'manage/activer-tachePlanifiee?idTacheAutomatique=' . $tache->getIdTacheAutomatique() ?>" class="btn btn-md btn-transparent ml-2 p-0">
+									<i class="fa fa-play text-success" style="font-size: 1.1em;"></i>
+								</a>
+							<?php endif?>
+						</div>
+					</div>
+				</div>
+				<div class="modal fade" id="modalDetail<?=$tache->getIdTacheAutomatique()?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  				<div class="modal-dialog modal-dialog-centered" role="document">
+	    				<div class="modal-content">
+	      					<div class="modal-header">
+	        					<div class="text-center" style="width: 100%;">
+						      		<h5 class="modal-title" id="exampleModalLabel">Les détails de la tâche</h5>
+						      	</div>
+	        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          						<span aria-hidden="true">&times;</span>
+	        					</button>
+	      					</div>
+	      					<div class="modal-body">
+	        					<div class="card p-3" style="background: #efefff;">
+	        						<div class="card m-1 p-2 titre text-center">
+	        							<?= $tache->getNom(); ?>
+	        						</div>
+	        						<div class="card m-1 p-2 text-justify">
+	        							<p></span><?= $tache->getDescription(); ?><span class="titre font-italic"><?= ' (' . $tache->getPeriode() . ')' ?></span></p>
+	        							<ul>
+	        								<li><span class="text-important">script PHP : </span><?= ' ' . $tache->getScript(); ?></li>
+	        								<li><span class="text-important">script période : </span><?= ' ' . $tache->getCodePeriode(); ?></li>
+	        							</ul>
+	        						</div>
+	        					</div>
+	      					</div>
+	      					<div class="modal-footer">
+	        					<div class="text-right" style="width: 105%!important;">
+						      	</div>
+	      					</div>
+	    				</div>
+	  				</div>
+	  			</div>
+				<div class="modal fade" id="modalSupprimer<?= $tache->getIdTacheAutomatique(); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				  	<div class="modal-dialog modal-dialog-centered" role="document">
+				    	<div class="modal-content">
+				      		<div class="modal-header text-center">
+				      			<div class="text-center" style="width: 100%;">
+				      				<h5 class="modal-title section-heading" id="exampleModalLabel">Confirmation de la suppression</h5>
+				      			</div>
+				        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          			<span aria-hidden="true">&times;</span>
+				        		</button>
+				      		</div>
+				      		<div class="modal-body">
+			      				<div class="card p-3 text-center" style="background: #ffffff;">
+			      					Voulez-vous vraiment supprimer cette tâche planifiée ?
+					        	</div>
+				      		</div>
+				      		<div class="modal-footer">
+				      			<div class="row" style="width: 105%!important;">
+				      				<?php $now = date("Y-m-d"); ?>
+				      				<div class="col-sm-3 text-left">
+				      					<a href="" class="btn btn-red">Annuler</a>
+				      				</div>
+				      				<div class="col-sm-5"></div>
+				      				<div class="col-sm-4">
+				      					<a href="<?= HOST . 'manage/delete-tachePlanifiee?idTacheAutomatique=' . $tache->getIdTacheAutomatique() ?>" class="btn btn-green">Confirmer</a>
+				      				</div>
+				      			</div>
+				      		</div>
+				    	</div>
+				  	</div>
+				</div>
+				<script>
+					$('#editTache<?=$tache->getIdTacheAutomatique()?>').click(function(){
+						$.ajax({
+							url : '<?= HOST . "manage/get-tachePlanifiee" ?>',
+							data : 'idTacheAutomatique=<?= $tache->getIdTacheAutomatique() ?>',
+							dataType : 'json',
+							success : function(data) {
+								$('#nom').val(data['nom']);
+								$('#description').html(data['description']);
+								$('#script option[value="' + data['script'] + '"]').prop('selected', true);
+								$('#periode').val(data['periode']);
+								$('#idTacheAutomatique').val(data['idTacheAutomatique']);
+								$('#titre-tache').html("Modifier la tâche");
+								var scripts = data['codePeriode'].split(" ");
+								$('#minute option[value="' + scripts[0] + '"]').prop('selected', true);
+								$('#heure option[value="' + scripts[1] + '"]').prop('selected', true);
+								$('#jour-mois option[value="' + scripts[2] + '"]').prop('selected', true);
+								$('#mois option[value="' + scripts[3] + '"]').prop('selected', true);
+								$('#jour-semaine option[value="' + scripts[4] + '"]').prop('selected', true);
+								$('#modalEnregistrement').modal('show');
+							}
+						});
+					});
+				</script>
+			<?php endforeach ?>
+		</div>
+	</div>
+</section>
+<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<form method="POST" id="form" action="<?= HOST . 'manage/save-tachePlanifiee'?>" enctype="multipart/form-data" novalidate="novalidate">
+				<input type="hidden" name="idTacheAutomatique" id="idTacheAutomatique" value=""> 
+				<div class="modal-header">
+					<div class="text-center" style="width: 100%;">
+			      		<h5 class="modal-title" id="titre-tache">Planifier une nouvelle tâche</h5>
+			      	</div>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+  						<span aria-hidden="true">&times;</span>
+					</button>
+					</div>
+					<div class="modal-body">
+					<div class="card p-3" style="background: #efefff; max-height: 400px; overflow-y: auto;">
+						<div class="row">
+							<div class="col-md-4">
+								<span class="titre">Nom : </span>
+							</div>
+							<div class="col-md-8">
+								<div class="form-group">
+									<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+    								<input type="text" class="form-control font-weight-bold" name="nom" id="nom" required="required" data-validation-required-message="Veuillez indiquer le nom" style="font-size: 0.8em!important;" placeholder="nom de la tâche">
+    								<p class="help-block text-danger"></p>
+    							</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-4">
+								<span class="titre">Description : </span>
+							</div>
+							<div class="col-md-8">
+								<div class="form-group">
+									<textarea class="form-control textarea-temps" name="description" id="description" required="required" data-validation-required-message="Veuillez décrire la tâche" placeholder="description de la tâche" style="background: #fff;"></textarea>
+				                  	<p class="help-block text-danger"></p>
+    							</div>
+							</div>
+						</div>
+						<hr>
+						<div class="row">
+							<div class="col-md-4">
+								<span class="titre">Script PHP : </span>
+							</div>
+							<div class="col-md-8">
+								<div class="form-group">
+									<i class="fa fa-pencil icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+					        		<select class="form-control font-weight-bold" name="script" id="script" required="required" data-validation-required-message="Veuillez indiquer le script PHP" style="font-size: 0.8em!important;">
+					        			<option value="">Selectionnez un script</option>
+					        			<?php foreach ($scripts as $script) : ?>
+					        				<option value="<?=$script?>"><?=$script?></option>
+					        			<?php endforeach ?>
+					        		</select>
+				                  	<p class="help-block text-danger"></p>
+				                </div>
+							</div>
+						</div>
+						<hr>
+						<div class="row">
+							<div class="col-md-4">
+								<span class="titre">Période : </span>
+							</div>
+							<div class="col-md-8">
+								<div class="form-group">
+									<i class="fa fa-clock icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+    								<input type="text" class="form-control font-weight-bold" name="periode" id="periode" required="required" data-validation-required-message="Veuillez indiquer la période" style="font-size: 0.8em!important;" placeholder="Description de la période">
+				                  	<p class="help-block text-danger"></p>
+    							</div>
+							</div>
+						</div>
+						<hr>
+						<div class="row">
+							<div class="col-md-5">
+								<span class="titre">minute : </span>
+							</div>
+							<div class="col-md-7">
+								<div class="">
+									<select id="minute" class="select-time" style="width: 220px!important;" required="required" data-validation-required-message="champ obligatoire">
+										<option value="*">minute</option>
+										<option value="*">chaque minute</option>
+										<?php for ($i = 0 ; $i < 60 ; $i++) : ?>
+											<?php if ($i < 10) : ?>
+												<option value="<?= '0' . $i ?>"><?=$i?></option>
+											<?php else : ?>
+												<option value="<?=$i?>"><?=$i?></option>
+											<?php endif ?>
+										<?php endfor ?>
+									</select>
+									<p class="help-block text-danger"></p>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-5">
+								<span class="titre">heure : </span>
+							</div>
+							<div class="col-md-7">
+								<div class="">
+									<select id="heure" class="select-time" style="width: 220px!important;">
+										<option value="*">heure</option>
+										<option value="*">chaque heure</option>
+										<?php for ($i = 0 ; $i < 24 ; $i++) : ?>
+											<?php if ($i < 10) : ?>
+												<option value="<?= '0' . $i ?>"><?=$i?></option>
+											<?php else : ?>
+												<option value="<?=$i?>"><?=$i?></option>
+											<?php endif ?>
+										<?php endfor ?>
+									</select>
+									<p class="help-block text-danger"></p>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-5">
+								<span class="titre">jour du mois : </span>
+							</div>
+							<div class="col-md-7">
+								<div class="">
+									<select id="jour-mois" class="select-time" style="width: 220px!important;">
+										<option value="*">jour du mois</option>
+										<option value="*">tous les jours du mois</option>
+										<?php for ($i = 0 ; $i < 32 ; $i++) : ?>
+											<?php if ($i < 10) : ?>
+												<option value="<?= '0' . $i ?>"><?=$i?></option>
+											<?php else : ?>
+												<option value="<?=$i?>"><?=$i?></option>
+											<?php endif ?>
+										<?php endfor ?>
+									</select>
+									<p class="help-block text-danger"></p>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-5">
+								<span class="titre">mois : </span>
+							</div>
+							<div class="col-md-7">
+								<div class="">
+									<select id="mois" class="select-time" style="width: 220px!important;">
+										<option value="*">mois</option>
+										<option value="*">tous les mois</option>
+										<option value="01">Janvier</option>
+										<option value="02">Février</option>
+										<option value="03">Mars</option>
+										<option value="04">Avril</option>
+										<option value="05">Mai</option>
+										<option value="06">Juin</option>
+										<option value="07">Juillet</option>
+										<option value="08">Août</option>
+										<option value="09">Septembre</option>
+										<option value="10">Octobre</option>
+										<option value="11">Novembre</option>
+										<option value="12">Décembre</option>
+									</select>
+									<p class="help-block text-danger"></p>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-5">
+								<span class="titre">jour de la semaine : </span>
+							</div>
+							<div class="col-md-7">
+								<div class="">
+									<select id="jour-semaine" class="select-time" style="width: 220px!important;">
+										<option value="*">jour de la semaine</option>
+										<option value="*">tous les jours de la semaine</option>
+										<option value="00">Dimanche</option>
+										<option value="01">Lundi</option>
+										<option value="02">Mardi</option>
+										<option value="03">Mercredi</option>
+										<option value="04">Jeudi</option>
+										<option value="05">Vendredi</option>
+										<option value="06">Samedi</option>
+									</select>
+									<p class="help-block text-danger"></p>
+								</div>
+								<div class="form-group">
+    								<input type="text" class="form-control hidden font-weight-bold" name="codePeriode" id="codePeriode" required="required" data-validation-required-message="Veuillez indiquer le script de la période" style="font-size: 0.8em!important;" placeholder="script de la période">
+				                  	<p class="help-block text-danger"></p>
+    							</div>
+							</div>
+						</div>
+					</div>
+					</div>
+					<div class="modal-footer">
+					<div class="row" style="width: 105%!important;">
+			      		<div class="col-md-3">
+			      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+			      		</div>
+			      		<div class="col-md-5"></div>
+			      		<div class="col-md-4">
+			      			<div class="form-group"> 
+			      				<button type="submit" id="submit" class="btn btn-md btn-info">
+			      					Enregistrer
+			      				</button>
+			      			</div>
+			      		</div>
+			      	</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$('#ajouter').click(function(){
+		$('#nom').val("");
+		$('#description').html("");
+		$('#script').val("");
+		$('#periode').val("");
+		$('#idTacheAutomatique').val("");
+		$('#titre-tache').html("Planifier une tâche");
+		$('#minute').val("*");
+		$('#heure').val("*");
+		$('#jour-mois').val("*");
+		$('#mois').val("*");
+		$('#jour-semaine').val("*");
+		$('#modalEnregistrement').modal('show');
+	});
+</script>
+<script src="<?= HOST; ?>../Web/Ressources/js/tachePlanifiee.js"></script>

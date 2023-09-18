@@ -1,0 +1,1578 @@
+<?php
+	extract($data);
+	$url = explode('/', $_GET['page']);
+	$tmpUrl = (array_key_exists(2, $url)) ? $url[2] : '' ;
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<div class="row" style="margin-top: -15px;">
+			<?php if (strstr($_SERVER["REQUEST_URI"],'idEmploye') && strstr(end($url), 'historiqueConge')) : ?>
+				<div class="col-md-1 align-left">
+					<a href="<?= $_SERVER['HTTP_REFERER'];?>" class="btn btn-primary rounded-circle">
+	          			<i class="fas fa-arrow-left"></i>
+	        		</a>
+	        	</div>
+			<?php endif; ?>
+			<?php if ($url[1] == "entreprise") : ?>
+				<div class="col-md-2">
+					<button class="btn btn-sm btn-primary" data-toggle="modal" id="demo" data-target="#modalDemosVideo">
+						<i class="fas fa-video" aria-hidden="true"></i>
+						<span class="ml-2">Démos</span>
+					</button>
+				</div>
+				<div class="col-md-8">
+			<?php else : ?>
+				<div class="col-md-9">
+			<?php endif; ?>
+				<h4 class="text-center list-title section-heading">Gestion de congé</h4>
+			</div>
+			<div class="col-md-2 text-right">
+				<?php if ($_SESSION['compte']['identifiant'] == "employe" && ($tmpUrl == "conge" || end($url) == 'historiqueConge')) : ?>
+					<button class="btn btn-transparent btn-circle-sm" data-toggle="modal" data-target="#modalChoiseDemande">
+						<i class="fa fa-paper-plane fa-15x tippy-act" aria-hidden="true"></i>
+					</button>
+				<?php elseif ($_SESSION['compte']['identifiant'] == "entreprise") : ?>
+					<?php  if ($tmpUrl == "conge" && $url[1] == "entreprise") : ?>
+						<a class="btn btn-transparent text-primary btn-circle-sm" href="<?= HOST . 'manage/entreprise/planning' ?>">
+							<i class="fa fa-calendar-check fa-15x tippy-act" aria-hidden="true"></i>
+						</a>
+					<?php  elseif ($tmpUrl == "validation" && $url[1] == "entreprise") : ?>
+						<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalEnregistrement">
+							<i class="fa fa-plus" aria-hidden="true"></i>
+							<span class="ml-2">ajouter</span>
+						</button>
+						<a class="btn btn-transparent text-primary btn-circle-sm" href="<?= HOST . 'manage/entreprise/planning' ?>">
+							<i class="fa fa-calendar-check fa-15x tippy-act" aria-hidden="true"></i>
+						</a>
+					<?php endif ?>
+				<?php endif ?>
+			</div>
+		</div>
+		<div class="block-section">
+			<?php if ($_SESSION['compte']['identifiant'] == "employe" || $_SESSION['compte']['identifiant'] == "entreprise") : ?>
+				<?php if ($_SESSION['compte']['identifiant'] == "employe") : ?>
+					<div class="row">
+				        <ul id="new-tab-button">
+			        		<li id="tab1">
+			        			<a href="<?= HOST. 'manage/employe/conge'?>">
+			        				Mes demandes de congé
+			        			</a>
+			        		</li>
+			        		<li id="tab3">
+			        			<a href="<?= HOST. 'manage/employe/historiqueConge'?>">
+			        				Historique de mes congés
+			        			</a>
+			        		</li>
+			        		<?php $isValidator = (!isset($employe) || is_null($employe)) ? $_SESSION['user']['isValidator'] : $employe->getIsValidator();
+		        			$isValidator = (int)$isValidator;
+		        			if ($isValidator) :
+		        				if ($isValidator == 1) :
+        					?>
+					        		<li id="tab2">
+					        			<a href="<?= HOST. 'manage/employe/validation'?>">
+					        				Mes validations de demande de congé
+					        			</a>
+					        		</li>   
+				        		<?php endif; ?>
+			        		<?php endif; ?>
+			        		<li id="tab4" class="d-none">
+			        			<a href="<?= HOST. 'manage/employe/congeCollaborateur'?>">
+			        				Solde de congés de mes collaborateurs
+			        			</a>
+			        		</li>        			    
+			        		<li id="tab5" class="d-none">
+			        			<a href="<?= HOST. 'manage/collaborater/planning' ?>">
+			        				Planning de congés de mes collaborateurs
+			        			</a>
+			        		</li>
+				        </ul>
+			      	</div>
+			      	<script src="<?= HOST; ?>../Web/Ressources/js/tabCongeEmploye.js"></script>
+			    <?php elseif ($_SESSION['compte']['identifiant'] == "entreprise") : ?>
+			    	<div class="row">
+				        <ul id="new-tab-button">
+			        		<li id="tab1">
+			        			<a href="<?= HOST. 'manage/entreprise/conge'?>">
+			        				Les congés de chaque employé
+			        			</a>
+			        		</li>
+			        		<?php if (strstr(end($url), 'historiqueConge')) : ?>
+				        		<li id="tab4">
+				        			<a href="<?= HOST. 'manage/historiqueConge'?>">
+				        				Historique de congé de <?php echo $employe->getCivilite() .' '.$employe->getNom().' '.$employe->getPrenom(); ?>
+				        			</a>
+				        		</li>
+			        		<?php endif;?>
+			        		<li id="tab2">
+			        			<a href="<?= HOST. 'manage/entreprise/validation'?>">
+			        				Mes validations de demande de congé
+			        			</a>
+			        		</li> 
+			        		<li id="tab3">
+			        			<a href="<?= HOST. 'manage/parametre/conge'?>">
+			        				Paramètre des demandes de congé
+			        			</a>
+			        		</li>       			    
+				        </ul>
+			      	</div>
+			      	<script src="<?= HOST; ?>../Web/Ressources/js/tabCongeEntreprise.js"></script>
+				<?php endif ?>
+				<?php if ($tmpUrl == "conge" && $_SESSION['compte']['identifiant'] == "employe") : ?>
+					<div class="row">
+						<div class="col-lg-12 text-center">
+		      				<div class="tete-list-section row" style="background: #647994;">
+		      					<div class="col-md-5 text-center">
+		      						<span class="titre" style="color: #ffffff;">
+		      							Vous avez <span style="color: #e57373;"><?= $stock ? ManagerModuleConge::showSoldeConge($stock->getDuree()) : 0 . 'j';?></span> de solde
+		      						</span>
+		      					</div>
+		      					<div class="col-md-3 text-center">
+		      						<label class="titre" style="color: #ffffff;">Année : </label>
+		      						<input class="select-time" type="number" id="annee" min="2019" value="<?=$_SESSION['filters']['annee']?>">
+		      					</div>
+		      					<div class="col-md-4 text-center">
+		      						<label class="titre" style="color: #ffffff;">lister : </label>
+									<select class="select-time"  style="font-size: 0.8em!important;" id="selection-type">
+										<option value="4"<?=$_SESSION['filters']['type'] == 4 ? 'selected' : ''; ?>>tout</option>
+										<option value="1"<?=$_SESSION['filters']['type'] == 1 ? 'selected' : ''; ?>>en attente</option>
+										<option value="2"<?=$_SESSION['filters']['type'] == 2 ? 'selected' : ''; ?>>validée</option>
+										<option value="0"<?=$_SESSION['filters']['type'] == 0 ? 'selected' : ''; ?>>refusée</option>
+										<option value="3"<?=$_SESSION['filters']['type'] == 3 ? 'selected' : ''; ?>>archivée</option>
+									</select>
+		      					</div>
+		      				</div>
+		      				<div class="m-l-3" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+		      				</div>
+		      			</div>
+					</div>
+					<!--  @changelog 12/04/2022 [OPT] (Lansky) Ajout demande de congé en heure partielle durant l'heure de travail -->
+					<div class="modal fade" id="modalDemandeFullTime" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  					<div class="modal-dialog modal-dialog-centered" role="document">
+		    				<div class="modal-content">
+		    					<form method="POST" id="form" action="<?= HOST . 'manage/save-demandeConge'?>" enctype="multipart/form-data" novalidate="novalidate">
+			      					<div class="modal-header">
+			        					<div class="text-center" style="width: 100%;">
+								      		<h5 class="modal-title section-heading" style="margin-bottom: 0px!important;" id="exampleModalLabel">Envoyer une demande de congé</h5>
+								      	</div>
+			        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          						<span aria-hidden="true">&times;</span>
+			        					</button>
+			      					</div>
+			      					<div class="modal-body">
+			        					<div class="card p-3" style="background: #efefff;">
+			        						<div class="form-group hidden">
+							                  	<input class="form-control" id="idEmploye" name="idEmploye" type="number" value="<?= $employe->getIdEmploye() ?>">
+							                </div>
+			        						<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="titre">Date de début : </span>
+			        							</div>
+			        							<div class="col-md-8">
+			        								<div class="form-group">
+			        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+				        								<label for="datepicker">
+										        			<input class="form-control datepicker datepicker-debut" value="" type="text" autocomplete="off" placeholder="date du début du congé" style="width: 110%; height: 38px; font-size: 0.9em; font-weight: bold;">
+									        			</label>
+									        			<input type="text" class="form-control hidden" name="debut" id="debut" required="required" data-validation-required-message="Veuillez renseigner la date de début" >
+									                  	<p class="help-block text-danger"></p>
+									                </div>
+			        							</div>
+			        						</div>
+			        						<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="titre">Heure de début : </span>
+			        							</div>
+			        							<div class="col-md-8">
+			        								<div class="form-group">
+			        									<i class="fa fa-clock icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+									            		<select class="form-control font-weight-bold" name="heureDebut" id="heureDebut" required="required" data-validation-required-message="obligatoire" style="width: 100px; max-width: 100%; font-size: 0.8em!important;"> ' +
+				        									 <option value="">Selectionnnez l&rsquo;heure</option> 
+				        									 <option value="1">Matin</option>
+				        									<option value="2">Midi</option>
+				        								</select>
+				        								<p class="help-block text-danger"></p>
+									            	</div>
+			        							</div>
+			        						</div>
+			        						<hr>
+			        						<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="titre">Date de fin : </span>
+			        							</div>
+			        							<div class="col-md-8">
+			        								<div class="form-group">
+			        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+				        								<label for="datepicker">
+										        			<input class="form-control datepicker" id="datepicker-fin" value="" type="text" autocomplete="off" placeholder="date de la fin du congé" style="width: 110%; height: 38px; font-size: 0.9em; font-weight: bold;" disabled="disabled">
+									        			</label>
+									        			<input type="text" class="form-control hidden" name="fin" id="fin" required="required" data-validation-required-message="Veuillez renseigner la date de fin" >
+									                  	<p class="help-block text-danger"></p>
+				        							</div>
+			        							</div>
+			        						</div>
+			        						<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="titre">Heure de fin : </span>
+			        							</div>
+			        							<div class="col-md-8">
+			        								<div class="form-group">
+			        									<i class="fa fa-clock icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+									            		<select class="form-control font-weight-bold" name="heureFin" id="heureFin" required="required" data-validation-required-message="obligatoire" style="width: 100px; max-width: 100%; font-size: 0.8em!important;" disabled="disabled"> ' +
+				        									 <option value="">Selectionnnez l&rsquo;heure</option> 
+				        									 <option value="2">Midi</option>
+				        									<option value="3">Soir</option>
+				        								</select>
+				        								<p class="help-block text-danger"></p>
+									            	</div>
+			        							</div>
+			        						</div>
+			        						<hr>
+		        							<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="titre">Motif :</span>
+			        							</div>
+			        							<div class="col-md-8">
+				        							<div class="form-group">
+				        								<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+									        			<input type="text" class="form-control" name="raison" id="raison" required="required" data-validation-required-message="Veuillez indiquer la raison de votre congé" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;" placeholder="raison de votre congé">
+									                  	<p class="help-block text-danger"></p>
+				        							</div>
+				        						</div>
+			        						</div>
+			        					</div>
+			      					</div>
+			      					<div class="modal-footer">
+			        					<div class="row" style="width: 105%!important;">
+								      		<div class="col-md-3">
+								      			<button type="button" class="btn btn-md btn-danger annuler" data-dismiss="modal">Annuler</button>
+								      		</div>
+								      		<div class="col-md-5"></div>
+								      		<div class="col-md-4">
+								      			<div class="form-group"> 
+								      				<button type="submit" class="btn btn-md btn-info submit">
+								      					Envoyer
+								      				</button>
+								      			</div>
+								      		</div>
+								      	</div>
+			      					</div>
+			      				</form>
+			      			</div>
+		  				</div>
+					</div>
+					<div class="modal fade" id="modalDemandePartialTime" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  					<div class="modal-dialog modal-dialog-centered" role="document">
+		    				<div class="modal-content">
+		    					<form method="POST" id="form" action="<?= HOST . 'manage/save-demandeConge'?>" enctype="multipart/form-data" novalidate="novalidate">
+			      					<div class="modal-header">
+			        					<div class="text-center" style="width: 100%;">
+								      		<h5 class="modal-title section-heading" style="margin-bottom: 0px!important;" id="exampleModalLabel">Envoyer une demande de congé</h5>
+								      	</div>
+			        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          						<span aria-hidden="true">&times;</span>
+			        					</button>
+			      					</div>
+			      					<div class="modal-body">
+			        					<div class="card p-3" style="background: #efefff;">
+			        						<div class="form-group hidden">
+							                  	<input class="form-control" id="idEmploye" name="idEmploye" type="number" value="<?= $employe->getIdEmploye() ?>">
+							                </div>
+			        						<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="titre">Date de début : </span>
+			        							</div>
+			        							<div class="col-md-8">
+			        								<div class="form-group">
+			        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+				        								<label for="datepicker">
+										        			<input class="form-control datepicker datepicker-debut" value="" type="text" autocomplete="off" placeholder="date du début du congé" style="width: 110%; height: 38px; font-size: 0.9em; font-weight: bold;">
+									        			</label>
+									        			<input type="text" class="form-control hidden" name="debut" id="debut" required="required" data-validation-required-message="Veuillez renseigner la date de début" >
+									                  	<p class="help-block text-danger"></p>
+									                </div>
+			        							</div>
+			        						</div>
+											 <hr> 
+						    				 <div class="row"> 
+												 <div class="col-md-4"> 
+													 <span class="titre">A partir de :</span> 
+												 </div> 
+												 <div class="col-md-8"> 
+													 <div class="form-group"> 
+									        			 <input type="number" required="required" data-validation-required-message="obligatoire" name="beginto" id="beginto" placeholder="0 heure" max="24" min="0" style=" height: 40px; width: 113px; padding-left: 9px;">
+									                  	 <p class="help-block text-danger"></p>
+													 </div> 
+												 </div> 
+											 </div> 
+											 <div class="row"> 
+												 <div class="col-md-4"> 
+													 <span class="titre">Durée :</span> 
+												 </div> 
+												 <div class="col-md-8"> 
+													 <div class="form-group"> 
+									        			 <input type="number" required="required" data-validation-required-message="obligatoire" name="during" id="during"placeholder="0 heure" max="8" min="0" style=" height: 40px; width: 113px; padding-left: 9px;">
+									                  	 <p class="help-block text-danger"></p> 
+													 </div> 
+												 </div> 
+											 </div> 
+											 <hr> 
+		        							<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="titre">Motif :</span>
+			        							</div>
+			        							<div class="col-md-8">
+				        							<div class="form-group">
+				        								<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+									        			<input type="text" class="form-control" name="raison" id="raison" required="required" data-validation-required-message="Veuillez indiquer la raison de votre congé" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;" placeholder="raison de votre congé">
+									                  	<p class="help-block text-danger"></p>
+				        							</div>
+				        						</div>
+			        						</div>
+			        					</div>
+			      					</div>
+			      					<div class="modal-footer">
+			        					<div class="row" style="width: 105%!important;">
+								      		<div class="col-md-3">
+								      			<button type="button" class="btn btn-md btn-danger annuler" data-dismiss="modal">Annuler</button>
+								      		</div>
+								      		<div class="col-md-5"></div>
+								      		<div class="col-md-4">
+								      			<div class="form-group"> 
+								      				<button type="submit"class="btn btn-md btn-info submit">
+								      					Envoyer
+								      				</button>
+								      			</div>
+								      		</div>
+								      	</div>
+			      					</div>
+			      				</form>
+		    				</div>
+		  				</div>
+					</div>
+					<!--  @changelog 12/04/2022 [OPT] (Lansky) Faire le choix anvant envoyer sa demande  -->
+					<div class="modal fade" id="modalChoiseDemande" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  					<div class="modal-dialog modal-dialog-centered" role="document">
+		    				<div class="modal-content">
+		      					<div class="modal-header">
+		        					<div class="text-center" style="width: 100%;">
+							      		<h5 class="modal-title section-heading" style="margin-bottom: 0px!important;" id="exampleModalLabel">Choisir un mode de congé</h5>
+							      	</div>
+		        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          						<span aria-hidden="true">&times;</span>
+		        					</button>
+		      					</div>
+		      					<div class="modal-body">
+		        					<div class="card p-3" style="background: #efefff;">
+		        						<div class="form-group" style="margin-left: 20%;">
+										  	<input class="form-group-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+										  	<label class="form-group-label" for="flexRadioDefault1">
+										    	Congé mi-temps (en heure)
+										  	</label>
+										</div>
+										<div class="form-group" style="margin-left: 20%;">
+										  	<input class="form-group-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+										  	<label class="form-group-label" for="flexRadioDefault2">
+										    	Congé journalier ou congé de demi-journé
+										  	</label>
+										</div>
+		        					</div>
+		      					</div>	
+		    				</div>
+		  				</div>
+					</div>
+					<script>
+						$("document").ready(function(){
+							$("#liste").load("<?= HOST . 'manage/demandeConges'?>", {
+								annee     : $('#annee').val(),
+								type      : $('#selection-type').val()
+							});
+						});
+						$('#annee').change(function(){
+							$("#liste").load("<?= HOST . 'manage/demandeConges'?>", {
+								annee     : $('#annee').val(),
+								type      : $('#selection-type').val()
+							});
+						});
+						$('#selection-type').change(function(){
+							$("#liste").load("<?= HOST . 'manage/demandeConges'?>", {
+								annee     : $('#annee').val(),
+								type      : $('#selection-type').val()
+							});
+						});
+						$('.datepicker-debut').change(function(){
+							if ($('.datepicker-debut').val() != "") {
+								$.ajax({
+									url : "<?= HOST . 'manage/congeDisponible'?>",
+									data : "idEmploye=" + $("#idEmploye").val(),
+									dataType : "text",
+									success : function(data)
+									{
+										var stringDate = $('.datepicker-debut').datepicker('getDate');
+										var date       = new Date(stringDate.getFullYear(), stringDate.getMonth(), stringDate.getDate() +  parseInt(data, 10) - 1);
+										if ($('#modalDemandeFullTime').attr('class').search('show') > 0) {
+										    $('#datepicker-fin').datepicker('option', 'maxDate', date);
+										    $('#datepicker-fin').datepicker('option', 'minDate', $('.datepicker-debut').val());
+										    $('#datepicker-fin').val("");
+										    $('#datepicker-fin').attr('disabled', false);
+										    $('#heureFin').attr('disabled', false);
+										}
+									}
+								});
+							} else {
+								$('#datepicker-fin').attr('disabled', true);
+								$('#heureFin').attr('disabled', true);
+							}
+						});
+						$('#datepicker-fin').change(function(){
+							if ($('.datepicker-debut').val() == $(this).val() && $('#heureDebut option:selected').val() == 2) {
+								$('#heureFin option[value="3"]').prop('selected', true);
+								$('#heureFin').attr('disabled', true);
+							}
+						});
+						$(".submit").click(function(){
+				          	var date = $('.modal.fade.show').find(".datepicker-debut").val().split('/');
+				          	if (date != "") {
+				          		$('.modal.fade.show').find(".datepicker-debut").val(date[2] + '-' + date[1] + '-' + date[0]); 
+				          		//$("#datepicker-debut").val().replace(/\//g,'-'); même résultat 
+				          	}
+							if ($('#modalDemandeFullTime').attr('class').search('show') > 0) {
+					          	date = $("#datepicker-fin").val().split('/');
+					          	if (date != "") {
+					          		$("#fin").val(date[2] + '-' + date[1] + '-' + date[0]);
+									$('#heureFin').attr('disabled', false);
+									$('select#heureFin').val($('#heureFin option:selected').val()).change();
+					          	}
+				          	}
+				          	var val = $('.modal.fade.show').find(".datepicker-debut").val();
+				          	$('.modal.fade.show').find(".datepicker-debut").closest('.form-group').find('input#debut').val(val);
+						});
+		      			$(".annuler").click(function(){
+							window.location.reload();
+						});
+						tippy('.fa-paper-plane', {
+							content: "envoyer une de mande de congé"
+						});
+						/* @changelog [OPT] 12/04/2022 Lansky */
+						var $chkboxes = $('input[type=radio]');
+						$chkboxes.click(function() {
+					    	$.each($('.card.p-3').find('#begin').parent().children(), function(k, v){
+					    		if ($(this).attr('id') == 'partialTime' || $(this).attr('id') == 'fullTime') {
+					    			$(this).remove();
+					    		}
+					    	});
+						    if ($(this).attr('id') == 'flexRadioDefault2') {
+								var selector = 'modalDemandeFullTime';
+
+						    } else if ($(this).attr('id') == 'flexRadioDefault1') {
+ 						    	var selector = 'modalDemandePartialTime';
+ 						    }
+ 						    $('#modalChoiseDemande').modal('hide');
+ 						    $('#' + selector).modal('show');
+ 						});
+					</script>
+				<?php elseif (end($url) == "historiqueConge") : ?>
+					<div class="row page-complet">
+					<div class="col-lg-12 text-center">
+		      				<div class="tete-list-section row" style="background: #647994;">
+		      					<div class="col-md-5 text-center">
+		      						<label class="titre" style="color: #ffffff;"><?= strstr($_SERVER["REQUEST_URI"],'idEmploye') ? $employe->getCivilite() .' '.$employe->getNom().' '.$employe->getPrenom() : ''; ?></label>
+	      						</div>
+		      					<div class="col-md-3 text-center">
+		      						<label class="titre" style="color: #ffffff;">Année : </label>
+		      						<input class="select-time" type="number" id="annee" min="2018" value="<?= date('Y') ?>">
+		      					</div>
+		      					<div class="col-md-4 text-center <?=$_SESSION['compte']['identifiant'] == 'entreprise' ? 'hidden': ''; ?>">
+		      						<label class="titre" style="color: #ffffff;">lister : </label>
+									<select class="select-time"  style="font-size: 0.8em!important;" id="selection-type">
+										<?php if ($_SESSION['compte']['identifiant'] == "employe") : ?>
+											<option value="4"<?=$_SESSION['filters']['type'] == 4 ? 'selected' : ''; ?>>tout</option>
+											<option value="1"<?=$_SESSION['filters']['type'] == 1 ? 'selected' : ''; ?>>en attente</option>
+											<option value="2"<?=$_SESSION['filters']['type'] == 2 ? 'selected' : ''; ?>>validée</option>
+											<option value="0"<?=$_SESSION['filters']['type'] == 0 ? 'selected' : ''; ?>>refusée</option>
+											<option value="3"<?=$_SESSION['filters']['type'] == 3 ? 'selected' : ''; ?>>archivée</option>
+										<?php endif; ?>
+									</select>
+		      					</div>
+		      				</div>
+							<div class="row"> 
+								<div id="chartdiv" style="width: 100%; height: 400px;"></div>
+							</div>
+							<?php if ($_SESSION['compte']['identifiant'] == 'entreprise') : ?>
+								<div class="row align-items-center">
+									<a  class="btn btn-downloadx btn-success" id="print" onclick="printDiv ()">
+										<i class="fas fa-arrow-alt-circle-down"></i> Télécharger en pdf
+									</a>
+								</div>
+							<?php endif; ?>
+							<div class="card m-2 p-2 list-head" style="border: 1px solid #1219c5; background: #e3e3e3; font-size: 20px;">
+								<div class="row">
+									<div class="col-md-4 text-center">
+											<span class="titre">Motif</span>
+									</div>
+									<div class="col-md-3 text-center">
+										<span class="titre">Début et Fin</span>
+									</div>
+									<div class="col-md-1 text-center" style="padding-left: 0; padding-right:0;">
+										<span class="titre">Valideé</span>
+									</div>
+									<div class="col-md-1 text-center" style="padding-left: 0; padding-right:0;">
+										<span class="titre">Réfusée</span>
+									</div>
+									<div class="col-md-1 text-center" style="padding-left: 0; padding-right:0;">
+										<span class="titre">En attente</span>
+									</div>
+									<div class="col-md-1 text-center" style="padding-left: 0; padding-right:0;">
+										<span class="titre">Retirée</span>
+									</div>
+									<div class="col-md-1 text-center"></div>
+								</div>
+							</div>
+		      				<div class="m-l-3" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+		      				</div>
+		      			</div>
+					</div>
+					<div class="modal fade" id="modalDemande" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  					<div class="modal-dialog modal-dialog-centered" role="document">
+		    				<div class="modal-content">
+		    					<form method="POST" id="form" action="<?= HOST . 'manage/save-demandeConge'?>" enctype="multipart/form-data" novalidate="novalidate">
+			      					<div class="modal-header">
+			        					<div class="text-center" style="width: 100%;">
+								      		<h5 class="modal-title section-heading" style="margin-bottom: 0px!important;" id="exampleModalLabel">Envoyer une demande de congé</h5>
+								      	</div>
+			        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          						<span aria-hidden="true">&times;</span>
+			        					</button>
+			      					</div>
+			      					<div class="modal-body">
+			        					<div class="card p-3" style="background: #efefff;">
+			        						<div class="form-group hidden">
+							                  	<input class="form-control" id="idEmploye" name="idEmploye" type="number" value="<?= $employe->getIdEmploye() ?>">
+							                </div>
+			        						<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="titre">Date de début : </span>
+			        							</div>
+			        							<div class="col-md-8">
+			        								<div class="form-group">
+			        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+				        								<label for="datepicker">
+										        			<input class="form-control datepicker" id="datepicker-debut" value="" type="text" autocomplete="off" placeholder="date du début du congé" style="width: 110%; height: 38px; font-size: 0.9em; font-weight: bold;">
+									        			</label>
+									        			<input type="text" class="form-control hidden" name="debut" id="debut" required="required" data-validation-required-message="Veuillez renseigner la date de début" >
+									                  	<p class="help-block text-danger"></p>
+									                </div>
+			        							</div>
+			        						</div>
+			        						<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="titre">Heure de début : </span>
+			        							</div>
+			        							<div class="col-md-8">
+			        								<div class="form-group">
+			        									<i class="fa fa-clock icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+									            		<select class="form-control font-weight-bold" name="heureDebut" id="heureDebut" required="required" data-validation-required-message="obligatoire" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+				        									<option value="">Selectionnnez l'heure</option>
+				        									<option value="1">Matin</option>
+				        									<option value="2">Midi</option>
+				        								</select>
+				        								<p class="help-block text-danger"></p>
+									            	</div>
+			        							</div>
+			        						</div>
+			        						<hr>
+			        						<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="titre">Date de fin : </span>
+			        							</div>
+			        							<div class="col-md-8">
+			        								<div class="form-group">
+			        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+				        								<label for="datepicker">
+										        			<input class="form-control datepicker" id="datepicker-fin" value="" type="text" autocomplete="off" placeholder="date de la fin du congé" style="width: 110%; height: 38px; font-size: 0.9em; font-weight: bold;" disabled="disabled">
+									        			</label>
+									        			<input type="text" class="form-control hidden" name="fin" id="fin" required="required" data-validation-required-message="Veuillez renseigner la date de fin" >
+									                  	<p class="help-block text-danger"></p>
+				        							</div>
+			        							</div>
+			        						</div>
+			        						<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="titre">Heure de fin : </span>
+			        							</div>
+			        							<div class="col-md-8">
+			        								<div class="form-group">
+			        									<i class="fa fa-clock icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+									            		<select class="form-control font-weight-bold" name="heureFin" id="heureFin" required="required" data-validation-required-message="obligatoire" style="width: 100%; max-width: 100%; font-size: 0.8em!important;" disabled="disabled">
+				        									<option value="">Selectionnnez l'heure</option>
+				        									<option value="2">Midi</option>
+				        									<option value="3">Soir</option>
+				        								</select>
+				        								<p class="help-block text-danger"></p>
+									            	</div>
+			        							</div>
+			        						</div>
+			        						<hr>
+		        							<div class="row">
+			        							<div class="col-md-4">
+			        								<span class="titre">Motif :</span>
+			        							</div>
+			        							<div class="col-md-8">
+				        							<div class="form-group">
+				        								<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+									        			<input type="text" class="form-control" name="raison" id="raison" required="required" data-validation-required-message="Veuillez indiquer la raison de votre congé" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;" placeholder="raison de votre congé">
+									                  	<p class="help-block text-danger"></p>
+				        							</div>
+				        						</div>
+			        						</div>
+			        					</div>
+			      					</div>
+			      					<div class="modal-footer">
+			        					<div class="row" style="width: 105%!important;">
+								      		<div class="col-md-3">
+								      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+								      		</div>
+								      		<div class="col-md-5"></div>
+								      		<div class="col-md-4">
+								      			<div class="form-group"> 
+								      				<button type="submit" id="submit" class="btn btn-md btn-info">
+								      					Envoyer
+								      				</button>
+								      			</div>
+								      		</div>
+								      	</div>
+			      					</div>
+			      				</form>
+		    				</div>
+		  				</div>
+					</div>
+					<?php 
+						if (isset($_GET['idEmploye'])) {
+							$urls = '?idEmploye=' . $_GET['idEmploye'];
+						} else {
+							$urls = '';
+						}
+						$addUrl = $_GET['page'] . $urls;
+					 ?>
+					<script>
+						var stockConge 	= <?= json_encode($stock->toArray()); ?>;
+						var conges 		= <?= json_encode($conge); ?>;
+
+						$("document").ready(function(){
+							$("#liste").load("<?= HOST . $addUrl ?>",
+								{
+								annee     : $('#annee').val(),
+								type      : $('#selection-type').val()
+							});
+						});
+						$('#annee').change(function(){
+							$("#liste").load("<?= HOST . $addUrl ?>", {
+								annee     : $('#annee').val(),
+								type      : $('#selection-type').val()
+							}, function(donnees){
+								showHistoriqueConge(newStockConge, newConges);
+							});
+						});
+						$('#selection-type').change(function(){
+							$("#liste").load("<?= HOST . $addUrl ?>", {
+								annee     : $('#annee').val(),
+								type      : $('#selection-type').val()
+							}, function(donnees){
+								showHistoriqueConge(newStockConge, newConges);
+							});
+						});
+						$('#datepicker-debut').change(function(){
+							if ($('#datepicker-debut').val() != "") {
+								$.ajax({
+									url : "<?= HOST . 'manage/congeDisponible'?>",
+									data : "idEmploye=" + $("#idEmploye").val(),
+									dataType : "text",
+									success : function(data)
+									{
+										var stringDate = $('#datepicker-debut').datepicker('getDate');
+										var date       = new Date(stringDate.getFullYear(), stringDate.getMonth(), stringDate.getDate() +  parseInt(data, 10) - 1);
+									    $('#datepicker-fin').datepicker('option', 'maxDate', date);
+									    $('#datepicker-fin').datepicker('option', 'minDate', $('#datepicker-debut').val());
+									    $('#datepicker-fin').val("");
+									    $('#datepicker-fin').attr('disabled', false);
+									    $('#heureFin').attr('disabled', false);
+									}
+								});
+							} else {
+								$('#datepicker-fin').attr('disabled', true);
+								$('#heureFin').attr('disabled', true);
+							}
+						});
+						$("#submit").click(function(){
+				          	var date = $("#datepicker-debut").val().split('/');
+				          	if (date != "") {
+				          		$("#debut").val(date[2] + '-' + date[1] + '-' + date[0]);
+				          	}
+				          	date = $("#datepicker-fin").val().split('/');
+				          	if (date != "") {
+				          		$("#fin").val(date[2] + '-' + date[1] + '-' + date[0]);
+				          	}
+						});
+		      			$("#annuler").click(function(){
+							window.location.reload();
+						});
+						tippy('.fa-paper-plane', {
+							content: "envoyer une de mande de congé"
+						});
+
+						function showHistoriqueConge(newStockConge, newConges)
+						{
+							$.ajax({
+								url: "<?= HOST; ?>../Web/Ressources/js/voirHistoriqueCongeGraph.js",
+								dataType: 'script',
+								success: function() {
+									// script has been loaded and executed
+									drawGraphHistoriqueConge(newStockConge, newConges);
+								}
+							});
+						}
+					</script>
+					<script src="<?= HOST; ?>../Web/Ressources/js/plugin/core.js"></script>
+					<?php if ($_SESSION['compte']['identifiant'] == 'entreprise') : ?>
+				      	<script src="<?= HOST; ?>../Web/Ressources/js/tabCongeEmploye.js"></script>
+					<?php endif; ?>
+					<script src="<?= HOST; ?>../Web/Ressources/js/plugin/maps.js"></script>
+					<script src="<?= HOST; ?>../Web/Ressources/js/plugin/charts.js"></script>
+					<script src="<?= HOST; ?>../Web/Ressources/js/voirHistoriqueCongeGraph.js"></script>
+				<?php elseif ((end($url) == "conge" && $url[1] == "entreprise") ||
+							(end($url) == "congeCollaborateur" && $url[1] == "employe")) : ?>
+					<div class="row">
+		      			<div class="col-lg-12">
+		      				<div class="tete-list-section row" style="background: #647994;">
+		      					<div class="col-md-8 text-center" id="filtre-gauche" style="overflow: hidden; white-space: nowrap;">
+		      						<div class="row">
+		      							<div class="col-md-1 text-left">
+		      								<label class="titre" style="color: #ffffff;">Filtre : </label>
+		      							</div>
+		      							<div class="col-md-3 text-left">
+											<select class="select-time" id='filter-group' style="font-size: 0.8em!important;">
+												<option value=""> -- groupe --</option>
+												<option value="1" selected="selected">tout</option>
+												<option value="2">par service</option>
+												<option value="3">par poste</option>
+												<?php $url[1] == "entreprise" ? $humain = "par employé" : $humain = "par collaborateur"?>
+												<option value="4"><?= $humain; ?></option>
+											</select>
+										</div>
+										<div class="col-md-3 text-left">
+											<select class="select-time" id='filter-element'  style="font-size: 0.8em!important;">
+												<option class="option-tout" id="o-t" value="">-- selectionnez --</option>
+												<?php foreach ($filtres['services'] as $service) : ?>
+													<option class="option-service invisible" value="<?=$service->getIdEntrepriseService();?>"><?=$service->getService()?></option>
+												<?php endforeach ?>
+												<?php foreach ($filtres['postes'] as $poste) : ?>
+													<option class="option-poste invisible" value="<?=$poste->getIdEntreprisePoste();?>"><?=$poste->getPoste()?></option>
+												<?php endforeach ?>
+												<?php foreach ($filtres['employes'] as $employe) : ?>
+													<option class="option-employe invisible" value="<?=$employe->getIdEmploye();?>"><?=$employe->getNom() . ' ' . $employe->getPrenom()?></option>
+												<?php endforeach ?>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3 text-center" id="filtre-droite" style="overflow: hidden; white-space: nowrap;">
+									<label class="titre" style="color: #ffffff;">Année : </label>
+		      						<input class="select-time" type="number" id="annee" min="2019" value="<?= $_SESSION['filters']['annee']?>">
+								</div>
+							</div>
+							<div class="m-l-3" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+		      				</div>
+						</div>
+					</div>
+					<script>
+		      			const FILTER_GROUP_ALL     = 1;
+	        			const FILTER_GROUP_SERVICE = 2;
+	        			const FILTER_GROUP_POSTE   = 3;
+	        			const FILTER_GROUP_EMPLOYE = 4;
+		      			$('document').ready(function(){
+		      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+		      					$("#liste").load("<?= HOST . 'manage/conges'?>", {
+									groupe    : $('#filter-group').val(),
+									id        : $('#filter-element').val(),
+									annee     : $('#annee').val()
+								}, function() {
+									$('.option-tout').removeClass('invisible');
+			      					$('.option-service').addClass('invisible');
+			      					$('.option-poste').addClass('invisible');
+			      					$('.option-employe').addClass('invisible');
+			      					$('#filter-element').val("");
+			      					$('#filter-element').attr("disabled", true);
+								});
+		      				}
+		      			});
+		      			$('#filter-group').change(function(){
+		      				if ($('#filter-group').val() == FILTER_GROUP_ALL) {
+		      					$("#liste").load("<?= HOST . 'manage/conges'?>", {
+									groupe    : $('#filter-group').val(),
+									id        : $('#filter-element').val(),
+									annee     : $('#annee').val()
+								}, function() {
+									$('.option-tout').removeClass('invisible');
+			      					$('.option-service').addClass('invisible');
+			      					$('.option-poste').addClass('invisible');
+			      					$('.option-employe').addClass('invisible');
+			      					$('#filter-element').val("");
+			      					$('#filter-element').attr("disabled", true);
+								});
+		      				} else if ($('#filter-group').val() == FILTER_GROUP_SERVICE) {
+		      					$('.option-tout').addClass('invisible');
+		      					$('.option-service').removeClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').attr("disabled", false);
+		      					$('#filter-element').val("");
+		      				} else if ($('#filter-group').val() == FILTER_GROUP_POSTE) {
+		      					$('.option-tout').addClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').removeClass('invisible');
+		      					$('.option-employe').addClass('invisible');
+		      					$('#filter-element').attr("disabled", false);
+		      					$('#filter-element').val("");
+		      				} else if ($('#filter-group').val() == FILTER_GROUP_EMPLOYE) {
+		      					$('.option-tout').addClass('invisible');
+		      					$('.option-service').addClass('invisible');
+		      					$('.option-poste').addClass('invisible');
+		      					$('.option-employe').removeClass('invisible');
+		      					$('#filter-element').attr("disabled", false);
+		      					$('#filter-element').val("");
+		      				}
+		      			});
+		      			$('#filter-element').change(function() {
+		      				$("#liste").load("<?= HOST . 'manage/conges'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								annee     : $('#annee').val()
+							});
+		      			});
+		      			$('#annee').change(function() {
+							$("#liste").load("<?= HOST . 'manage/conges'?>", {
+								groupe    : $('#filter-group').val(),
+								id        : $('#filter-element').val(),
+								annee     : $('#annee').val()
+							});
+						});
+						tippy('.fa-calendar-check', {
+							content: "voir le planning"
+				  		});
+					</script>
+				<?php elseif ($tmpUrl == "conge" && $url[1] == "parametre") : ?>
+					<div class="row">
+						<div class="col-lg-12 text-center">
+		      				<div class="tete-list-section row" style="background: #647994;">
+		      					<div class="col-md-12 text-center">
+		      						<span class="titre" style="color: #ffffff;">Paramètrez les procédures de demande de congé</span>
+		      					</div>
+		      				</div>
+		      				<div class="" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+		      					<div class="col-lg-12 text-center">
+		      						<div class="card p-2 m-2" style="background: #ffffff;">
+		      							<span class="text-important m-auto">
+			      							Durée minimale de service effectif
+			      							<span class="ml-3" id="etat-attente">
+			      								<?php if ($parametre->getAttente() == ManagerModuleConge::ATTENTE_ACTIVE) : ?>
+											  		<i class="fa fa-circle text-success" style="font-size: 0.8em!important;"></i>
+											  		<span class="titre text-success ml-2">Activée</span>
+											  	<?php elseif ($parametre->getAttente() == ManagerModuleConge::ATTENTE_DESACTIVE) : ?>
+											  		<i class="fa fa-circle text-danger" style="font-size: 0.8em!important;"></i>
+											  		<span class="titre text-danger ml-2">Désactivée</span>
+											  	<?php endif ?>
+			      							</span>
+			      						</span>
+			      						<hr>
+		      							<div class="row">
+			      							<div class="col-md-6">
+			      								<p class="text-justify">
+			      									Si Vous activez cette configuration, tous les employés ne pourront bénéficier de leurs jours 
+			      									de congé qu'après avoir compléter <span class="text-important">12 mois de travail effectif</span>.
+			      								</p>
+			      							</div>
+			      							<div class="col-md-1"></div>
+			      							<div class="col-md-5 text-left">
+		      									<div class="custom-control custom-switch">
+		      										<?php if ($parametre->getAttente() == ManagerModuleConge::ATTENTE_ACTIVE) : ?>
+												  		<input type="checkbox" class="custom-control-input" id="switchAttente" checked="checked">
+												  		<label class="custom-control-label" for="switchAttente">Désactivez cette configuration</label>
+												  	<?php elseif ($parametre->getAttente() == ManagerModuleConge::ATTENTE_DESACTIVE) : ?>
+												  		<input type="checkbox" class="custom-control-input" id="switchAttente">
+												  		<label class="custom-control-label" for="switchAttente">Activez cette configuration</label>
+												  	<?php endif ?>
+												</div>
+			      							</div>
+			      						</div>
+			      					</div>
+			      					<div class="card p-2 m-2" style="background: #ffffff;">
+		      							<span class="text-important m-auto">
+			      							Calcul du solde de congé
+			      							<span class="ml-3" id="etat-calcul">
+			      								<?php if ($parametre->getCalcul() == ManagerModuleConge::CALCUL_PAR_MOIS) : ?>
+											  		<span class="titre text-info ml-2">[Calculé par mois complété]</span>
+											  	<?php elseif ($parametre->getCalcul() == ManagerModuleConge::CALCUL_AU_PRORATA) : ?>
+											  		<span class="titre text-info ml-2">[Calculé au prorata]</span>
+											  	<?php endif ?>
+			      							</span>
+			      						</span>
+			      						<hr>
+		      							<div class="row">
+			      							<div class="col-md-6">
+			      								<p class="text-justify">
+			      									<span class="titre">par mois complété : </span>
+			      									Le salarié bénéficiera de 2,5 jours de congé par mois si et seulement si l'employé
+			      									a complété ce dernier.
+			      								</p>
+			      								<p class="text-justify">
+			      									<span class="titre">par an complété : </span>
+			      									Le salarié bénéficiera de 30 jours de congé par an si et seulement si l'employé
+			      									a complété ce dernier.
+			      								</p>
+			      								<p class="text-justify">
+			      									<span class="titre">au prorata : </span>
+			      									Le salarié bénéficiera d'une durée de congé qui sera calculée en proportion des jours effectués.
+			      								</p>
+			      							</div>
+			      							<div class="col-md-1"></div>
+			      							<div class="col-md-5 text-left">
+		      									<div class="custom-control custom-radio">
+		      										<?php if ($parametre->getCalcul() == ManagerModuleConge::CALCUL_PAR_MOIS) : ?>
+												  		<input type="radio" id="customRadio-complet" name="customRadioCalcul" class="custom-control-calcul custom-control-input" checked="checked">
+												  	<?php else : ?>
+												  		<input type="radio" id="customRadio-complet" name="customRadioCalcul" class="custom-control-calcul custom-control-input">
+												  	<?php endif ?>
+												  <label class="custom-control-label" for="customRadio-complet">2.5 jours par mois complété</label>
+												</div>
+		      									<div class="custom-control custom-radio">
+		      										<?php if ($parametre->getCalcul() == ManagerModuleConge::CALCUL_PAR_AN) : ?>
+												  		<input type="radio" id="customRadio-annuel" name="customRadioCalcul" class="custom-control-calcul custom-control-input" checked="checked">
+												  	<?php else : ?>
+												  		<input type="radio" id="customRadio-annuel" name="customRadioCalcul" class="custom-control-calcul custom-control-input">
+												  	<?php endif ?>
+												  <label class="custom-control-label" for="customRadio-annuel">30 jours par an complété</label>
+												</div>
+												<div class="custom-control custom-radio">
+													<?php if ($parametre->getCalcul() == ManagerModuleConge::CALCUL_AU_PRORATA) : ?>
+												  		<input type="radio" id="customRadio-prorata" name="customRadioCalcul" class="custom-control-calcul custom-control-input" checked="checked">
+												  	<?php else : ?>
+												  		<input type="radio" id="customRadio-prorata" name="customRadioCalcul" class="custom-control-calcul custom-control-input">
+												  	<?php endif ?>
+												  <label class="custom-control-label" for="customRadio-prorata">Calculé au prorata</label>
+												</div>
+			      							</div>
+			      						</div>
+			      					</div>
+			      					<div class="card p-2 m-2" style="background: #ffffff;">
+		      							<span class="text-important m-auto">
+			      							Processus de validation
+			      							<span class="ml-3" id="etat-processus">
+			      								<?php if ($parametre->getProcessus() == ManagerModuleConge::DIRECT_VALIDATION) : ?>
+											  		<span class="titre text-info ml-2">[Directement par le RRH]</span>
+											  	<?php elseif ($parametre->getProcessus() == ManagerModuleConge::ALL_VALIDATION) : ?>
+											  		<span class="titre text-info ml-2">[Passe par tous les niveaux avant le RRH]</span>
+											  	<?php else : ?>
+											  		<span class="titre text-info ml-2">[Passe par <?= $parametre->getNiveau(); ?> niveau(x) avant le RRH]</span>
+											  	<?php endif ?>
+			      							</span>
+			      						</span>
+			      						<hr>
+		      							<div class="row">
+			      							<div class="col-md-6">
+			      								<p class="text-justify">
+			      									Veuillez Définir le niveau de validation des demandes de congé avant d'arriver au responsable RH 
+			      									qui effectuera la validation finale. 
+			      									Le niveau peut être vérifié dans <a href="<?= HOST . 'manage/organigramme' ?>">l'organigramme de l'entreprise</a>
+			      								</p>
+			      							</div>
+			      							<div class="col-md-1"></div>
+			      							<div class="col-md-5 text-left">
+		      									<div class="custom-control custom-radio">
+		      										<?php if ($parametre->getProcessus() == ManagerModuleConge::DIRECT_VALIDATION) : ?>
+												  		<input type="radio" id="customRadio-direct" name="customRadio" class="custom-control-input custom-control-processus" checked="checked">
+												  	<?php else : ?>
+												  		<input type="radio" id="customRadio-direct" name="customRadio" class="custom-control-input custom-control-processus">
+												  	<?php endif ?>
+												  <label class="custom-control-label" for="customRadio-direct">Directement au RRH</label>
+												</div>
+												<div class="custom-control custom-radio">
+													<?php if ($parametre->getProcessus() == ManagerModuleConge::ALL_VALIDATION) : ?>
+												  		<input type="radio" id="customRadio-all" name="customRadio" class="custom-control-input custom-control-processus" checked="checked">
+												  	<?php else : ?>
+												  		<input type="radio" id="customRadio-all" name="customRadio" class="custom-control-input custom-control-processus">
+												  	<?php endif ?>
+												  <label class="custom-control-label" for="customRadio-all">Toutes les validations possibles</label>
+												</div>
+												<div class="custom-control custom-radio">
+												  	<?php if ($parametre->getProcessus() == ManagerModuleConge::DEFINED_VALIDATION) : ?>
+												  		<input type="radio" id="customRadio-defined" name="customRadio" class="custom-control-input custom-control-processus" checked="checked">
+												  	<?php else : ?>
+												  		<input type="radio" id="customRadio-defined" name="customRadio" class="custom-control-input custom-control-processus">
+												  	<?php endif ?>
+												  	<label class="custom-control-label" for="customRadio-defined">Niveau à définir</label>
+												</div>
+												<div class="form-group row">
+													<div class="col-md-3">
+														<label>niveau : </label>
+													</div>
+													<div class="col-md-5 text-right">
+														<?php if ($parametre->getProcessus() == ManagerModuleConge::DEFINED_VALIDATION) : ?>
+													  		<input type="number" class="form-control select-time" id="niveau" min="0" max="10" style="width: 100%!important;" placeholder="niveau" value="<?= $parametre->getNiveau(); ?>">
+													  	<?php else : ?>
+													  		<input type="number" class="form-control select-time" id="niveau" min="0" max="10" disabled="disabled" style="width: 100%!important;" placeholder="niveau" value="<?= $parametre->getNiveau(); ?>">
+													  	<?php endif ?>
+													</div>
+													<div class="col-md-4">
+														<?php if ($parametre->getProcessus() == ManagerModuleConge::DEFINED_VALIDATION) : ?>
+													  		<button class="btn btn-sm btn-info" id="valider-configuration">valider</button>
+													  	<?php else : ?>
+													  		<button class="btn btn-sm btn-info" id="valider-configuration" disabled="disabled">valider</button>
+													  	<?php endif ?>
+													</div>
+												</div>
+			      							</div>
+			      						</div>
+			      					</div>
+
+			      					<div class="card p-2 m-2" style="background: #ffffff;">
+		      							<span class="text-important m-auto">
+			      							Déduction du solde de congé
+			      							
+			      						</span>
+			      						<hr>
+		      							<div class="row">
+			      							<div class="col-md-6">
+			      								<p class="text-justify">
+			      									<span class="titre">Déduire le week-end :</span>
+			      									Même si la demande de conge se termine le vendredi ou le samedi soir: on prend en compte le samedi et le dimanche
+			      								</p>
+			      							</div>
+			      							<div class="col-md-1"></div>
+			      							<div class="col-md-5 text-left">
+		      									<div class="custom-control custom-switch">
+											  		<input type="checkbox" class="custom-control-input" id="switchDeduction" <?=$parametre->getDeductWeekend() == ManagerModuleConge::YES ? 'checked="checked"':'';?>>
+											  		<label class="custom-control-label" for="switchDeduction"><?=$parametre->getDeductWeekend() == ManagerModuleConge::YES ? 'Oui':'Non';?></label>
+												</div>
+			      							</div>
+			      						</div>
+		      							<div class="row">
+			      							<div class="col-md-6">
+			      								<p class="text-justify">
+			      									<span class="titre">Passage de validation :</span>
+			      									Receivoir de notification lors d'absence du supérieur hiérarchique
+			      								</p>
+			      							</div>
+			      							<div class="col-md-1"></div>
+			      							<div class="col-md-5 text-left">
+		      									<div class="custom-control custom-switch">
+											  		<input type="checkbox" class="custom-control-input" id="switchNotif" <?=$parametre->getNotifyAbsence() == ManagerModuleConge::YES ? 'checked="checked"':'';?>>
+											  		<label class="custom-control-label" for="switchNotif"><?=$parametre->getNotifyAbsence() == ManagerModuleConge::YES ? 'Oui':'Non';?></label>
+												</div>
+			      							</div>
+			      						</div>
+			      					</div>
+		      					</div>
+		      				</div>
+		      			</div>
+		      		</div>
+					<script>
+						const TRUE               	= 1;
+						const FALSE              	= 0;
+						const DIRECT_VALIDATION  	= 0;
+        				const ALL_VALIDATION     	= 1;
+        				const DEFINED_VALIDATION 	= 2;
+        				const MONTH_COMPLETED    	= 0;
+        				const PROPRATA           	= 1;
+        				const YEAR_COMPLETED  		= 2;
+						$('#switchAttente').change(function(){
+							if ($('#switchAttente').is(':checked')) {
+								$.ajax({
+									url : "<?= HOST . 'manage/activer-attenteConge'?>",
+									data : "idEntreprise=<?= $_SESSION['user']['idEntreprise'] ?>",
+									dataType : "text",
+									success : function(data)
+									{
+										if (data == TRUE) {
+											$('#etat-attente').html(
+												'<i class="fa fa-circle text-success" style="font-size: 0.8em!important;"></i>' +
+											  	'<span class="titre text-success ml-2">Activée</span>'
+											);
+											notifier("success", "Activation terminée avec succès");
+										} else {
+											notifier("danger", "Erreur lors de l'activation");
+										}
+									}
+								});
+							} else {
+								$.ajax({
+									url : "<?= HOST . 'manage/desactiver-attenteConge'?>",
+									data : "idEntreprise=<?= $_SESSION['user']['idEntreprise'] ?>",
+									dataType : "text",
+									success : function(data)
+									{
+										if (data == TRUE) {
+											$('#etat-attente').html(
+												'<i class="fa fa-circle text-danger" style="font-size: 0.8em!important;"></i>' +
+											  	'<span class="titre text-danger ml-2">Desactivée</span>'
+											);
+											notifier("success", "Désactivation terminée avec succès");
+										} else {
+											notifier("danger", "Erreur lors de la désactivation");
+										}
+									}
+								});
+							}
+						});
+						$('.custom-control-processus').change(function(){
+							var validation = null;
+							var niveau     = FALSE;
+							if ($('#customRadio-direct').is(':checked')) {
+								validation = DIRECT_VALIDATION;
+								$('#niveau').attr("disabled", true);
+								$('#valider-configuration').attr("disabled", true);
+							} else if ($('#customRadio-all').is(':checked')) {
+								validation = ALL_VALIDATION;
+								$('#niveau').attr("disabled", true);
+								$('#valider-configuration').attr("disabled", true);
+							} else if ($('#customRadio-defined').is(':checked')) {
+								validation = DEFINED_VALIDATION;
+								$('#niveau').attr("disabled", false);
+								$('#valider-configuration').attr("disabled", false);
+							}
+							if (validation == DIRECT_VALIDATION || validation == ALL_VALIDATION) {
+								$.ajax({
+									url : "<?= HOST . 'manage/changer-processusConge'?>",
+									data : "processus=" + validation + "&niveau=" + niveau,
+									dataType : "text",
+									success : function(data)
+									{
+										if (data == DIRECT_VALIDATION) {
+											$('#etat-processus').html(
+												'<span class="titre text-info ml-2">[Directement par le RRH]</span>'
+											);
+											notifier("success", "Modification terminée avec succès");
+										} else if (data == ALL_VALIDATION) {
+											$('#etat-processus').html(
+												'<span class="titre text-info ml-2">[Passe par tous les niveaux avant le RRH]</span>'
+											);
+											notifier("success", "Modification terminée avec succès");
+										} else {
+											notifier("danger", "Erreur lors de la modification");
+										}
+									}
+								});
+							}
+						});
+						$('.custom-control-calcul').change(function(){
+							var calcul = null;
+							if ($('#customRadio-complet').is(':checked')) {
+								calcul = MONTH_COMPLETED;
+							} else if ($('#customRadio-prorata').is(':checked')) {
+								calcul = PROPRATA;
+							} else if ($('#customRadio-annuel').is(':checked')) {
+								calcul = YEAR_COMPLETED;
+							} 
+							$.ajax({
+								url : "<?= HOST . 'manage/changer-calculConge'?>",
+								data : "calcul=" + calcul,
+								dataType : "text",
+								success : function(data)
+								{
+									if (data == MONTH_COMPLETED) {
+										$('#etat-calcul').html(
+											'<span class="titre text-info ml-2">[Calculé par mois complété]</span>'
+										);
+										notifier("success", "Modification terminée avec succès");
+									} else if (data == PROPRATA) {
+										$('#etat-calcul').html(
+											'<span class="titre text-info ml-2">[Calculé au prorata]</span>'
+										);
+										notifier("success", "Modification terminée avec succès");
+									} else if (data == YEAR_COMPLETED) {
+										$('#etat-calcul').html(
+											'<span class="titre text-info ml-2">[Calculé annuel complété]</span>'
+										);
+										notifier("success", "Modification terminée avec succès");
+									} else {
+										notifier("danger", "Erreur lors de la modification");
+									}
+								}
+							});
+						});
+						$('#niveau').change(function(){
+							if ($('#niveau').val() == "") {
+								$('#niveau').val("0");
+							}
+						});
+						$('#valider-configuration').click(function(){
+							if ($('#niveau').val() == "") {
+								$('#niveau').val("0");
+							}
+							$.ajax({
+								url : "<?= HOST . 'manage/changer-processusConge'?>",
+								data : "processus=" + DEFINED_VALIDATION + "&niveau=" + $('#niveau').val(),
+								dataType : "text",
+								success : function(data)
+								{
+									if (data == DEFINED_VALIDATION) {
+										$('#etat-processus').html(
+											'<span class="titre text-info ml-2">[Passe par ' + $('#niveau').val() + ' niveau(x) avant le RRH]</span>'
+										);
+										notifier("success", "Modification terminée avec succès");
+									} else {
+										notifier("danger", "Erreur lors de la modification");
+									}
+								}
+							});
+						});
+						tippy('.fa-calendar-check', {
+							content: "voir le planning"
+				  		});
+				  		$('#switchNotif').change(function(){
+							let text='';
+							if ($('#switchNotif').is(':checked')) {
+								text = 'Oui';
+							} else {
+								text = 'Non';
+							}
+							$(this).parent().find('label.custom-control-label').html(text);
+
+							updateParameterConge("alertSuccess", "alertError")
+						});
+				  		$('#switchDeduction').change(function(){
+							let text='';
+							if ($('#switchDeduction').is(':checked')) {
+								text = 'Oui';
+							} else {
+								text = 'Non';
+							}
+							$(this).parent().find('label.custom-control-label').html(text);
+
+							updateParameterConge("alertSuccess", "alertError")
+						});
+
+						function updateParameterConge(alertSuccess, alertError) {
+							var params = "notify=" + ($('#switchNotif').is(':checked') ? TRUE : FALSE) + "&deduct=" + ($('#switchDeduction').is(':checked') ? TRUE : FALSE);
+							$.ajax({
+								url : "<?= HOST . 'manage/changer-parametreConge'?>",
+								data :  params,
+								dataType : "text",
+								success : function(data)
+								{
+									if (data == TRUE) {
+
+										notifier("success", alertSuccess);
+									} else {
+										notifier("danger", alertError);
+									}
+								}
+							});
+						}
+					</script>
+				<?php elseif ($tmpUrl == "validation") : ?>
+					<div class="row">
+						<div class="col-lg-12 text-center">
+		      				<div class="tete-list-section row" style="background: #647994;">
+		      					<div class="col-md-5 text-center">
+		      						<span class="titre" style="color: #ffffff;">Les validations de congé</span>
+		      					</div>
+		      					<div class="col-md-3 text-center">
+		      						<label class="titre" style="color: #ffffff;">Année : </label>
+		      						<input class="select-time" type="number" id="annee" min="2019" value="<?= $_SESSION['filters']['annee'];?>">
+		      					</div>
+		      					<div class="col-md-4 text-center">
+		      						<label class="titre" style="color: #ffffff;">Lister : </label>
+									<select class="select-time"  style="font-size: 0.8em!important;" id="selection-type">
+										<option value="4"<?=$_SESSION['filters']['type'] == 4 ? 'selected' : ''; ?>>tout</option>
+										<option value="1"<?=$_SESSION['filters']['type'] == 1 ? 'selected' : ''; ?>>en attente</option>
+										<option value="2"<?=$_SESSION['filters']['type'] == 2 ? 'selected' : ''; ?>>validée</option>
+										<option value="0"<?=$_SESSION['filters']['type'] == 0 ? 'selected' : ''; ?>>refusée</option>
+										<option value="3"<?=$_SESSION['filters']['type'] == 3 ? 'selected' : ''; ?>>archivée</option>
+									</select>
+		      					</div>
+		      				</div>
+		      				<div class="m-l-3" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+		      				</div>
+		      			</div>
+					</div>
+					<?php if ($_SESSION['compte']['identifiant'] == ManagerModuleConge::COMPTE_ENTREPRISE) : ?>
+						<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+			  				<div class="modal-dialog modal-dialog-centered" role="document">
+			    				<div class="modal-content">
+			    					<form method="POST" id="form" action="<?= HOST . 'manage/save-demandeConge'?>" enctype="multipart/form-data" novalidate="novalidate">
+			    						<input type="hidden" name="idEntreprise" value="<?=$_SESSION['user']['idEntreprise']?>">
+				      					<div class="modal-header">
+				        					<div class="text-center" style="width: 100%;">
+									      		<h5 class="modal-title" id="exampleModalLabel">Demande de congé</h5>
+									      	</div>
+				        					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          						<span aria-hidden="true">&times;</span>
+				        					</button>
+				      					</div>
+				      					<div class="modal-body">
+				        					<div class="card p-3" style="background: #efefff;">
+				        						<div class="row">
+				        							<div class="col-md-4">
+				        								<span class="titre">Employé : </span>
+				        							</div>
+				        							<div class="col-md-8">
+				        								<div class="form-group">
+															<i class="fa fa-search fa-fw icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+														  	<input class="form-control" type="text" id="recherche" placeholder="Recherche" style="height: 38px; font-size: 0.9em;">
+														</div>
+				        								<div class="form-group">
+				        									<i class="fa fa-user icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+					        								<select class="form-control font-weight-bold" name="idEmploye" id="idEmploye" required="required" data-validation-required-message="Veuillez selectionner un employé" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+					        									<option value="">Selectionnnez l'employé</option>
+					        									<?php foreach ($employes as $employe) : ?>
+					        										<option value="<?=$employe->getIdEmploye()?>"><?= $employe->getNom() . ' ' . $employe->getPrenom() ?></option>
+					        									<?php endforeach ?>
+					        								</select>
+					        								<p class="help-block text-danger"></p>
+					        							</div>
+				        							</div>
+				        						</div>
+				        						<hr>
+				        						<div class="row">
+				        							<div class="col-md-4">
+				        								<span class="titre">Date de début : </span>
+				        							</div>
+				        							<div class="col-md-8">
+				        								<div class="form-group">
+				        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+					        								<label for="datepicker">
+											        			<input class="form-control datepicker" id="datepicker-debut" value="" type="text" autocomplete="off" placeholder="date du début du congé" style="width: 110%; height: 38px; font-size: 0.9em; font-weight: bold;">
+										        			</label>
+										        			<input type="text" class="form-control hidden" name="debut" id="debut" required="required" data-validation-required-message="Veuillez renseigner la date de début" >
+										                  	<p class="help-block text-danger"></p>
+										                </div>
+				        							</div>
+				        						</div>
+				        						<div class="row">
+				        							<div class="col-md-4">
+				        								<span class="titre">Heure de début : </span>
+				        							</div>
+				        							<div class="col-md-8">
+				        								<div class="form-group">
+				        									<i class="fa fa-clock icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+										            		<select class="form-control font-weight-bold" name="heureDebut" id="heureDebut" required="required" data-validation-required-message="obligatoire" style="width: 100%; max-width: 100%; font-size: 0.8em!important;">
+					        									<option value="">Selectionnnez l'heure</option>
+					        									<option value="1">Matin</option>
+					        									<option value="2">Midi</option>
+					        								</select>
+					        								<p class="help-block text-danger"></p>
+										            	</div>
+				        							</div>
+				        						</div>
+				        						<hr>
+				        						<div class="row">
+				        							<div class="col-md-4">
+				        								<span class="titre">Date de fin </span>
+				        								<span class="text-danger titre" id="solde"></span> :
+				        							</div>
+				        							<div class="col-md-8">
+				        								<div class="form-group">
+				        									<i class="fa fa-calendar icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+					        								<label for="datepicker">
+											        			<input class="form-control datepicker" id="datepicker-fin" value="" type="text" autocomplete="off" placeholder="date de la fin du congé" style="width: 110%; height: 38px; font-size: 0.9em; font-weight: bold;" disabled="disabled">
+										        			</label>
+										        			<input type="text" class="form-control hidden" name="fin" id="fin" required="required" data-validation-required-message="Veuillez renseigner la date de fin" >
+										                  	<p class="help-block text-danger"></p>
+					        							</div>
+				        							</div>
+				        						</div>
+				        						<div class="row">
+				        							<div class="col-md-4">
+				        								<span class="titre">Heure de fin : </span>
+				        							</div>
+				        							<div class="col-md-8">
+				        								<div class="form-group">
+				        									<i class="fa fa-clock icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+										            		<select class="form-control font-weight-bold" name="heureFin" id="heureFin" required="required" data-validation-required-message="obligatoire" style="width: 100%; max-width: 100%; font-size: 0.8em!important;" disabled="disabled">
+					        									<option value="">Selectionnnez l'heure</option>
+					        									<option value="2">Midi</option>
+					        									<option value="3">Soir</option>
+					        								</select>
+					        								<p class="help-block text-danger"></p>
+										            	</div>
+				        							</div>
+				        						</div>
+				        						<hr>
+				        						<div class="row">
+				        							<div class="col-md-4">
+				        								<span class="titre">Motif :</span>
+				        							</div>
+				        							<div class="col-md-8">
+					        							<div class="form-group">
+					        								<i class="fa fa-tag icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+										        			<input type="text" class="form-control" name="raison" id="raison" required="required" data-validation-required-message="Veuillez indiquer la raison de votre congé" style="width: 100%; height: 38px; font-size: 0.9em; font-weight: bold;" placeholder="raison de votre congé">
+										                  	<p class="help-block text-danger"></p>
+					        							</div>
+					        						</div>
+				        						</div>
+				        					</div>
+				      					</div>
+				      					<div class="modal-footer">
+				        					<div class="row" style="width: 105%!important;">
+									      		<div class="col-md-3">
+									      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+									      		</div>
+									      		<div class="col-md-5"></div>
+									      		<div class="col-md-4">
+									      			<div class="form-group"> 
+									      				<button type="submit" id="submit" class="btn btn-md btn-info">
+									      					Enregistrer
+									      				</button>
+									      			</div>
+									      		</div>
+									      	</div>
+				      					</div>
+				      				</form>
+			    				</div>
+			  				</div>
+						</div>
+						<script>
+							tippy('.fa-calendar-check', {
+								content: "voir le planning"
+					  		});
+					  		tippy('.fa-plus', {
+								content: "Enregistrer une demande de congé"
+					  		});
+					  		$('#datepicker-debut').change(function(){
+								if ($('#datepicker-debut').val() != "") {
+									$.ajax({
+										url : "<?= HOST . 'manage/congeDisponible'?>",
+										data : "idEmploye=" + $("#idEmploye").val(),
+										dataType : "text",
+										success : function(data)
+										{
+											$('#solde').html("(" + parseInt(data, 10) + " j)");
+											var stringDate = $('#datepicker-debut').datepicker('getDate');
+											var date       = new Date(stringDate.getFullYear(), stringDate.getMonth(), stringDate.getDate() +  parseInt(data, 10) - 1);
+										    $('#datepicker-fin').datepicker('option', 'maxDate', date);
+										    $('#datepicker-fin').datepicker('option', 'minDate', $('#datepicker-debut').val());
+										    $('#datepicker-fin').val("");
+										    $('#datepicker-fin').attr('disabled', false);
+										    $('#heureFin').attr('disabled', false);
+										}
+									});
+								} else {
+									$('#datepicker-fin').attr('disabled', true);
+									$('#heureFin').attr('disabled', true);
+								}
+							});
+							$("#recherche").change(function() {
+								if ($("#recherche").val() != "") {
+									$('#idEmploye option').each(function(){
+									    if ($(this).text().toLowerCase().includes($("#recherche").val().toLowerCase())) {
+									    	$(this).removeClass('invisible');
+									    	$(this).attr('selected', true);
+									    } else {
+									    	$(this).attr('selected', false);
+									    	$(this).addClass('invisible');
+									    }
+									});
+									$("#idEmploye").trigger('change');
+								} else {
+									$('#idEmploye option').each(function(){
+										$(this).removeClass('invisible');
+										$(this).attr('selected', false);
+									});
+								}
+								$("#idEmploye").trigger('mousedown');
+							});
+							$("#submit").click(function(){
+					          	var date = $("#datepicker-debut").val().split('/');
+					          	if (date != "") {
+					          		$("#debut").val(date[2] + '-' + date[1] + '-' + date[0]);
+					          	}
+					          	date = $("#datepicker-fin").val().split('/');
+					          	if (date != "") {
+					          		$("#fin").val(date[2] + '-' + date[1] + '-' + date[0]);
+					          	}
+							});
+			      			$("#annuler").click(function(){
+								window.location.reload();
+							});
+						</script>
+					<?php endif ?>
+					<script>
+						$("document").ready(function(){
+							$("#liste").load("<?= HOST . 'manage/validationConges'?>", {
+								annee     : $('#annee').val(),
+								type      : $('#selection-type').val()
+							});
+						});
+						$('#annee').change(function(){
+							$("#liste").load("<?= HOST . 'manage/validationConges'?>", {
+								annee     : $('#annee').val(),
+								type      : $('#selection-type').val()
+							});
+						});
+						$('#selection-type').change(function(){
+							$("#liste").load("<?= HOST . 'manage/validationConges'?>", {
+								annee     : $('#annee').val(),
+								type      : $('#selection-type').val()
+							});
+						});
+					</script>
+				<?php endif ?>
+			<?php endif ?>
+		</div>
+	</div>
+</section>
+<?php if ($_SESSION['compte']['identifiant'] == ManagerModuleConge::COMPTE_ENTREPRISE) : ?>
+	<!--  @Changelog 15/07/2022 [OPT] (Lansky) Ajouter un démo de guide d'utilisation du module CONGE -->
+	<div class="modal fade" id="modalDemosVideo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<div class="text-center" style="width: 100%;">
+			      		<h5 class="modal-title section-heading" style="margin-bottom: 0px!important;" id="exampleModalLabel">Démo du congé</h5>
+			      	</div>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+  						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="card p-3" style="background: #efefff;">
+						<video id="movie" width="100%" height="auto" preload controls>
+				            <source src="<?= HOST; ?>../Web/Ressources/videos/demo-conge.mp4" type='video/mp4; codecs=avc1.42E01E, mp4a.40.2"' />
+				            <source src="<?= HOST; ?>../Web/Ressources/videos/demo-conge.webm" type='video/webm; codecs="vp8, vorbis"' />
+				            <source src="<?= HOST; ?>../Web/Ressources/videos/demo-conge.ogg" type='video/ogg; codecs="theora, vorbis"' />
+				            <object width="100%" height="auto" type="application/x-shockwave-flash" data="flowplayer-3.2.1.swf">
+				              <param ... />
+				            </object>
+			          </video>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="row" style="width: 105%!important;">
+			      		<div class="col-md-3">
+			      			<button type="button" class="btn btn-md btn-danger" id="annuler" data-dismiss="modal">Annuler</button>
+			      		</div>
+			      		<div class="col-md-9"></div>
+			      	</div>
+				</div>	
+			</div>
+		</div>
+	</div>
+<?php endif; ?>
+<script src="<?= HOST; ?>../Web/Ressources/js/afficherFormEmploye.js"></script>
+<script>
+	$(function() {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+	});
+
+	$('#demo').click(function(){
+		// $("#movie")[0].autoplay = true;
+		// $("#movie")[0].load();
+		$("#movie")[0].play();
+	});
+	$('#annuler').click(function(){
+		$("#movie")[0].pause();
+	});
+	$('button.close').click(function(){
+		$("#movie")[0].pause();
+	});
+</script>
+										

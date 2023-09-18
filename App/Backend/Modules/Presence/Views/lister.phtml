@@ -1,0 +1,122 @@
+<style type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/dataTable.bootstrap.css"></style>
+<style type="text/css" href="<?= HOST; ?>../Web/Ressources/css/plugin/dataTable.responsive.css"></style>
+<?php
+	$url = explode("/", $_GET['page']);
+	$url = $url[1];
+?>
+<section class="page-section" id="back-section">
+	<div class="container">
+		<?php if($url == "jourFeries"): $jourFeries = $data; $pageTitle = "Jours Fériés";?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-jourFerie";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des jours fériés</h4>
+				</div>
+			</div>
+			<br>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Designation</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($jourFeries)) : foreach ($jourFeries as $jourFerie): ?>
+					        <tr>
+					            <td>
+					            	<?= $jourFerie->getDesignation(); ?>
+					            </td>
+					            <td class="text-center">
+					            	<a href="<?= HOST . "manage/update-jourFerie?idJourFerie=" . $jourFerie->getIdJourFerie(); ?>" class="btn btn-warning">
+							        	<i class="fas fa-edit">	</i>
+							      	</a>
+					            	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $jourFerie->getIdJourFerie(); ?>" data-name="<?= ucwords($jourFerie->getDesignation()); ?>" data-url="delete-jourFerie?idJourFerie=" >
+					                    <i class="fas fa-trash"></i>
+					                </a>
+					            </td>
+					        </tr>
+					        <?php endforeach; ?>
+					        <?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php elseif($url == "permissions"): $permissions = $data; $pageTitle = "Types de permission";?>
+			<div class="row">
+				<div class="col-md-3">
+					<a href="<?= HOST . "manage/create-permission";?>" class="btn btn-primary" id="add-btn">
+						<i class="fas fa-plus"></i>	Ajouter	        		
+		      		</a>
+				</div>
+				<div class="col-md-6">
+					<h4 class="text-center list-title section-heading">Liste des permissions</h4>
+				</div>
+			</div>
+			<br>
+			<div class="row block-section">
+				<div>
+					<table class="table table-striped small-first-col" id="table-back">
+						<thead>
+							<tr>
+								<th>Permission</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						<tbody id="tableSearch" class="body-half-screen">
+							<?php if(!empty($permissions)) : foreach ($permissions as $permission): ?>
+					        <tr>
+					            <td>
+					            	<?= $permission->getDesignation(); ?>
+					            </td>
+					            <td class="text-center">
+					            	<a href="<?= HOST . "manage/update-permission?idTypePermission=" . $permission->getIdTypePermission(); ?>" class="btn btn-warning">
+							        	<i class="fas fa-edit">	</i>
+							      	</a>
+					            	<a href="#" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= $permission->getIdTypePermission(); ?>" data-name="<?= ucwords($permission->getDesignation()); ?>" data-url="delete-permission?idTypePermission=" >
+					                    <i class="fas fa-trash"></i>
+					                </a>
+					            </td>
+					        </tr>
+					        <?php endforeach; ?>
+					        <?php endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+		<?php endif?>
+	</div>
+</section>
+ <!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="text-confirmation"></p>
+      </div>
+      <div class="modal-footer">
+        <a id="action-delete" class="btn btn-success">Oui</a>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Non</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="<?= HOST; ?>../Web/Ressources/js/listerModuleEmploye.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>

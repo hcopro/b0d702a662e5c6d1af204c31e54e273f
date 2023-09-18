@@ -1,0 +1,109 @@
+<?php
+	extract($data);
+?>
+<div>
+	<?php if (count($demandes) > 0) : ?>
+		<!--  **@changelog 19/04/2022 [OPT] (Lansky) Récupérer la durée du congé en mi-temps et afficher les états de validation du congé selon leur statut **-->
+		<?php foreach ($demandes as $demande) : $text = "";
+			$statut 		= isset($statut) ? $statut : '';
+			$validatedDay 	= '-';
+			$proposedDay 	= '-';
+			$rejectedDay 	= '-';
+			$canceledDay 	= '-';
+			if (!empty($validations[$demande->getIdConge()])) :
+				if (!is_null($validations[$demande->getIdConge()][0])) :
+					extract($validations[$demande->getIdConge()][0]);
+				endif;
+			endif;
+			if ($demande->getStatut() == ManagerModuleConge::LEAVE_ABOLISHED) : ?>
+				<?php if ($statut == ManagerModuleConge::LEAVE_PROPOSED) :
+					$color = "#ffe905"; $class = "fa-exclamation-triangle"; $text = "annulation en attente";
+				?>
+				<?php elseif ($statut == ManagerModuleConge::LEAVE_VALIDATED) :
+					$color = "#0076fd"; $class = "fa-check"; $text = "congé annulé";
+				?>
+				<?php elseif ($statut == ManagerModuleConge::LEAVE_REJECTED) :
+					$color = "#6610f2/*#f1491d*/"; $class = "fa-times"; $text = "annulation rejetée";
+				?>
+				<?php elseif ($statut == ManagerModuleConge::LEAVE_CANCELED) :
+					$color = "#ff2598"; $class = "fa-trash"; $text = "annulation retirée";
+				?>
+				<?php endif?>
+			<?php else :?>
+				<?php if ($demande->getStatut() == ManagerModuleConge::LEAVE_VALIDATED) :
+					$color = "#00c853"; $class = "fa-check"; $text = "validée";					
+				?>
+				<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_PROPOSED) :
+					$color = "#ffab00"; $class = "fa-exclamation-triangle"; $text = "en attente";	
+				?>
+				<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_REJECTED) : 
+					$color = "#d32f2f"; $class = "fa-times"; $text = "rejetée";
+				?>
+				<?php elseif ($demande->getStatut() == ManagerModuleConge::LEAVE_CANCELED) :
+					$color = "#f13535f5"; $class = "fa-trash"; $text = "retirée";					
+				?>
+				<?php endif?>
+			<?php endif?>
+			<?php
+				if ($text == "validée" || $text == "annulation rejetée" || $text == "annulation retirée") :
+					$validatedDay = ManagerModuleConge::showSoldeConge(ManagerModuleConge::calculateCongeDuring ($demande));
+				elseif ($text == "en attente" || $text == "annulation en attente") :
+					$proposedDay = ManagerModuleConge::showSoldeConge(ManagerModuleConge::calculateCongeDuring ($demande));
+				elseif ($text == "rejetée") :
+					$rejectedDay = ManagerModuleConge::showSoldeConge(ManagerModuleConge::calculateCongeDuring ($demande));
+				elseif ($text == "retirée") :
+					$canceledDay = ManagerModuleConge::showSoldeConge(ManagerModuleConge::calculateCongeDuring ($demande));
+				endif;
+			?>
+			<div class="card m-2 p-2 list-body" style="border: 1px solid <?=$color?>;">
+				<div class="row">
+					<div class="col-md-4 text-center">
+						<span class="text-important"><?= ucfirst($demande->getRaison())?></span>
+					</div>
+					<div class="col-md-3 text-center">
+						<?php $date = explode("-", $demande->getDebut()) ?>
+						<span class="titre"><?= ' ' . $date[2] . '/' . $date[1] . '/' . $date[0]?></span>
+						au
+						<?php $date = explode("-", $demande->getFin()) ?>
+						<span class="titre"><?=' ' . $date[2] . '/' . $date[1] . '/' . $date[0]?></span>
+					</div>
+					<div class="col-md-1 text-center" style="padding-left: 0; padding-right:0;">
+						<span class="text-important">
+							<?= $validatedDay ; ?>
+						</span>
+					</div>
+					<div class="col-md-1 text-center" style="padding-left: 0; padding-right:0;">
+						<span class="text-important">
+							<?= $rejectedDay; ?>
+						</span>
+					</div>
+					<div class="col-md-1 text-center" style="padding-left: 0; padding-right:0;">
+						<span class="text-important">
+							<?= $proposedDay ; ?>
+						</span>
+					</div>
+					<div class="col-md-1 text-center" style="padding-left: 0; padding-right:0;">
+						<span class="text-important">
+							<?= $canceledDay ; ?>
+						</span>
+					</div>
+					<div class="col-md-1 text-center"></div>
+					<!-- <div class="col-md-2 text-center">
+						<span class="text-important" style="color: <?= $color?>;"><?= $text?></span>
+						<i class="fa <?= $class?>" style="color: <?= $color?>;" aria-hidden="true"></i>
+					</div> -->
+				</div>
+			</div>
+		<?php endforeach?>
+	<?php else : ?>
+		<div class="card m-2 p-2 text-center">
+			<span>Vous n'avez aucune demande de congé à afficher</span>
+		</div>
+	<?php endif?>
+</div>
+<?php if (isset($stock)) : ?>
+	<script type="text/javascript">
+		var newStockConge 	= <?= json_encode($stock->toArray()); ?>;
+		var newConges 		= <?= json_encode($conge); ?>;
+	</script>
+<?php endif; ?>

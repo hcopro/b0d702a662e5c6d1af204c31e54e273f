@@ -1,0 +1,86 @@
+	<?php 
+		extract($data);
+		// echo "<pre>";
+		// var_dump("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+		// var_dump( $_GET['page']);
+		// var_dump("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+		// var_dump($data);
+		// exit();
+
+	?>
+	<table class="table table-striped small-first-col" id="table-back">
+		<thead>
+			<tr>
+				<th>Prénom</th>
+				<th>Nom</th>
+				<th>Répondre</th>
+				<th>Service</th>
+				<th>Poste</th>
+				<th>Date d'envoie</th>
+				<th>Répondu le</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody id="tableSearch" class="body-half-screen">
+			<?php foreach ($barometres as $barometre): ?>
+				<tr>
+					<td>
+						<?= $barometre->getIdEmploye()->getIdEmploye()->getPrenom() ; ?>
+					</td>
+					<td>
+						<?= $barometre->getIdEmploye()->getIdEmploye()->getNom() ; ?>
+					</td>
+					<td>
+						<?= $barometre->getIsAnswered() ; ?>
+			   		</td>
+					<td>
+						<?= $barometre->getIdEmploye()->getIdServicePoste()->getIdEntrepriseService()->getService() ; ?>
+					</td>
+					<td>
+						<?= $barometre->getIdEmploye()->getIdServicePoste()->getIdEntreprisePoste()->getPoste() ; ?>
+					</td>
+					<td>
+						<?= $barometre->getDate() ; ?>
+					</td>
+					<td>
+						<?php if (!is_null($barometre->getDateReply())) : ?>
+							<?= $barometre->getDateReply() ; ?>
+						<?php else : ?>
+							---
+						<?php endif; ?>
+					</td>
+					<td>
+						<?php if ($barometre->getIsAnswered() == 'YES') : ?>
+							<a href="<?= HOST. 'manage/barometre/graph_barometer?idBarometre=' . $barometre->getIdBarometreList() ; ?>" class="btn btn-info"><i class="far fa-chart-bar"></i></a>
+						<?php endif; ?>
+				      	<a href="archived-barometre?idBarometre=<?=$barometre->getIdBarometreList(); ?>" class="btn btn-danger archived" data-toggle="modal" data-target="#deleteModal<?=$barometre->getIdBarometreList(); ?>" data-id="" data-url="archived-barometre?idBarometre=<?=$barometre->getIdBarometreList(); ?>"><i class="fa fa-times"></i></a>
+					</td>
+				</tr>
+			<?php endforeach;?>
+		</tbody>
+	</table>
+
+
+
+			<!-- Debut Modal d'archivage une candidaure -->
+				<div class="modal fade" id="archiveModal" tabindex="-1" role="dialog" aria-hidden="true">
+				  <div class="modal-dialog modal-dialog-centered" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title text-center">Confirmation</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				      </div>
+				      <div class="modal-body">
+				        <p id="text-confirmation"> Voulez-vous vraiment archiver cette candidature ?</p>
+				      </div>
+				      <div class="modal-footer">
+				        <a id="action-archive" class="btn btn-success" href="">Oui</a>
+				        <button type="button" class="btn btn-danger" data-dismiss="modal">Non</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+			<!-- Fin du Modal d'archivage une candidaure -->
+<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>

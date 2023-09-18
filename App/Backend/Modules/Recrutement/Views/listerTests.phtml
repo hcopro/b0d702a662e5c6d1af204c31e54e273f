@@ -1,0 +1,320 @@
+<?php
+	$url = explode('/', $_GET['page']);
+	extract($data);
+			// echo "<pre>";
+   //          var_dump($data); 
+   //          exit();
+?>
+<?php if ($_SESSION['compte']['identifiant'] == "entreprise") : ?>
+	<section class="page-section" id="back-section">
+		<div class="container">
+			<div class="row" style="margin-top: -15px;">
+				<div class="col-md-2"></div>
+				<div class="col-md-8">
+					<h4 class="text-center list-title section-heading">Mes tests</h4>
+				</div>
+				<div class="col-md-2 text-right">
+					<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalEnregistrement">
+						<i class="fa fa-plus" aria-hidden="true"></i>
+						<span class="ml-2">créer</span>
+					</button>
+				</div>
+			</div>
+			<div class="row" style="margin-top: -15px;">
+				<div class="col-md-12 text-left">
+					<form enctype="multipart/form-data" method="POST" action="<?= HOST. 'manage/testCandidate/csv_file'?>" role="form">
+						<div class="form-group">
+							<input type="file" accept=".csv" name="file" id="file" style="padding: 7px; padding-left: 2px; font-weight: 400; font-size: 16px;" required="required" data-validation-required-message="Veuillez importer un fichier csv">
+						</div>
+						<div class="form-group" style="margin-top: -65px; padding-left: 412px;">
+							<input type="file" name="filedocx" accept=".docx"+ id="filedocx" style="padding: 7px; padding-left: 2px; font-weight: 400; font-size: 16px;">
+						</div>
+							<label class="label-input">Poste :</label>
+						<div class="form-group" style=" padding-left: 60px; position: absolute; ">
+								<i class="fa fa-briefcase icon-input" aria-hidden="true" style="color: #3a434f; margin-top: -25px; padding-left: 0px;"></i>
+		                        <select class="form-control span3 focus_activated" name="idEntreprisePoste" id="idEntreprisePoste" required="required" data-validation-required-message="Veuillez choisir un poste" style="padding: 7px; padding-left: 23px; font-weight: 400; font-size: 16px; width: 320px; margin-top: -37px;">
+		                          <option class="text-center" value="">__Choisir__</option>
+		                          <?php foreach($postes as $poste): ?>
+		                            <option value="<?= $poste->getIdEntreprisePoste(); ?>">
+		                              	<?= ucfirst($poste->getPoste()); ?>
+		                            </option>
+		                          <?php endforeach; ?>
+		                        </select>
+		                        <p class="help-block text-danger"></p>
+						</div>
+						<div class="form-group" style="margin-top: -37px; padding-left: 415px;">
+							<button type="submit" class="btn btn-success" name="upload"><i class="fas fa-file-import fa-1x"></i>&nbsp; Upload</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="block-section">
+				<div class="row">
+			        <ul id="new-tab-button">
+		        		<li id="tab2">
+		        			<a href="<?= HOST. '#'?>">
+		        				La liste des tests candidats
+		        			</a>
+		        		</li>
+		        		<li id="tab4">
+		        			<a href="<?= HOST. '#'?>">
+		        				La liste des tests cognitifs
+		        			</a>
+		        		</li>
+		        		<li id="tab4">
+		        			<a href="<?= HOST. '#'?>">
+		        				La liste des tests personnalités
+		        			</a>
+		        		</li>
+			        </ul>
+		      	</div>
+				<div class="p-2" id="liste" style="height: 53vh; max-height: 53vh; background: #f5f5f5; overflow-y: auto;">
+					<div class="row block-section">
+						<div>
+							<table class="table table-striped small-first-col" id="table-back">
+								<?php if($url[1] == 'tests') : $pageTitle = "Test candidat";?>
+									<thead>
+										<tr>
+											<th></th>
+											<th>Test</th>
+											<th>Poste</th>
+											<th>Description</th>
+											<th class="text-center">Actions</th>
+										</tr>
+									</thead>
+									<tbody id="tableSearch" class="body-half-screen">
+										<?php if ($testeCandidates) : $inc = 0; ?>
+											<?php foreach ($testeCandidates as $test): ?>
+												<tr class="">
+													<td><?= ++$inc; ?></td>
+													<td>
+														<?= $test->getLibelle(); ?>
+													</td>
+													<td>
+														<?= $test->getIdEntreprisePoste(); ?>
+													</td>
+													<td></td>
+													<td class="text-center">
+														<a href="#; ?>&questionnaire" class="btn btn-info">
+												        	<i class="fas fa-eye"></i>
+												      	</a>
+												      	<button class="btn btn-warning" data-toggle="modal" data-target="#modalUpdate"
+												      		id="modifier-test<?=$test->getIdTestCandidate()?>" data-url="update-testCCandidate?idTestCandidate=<?='xxxx'; ?>">
+												        	<i class="fas fa-edit"></i>	
+												      	</button>			      		
+												      	<a href="delete-test?idTestCandidate=<?= 'yyy'; ?>" class="btn btn-danger delete" data-toggle="modal" data-target="#deleteModal" data-id="<?= 'ddddd'; ?>"data-url="delete-test?idTestCandidate=<?= 'jjj'; ?>">
+									                 		<i class="fas fa-trash"></i>
+										                </a>
+													</td>
+												</tr>
+											<?php endforeach;?>
+										<?php endif;?>
+									</tbody>
+								<?php endif; ?>
+							</table>
+						</div>
+					</div>
+				</div>
+				<!-- Debut du Modal Suppresion trait de personnalité-->
+					<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+					  <div class="modal-dialog modal-dialog-centered" role="document">
+					    <div class="modal-content">
+					      <div class="modal-header">
+					        <h5 class="modal-title text-center">Confirmation</h5>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          <span aria-hidden="true">&times;</span>
+					        </button>
+					      </div>
+					      <div class="modal-body">
+					        <p id="text-confirmation"></p>
+					      </div>
+					      <div class="modal-footer">
+					        <a id="action-delete" class="btn btn-success" href="">Oui</a>
+					        <button type="button" class="btn btn-danger" data-dismiss="modal">Non</button>
+					      </div>
+					    </div>
+					  </div>
+					</div>
+				<!-- Fin du Modal Suppression trait de personnalité -->
+					<!-- Debut du Modal Modification trait de personnalité -->
+						<div class="modal fade" id="modalUpdate" tabindex="-1" role="dialog"
+							aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+							<div class="modal-dialog modal-dialog-centered" role="document">
+								<div class="modal-content">
+									<form method="POST" action="<?= HOST . 'manage/update-test' ?>" enctype="multipart/form-data"
+										novalidate="novalidate">
+										<div class="modal-header">
+											<div class="text-center" style="width: 100%;">
+									      		<h5 class="modal-title" id="exampleModalLabel"> <?= 'Modifier '.lcfirst($pageTitle) ?></h5>
+									      	</div>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+						  					<div class="card p-3" style="background: #efefff;">
+							                	<div class="form-group hidden">
+								              		<input class="form-control" id="idCategorieUpdate" name="id_categorie" type="number" value="<?php if (isset($test)) : $test->getIdTestCandidate(); endif; ?>" readonly>
+								              		<p class="help-block text-danger"></p>
+								              	</div>
+												<div class="row">
+													<div class="col-md-4">
+														<span class="titre">Dimension : </span>
+													</div>
+													<div class="col-md-8">
+														<div class="form-group">
+															<i class="fa fa-pencil-alt icon-input" aria-hidden="true" style="color: #3a434f; text-align: left !important;"></i>
+															<input class="form-control focus_activated text-capitalize modal-input"
+																name="libelle" type="text" id="input-hiddenLibelle" required="required" data-validation-required-message="Entrez la dimension svp!"
+																data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùçâ |'-?<>,;:!\/'']*"
+																data-validation-regex-message="Caractères non valide" value="">
+															<p class="help-block text-danger"></p>
+														</div>
+													</div>
+												</div>
+												<hr>
+												<div class="row">
+													<div class="col-md-4">
+														<span class="titre">Code : </span>
+													</div>
+													<div class="col-md-8">
+														<div class="form-group">
+															<i class="fa fa-pencil-alt icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+															<input class="form-control focus_activated text-capitalize modal-input code"  name="code"
+																type="text" required="required" data-validation-required-message="Entrez le code svp!"
+																data-validation-regex-regex="^[a-zA-_]*" data-validation-regex-message="Caractères non valide"
+																placeholder="Saisir un code">
+															<p class="help-block text-danger"></p>
+														</div>
+													</div>
+												</div>
+												<hr>
+												<div class="row">
+													<div class="col-md-4">
+														<span class="titre">Description : </span>
+													</div>
+													<div class="col-md-8">
+														<div class="form-group">
+															<textarea class="form-control rounded-0 description" name="description" rows="3"></textarea>
+														</div>
+													</div>
+												</div>
+												<hr>
+												</div>
+											</div>
+										<div class="modal-footer">
+											<div class="row" style="width: 105%!important;">
+							      				<div class="col-md-3">
+							      					<button type="button" class="btn btn-md btn-danger annuler" data-dismiss="modal">Annuler</button>
+							      				</div>
+							      				<div class="col-md-5"></div>
+									      		<div class="col-md-4">
+									      			<div class="form-group"> 
+									      				<button type="submit" class="btn btn-md btn-sm btn-info">
+									      					Enregister 
+									      				</button>
+									      			</div>
+									      		</div>
+									      	</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					<!-- Fin du Modal Modification trait de personnalité -->
+				<!-- Debut Modal Ajout nouveau enregistrement -->
+					<div class="modal fade" id="modalEnregistrement" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<form method="POST" action="<?= HOST . 'manage/create-test'; ?>" enctype="multipart/form-data" novalidate="novalidate" class="error">
+									<div class="modal-header">
+										<div class="text-center" style="width: 100%;">
+								      		<h5 class="modal-title" id="exampleModalLabel"> <?= 'Créer '.lcfirst($pageTitle) ?></h5>
+								      	</div>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+										<div class="modal-body">
+					  					<div class="card p-3" style="background: #efefff;">
+											<div class="form-group hidden">
+					              				<input class="form-control" name="idCategorie" type="number" value="<?php if(isset($test)) :
+								              		echo $test->getLibelle(); endif; ?>" readonly>
+								              	<p class="help-block text-danger"></p>
+								            </div>
+											<div class="row">
+												<div class="col-md-4">
+													<span class="titre">Dimension : </span>
+												</div>
+												<div class="col-md-8">
+													<div class="form-group">
+														<i class="fa fa-pencil-alt icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+														<input class="form-control focus_activated text-capitalize modal-input" id="libelle" name="libelle"
+															type="text" required="required" data-validation-required-message="Entrez la dimension svp!"
+															data-validation-regex-regex="^[a-zA-Z|éèêëôöîïàùçâ |'-?<>,;:!\/'']*" data-validation-regex-message="Caractères non valide"
+															placeholder="Saisir une dimension">
+														<p class="help-block text-danger"></p>
+													</div>
+												</div>
+											</div>
+											<hr>
+											<div class="row">
+												<div class="col-md-4">
+													<span class="titre">Code : </span>
+												</div>
+												<div class="col-md-8">
+													<div class="form-group">
+														<i class="fa fa-pencil-alt icon-input" aria-hidden="true" style="color: #3a434f;"></i>
+														<input class="form-control focus_activated text-capitalize modal-input" name="code"
+															type="text" required="required" data-validation-required-message="Entrez le code svp!"
+															data-validation-regex-regex="^[a-zA-_]*" data-validation-regex-message="Caractères non valide"
+															placeholder="Saisir un code">
+														<p class="help-block text-danger"></p>
+													</div>
+												</div>
+											</div>
+											<hr>
+											<div class="row">
+												<div class="col-md-4">
+													<span class="titre">Description : </span>
+												</div>
+												<div class="col-md-8">
+													<div class="form-group">
+														<textarea class="form-control rounded-0" name="description" rows="3"></textarea>
+													</div>
+												</div>
+											</div>
+											<hr>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<div class="row" style="width: 105%!important;">
+						      		<div class="col-md-3">
+						      			<button type="button" class="btn btn-md btn-danger annuler" data-dismiss="modal">Annuler</button>
+						      		</div>
+						      		<div class="col-md-5"></div>
+						      		<div class="col-md-4">
+						      			<div class="form-group"> 
+						      				<button type="submit" class="btn btn-md btn-info">
+						      					Enregister 
+						      				</button>
+						      			</div>
+						      		</div>
+						      	</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				<!-- Fin Modal Ajout nouveau enregistrement -->
+				<script src="<?= HOST; ?>../Web/Ressources/js/backend_datatable.js"></script>
+			</div>
+		</div>
+	</section>
+<?php endif ?>
+<!-- <script src="<?= HOST; ?>../Web/Ressources/js/listerTest.js"></script> -->
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/jquery.dataTables.min.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/datatable.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/dataTables.responsive.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave.js"></script>
+<script src="<?= HOST; ?>../Web/Ressources/js/plugin/cleave-phone.i18n.js"></script>

@@ -1,0 +1,22 @@
+<?xml version = "1.0" encoding="UTF-8" standalone="yes" ?>
+<routes>
+	<route url="create-compte" module="compte" action="creerCompte"></route>
+	<route url="cancel-compte" module="compte" action="cancelCompte"></route>
+	<route url="connexion" module="compte" action="connecter"></route>
+	<route url="deconnexion" module="compte" action="deconnecter"></route>
+
+	<route url="register-candidat" module="compte" action="afficherForm"></route>
+	<route url="save-candidat" module="compte" action="mettreAJour"></route>
+
+	<route url="register-entreprise" module="compte" action="afficherForm"></route>
+	<route url="save-entreprise" module="compte" action="mettreAJour"></route>
+
+	<route url="send_message" module="compte" action="sendMessage"></route>
+
+	<route url="offres" module="recrutement" action="listerOffres"></route>
+	<route url="offre" module="recrutement" action="voirOffre"></route>
+
+	<route url="test" module="compte" action="tester"></route>
+	<route url="ecriture" module="compte" action="ecrire"></route>
+
+</routes>
